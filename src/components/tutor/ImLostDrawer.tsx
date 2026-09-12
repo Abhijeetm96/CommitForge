@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import {
-  LifeBuoy,
   X,
   RotateCcw,
-  CheckCircle2,
-  HelpCircle,
-  Lightbulb,
+  Play,
   ArrowRight,
-  Terminal,
+  HelpCircle,
+  AlertTriangle,
 } from 'lucide-react';
 
 interface ImLostDrawerProps {
@@ -17,24 +15,60 @@ interface ImLostDrawerProps {
 }
 
 export const ImLostDrawer: React.FC<ImLostDrawerProps> = ({ isOpen, onClose }) => {
-  const { currentLesson, repo, inspection, resetCurrentExercise, openHumansTerm } = useApp();
-  const [selectedAnswer, setSelectedAnswer] = useState<'yes' | 'no' | 'unsure' | null>(null);
-  const [showFullCommand, setShowFullCommand] = useState(false);
-  const [resetDone, setResetDone] = useState(false);
+  const { repo, resetCurrentExercise, executeCommand, first10Step } = useApp();
+  const [selectedIssue, setSelectedIssue] = useState<number | null>(null);
 
   if (!isOpen) return null;
 
-  const stagedCount = Object.keys(repo.index).length;
-  const modifiedFiles = inspection.fileStatuses.filter((f) => f.isModified || f.isUntracked);
-  const primaryChangedFile = modifiedFiles[0]?.path || 'your files';
+  const changedFiles = Object.keys(repo.workingDirectory);
+  const stagedFiles = Object.keys(repo.index);
 
-  const handleReset = () => {
-    resetCurrentExercise();
-    setResetDone(true);
-    setTimeout(() => {
-      setResetDone(false);
+  const ISSUES = [
+    {
+      id: 'dont-understand',
+      text: "I don't understand what's happening",
+      explanation: `Right now, Git is looking at your project folder. You have ${changedFiles.length} file(s) on your desk, and ${stagedFiles.length} file(s) in the packing box. Remember: changes happen on your desk first, then you pack them with \`git add\`, then seal them with \`git commit\`.`,
+      suggestedCmd: 'git status',
+      cmdLabel: 'Run git status to inspect state',
+    },
+    {
+      id: 'dont-know-cmd',
+      text: "I don't know what command to use",
+      explanation:
+        stagedFiles.length > 0
+          ? 'You already have files packed in the box! The next step is to seal your snapshot: `git commit -m "Your message"`.'
+          : changedFiles.length > 0
+          ? 'You have edits on your desk. To pack them into the box, run: `git add <filename>` (e.g. `git add index.html`).'
+          : 'Everything is clean! Check your position with `pwd` or view history with `git log`.',
+      suggestedCmd: stagedFiles.length > 0 ? 'git commit -m "Save progress"' : 'git status',
+      cmdLabel: stagedFiles.length > 0 ? 'Run git commit' : 'Run git status',
+    },
+    {
+      id: 'got-error',
+      text: 'I ran a command and got an error',
+      explanation:
+        'Errors are normal in software development! In Git, most errors happen when typing flags without spaces, forgetting quotes in commit messages, or trying to commit when nothing is staged.',
+      suggestedCmd: 'git status',
+      cmdLabel: 'Check repository status',
+    },
+    {
+      id: 'broke-something',
+      text: 'I think I broke something',
+      explanation:
+        'Good news: in Git, almost nothing is permanently lost! You can safely reset this exercise to return to the clean starting state.',
+      suggestedCmd: 'reset',
+      cmdLabel: 'Reset this exercise safely',
+    },
+  ];
+
+  const handleAction = (cmd: string) => {
+    if (cmd === 'reset') {
+      resetCurrentExercise();
       onClose();
-    }, 1500);
+    } else {
+      executeCommand(cmd);
+      onClose();
+    }
   };
 
   return (
@@ -42,8 +76,8 @@ export const ImLostDrawer: React.FC<ImLostDrawerProps> = ({ isOpen, onClose }) =
       style={{
         position: 'fixed',
         inset: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.75)',
-        backdropFilter: 'blur(4px)',
+        backgroundColor: 'rgba(0, 0, 0, 0.78)',
+        backdropFilter: 'blur(6px)',
         zIndex: 9999,
         display: 'flex',
         alignItems: 'center',
@@ -54,249 +88,156 @@ export const ImLostDrawer: React.FC<ImLostDrawerProps> = ({ isOpen, onClose }) =
     >
       <div
         style={{
-          background: 'var(--bg-surface)',
-          border: '1px solid var(--border-color)',
-          borderRadius: 'var(--radius-lg)',
+          background: '#131d33',
+          border: '1px solid rgba(255, 255, 255, 0.12)',
+          borderRadius: '16px',
           maxWidth: '560px',
           width: '100%',
-          boxShadow: '0 20px 50px rgba(0, 0, 0, 0.6)',
-          overflow: 'hidden',
+          padding: '2rem',
           display: 'flex',
           flexDirection: 'column',
+          gap: '1.25rem',
+          boxShadow: '0 20px 50px rgba(0, 0, 0, 0.6)',
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div
-          style={{
-            padding: '1.2rem 1.5rem',
-            borderBottom: '1px solid var(--border-color)',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            background: 'linear-gradient(90deg, rgba(240, 80, 51, 0.15), rgba(245, 158, 11, 0.1))',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-            <div
+        {/* Header (Screen 5: I'm Lost 🙁) */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div>
+            <h2
               style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '50%',
-                background: 'var(--danger-red)',
-                color: 'white',
+                fontSize: '1.4rem',
+                fontWeight: 900,
+                color: '#f8fafc',
+                margin: 0,
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
+                gap: '0.4rem',
               }}
             >
-              <LifeBuoy size={18} />
-            </div>
-            <div>
-              <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', color: 'var(--danger-red)', fontWeight: 800 }}>
-                🆘 Emergency Mentor
-              </div>
-              <h2 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
-                No problem. Let's figure this out together.
-              </h2>
-            </div>
+              I'm Lost 🙁
+            </h2>
+            <p style={{ color: '#94a3b8', fontSize: '0.92rem', margin: '0.25rem 0 0 0' }}>
+              No problem. What are you stuck on?
+            </p>
           </div>
+
           <button
             onClick={onClose}
             style={{
-              background: 'transparent',
+              background: 'rgba(255, 255, 255, 0.06)',
               border: 'none',
-              color: 'var(--text-muted)',
+              color: '#94a3b8',
+              borderRadius: '50%',
+              width: '28px',
+              height: '28px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
               cursor: 'pointer',
-              padding: '0.3rem',
             }}
           >
-            <X size={20} />
+            <X size={16} />
           </button>
         </div>
 
-        {/* Conversational Triage Body (Point 16) */}
-        <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
-          {/* 1. What you're trying to do */}
-          <div style={{ background: 'var(--bg-app)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '1rem' }}>
-            <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--git-orange)', textTransform: 'uppercase', marginBottom: '0.3rem' }}>
-              You're trying to:
-            </div>
-            <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-              {currentLesson.mission}
-            </div>
-          </div>
-
-          {/* 2. What Git currently sees */}
-          <div style={{ background: 'var(--bg-app)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '1rem' }}>
-            <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--cyan)', textTransform: 'uppercase', marginBottom: '0.3rem' }}>
-              Git currently sees:
-            </div>
-            <div style={{ fontSize: '0.92rem', color: 'var(--text-primary)' }}>
-              {modifiedFiles.length > 0 ? (
-                <span>📄 <code>{primaryChangedFile}</code> has been modified on your desk</span>
-              ) : (
-                <span>📄 Your desk is clean (no unsaved file modifications)</span>
-              )}
-              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-                Packing box (Staging Area): {stagedCount === 0 ? 'Empty' : `${stagedCount} file(s) staged`}
-              </div>
-            </div>
-          </div>
-
-          {/* 3. Think Prompt */}
-          <div style={{ background: 'rgba(245, 158, 11, 0.06)', border: '1px solid rgba(245, 158, 11, 0.25)', borderRadius: 'var(--radius-md)', padding: '1rem' }}>
-            <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--warning-amber)', textTransform: 'uppercase', marginBottom: '0.4rem' }}>
-              Think:
-            </div>
-            <div style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.75rem' }}>
-              Have we selected this change for our next snapshot?
-            </div>
-
-            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-              <button
-                onClick={() => setSelectedAnswer('yes')}
-                style={{
-                  background: selectedAnswer === 'yes' ? 'var(--git-orange)' : 'var(--bg-app)',
-                  color: selectedAnswer === 'yes' ? 'white' : 'var(--text-primary)',
-                  border: '1px solid var(--border-color)',
-                  padding: '0.45rem 1rem',
-                  borderRadius: 'var(--radius-sm)',
-                  fontWeight: 700,
-                  fontSize: '0.82rem',
-                  cursor: 'pointer',
-                }}
-              >
-                YES
-              </button>
-
-              <button
-                onClick={() => setSelectedAnswer('no')}
-                style={{
-                  background: selectedAnswer === 'no' ? 'var(--git-orange)' : 'var(--bg-app)',
-                  color: selectedAnswer === 'no' ? 'white' : 'var(--text-primary)',
-                  border: '1px solid var(--border-color)',
-                  padding: '0.45rem 1rem',
-                  borderRadius: 'var(--radius-sm)',
-                  fontWeight: 700,
-                  fontSize: '0.82rem',
-                  cursor: 'pointer',
-                }}
-              >
-                NO
-              </button>
-
-              <button
-                onClick={() => setSelectedAnswer('unsure')}
-                style={{
-                  background: selectedAnswer === 'unsure' ? 'var(--git-orange)' : 'var(--bg-app)',
-                  color: selectedAnswer === 'unsure' ? 'white' : 'var(--text-primary)',
-                  border: '1px solid var(--border-color)',
-                  padding: '0.45rem 1rem',
-                  borderRadius: 'var(--radius-sm)',
-                  fontWeight: 700,
-                  fontSize: '0.82rem',
-                  cursor: 'pointer',
-                }}
-              >
-                I'M NOT SURE
-              </button>
-            </div>
-
-            {/* Conversational Explanation after answering */}
-            {selectedAnswer !== null && (
+        {/* 4 Selectable Issues */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+          {ISSUES.map((issue, idx) => {
+            const isSelected = selectedIssue === idx;
+            return (
               <div
+                key={issue.id}
+                onClick={() => setSelectedIssue(isSelected ? null : idx)}
                 style={{
-                  marginTop: '0.8rem',
-                  padding: '0.75rem',
-                  borderRadius: 'var(--radius-sm)',
-                  background: 'var(--bg-app)',
-                  border: '1px solid var(--border-color)',
-                  fontSize: '0.85rem',
-                  lineHeight: 1.5,
+                  background: isSelected ? 'rgba(56, 189, 248, 0.08)' : '#0e172a',
+                  border: `1px solid ${isSelected ? '#38bdf8' : 'rgba(255, 255, 255, 0.08)'}`,
+                  borderRadius: '10px',
+                  padding: '0.85rem 1rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.6rem',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
                 }}
               >
-                {selectedAnswer === 'no' && (
-                  <div>
-                    <strong>Exactly.</strong> If the change is not staged in the packing box, Git cannot include it in a commit.
-                    Run: <code>git add {primaryChangedFile}</code>
-                  </div>
-                )}
-                {selectedAnswer === 'yes' && (
-                  <div>
-                    If you already staged it, you are ready to seal the box!
-                    Run: <code>git commit -m "Describe your changes"</code>
-                  </div>
-                )}
-                {selectedAnswer === 'unsure' && (
-                  <div>
-                    Remember the physical rhythm: <strong>Desk ➔ Packing Box ➔ Sealed Snapshot</strong>.
-                    Run <code>git status</code> to see if your file is in red (still on desk) or green (already in the packing box).
-                  </div>
-                )}
-
-                {!showFullCommand ? (
-                  <button
-                    onClick={() => setShowFullCommand(true)}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <div
                     style={{
-                      marginTop: '0.5rem',
-                      background: 'transparent',
-                      border: 'none',
-                      color: 'var(--cyan)',
-                      fontSize: '0.8rem',
-                      cursor: 'pointer',
-                      textDecoration: 'underline',
-                      padding: 0,
+                      width: '16px',
+                      height: '16px',
+                      borderRadius: '50%',
+                      border: `2px solid ${isSelected ? '#38bdf8' : '#64748b'}`,
+                      background: isSelected ? '#38bdf8' : 'transparent',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                    }}
+                  />
+                  <span style={{ fontSize: '0.92rem', fontWeight: 600, color: isSelected ? '#ffffff' : '#cbd5e1' }}>
+                    {issue.text}
+                  </span>
+                </div>
+
+                {/* Expanded guidance */}
+                {isSelected && (
+                  <div
+                    style={{
+                      paddingTop: '0.4rem',
+                      borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '0.75rem',
+                      fontSize: '0.85rem',
+                      color: '#94a3b8',
+                      lineHeight: 1.5,
                     }}
                   >
-                    Still stuck? Show exact solution command
-                  </button>
-                ) : (
-                  <div style={{ marginTop: '0.5rem', fontFamily: 'monospace', background: 'var(--bg-terminal)', padding: '0.4rem 0.6rem', borderRadius: '4px', color: 'var(--terminal-green)' }}>
-                    {currentLesson.solution}
+                    <div>{issue.explanation}</div>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAction(issue.suggestedCmd);
+                      }}
+                      style={{
+                        background: '#2563eb',
+                        color: 'white',
+                        border: 'none',
+                        padding: '0.6rem 1rem',
+                        borderRadius: '6px',
+                        fontSize: '0.82rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        alignSelf: 'flex-start',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.4rem',
+                      }}
+                    >
+                      <Play size={13} /> {issue.cmdLabel}
+                    </button>
                   </div>
                 )}
               </div>
-            )}
-          </div>
+            );
+          })}
+        </div>
 
-          {/* Action Row */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.5rem' }}>
-            <button
-              onClick={handleReset}
-              style={{
-                background: 'transparent',
-                border: '1px solid var(--border-color)',
-                color: 'var(--danger-red)',
-                padding: '0.45rem 0.8rem',
-                borderRadius: 'var(--radius-sm)',
-                fontSize: '0.8rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.3rem',
-              }}
-            >
-              <RotateCcw size={14} /> {resetDone ? 'Resetting...' : 'Reset This Step'}
-            </button>
-
-            <button
-              onClick={onClose}
-              style={{
-                background: 'var(--git-orange)',
-                color: 'white',
-                border: 'none',
-                padding: '0.55rem 1.4rem',
-                borderRadius: 'var(--radius-sm)',
-                fontWeight: 800,
-                fontSize: '0.85rem',
-                cursor: 'pointer',
-              }}
-            >
-              Ready to Try Again
-            </button>
-          </div>
+        {/* Friendly Reassurance Note (Screen 5 footer) */}
+        <div
+          style={{
+            fontSize: '0.82rem',
+            color: '#64748b',
+            textAlign: 'center',
+            lineHeight: 1.5,
+            marginTop: '0.25rem',
+          }}
+        >
+          You can always ask. Everyone gets stuck!
+          <br />
+          That's how developers learn.
         </div>
       </div>
     </div>

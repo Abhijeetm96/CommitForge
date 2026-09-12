@@ -11,6 +11,8 @@ import { Terminal } from './components/terminal/Terminal';
 import { LessonPanel } from './components/panels/LessonPanel';
 import { DashboardView } from './components/dashboard/DashboardView';
 import { First10MinutesView } from './components/labs/First10MinutesView';
+import { PracticeView } from './components/practice/PracticeView';
+import { DeveloperIdeView } from './components/ide/DeveloperIdeView';
 import { LabsHubView } from './components/labs/LabsHubView';
 import { CommandReferenceView } from './components/labs/CommandReferenceView';
 import { InternalsModal } from './components/visualizer/InternalsModal';
@@ -51,47 +53,13 @@ const AppContent: React.FC = () => {
         {(mode === 'learn' || mode === 'first10') && <First10MinutesView />}
 
         {/* EXPERIENCE 2: 🛠️ PRACTICE (Guided Developer Missions) */}
-        {mode === 'practice' && (
-          <div style={{ display: 'flex', flexDirection: 'column', flex: 1, position: 'relative', overflow: 'hidden' }}>
-            <LessonPanel />
-            <div style={{ borderBottom: '1px solid var(--border-color)', maxHeight: '240px', overflowY: 'auto' }}>
-              <ThreeAreaVisualizer />
-            </div>
-            <div className="ide-workspace">
-              <FileExplorer />
-              <CodeEditor />
-              <div className="terminal-preview-column">
-                <AppPreview />
-                <Terminal />
-              </div>
-            </div>
-            <div style={{ padding: '0.4rem 1rem' }}>
-              <ForgeTutor />
-            </div>
-          </div>
-        )}
+        {mode === 'practice' && <PracticeView />}
 
         {/* EXPERIENCE 3: 🔬 LABS (Break, Diagnose & Recover) */}
         {isLabsRoute && <LabsHubView />}
 
         {/* EXPERIENCE 4: 💻 DEVELOPER IDE (Work Like a Professional Developer) */}
-        {mode === 'ide' && (
-          <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
-            <GitStateInspector />
-            <div style={{ borderBottom: '1px solid var(--border-color)', maxHeight: '240px', overflowY: 'auto' }}>
-              <ThreeAreaVisualizer />
-            </div>
-            <div className="ide-workspace">
-              <FileExplorer />
-              <CodeEditor />
-              <div className="terminal-preview-column">
-                <AppPreview />
-                <Terminal />
-              </div>
-            </div>
-            <GitGraph />
-          </div>
-        )}
+        {mode === 'ide' && <DeveloperIdeView />}
 
         {/* REFERENCE / ENCYCLOPEDIA (Advanced/Expert Only) */}
         {mode === 'reference' && <CommandReferenceView />}

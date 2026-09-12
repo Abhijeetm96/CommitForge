@@ -710,7 +710,7 @@ body {
   gap: 0.6rem;
 }
 
-/* Responsive */
+/* Responsive Layouts & Breakpoints */
 @media (max-width: 1024px) {
   .ide-workspace {
     grid-template-columns: 200px 1fr;
@@ -719,9 +719,93 @@ body {
     grid-column: span 2;
     height: 350px;
   }
+
+  /* Learn 3-Column: collapse mentor sidebar on tablet */
+  .learn-3col-grid {
+    grid-template-columns: 200px 1fr !important;
+  }
+  .learn-mentor-sidebar {
+    display: none !important;
+  }
+
+  /* IDE 3-Panel: collapse git panel on tablet */
+  .ide-3panel-grid {
+    grid-template-columns: 180px 1fr !important;
+  }
+  .ide-git-panel {
+    display: none !important;
+  }
 }
 
 @media (max-width: 768px) {
+  /* Header Nav */
+  .header-nav {
+    padding: 0 0.75rem !important;
+  }
+  .header-tagline {
+    display: none !important;
+  }
+  .header-lost-label {
+    display: none !important;
+  }
+  .header-nav-tabs {
+    gap: 0.25rem !important;
+  }
+  .header-nav-tabs button {
+    padding: 0.35rem 0.55rem !important;
+    font-size: 0.8rem !important;
+  }
+
+  /* Learn Mode: Stack vertically on mobile */
+  .learn-3col-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    overflow-y: auto !important;
+  }
+  .learn-checklist-sidebar {
+    max-height: 90px !important;
+    flex-shrink: 0 !important;
+    border-right: none !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    padding: 0.5rem !important;
+    gap: 0.4rem !important;
+  }
+  .learn-checklist-sidebar button {
+    flex-shrink: 0 !important;
+    width: auto !important;
+    max-width: 160px !important;
+  }
+
+  /* Screen 3: Before/After visual comparison on mobile */
+  .before-after-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+  }
+
+  /* Screen 2: Concept Diagram Box on mobile */
+  .concept-diagram-box {
+    flex-direction: column !important;
+    gap: 1rem !important;
+  }
+
+  /* IDE Mode: Stack vertically on mobile */
+  .ide-3panel-grid {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .ide-files-panel {
+    max-height: 120px !important;
+    flex-shrink: 0 !important;
+    border-right: none !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  }
+  .ide-editor-panel {
+    min-height: 250px !important;
+    flex: 1 !important;
+  }
+
   .three-area-columns {
     grid-template-columns: 1fr;
   }
@@ -731,7 +815,10 @@ body {
   .file-explorer {
     display: none;
   }
-  .nav-tabs {
-    display: none;
+}
+
+@media (max-width: 480px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr !important;
   }
 }
