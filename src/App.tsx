@@ -11,14 +11,7 @@ import { Terminal } from './components/terminal/Terminal';
 import { LessonPanel } from './components/panels/LessonPanel';
 import { DashboardView } from './components/dashboard/DashboardView';
 import { First10MinutesView } from './components/labs/First10MinutesView';
-import { CommandDiscoveryView } from './components/labs/CommandDiscoveryView';
-import { BreakItView } from './components/labs/BreakItView';
-import { ConfigLabView } from './components/labs/ConfigLabView';
-import { UndoLabView } from './components/labs/UndoLabView';
-import { ConflictArenaView } from './components/labs/ConflictArenaView';
-import { GitHospitalView } from './components/labs/GitHospitalView';
-import { TwoDevView } from './components/labs/TwoDevView';
-import { CapstoneView } from './components/labs/CapstoneView';
+import { LabsHubView } from './components/labs/LabsHubView';
 import { CommandReferenceView } from './components/labs/CommandReferenceView';
 import { InternalsModal } from './components/visualizer/InternalsModal';
 import { ForgeTutor } from './components/tutor/ForgeTutor';
@@ -30,6 +23,7 @@ import { Database } from 'lucide-react';
 const AppContent: React.FC = () => {
   const {
     mode,
+    instructionMode,
     showOnboarding,
     setShowOnboarding,
     showLostDrawer,
@@ -40,30 +34,29 @@ const AppContent: React.FC = () => {
 
   const [showInternalsModal, setShowInternalsModal] = useState(false);
 
-  // Dedicated modes manage their own visualizers
-  const isCustomLayoutMode = ['first10', 'discover', 'break-it', 'config-lab', 'dashboard'].includes(mode);
+  // Check if current mode is a Labs sub-route
+  const isLabsRoute =
+    mode === 'labs' ||
+    ['break-it', 'undo-lab', 'conflict-arena', 'hospital', 'two-dev', 'capstone', 'config-lab', 'discover'].includes(mode);
 
   return (
     <>
       <HeaderNav />
 
-      {!isCustomLayoutMode && (
-        <>
-          <GitStateInspector />
-          <ThreeAreaVisualizer />
-        </>
-      )}
-
       <main className="main-content">
+        {/* EXPERIENCE 0: HOME / DASHBOARD */}
         {mode === 'dashboard' && <DashboardView />}
-        {mode === 'first10' && <First10MinutesView />}
-        {mode === 'discover' && <CommandDiscoveryView />}
-        {mode === 'break-it' && <BreakItView />}
-        {mode === 'config-lab' && <ConfigLabView />}
 
-        {mode === 'learn' && (
-          <div style={{ display: 'flex', flexDirection: 'column', flex: 1, position: 'relative' }}>
+        {/* EXPERIENCE 1: 🎓 LEARN (First 10 Minutes & Foundations) */}
+        {(mode === 'learn' || mode === 'first10') && <First10MinutesView />}
+
+        {/* EXPERIENCE 2: 🛠️ PRACTICE (Guided Developer Missions) */}
+        {mode === 'practice' && (
+          <div style={{ display: 'flex', flexDirection: 'column', flex: 1, position: 'relative', overflow: 'hidden' }}>
             <LessonPanel />
+            <div style={{ borderBottom: '1px solid var(--border-color)', maxHeight: '240px', overflowY: 'auto' }}>
+              <ThreeAreaVisualizer />
+            </div>
             <div className="ide-workspace">
               <FileExplorer />
               <CodeEditor />
@@ -72,15 +65,22 @@ const AppContent: React.FC = () => {
                 <Terminal />
               </div>
             </div>
-            <div style={{ padding: '0.5rem 1rem' }}>
+            <div style={{ padding: '0.4rem 1rem' }}>
               <ForgeTutor />
             </div>
-            <GitGraph />
           </div>
         )}
 
+        {/* EXPERIENCE 3: 🔬 LABS (Break, Diagnose & Recover) */}
+        {isLabsRoute && <LabsHubView />}
+
+        {/* EXPERIENCE 4: 💻 DEVELOPER IDE (Work Like a Professional Developer) */}
         {mode === 'ide' && (
-          <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
+            <GitStateInspector />
+            <div style={{ borderBottom: '1px solid var(--border-color)', maxHeight: '240px', overflowY: 'auto' }}>
+              <ThreeAreaVisualizer />
+            </div>
             <div className="ide-workspace">
               <FileExplorer />
               <CodeEditor />
@@ -93,40 +93,38 @@ const AppContent: React.FC = () => {
           </div>
         )}
 
-        {mode === 'undo-lab' && <UndoLabView />}
-        {mode === 'conflict-arena' && <ConflictArenaView />}
-        {mode === 'hospital' && <GitHospitalView />}
-        {mode === 'two-dev' && <TwoDevView />}
-        {mode === 'capstone' && <CapstoneView />}
+        {/* REFERENCE / ENCYCLOPEDIA (Advanced/Expert Only) */}
         {mode === 'reference' && <CommandReferenceView />}
       </main>
 
-      {/* Floating Git Internals Trigger Button */}
-      <button
-        onClick={() => setShowInternalsModal(true)}
-        style={{
-          position: 'fixed',
-          bottom: '16px',
-          right: '16px',
-          background: 'var(--bg-surface-elevated)',
-          color: 'var(--git-orange)',
-          border: '1px solid var(--git-orange)',
-          padding: '0.5rem 1rem',
-          borderRadius: '999px',
-          fontSize: '0.8rem',
-          fontWeight: 700,
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.4rem',
-          cursor: 'pointer',
-          boxShadow: 'var(--shadow-md)',
-          zIndex: 90,
-        }}
-        title="Inspect .git/objects Object Database"
-      >
-        <Database size={15} />
-        Git Internals DB
-      </button>
+      {/* Floating Git Internals Trigger Button - ONLY visible in Developer IDE or for Expert mode */}
+      {(mode === 'ide' || instructionMode === 'expert') && (
+        <button
+          onClick={() => setShowInternalsModal(true)}
+          style={{
+            position: 'fixed',
+            bottom: '16px',
+            right: '16px',
+            background: 'var(--bg-surface-elevated)',
+            color: 'var(--git-orange)',
+            border: '1px solid var(--git-orange)',
+            padding: '0.5rem 1rem',
+            borderRadius: '999px',
+            fontSize: '0.8rem',
+            fontWeight: 700,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.4rem',
+            cursor: 'pointer',
+            boxShadow: 'var(--shadow-md)',
+            zIndex: 90,
+          }}
+          title="Inspect .git/objects Object Database"
+        >
+          <Database size={15} />
+          Git Internals DB
+        </button>
+      )}
 
       {/* Modals & Drawers */}
       {showInternalsModal && (

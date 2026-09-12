@@ -52,74 +52,61 @@ export const HeaderNav: React.FC = () => {
 
       <nav className="nav-tabs">
         <button className={`nav-btn ${mode === 'dashboard' ? 'active' : ''}`} onClick={() => setMode('dashboard')}>
-          <BookOpen size={15} /> Dashboard
+          <BookOpen size={15} /> Home
         </button>
-        <button className={`nav-btn ${mode === 'first10' ? 'active' : ''}`} onClick={() => setMode('first10')} style={{ color: 'var(--git-orange)', fontWeight: 800 }}>
-          <span>🐣</span> First 10 Mins
+        <button className={`nav-btn ${mode === 'learn' || mode === 'first10' ? 'active' : ''}`} onClick={() => setMode('learn')} style={{ fontWeight: 800 }}>
+          <span>🎓</span> Learn
         </button>
-        <button className={`nav-btn ${mode === 'learn' ? 'active' : ''}`} onClick={() => setMode('learn')}>
-          <FolderGit2 size={15} /> Curriculum
-        </button>
-        <button className={`nav-btn ${mode === 'discover' ? 'active' : ''}`} onClick={() => setMode('discover')}>
-          <Compass size={15} /> What Should I Do?
-        </button>
-        <button className={`nav-btn ${mode === 'break-it' ? 'active' : ''}`} onClick={() => setMode('break-it')}>
-          <Flame size={15} /> Break It
-        </button>
-        <button className={`nav-btn ${mode === 'ide' ? 'active' : ''}`} onClick={() => setMode('ide')}>
-          <Terminal size={15} /> Developer IDE
+        <button className={`nav-btn ${mode === 'practice' ? 'active' : ''}`} onClick={() => setMode('practice')}>
+          <FolderGit2 size={15} /> Practice
         </button>
 
-        {/* Progressively Disclosed Tabs */}
+        {/* Progressively Disclosed Tabs: Intermediate+ */}
         {instructionMode !== 'beginner' && (
           <>
-            <button className={`nav-btn ${mode === 'undo-lab' ? 'active' : ''}`} onClick={() => setMode('undo-lab')}>
-              <RotateCcw size={15} /> Undo Lab
+            <button className={`nav-btn ${mode === 'labs' || ['break-it', 'undo-lab', 'conflict-arena', 'hospital', 'two-dev', 'capstone', 'config-lab', 'discover'].includes(mode) ? 'active' : ''}`} onClick={() => setMode('labs')}>
+              <Flame size={15} /> Labs
             </button>
-            <button className={`nav-btn ${mode === 'conflict-arena' ? 'active' : ''}`} onClick={() => setMode('conflict-arena')}>
-              <ShieldAlert size={15} /> Conflict Arena
-            </button>
-            <button className={`nav-btn ${mode === 'hospital' ? 'active' : ''}`} onClick={() => setMode('hospital')}>
-              <Activity size={15} /> Git Hospital
-            </button>
-            <button className={`nav-btn ${mode === 'two-dev' ? 'active' : ''}`} onClick={() => setMode('two-dev')}>
-              <Users size={15} /> Team Sim
-            </button>
-            <button className={`nav-btn ${mode === 'config-lab' ? 'active' : ''}`} onClick={() => setMode('config-lab')}>
-              <Settings size={15} /> Config Lab
+            <button className={`nav-btn ${mode === 'ide' ? 'active' : ''}`} onClick={() => setMode('ide')}>
+              <Terminal size={15} /> Developer IDE
             </button>
           </>
         )}
 
-        <button className={`nav-btn ${mode === 'reference' ? 'active' : ''}`} onClick={() => setMode('reference')}>
-          <BookMarked size={15} /> Encyclopedia
-        </button>
+        {/* Advanced/Expert Only */}
+        {(instructionMode === 'advanced' || instructionMode === 'expert') && (
+          <button className={`nav-btn ${mode === 'reference' ? 'active' : ''}`} onClick={() => setMode('reference')}>
+            <BookMarked size={15} /> Reference
+          </button>
+        )}
       </nav>
 
       <div className="header-actions">
-        {/* Project Selector */}
-        <select
-          value={currentProject.id}
-          onChange={(e) => setProjectKey(e.target.value)}
-          style={{
-            background: 'var(--bg-app)',
-            color: 'var(--text-primary)',
-            border: '1px solid var(--border-color)',
-            padding: '0.35rem 0.6rem',
-            borderRadius: 'var(--radius-sm)',
-            fontSize: '0.8rem',
-            outline: 'none',
-            fontFamily: 'var(--font-sans)',
-            cursor: 'pointer',
-          }}
-          title="Switch Active Project"
-        >
-          {Object.values(PROJECTS).map((p) => (
-            <option key={p.id} value={p.id}>
-              📁 {p.name}
-            </option>
-          ))}
-        </select>
+        {/* Project Selector - Shown for Intermediate and above or in IDE */}
+        {instructionMode !== 'beginner' && (
+          <select
+            value={currentProject.id}
+            onChange={(e) => setProjectKey(e.target.value)}
+            style={{
+              background: 'var(--bg-app)',
+              color: 'var(--text-primary)',
+              border: '1px solid var(--border-color)',
+              padding: '0.35rem 0.6rem',
+              borderRadius: 'var(--radius-sm)',
+              fontSize: '0.8rem',
+              outline: 'none',
+              fontFamily: 'var(--font-sans)',
+              cursor: 'pointer',
+            }}
+            title="Switch Active Project"
+          >
+            {Object.values(PROJECTS).map((p) => (
+              <option key={p.id} value={p.id}>
+                📁 {p.name}
+              </option>
+            ))}
+          </select>
+        )}
 
         {/* Training Wheel / Instruction Mode */}
         <select
@@ -135,12 +122,12 @@ export const HeaderNav: React.FC = () => {
             outline: 'none',
             cursor: 'pointer',
           }}
-          title="Instruction Mode (Training Wheel Removal)"
+          title="Change Experience Level (Progressive Disclosure)"
         >
-          <option value="beginner">🟢 Beginner (Detailed)</option>
-          <option value="intermediate">🔵 Intermediate (Clues)</option>
-          <option value="advanced">🟡 Advanced (Goal Only)</option>
-          <option value="expert">🔴 Expert (Zero Hints)</option>
+          <option value="beginner">🐣 Beginner (Zero Knowledge)</option>
+          <option value="intermediate">🌱 Intermediate (Guided)</option>
+          <option value="advanced">👨‍💻 Advanced (Developer)</option>
+          <option value="expert">🧙 Expert (Unrestricted)</option>
         </select>
 
         {/* 🆘 I'm Lost Button */}

@@ -297,6 +297,23 @@ export const CommandReferenceView: React.FC = () => {
       {/* TAB 3: Complete Command Coverage Matrix */}
       {activeTab === 'coverage' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+          {/* Exact Coverage Denominator Disclaimer (Point 24) */}
+          <div
+            style={{
+              padding: '0.75rem 1rem',
+              background: 'rgba(6, 182, 212, 0.08)',
+              border: '1px solid rgba(6, 182, 212, 0.3)',
+              borderRadius: 'var(--radius-md)',
+              fontSize: '0.85rem',
+              color: 'var(--text-secondary)',
+              lineHeight: 1.5,
+            }}
+          >
+            <strong style={{ color: 'var(--cyan)' }}>Documented Curriculum Coverage:</strong>{' '}
+            CommitForge covers <strong>62 command families</strong> and <strong>120+ command variants and utilities</strong> across 6 progressive tiers.
+            Coverage measures documented curriculum coverage and interactive simulation, not full low-level reimplementation of the C Git binary itself.
+          </div>
+
           {/* Metrics Summary Cards */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
             <div style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '1rem' }}>

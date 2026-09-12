@@ -14,10 +14,14 @@ import {
 } from 'lucide-react';
 
 export const ThreeAreaVisualizer: React.FC = () => {
-  const { repo, openFileTab, openHumansTerm, replayTrigger, triggerReplay } = useApp();
+  const { repo, openFileTab, openHumansTerm, replayTrigger, triggerReplay, instructionMode } = useApp();
   const [animatingAdd, setAnimatingAdd] = useState(false);
   const [animatingCommit, setAnimatingCommit] = useState(false);
   const [selectedFileCard, setSelectedFileCard] = useState<{ path: string; area: string; reason: string } | null>(null);
+  const [activeExplainColumn, setActiveExplainColumn] = useState<string | null>(null);
+
+  const isBeginner = instructionMode === 'beginner';
+  const isIntermediate = instructionMode === 'intermediate';
 
   const workingFiles = Object.keys(repo.workingDirectory);
   const stagedFiles = Object.keys(repo.index);
@@ -44,6 +48,10 @@ export const ThreeAreaVisualizer: React.FC = () => {
     }
   }, [replayTrigger]);
 
+  const toggleExplain = (col: string) => {
+    setActiveExplainColumn(prev => prev === col ? null : col);
+  };
+
   return (
     <div className="three-area-container" style={{ position: 'relative' }}>
       {/* Header with Title and Replay Animation */}
@@ -51,7 +59,7 @@ export const ThreeAreaVisualizer: React.FC = () => {
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
           <div className="three-area-title" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 800 }}>
             <Database size={16} color="var(--git-orange)" />
-            The Three Areas of Git (Your Visual Mental Model)
+            {isBeginner ? 'The Three Steps of Git (How Git Remembers)' : 'The Three Areas of Git (Mental Model)'}
           </div>
         </div>
 
@@ -78,45 +86,105 @@ export const ThreeAreaVisualizer: React.FC = () => {
         </div>
       </div>
 
-      {/* Visual Pipeline Connector Bar */}
+      {/* Visual Pipeline Connector Bar with Progressive Terminology */}
       <div
         style={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-around',
-          padding: '0.35rem 1rem',
+          padding: '0.4rem 1rem',
           background: 'var(--bg-app)',
           borderRadius: 'var(--radius-sm)',
-          fontSize: '0.72rem',
+          fontSize: '0.74rem',
           color: 'var(--text-secondary)',
           border: '1px solid var(--border-color)',
-          marginBottom: '0.5rem',
+          marginBottom: '0.6rem',
           flexWrap: 'wrap',
           gap: '0.4rem',
         }}
       >
-        <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontWeight: 600 }}>
-          <HardDrive size={12} color="var(--warning-amber)" /> Working Tree
+        <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontWeight: 700, color: 'var(--warning-amber)' }}>
+          <HardDrive size={13} /> {isBeginner ? '📄 Your Files (Desk)' : isIntermediate ? '📁 Working Directory' : 'Working Tree'}
         </span>
         <span style={{ color: 'var(--git-orange)', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
           ➔ <code>git add</code> ➔
         </span>
-        <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontWeight: 600 }}>
-          <Inbox size={12} color="var(--terminal-green)" /> Staging Area
+        <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontWeight: 700, color: 'var(--terminal-green)' }}>
+          <Inbox size={13} /> {isBeginner ? '📦 Packing Box (Staging)' : isIntermediate ? '📦 Staging Area' : 'Index (Stage)'}
         </span>
         <span style={{ color: 'var(--git-orange)', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
           ➔ <code>git commit</code> ➔
         </span>
-        <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontWeight: 600 }}>
-          <Database size={12} color="var(--cyan)" /> Local Repo
+        <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontWeight: 700, color: 'var(--cyan)' }}>
+          <Database size={13} /> {isBeginner ? '💾 Saved Snapshots' : isIntermediate ? '💾 Local Repository' : 'Commit DAG (HEAD)'}
         </span>
-        <span style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
-          ➔ <code>git push</code> ➔
-        </span>
-        <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontWeight: 600 }}>
-          <Globe size={12} color="#a855f7" /> Remote
-        </span>
+        {!isBeginner && (
+          <>
+            <span style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.2rem' }}>
+              ➔ <code>git push</code> ➔
+            </span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontWeight: 700, color: '#a855f7' }}>
+              <Globe size={13} /> {isIntermediate ? '🌐 Remote (origin)' : 'Remote Tracking'}
+            </span>
+          </>
+        )}
       </div>
+
+      {/* Explanatory Banner if toggled */}
+      {activeExplainColumn && (
+        <div
+          style={{
+            background: 'var(--bg-surface-elevated)',
+            border: '1px solid var(--git-orange)',
+            borderRadius: 'var(--radius-sm)',
+            padding: '0.6rem 0.9rem',
+            marginBottom: '0.6rem',
+            fontSize: '0.8rem',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            color: 'var(--text-primary)',
+          }}
+        >
+          <div>
+            {activeExplainColumn === 'col1' && (
+              <>
+                <strong style={{ color: 'var(--warning-amber)' }}>
+                  {isBeginner ? '📄 Your Files (On Desk)' : 'Working Tree'}:
+                </strong>{' '}
+                These are the real files on your computer. When you edit code in your editor, changes happen here first. Git notices changes, but does NOT save them into history until you add them.
+              </>
+            )}
+            {activeExplainColumn === 'col2' && (
+              <>
+                <strong style={{ color: 'var(--terminal-green)' }}>
+                  {isBeginner ? '📦 Packing Box (Staging Area)' : 'Staging Area (Index)'}:
+                </strong>{' '}
+                A staging area is like a box where you pack only the specific changes you want to save. Running <code>git add &lt;file&gt;</code> puts a file into this box.
+              </>
+            )}
+            {activeExplainColumn === 'col3' && (
+              <>
+                <strong style={{ color: 'var(--cyan)' }}>
+                  {isBeginner ? '💾 Saved Snapshots (Commits)' : 'Repository (HEAD)'}:
+                </strong>{' '}
+                Running <code>git commit</code> seals the packing box and writes a permanent snapshot with your name and message into history. You can travel back here anytime.
+              </>
+            )}
+            {activeExplainColumn === 'col4' && (
+              <>
+                <strong style={{ color: '#a855f7' }}>Remote (origin):</strong> A backup copy of your repository hosted on another machine or service (like GitHub). <code>git push</code> uploads your commits there.
+              </>
+            )}
+          </div>
+          <button
+            onClick={() => setActiveExplainColumn(null)}
+            style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', marginLeft: '0.8rem', fontWeight: 800 }}
+          >
+            ✕
+          </button>
+        </div>
+      )}
 
       {/* Columns */}
       <div className="three-area-columns">
@@ -130,16 +198,29 @@ export const ThreeAreaVisualizer: React.FC = () => {
         >
           <div className="column-header">
             <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-              <HardDrive size={13} /> 1. Working Tree
+              <HardDrive size={13} />
+              {isBeginner ? '1. Your Files (Desk)' : isIntermediate ? '1. Working Directory' : '1. Working Tree'}
               <button
-                onClick={() => openHumansTerm('working-directory')}
-                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: 0 }}
-                title="What is the Working Tree? (Click for plain English explanation)"
+                onClick={() => toggleExplain('col1')}
+                style={{
+                  background: 'rgba(245, 158, 11, 0.15)',
+                  border: '1px solid rgba(245, 158, 11, 0.3)',
+                  color: 'var(--warning-amber)',
+                  borderRadius: '999px',
+                  cursor: 'pointer',
+                  padding: '0.1rem 0.35rem',
+                  fontSize: '0.68rem',
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.2rem',
+                }}
+                title="What is this? Click for plain explanation"
               >
-                <HelpCircle size={12} />
+                ❓ What is this?
               </button>
             </span>
-            <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{workingFiles.length} files on desk</span>
+            <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>{workingFiles.length} on desk</span>
           </div>
 
           <div className="file-cards">
@@ -159,14 +240,14 @@ export const ThreeAreaVisualizer: React.FC = () => {
                       openFileTab(path);
                       setSelectedFileCard({
                         path,
-                        area: 'Working Tree',
+                        area: isBeginner ? 'Your Files (On Desk)' : 'Working Tree',
                         reason: hasConflict
-                          ? 'This file has conflicting changes from both branches that need your manual resolution.'
+                          ? 'This file has conflicting changes from two branches that need your resolution.'
                           : isModified
-                          ? 'This file has uncommitted edits on your local desk. Run `git add` to prepare it for a snapshot.'
+                          ? 'This file has changes on your desk. Run `git add` to place it in the packing box.'
                           : isUntracked
-                          ? 'This file is brand new. Git is not watching it yet until you run `git add`.'
-                          : 'This file matches the latest saved version.',
+                          ? 'This file is brand new. Git is not tracking it until you run `git add`.'
+                          : 'This file matches the latest saved snapshot.',
                       });
                     }}
                     title="Click to view file in editor & inspect state"
@@ -196,13 +277,26 @@ export const ThreeAreaVisualizer: React.FC = () => {
         >
           <div className="column-header">
             <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-              <Inbox size={13} /> 2. Staging Area (The Box)
+              <Inbox size={13} />
+              {isBeginner ? '2. Packing Box (Staging)' : isIntermediate ? '2. Staging Area' : '2. Index (Staging)'}
               <button
-                onClick={() => openHumansTerm('staging-area')}
-                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: 0 }}
-                title="What is the Staging Area? (Click for plain English explanation)"
+                onClick={() => toggleExplain('col2')}
+                style={{
+                  background: 'rgba(16, 185, 129, 0.15)',
+                  border: '1px solid rgba(16, 185, 129, 0.3)',
+                  color: 'var(--terminal-green)',
+                  borderRadius: '999px',
+                  cursor: 'pointer',
+                  padding: '0.1rem 0.35rem',
+                  fontSize: '0.68rem',
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.2rem',
+                }}
+                title="What is this? Click for plain explanation"
               >
-                <HelpCircle size={12} />
+                ❓ What is this?
               </button>
             </span>
             <span style={{ color: stagedFiles.length > 0 ? 'var(--success)' : 'var(--text-muted)' }}>
@@ -224,8 +318,8 @@ export const ThreeAreaVisualizer: React.FC = () => {
                     openFileTab(path);
                     setSelectedFileCard({
                       path,
-                      area: 'Staging Area',
-                      reason: 'This file is inside the staging box! It will be permanently recorded when you run `git commit`.',
+                      area: isBeginner ? 'Packing Box' : 'Staging Area',
+                      reason: 'This file is inside the packing box! It will be permanently recorded when you run `git commit`.',
                     });
                   }}
                   style={{ cursor: 'pointer' }}
@@ -246,17 +340,32 @@ export const ThreeAreaVisualizer: React.FC = () => {
         <div className="visual-column">
           <div className="column-header">
             <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-              <Database size={13} /> 3. Local Repo (HEAD)
+              <Database size={13} />
+              {isBeginner ? '3. Saved Snapshots' : isIntermediate ? '3. Local Repository' : '3. Commit DAG (HEAD)'}
               <button
-                onClick={() => openHumansTerm('commit')}
-                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: 0 }}
-                title="What is a Commit? (Click for plain English explanation)"
+                onClick={() => toggleExplain('col3')}
+                style={{
+                  background: 'rgba(6, 182, 212, 0.15)',
+                  border: '1px solid rgba(6, 182, 212, 0.3)',
+                  color: 'var(--cyan)',
+                  borderRadius: '999px',
+                  cursor: 'pointer',
+                  padding: '0.1rem 0.35rem',
+                  fontSize: '0.68rem',
+                  fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.2rem',
+                }}
+                title="What is this? Click for plain explanation"
               >
-                <HelpCircle size={12} />
+                ❓ What is this?
               </button>
             </span>
             <span>
-              {repo.head.type === 'branch' ? repo.head.ref : repo.head.ref ? repo.head.ref.slice(0, 7) : 'init'}
+              {isBeginner
+                ? `${committedPaths.length} files saved`
+                : repo.head.type === 'branch' ? repo.head.ref : repo.head.ref ? repo.head.ref.slice(0, 7) : 'init'}
             </span>
           </div>
 
@@ -274,7 +383,7 @@ export const ThreeAreaVisualizer: React.FC = () => {
                     openFileTab(path);
                     setSelectedFileCard({
                       path,
-                      area: 'Repository (HEAD)',
+                      area: isBeginner ? 'Saved Snapshot' : 'Repository (HEAD)',
                       reason: 'This file is safely sealed inside your project history. You can travel back to this snapshot anytime.',
                     });
                   }}
@@ -292,45 +401,59 @@ export const ThreeAreaVisualizer: React.FC = () => {
           </div>
         </div>
 
-        {/* Column 4: Remote Repository */}
-        <div className="visual-column">
-          <div className="column-header">
-            <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-              <Globe size={13} /> 4. Remote (origin)
-              <button
-                onClick={() => openHumansTerm('remote')}
-                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: 0 }}
-                title="What is a Remote? (Click for plain English explanation)"
-              >
-                <HelpCircle size={12} />
-              </button>
-            </span>
-            <span>{repo.remotes['origin'] ? 'Connected' : 'None'}</span>
-          </div>
+        {/* Column 4: Remote Repository - Only for Intermediate and above */}
+        {!isBeginner && (
+          <div className="visual-column">
+            <div className="column-header">
+              <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                <Globe size={13} /> 4. Remote (origin)
+                <button
+                  onClick={() => toggleExplain('col4')}
+                  style={{
+                    background: 'rgba(168, 85, 247, 0.15)',
+                    border: '1px solid rgba(168, 85, 247, 0.3)',
+                    color: '#a855f7',
+                    borderRadius: '999px',
+                    cursor: 'pointer',
+                    padding: '0.1rem 0.35rem',
+                    fontSize: '0.68rem',
+                    fontWeight: 700,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.2rem',
+                  }}
+                  title="What is this? Click for plain explanation"
+                >
+                  ❓ What is this?
+                </button>
+              </span>
+              <span>{repo.remotes['origin'] ? 'Connected' : 'None'}</span>
+            </div>
 
-          <div className="file-cards">
-            {!repo.remotes['origin'] ? (
-              <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textAlign: 'center', margin: 'auto' }}>
-                No remote set (git remote add)
-              </div>
-            ) : !remoteCommit ? (
-              <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textAlign: 'center', margin: 'auto' }}>
-                Not pushed yet (git push)
-              </div>
-            ) : (
-              Object.keys(remoteCommit.files).map(path => (
-                <div key={path} className="file-card remote" onClick={() => openFileTab(path)} style={{ cursor: 'pointer' }}>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                    <FileText size={12} /> {path}
-                  </span>
-                  <span style={{ fontSize: '0.7rem', color: 'var(--git-cyan)' }}>
-                    SYNCED
-                  </span>
+            <div className="file-cards">
+              {!repo.remotes['origin'] ? (
+                <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textAlign: 'center', margin: 'auto' }}>
+                  No remote set (git remote add)
                 </div>
-              ))
-            )}
+              ) : !remoteCommit ? (
+                <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textAlign: 'center', margin: 'auto' }}>
+                  Not pushed yet (git push)
+                </div>
+              ) : (
+                Object.keys(remoteCommit.files).map(path => (
+                  <div key={path} className="file-card remote" onClick={() => openFileTab(path)} style={{ cursor: 'pointer' }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                      <FileText size={12} /> {path}
+                    </span>
+                    <span style={{ fontSize: '0.7rem', color: 'var(--git-cyan)' }}>
+                      SYNCED
+                    </span>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Selected File Card Explanation Toast */}

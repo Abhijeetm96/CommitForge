@@ -8,6 +8,8 @@ export type ViewMode =
   | 'dashboard'
   | 'first10'
   | 'learn'
+  | 'practice'
+  | 'labs'
   | 'ide'
   | 'discover'
   | 'undo-lab'
@@ -22,6 +24,24 @@ export type ViewMode =
 
 export type InstructionMode = 'beginner' | 'intermediate' | 'advanced' | 'expert';
 
+export type CompetencyLevel = 'not_assessed' | 'introduced' | 'practiced' | 'understood' | 'independent' | 'mastered';
+
+export interface SkillMastery {
+  level: CompetencyLevel;
+  score: number; // 0 to 100
+  evidenceCount: number;
+}
+
+export interface EvidenceMastery {
+  foundations: SkillMastery;
+  filesAndChanges: SkillMastery;
+  staging: SkillMastery;
+  commits: SkillMastery;
+  branches: SkillMastery;
+  merging: SkillMastery;
+  recovery: SkillMastery;
+}
+
 export interface MasteryScores {
   status: number;
   staging: number;
@@ -31,6 +51,14 @@ export interface MasteryScores {
   rebase: number;
   recovery: number;
   remotes: number;
+}
+
+export interface EngineDiff {
+  command: string;
+  whatHappened: string;
+  whatChanged: string[];
+  whatDidNotChange: string[];
+  why: string;
 }
 
 export interface AppContextType {
@@ -72,6 +100,7 @@ export interface AppContextType {
   // Educational Feedback & Explanations
   lastWhyExplanation: WhyExplanation | null;
   lastComparison: CommandComparison | null;
+  lastEngineDiff: EngineDiff | null;
   setLastWhyExplanation: (w: WhyExplanation | null) => void;
   setLastComparison: (c: CommandComparison | null) => void;
   
@@ -80,8 +109,10 @@ export interface AppContextType {
   confirmDangerCommand: () => void;
   cancelDangerCommand: () => void;
 
-  // Mastery
+  // Evidence-Based Mastery
   mastery: MasteryScores;
+  evidenceMastery: EvidenceMastery;
+  recordSkillEvidence: (skill: keyof EvidenceMastery, level: CompetencyLevel) => void;
   resetCurrentExercise: () => void;
 
   // Beginner-First Tutor & Modal Controls
@@ -96,15 +127,30 @@ export interface AppContextType {
   setFirst10Step: (s: number) => void;
   replayTrigger: number;
   triggerReplay: () => void;
+
+  // Labs Hub
+  activeLab: 'break-it' | 'undo-lab' | 'conflict-arena' | 'hospital' | 'two-dev' | 'capstone' | 'config-lab' | 'discover';
+  setActiveLab: (l: 'break-it' | 'undo-lab' | 'conflict-arena' | 'hospital' | 'two-dev' | 'capstone' | 'config-lab' | 'discover') => void;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [mode, setMode] = useState<ViewMode>('dashboard');
-  const [instructionMode, setInstructionMode] = useState<InstructionMode>('beginner');
+  const [mode, setModeState] = useState<ViewMode>('dashboard');
+  const [instructionMode, setInstructionModeState] = useState<InstructionMode>(() => {
+    return (localStorage.getItem('commitforge_instruction_mode') as InstructionMode) || 'beginner';
+  });
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [projectKey, setProjectKeyState] = useState<string>('personal-website');
+
+  const setInstructionMode = (im: InstructionMode) => {
+    setInstructionModeState(im);
+    localStorage.setItem('commitforge_instruction_mode', im);
+  };
+
+  const setMode = (m: ViewMode) => {
+    setModeState(m);
+  };
 
   const currentProject = useMemo(() => PROJECTS[projectKey] || PROJECTS['personal-website'], [projectKey]);
   
@@ -146,28 +192,65 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Why explanation & comparisons
   const [lastWhyExplanation, setLastWhyExplanation] = useState<WhyExplanation | null>(null);
   const [lastComparison, setLastComparison] = useState<CommandComparison | null>(null);
+  const [lastEngineDiff, setLastEngineDiff] = useState<EngineDiff | null>(null);
 
   // Danger modal
   const [dangerPrompt, setDangerPrompt] = useState<{ rawCommand: string; dangerInfo: any } | null>(null);
 
-  // Mastery
-  const [mastery, setMastery] = useState<MasteryScores>({
-    status: 40,
-    staging: 35,
-    commits: 30,
-    branches: 20,
-    merging: 15,
-    rebase: 10,
-    recovery: 15,
-    remotes: 10,
+  // Evidence-based Mastery (starts at 0% / not_assessed)
+  const [evidenceMastery, setEvidenceMastery] = useState<EvidenceMastery>({
+    foundations: { level: 'not_assessed', score: 0, evidenceCount: 0 },
+    filesAndChanges: { level: 'not_assessed', score: 0, evidenceCount: 0 },
+    staging: { level: 'not_assessed', score: 0, evidenceCount: 0 },
+    commits: { level: 'not_assessed', score: 0, evidenceCount: 0 },
+    branches: { level: 'not_assessed', score: 0, evidenceCount: 0 },
+    merging: { level: 'not_assessed', score: 0, evidenceCount: 0 },
+    recovery: { level: 'not_assessed', score: 0, evidenceCount: 0 },
   });
 
+  const recordSkillEvidence = (skill: keyof EvidenceMastery, level: CompetencyLevel) => {
+    const scoreMap: Record<CompetencyLevel, number> = {
+      not_assessed: 0,
+      introduced: 25,
+      practiced: 50,
+      understood: 75,
+      independent: 90,
+      mastered: 100,
+    };
+    setEvidenceMastery(prev => {
+      const current = prev[skill];
+      const newScore = Math.max(current.score, scoreMap[level]);
+      return {
+        ...prev,
+        [skill]: {
+          level,
+          score: newScore,
+          evidenceCount: current.evidenceCount + 1,
+        },
+      };
+    });
+  };
+
+  const mastery: MasteryScores = useMemo(() => ({
+    status: evidenceMastery.foundations.score,
+    staging: evidenceMastery.staging.score,
+    commits: evidenceMastery.commits.score,
+    branches: evidenceMastery.branches.score,
+    merging: evidenceMastery.merging.score,
+    rebase: Math.round((evidenceMastery.branches.score + evidenceMastery.commits.score) / 2),
+    recovery: evidenceMastery.recovery.score,
+    remotes: Math.round(evidenceMastery.branches.score * 0.8),
+  }), [evidenceMastery]);
+
   // Beginner-First & Tutor State
-  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState<boolean>(() => {
+    return !localStorage.getItem('commitforge_onboarded');
+  });
   const [showLostDrawer, setShowLostDrawer] = useState(false);
   const [activeHumansTerm, setActiveHumansTerm] = useState<string | null>(null);
   const [first10Step, setFirst10Step] = useState(1);
   const [replayTrigger, setReplayTrigger] = useState(0);
+  const [activeLab, setActiveLab] = useState<'break-it' | 'undo-lab' | 'conflict-arena' | 'hospital' | 'two-dev' | 'capstone' | 'config-lab' | 'discover'>('break-it');
 
   const openHumansTerm = (id: string) => setActiveHumansTerm(id);
   const closeHumansModal = () => setActiveHumansTerm(null);
@@ -183,16 +266,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const markLessonComplete = (id: string) => {
     if (!completedLessonIds.includes(id)) {
       setCompletedLessonIds(prev => [...prev, id]);
-      // Boost mastery scores
-      setMastery(prev => ({
-        ...prev,
-        status: Math.min(100, prev.status + 5),
-        staging: Math.min(100, prev.staging + 6),
-        commits: Math.min(100, prev.commits + 5),
-        branches: Math.min(100, prev.branches + 7),
-        merging: Math.min(100, prev.merging + 8),
-        recovery: Math.min(100, prev.recovery + 8),
-      }));
+      recordSkillEvidence('foundations', 'practiced');
+      recordSkillEvidence('commits', 'practiced');
     }
   };
 
@@ -229,7 +304,82 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const executeCommand = (cmd: string): CommandResult => {
+    const prevRepo = { ...engine.getRepo() };
+    const prevStagedCount = Object.keys(prevRepo.index).length;
+
     const res = engine.execute(cmd);
+    const nextRepo = engine.getRepo();
+    const nextStagedCount = Object.keys(nextRepo.index).length;
+
+    // Calculate EngineDiff ("Engine as Teacher")
+    const trimmed = cmd.trim();
+    let diff: EngineDiff | null = null;
+    if (trimmed.startsWith('git add')) {
+      diff = {
+        command: cmd,
+        whatHappened: 'Selected files were placed into the Staging Area (the packing box).',
+        whatChanged: [`${nextStagedCount} file(s) are now staged and ready for the next snapshot.`],
+        whatDidNotChange: ['No commit was created yet. History is unchanged.'],
+        why: 'Git requires a two-step commit rhythm: git add prepares the box, git commit seals the box.',
+      };
+      recordSkillEvidence('staging', 'practiced');
+    } else if (trimmed.startsWith('git commit')) {
+      if (prevStagedCount === 0 && Object.keys(prevRepo.workingDirectory).length > 0) {
+        res.stderr.push('💡 Educational Mentor Note: You tried to commit, but Git has no staged changes.');
+        res.stderr.push('Remember: Desk ➔ Packing Box ➔ Snapshot.');
+        res.stderr.push('Your changes are still on the desk. Run `git add <file>` first!');
+      } else if (res.exitCode === 0) {
+        const headSha = nextRepo.head.type === 'branch' ? (nextRepo.branches[nextRepo.head.ref]?.targetCommitHash.substring(0, 7) || 'root') : 'commit';
+        diff = {
+          command: cmd,
+          whatHappened: `Sealed a permanent snapshot (${headSha}) in your repository.`,
+          whatChanged: ['New commit snapshot recorded in permanent history.', 'Staging area emptied.'],
+          whatDidNotChange: ['Your working directory files remain safely on your desk.'],
+          why: 'Commits are immutable historical snapshots that you can always inspect or return to.',
+        };
+        recordSkillEvidence('commits', 'practiced');
+      }
+    } else if (trimmed === 'pwd') {
+      diff = {
+        command: 'pwd',
+        whatHappened: 'Printed current working directory path.',
+        whatChanged: ['Terminal displayed your active location.'],
+        whatDidNotChange: ['No files or Git history were modified.'],
+        why: 'Verifying your location ensures commands are run in the right folder.',
+      };
+      recordSkillEvidence('foundations', 'practiced');
+    } else if (trimmed === 'ls') {
+      diff = {
+        command: 'ls',
+        whatHappened: 'Listed all files in the current folder.',
+        whatChanged: ['Terminal printed project files.'],
+        whatDidNotChange: ['No files or Git history were modified.'],
+        why: 'Always inspect your files before making edits.',
+      };
+      recordSkillEvidence('foundations', 'practiced');
+    } else if (trimmed.startsWith('git init')) {
+      diff = {
+        command: 'git init',
+        whatHappened: 'Initialized a new Git repository.',
+        whatChanged: ['Created hidden .git tracking database.'],
+        whatDidNotChange: ['Existing files were untouched.'],
+        why: 'Git is now ready to compare your files with saved versions.',
+      };
+      recordSkillEvidence('foundations', 'practiced');
+    } else if (trimmed.startsWith('git status')) {
+      diff = {
+        command: 'git status',
+        whatHappened: 'Compared working directory files against staging and commit history.',
+        whatChanged: ['Displayed status report.'],
+        whatDidNotChange: ['Nothing. git status is completely read-only.'],
+        why: 'Run status before and after commands to stay aware of repository state.',
+      };
+      recordSkillEvidence('foundations', 'practiced');
+    }
+
+    if (diff) {
+      setLastEngineDiff(diff);
+    }
 
     if (res.whyExplanation) {
       setLastWhyExplanation(res.whyExplanation);
@@ -308,12 +458,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         recordPrediction,
         lastWhyExplanation,
         lastComparison,
+        lastEngineDiff,
         setLastWhyExplanation,
         setLastComparison,
         dangerPrompt,
         confirmDangerCommand,
         cancelDangerCommand,
         mastery,
+        evidenceMastery,
+        recordSkillEvidence,
         resetCurrentExercise,
         showOnboarding,
         setShowOnboarding,
@@ -326,6 +479,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setFirst10Step,
         replayTrigger,
         triggerReplay,
+        activeLab,
+        setActiveLab,
       }}
     >
       <div className={`app-root ${theme}`}>{children}</div>

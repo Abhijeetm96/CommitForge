@@ -3,14 +3,12 @@ import { useApp } from '../../context/AppContext';
 import {
   LifeBuoy,
   X,
-  HelpCircle,
-  Eye,
-  Lightbulb,
-  Terminal,
   RotateCcw,
   CheckCircle2,
-  ChevronRight,
-  Sparkles,
+  HelpCircle,
+  Lightbulb,
+  ArrowRight,
+  Terminal,
 } from 'lucide-react';
 
 interface ImLostDrawerProps {
@@ -19,21 +17,24 @@ interface ImLostDrawerProps {
 }
 
 export const ImLostDrawer: React.FC<ImLostDrawerProps> = ({ isOpen, onClose }) => {
-  const { currentLesson, repo, inspection, executeCommand, resetCurrentExercise, openHumansTerm } = useApp();
-  const [revealedLevel, setRevealedLevel] = useState<number>(1); // 1 = conceptual, 2 = example, 3 = exact command
+  const { currentLesson, repo, inspection, resetCurrentExercise, openHumansTerm } = useApp();
+  const [selectedAnswer, setSelectedAnswer] = useState<'yes' | 'no' | 'unsure' | null>(null);
+  const [showFullCommand, setShowFullCommand] = useState(false);
   const [resetDone, setResetDone] = useState(false);
 
   if (!isOpen) return null;
 
-  const currentBranch = repo.head.type === 'branch' ? repo.head.ref : 'detached HEAD';
   const stagedCount = Object.keys(repo.index).length;
-  const untrackedCount = inspection.fileStatuses.filter(f => f.isUntracked).length;
-  const modifiedCount = inspection.fileStatuses.filter(f => f.isModified).length;
+  const modifiedFiles = inspection.fileStatuses.filter((f) => f.isModified || f.isUntracked);
+  const primaryChangedFile = modifiedFiles[0]?.path || 'your files';
 
   const handleReset = () => {
     resetCurrentExercise();
     setResetDone(true);
-    setTimeout(() => setResetDone(false), 2500);
+    setTimeout(() => {
+      setResetDone(false);
+      onClose();
+    }, 1500);
   };
 
   return (
@@ -56,20 +57,19 @@ export const ImLostDrawer: React.FC<ImLostDrawerProps> = ({ isOpen, onClose }) =
           background: 'var(--bg-surface)',
           border: '1px solid var(--border-color)',
           borderRadius: 'var(--radius-lg)',
-          maxWidth: '680px',
+          maxWidth: '560px',
           width: '100%',
-          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.5)',
+          boxShadow: '0 20px 50px rgba(0, 0, 0, 0.6)',
           overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
-          maxHeight: '90vh',
         }}
-        onClick={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div
           style={{
-            padding: '1.25rem 1.5rem',
+            padding: '1.2rem 1.5rem',
             borderBottom: '1px solid var(--border-color)',
             display: 'flex',
             justifyContent: 'space-between',
@@ -80,24 +80,24 @@ export const ImLostDrawer: React.FC<ImLostDrawerProps> = ({ isOpen, onClose }) =
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
             <div
               style={{
-                width: '34px',
-                height: '34px',
-                borderRadius: '8px',
+                width: '32px',
+                height: '32px',
+                borderRadius: '50%',
                 background: 'var(--danger-red)',
+                color: 'white',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: 'white',
               }}
             >
-              <LifeBuoy size={20} />
+              <LifeBuoy size={18} />
             </div>
             <div>
-              <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--danger-red)', fontWeight: 800 }}>
-                🆘 Emergency Mentor • Senior Dev Support
+              <div style={{ fontSize: '0.72rem', textTransform: 'uppercase', color: 'var(--danger-red)', fontWeight: 800 }}>
+                🆘 Emergency Mentor
               </div>
-              <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
-                Don't Worry, We've Got You Covered
+              <h2 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
+                No problem. Let's figure this out together.
               </h2>
             </div>
           </div>
@@ -108,213 +108,195 @@ export const ImLostDrawer: React.FC<ImLostDrawerProps> = ({ isOpen, onClose }) =
               border: 'none',
               color: 'var(--text-muted)',
               cursor: 'pointer',
-              padding: '0.4rem',
-              borderRadius: '6px',
+              padding: '0.3rem',
             }}
           >
             <X size={20} />
           </button>
         </div>
 
-        {/* Content */}
-        <div style={{ padding: '1.5rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
-          {/* 1. What are you trying to accomplish? */}
+        {/* Conversational Triage Body (Point 16) */}
+        <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+          {/* 1. What you're trying to do */}
           <div style={{ background: 'var(--bg-app)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '1rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--git-orange)', fontWeight: 700, fontSize: '0.82rem', textTransform: 'uppercase', marginBottom: '0.3rem' }}>
-              <HelpCircle size={16} /> 1. What are you trying to accomplish?
+            <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--git-orange)', textTransform: 'uppercase', marginBottom: '0.3rem' }}>
+              You're trying to:
             </div>
-            <div style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-primary)', lineHeight: 1.5 }}>
+            <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)' }}>
               {currentLesson.mission}
             </div>
-            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.4rem' }}>
-              Goal: {currentLesson.task.beginnerPrompt}
-            </div>
           </div>
 
-          {/* 2. What is the current repository state? */}
+          {/* 2. What Git currently sees */}
           <div style={{ background: 'var(--bg-app)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '1rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--cyan)', fontWeight: 700, fontSize: '0.82rem', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
-              <Eye size={16} /> 2. What is Git's current state right now?
+            <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--cyan)', textTransform: 'uppercase', marginBottom: '0.3rem' }}>
+              Git currently sees:
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.6rem' }}>
-              <div style={{ background: 'var(--bg-surface)', padding: '0.6rem 0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)' }}>
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>ACTIVE BRANCH</div>
-                <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)' }}>{currentBranch}</div>
-              </div>
-              <div style={{ background: 'var(--bg-surface)', padding: '0.6rem 0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)' }}>
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>STAGING AREA</div>
-                <div style={{ fontSize: '0.95rem', fontWeight: 700, color: stagedCount > 0 ? 'var(--terminal-green)' : 'var(--text-secondary)' }}>
-                  {stagedCount} file(s)
-                </div>
-              </div>
-              <div style={{ background: 'var(--bg-surface)', padding: '0.6rem 0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-color)' }}>
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>WORKING EDITS</div>
-                <div style={{ fontSize: '0.95rem', fontWeight: 700, color: modifiedCount + untrackedCount > 0 ? 'var(--warning-amber)' : 'var(--text-secondary)' }}>
-                  {modifiedCount + untrackedCount} file(s)
-                </div>
+            <div style={{ fontSize: '0.92rem', color: 'var(--text-primary)' }}>
+              {modifiedFiles.length > 0 ? (
+                <span>📄 <code>{primaryChangedFile}</code> has been modified on your desk</span>
+              ) : (
+                <span>📄 Your desk is clean (no unsaved file modifications)</span>
+              )}
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+                Packing box (Staging Area): {stagedCount === 0 ? 'Empty' : `${stagedCount} file(s) staged`}
               </div>
             </div>
           </div>
 
-          {/* 3. Progressive Hints (3 Tiers) */}
-          <div style={{ border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '1rem', background: 'rgba(245, 158, 11, 0.04)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--warning-amber)', fontWeight: 700, fontSize: '0.82rem', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
-              <Lightbulb size={16} /> 3. Progressive Guidance (Think First)
+          {/* 3. Think Prompt */}
+          <div style={{ background: 'rgba(245, 158, 11, 0.06)', border: '1px solid rgba(245, 158, 11, 0.25)', borderRadius: 'var(--radius-md)', padding: '1rem' }}>
+            <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--warning-amber)', textTransform: 'uppercase', marginBottom: '0.4rem' }}>
+              Think:
+            </div>
+            <div style={{ fontSize: '0.92rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.75rem' }}>
+              Have we selected this change for our next snapshot?
             </div>
 
-            {/* Hint 1: Conceptual */}
-            <div style={{ padding: '0.75rem', background: 'var(--bg-app)', borderRadius: 'var(--radius-sm)', marginBottom: '0.6rem', border: '1px solid var(--border-color)' }}>
-              <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--warning-amber)', textTransform: 'uppercase' }}>
-                Level 1: Conceptual Clue
-              </div>
-              <div style={{ fontSize: '0.88rem', color: 'var(--text-primary)', marginTop: '0.2rem' }}>
-                {currentLesson.hints[0] || 'Observe what changed in your working directory versus the staging area.'}
-              </div>
-            </div>
-
-            {/* Hint 2: Stronger */}
-            {revealedLevel >= 2 ? (
-              <div style={{ padding: '0.75rem', background: 'var(--bg-app)', borderRadius: 'var(--radius-sm)', marginBottom: '0.6rem', border: '1px solid var(--border-color)' }}>
-                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--cyan)', textTransform: 'uppercase' }}>
-                  Level 2: Stronger Hint
-                </div>
-                <div style={{ fontSize: '0.88rem', color: 'var(--text-primary)', marginTop: '0.2rem' }}>
-                  {currentLesson.hints[1] || 'Look at the command syntax required to prepare files or move branches.'}
-                </div>
-              </div>
-            ) : (
+            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
               <button
-                onClick={() => setRevealedLevel(2)}
+                onClick={() => setSelectedAnswer('yes')}
                 style={{
-                  background: 'transparent',
-                  border: '1px dashed var(--border-color)',
-                  color: 'var(--text-secondary)',
-                  padding: '0.5rem 0.8rem',
+                  background: selectedAnswer === 'yes' ? 'var(--git-orange)' : 'var(--bg-app)',
+                  color: selectedAnswer === 'yes' ? 'white' : 'var(--text-primary)',
+                  border: '1px solid var(--border-color)',
+                  padding: '0.45rem 1rem',
                   borderRadius: 'var(--radius-sm)',
+                  fontWeight: 700,
+                  fontSize: '0.82rem',
                   cursor: 'pointer',
-                  fontSize: '0.8rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.4rem',
-                  width: '100%',
-                  justifyContent: 'center',
-                  marginBottom: '0.6rem',
                 }}
               >
-                Need a stronger clue? Click to reveal Level 2 <ChevronRight size={14} />
+                YES
               </button>
+
+              <button
+                onClick={() => setSelectedAnswer('no')}
+                style={{
+                  background: selectedAnswer === 'no' ? 'var(--git-orange)' : 'var(--bg-app)',
+                  color: selectedAnswer === 'no' ? 'white' : 'var(--text-primary)',
+                  border: '1px solid var(--border-color)',
+                  padding: '0.45rem 1rem',
+                  borderRadius: 'var(--radius-sm)',
+                  fontWeight: 700,
+                  fontSize: '0.82rem',
+                  cursor: 'pointer',
+                }}
+              >
+                NO
+              </button>
+
+              <button
+                onClick={() => setSelectedAnswer('unsure')}
+                style={{
+                  background: selectedAnswer === 'unsure' ? 'var(--git-orange)' : 'var(--bg-app)',
+                  color: selectedAnswer === 'unsure' ? 'white' : 'var(--text-primary)',
+                  border: '1px solid var(--border-color)',
+                  padding: '0.45rem 1rem',
+                  borderRadius: 'var(--radius-sm)',
+                  fontWeight: 700,
+                  fontSize: '0.82rem',
+                  cursor: 'pointer',
+                }}
+              >
+                I'M NOT SURE
+              </button>
+            </div>
+
+            {/* Conversational Explanation after answering */}
+            {selectedAnswer !== null && (
+              <div
+                style={{
+                  marginTop: '0.8rem',
+                  padding: '0.75rem',
+                  borderRadius: 'var(--radius-sm)',
+                  background: 'var(--bg-app)',
+                  border: '1px solid var(--border-color)',
+                  fontSize: '0.85rem',
+                  lineHeight: 1.5,
+                }}
+              >
+                {selectedAnswer === 'no' && (
+                  <div>
+                    <strong>Exactly.</strong> If the change is not staged in the packing box, Git cannot include it in a commit.
+                    Run: <code>git add {primaryChangedFile}</code>
+                  </div>
+                )}
+                {selectedAnswer === 'yes' && (
+                  <div>
+                    If you already staged it, you are ready to seal the box!
+                    Run: <code>git commit -m "Describe your changes"</code>
+                  </div>
+                )}
+                {selectedAnswer === 'unsure' && (
+                  <div>
+                    Remember the physical rhythm: <strong>Desk ➔ Packing Box ➔ Sealed Snapshot</strong>.
+                    Run <code>git status</code> to see if your file is in red (still on desk) or green (already in the packing box).
+                  </div>
+                )}
+
+                {!showFullCommand ? (
+                  <button
+                    onClick={() => setShowFullCommand(true)}
+                    style={{
+                      marginTop: '0.5rem',
+                      background: 'transparent',
+                      border: 'none',
+                      color: 'var(--cyan)',
+                      fontSize: '0.8rem',
+                      cursor: 'pointer',
+                      textDecoration: 'underline',
+                      padding: 0,
+                    }}
+                  >
+                    Still stuck? Show exact solution command
+                  </button>
+                ) : (
+                  <div style={{ marginTop: '0.5rem', fontFamily: 'monospace', background: 'var(--bg-terminal)', padding: '0.4rem 0.6rem', borderRadius: '4px', color: 'var(--terminal-green)' }}>
+                    {currentLesson.solution}
+                  </div>
+                )}
+              </div>
             )}
-
-            {/* Hint 3: Exact Command */}
-            {revealedLevel >= 3 ? (
-              <div style={{ padding: '0.75rem', background: 'rgba(16, 185, 129, 0.08)', borderRadius: 'var(--radius-sm)', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
-                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--terminal-green)', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                  <Terminal size={14} /> Level 3: Exact Solution
-                </div>
-                <div style={{ fontSize: '0.88rem', marginTop: '0.2rem', fontFamily: 'monospace', background: 'var(--bg-terminal)', padding: '0.5rem 0.75rem', borderRadius: '4px', color: 'var(--terminal-green)' }}>
-                  {currentLesson.solution}
-                </div>
-              </div>
-            ) : revealedLevel >= 2 ? (
-              <button
-                onClick={() => setRevealedLevel(3)}
-                style={{
-                  background: 'transparent',
-                  border: '1px dashed var(--border-color)',
-                  color: 'var(--text-secondary)',
-                  padding: '0.5rem 0.8rem',
-                  borderRadius: 'var(--radius-sm)',
-                  cursor: 'pointer',
-                  fontSize: '0.8rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.4rem',
-                  width: '100%',
-                  justifyContent: 'center',
-                }}
-              >
-                Still stuck? Reveal exact command solution <ChevronRight size={14} />
-              </button>
-            ) : null}
           </div>
 
-          {/* 4. Safe Reset Option */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-app)', padding: '0.8rem 1rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
-            <div>
-              <div style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-                Feel like you broke something?
-              </div>
-              <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                You can safely reset this exercise to its clean initial state anytime.
-              </div>
-            </div>
+          {/* Action Row */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.5rem' }}>
             <button
               onClick={handleReset}
               style={{
-                background: resetDone ? 'var(--terminal-green)' : 'rgba(239, 68, 68, 0.15)',
-                color: resetDone ? 'white' : 'var(--danger-red)',
-                border: `1px solid ${resetDone ? 'var(--terminal-green)' : 'rgba(239, 68, 68, 0.4)'}`,
-                padding: '0.45rem 0.9rem',
+                background: 'transparent',
+                border: '1px solid var(--border-color)',
+                color: 'var(--danger-red)',
+                padding: '0.45rem 0.8rem',
                 borderRadius: 'var(--radius-sm)',
+                fontSize: '0.8rem',
                 fontWeight: 700,
-                fontSize: '0.82rem',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.4rem',
+                gap: '0.3rem',
               }}
             >
-              {resetDone ? <CheckCircle2 size={16} /> : <RotateCcw size={16} />}
-              {resetDone ? 'Reset Complete!' : 'Reset Exercise'}
+              <RotateCcw size={14} /> {resetDone ? 'Resetting...' : 'Reset This Step'}
+            </button>
+
+            <button
+              onClick={onClose}
+              style={{
+                background: 'var(--git-orange)',
+                color: 'white',
+                border: 'none',
+                padding: '0.55rem 1.4rem',
+                borderRadius: 'var(--radius-sm)',
+                fontWeight: 800,
+                fontSize: '0.85rem',
+                cursor: 'pointer',
+              }}
+            >
+              Ready to Try Again
             </button>
           </div>
-        </div>
-
-        {/* Footer */}
-        <div
-          style={{
-            padding: '0.9rem 1.5rem',
-            borderTop: '1px solid var(--border-color)',
-            background: 'var(--bg-app)',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <button
-            onClick={() => {
-              onClose();
-              openHumansTerm('staging-area');
-            }}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: 'var(--cyan)',
-              fontSize: '0.82rem',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.3rem',
-              textDecoration: 'underline',
-            }}
-          >
-            <Sparkles size={14} /> Open Git for Humans Metaphors
-          </button>
-          <button
-            onClick={onClose}
-            style={{
-              background: 'var(--git-orange)',
-              color: 'white',
-              border: 'none',
-              padding: '0.5rem 1.25rem',
-              borderRadius: 'var(--radius-sm)',
-              fontWeight: 700,
-              fontSize: '0.85rem',
-              cursor: 'pointer',
-            }}
-          >
-            Ready to Try Again
-          </button>
         </div>
       </div>
     </div>
