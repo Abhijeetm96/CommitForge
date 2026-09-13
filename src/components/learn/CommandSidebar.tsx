@@ -4,173 +4,200 @@ import {
   ChevronDown,
   ChevronRight,
   Terminal,
+  CheckCircle2,
+  Lock,
+  Sparkles,
+  MapPin,
   X,
-  BookOpen,
-  ArrowUpRight,
+  Compass,
 } from 'lucide-react';
 
-export interface CurriculumCommand {
+export interface RoadmapCommand {
   name: string;
   desc: string;
   syntax: string;
-  level: number;
+  purposeNote?: string;
   risk?: 'SAFE' | 'LOW' | 'MEDIUM' | 'HIGH';
 }
 
-export interface CurriculumLevel {
+export interface RoadmapMilestone {
   levelNumber: number;
+  levelCode: string;
   title: string;
-  subtitle: string;
-  isCurrent?: boolean;
-  commands: CurriculumCommand[];
+  tagline: string;
+  badge?: string;
+  status: 'completed' | 'active' | 'upcoming';
+  commands: RoadmapCommand[];
 }
 
-export const CURRICULUM_LEVELS: CurriculumLevel[] = [
+export const ROADMAP_MILESTONES: RoadmapMilestone[] = [
   {
     levelNumber: 0,
-    title: 'LEVEL 0 — Computer & Git Fundamentals',
-    subtitle: 'Terminal, files, paths & mental models',
+    levelCode: '00',
+    title: 'Computer & Git Foundations',
+    tagline: 'Terminal navigation, files, paths & local vs cloud',
+    status: 'completed',
     commands: [
-      { name: 'pwd', desc: 'Print working directory path', syntax: 'pwd', level: 0, risk: 'SAFE' },
-      { name: 'ls', desc: 'List files and folders', syntax: 'ls -la', level: 0, risk: 'SAFE' },
-      { name: 'cd', desc: 'Change current directory', syntax: 'cd <dir>', level: 0, risk: 'SAFE' },
-      { name: 'mkdir', desc: 'Create a new directory', syntax: 'mkdir <name>', level: 0, risk: 'SAFE' },
-      { name: 'touch', desc: 'Create an empty file', syntax: 'touch <file>', level: 0, risk: 'SAFE' },
-      { name: 'cat', desc: 'Display file contents', syntax: 'cat <file>', level: 0, risk: 'SAFE' },
-      { name: 'rm', desc: 'Remove file from disk', syntax: 'rm <file>', level: 0, risk: 'MEDIUM' },
+      { name: 'pwd', desc: 'Print working directory path', syntax: 'pwd', risk: 'SAFE' },
+      { name: 'ls', desc: 'List files and folders in active folder', syntax: 'ls -la', risk: 'SAFE' },
+      { name: 'cd', desc: 'Change current working directory', syntax: 'cd <dir>', risk: 'SAFE' },
+      { name: 'mkdir', desc: 'Create a new project folder', syntax: 'mkdir <folder>', risk: 'SAFE' },
+      { name: 'touch', desc: 'Create a new file', syntax: 'touch <file>', risk: 'SAFE' },
+      { name: 'rm', desc: 'Remove file from disk', syntax: 'rm <file>', risk: 'MEDIUM' },
     ],
   },
   {
     levelNumber: 1,
-    title: 'LEVEL 1 — Save My Work',
-    subtitle: 'The foundational Git save loop',
-    isCurrent: true,
+    levelCode: '01',
+    title: 'Save My Work',
+    tagline: 'The foundational save loop: inspect, stage & snapshot',
+    badge: 'Current Chapter',
+    status: 'active',
     commands: [
-      { name: 'git init', desc: 'Initialize local Git repository', syntax: 'git init', level: 1, risk: 'SAFE' },
-      { name: 'git status', desc: 'Inspect desk & staging box', syntax: 'git status [-s]', level: 1, risk: 'SAFE' },
-      { name: 'git diff', desc: 'Compare unstaged file changes', syntax: 'git diff', level: 1, risk: 'SAFE' },
-      { name: 'git add', desc: 'Stage changes into packing box', syntax: 'git add <file>', level: 1, risk: 'SAFE' },
-      { name: 'git commit', desc: 'Seal snapshot into history vault', syntax: 'git commit -m "msg"', level: 1, risk: 'SAFE' },
-      { name: 'git log', desc: 'View commit history timeline', syntax: 'git log --oneline', level: 1, risk: 'SAFE' },
+      { name: 'git init', desc: 'Turn current folder into a Git repository', syntax: 'git init', risk: 'SAFE' },
+      { name: 'git status', desc: 'Check working tree desk & staging box', syntax: 'git status', risk: 'SAFE' },
+      { name: 'git diff', desc: 'Inspect unstaged line-by-line changes', syntax: 'git diff', risk: 'SAFE' },
+      { name: 'git add', desc: 'Pack changes into the staging area', syntax: 'git add <file>', risk: 'SAFE' },
+      { name: 'git commit', desc: 'Seal staged files into a permanent snapshot', syntax: 'git commit -m "msg"', risk: 'SAFE' },
+      { name: 'git log', desc: 'View commit timeline & history graph', syntax: 'git log --oneline', risk: 'SAFE' },
     ],
   },
   {
     levelNumber: 2,
-    title: 'LEVEL 2 — Undo & Recover',
-    subtitle: 'Restoring files & unwrapping commits',
+    levelCode: '02',
+    title: 'Undo & Recover',
+    tagline: 'Discard mistakes, unstage files & rescue lost commits',
+    status: 'upcoming',
     commands: [
-      { name: 'git restore', desc: 'Discard working changes', syntax: 'git restore <file>', level: 2, risk: 'LOW' },
-      { name: 'git restore --staged', desc: 'Unstage file from packing box', syntax: 'git restore --staged <file>', level: 2, risk: 'SAFE' },
-      { name: 'git reset', desc: 'Rewind HEAD / unstage commits', syntax: 'git reset [--soft|--hard]', level: 2, risk: 'MEDIUM' },
-      { name: 'git revert', desc: 'Create safe undo commit', syntax: 'git revert <commit>', level: 2, risk: 'SAFE' },
-      { name: 'git clean', desc: 'Remove untracked files', syntax: 'git clean -fd', level: 2, risk: 'HIGH' },
-      { name: 'git reflog', desc: 'Safety net of all HEAD moves', syntax: 'git reflog', level: 2, risk: 'SAFE' },
+      { name: 'git restore', desc: 'Discard uncommitted working tree changes', syntax: 'git restore <file>', risk: 'LOW' },
+      { name: 'git restore --staged', desc: 'Take accidentally staged files out of box', syntax: 'git restore --staged <file>', risk: 'SAFE' },
+      { name: 'git reset', desc: 'Rewind HEAD pointer or uncommit files', syntax: 'git reset [--soft|--hard] HEAD~1', risk: 'MEDIUM' },
+      { name: 'git revert', desc: 'Create a safe forward-moving undo commit', syntax: 'git revert <commit>', risk: 'SAFE' },
+      { name: 'git clean', desc: 'Delete untracked files from disk', syntax: 'git clean -fd', risk: 'HIGH' },
+      { name: 'git reflog', desc: 'Emergency log of every commit HEAD ever visited', syntax: 'git reflog', risk: 'SAFE' },
     ],
   },
   {
     levelNumber: 3,
-    title: 'LEVEL 3 — Branches',
-    subtitle: 'Parallel universes & switching',
+    levelCode: '03',
+    title: 'Branch Management',
+    tagline: 'Parallel development lines, switching & fast-forward merges',
+    status: 'upcoming',
     commands: [
-      { name: 'git branch', desc: 'List, create, or delete branches', syntax: 'git branch [-a|-d]', level: 3, risk: 'SAFE' },
-      { name: 'git switch', desc: 'Switch or create branch', syntax: 'git switch [-c] <branch>', level: 3, risk: 'SAFE' },
-      { name: 'git checkout', desc: 'Legacy context switch', syntax: 'git checkout <branch>', level: 3, risk: 'LOW' },
-      { name: 'git merge', desc: 'Combine branch histories', syntax: 'git merge <branch>', level: 3, risk: 'MEDIUM' },
-      { name: 'git branch -d', desc: 'Safely delete merged branch', syntax: 'git branch -d <name>', level: 3, risk: 'LOW' },
+      { name: 'git branch', desc: 'List, create or safely delete branches', syntax: 'git branch [-a|-d]', risk: 'SAFE' },
+      { name: 'git switch', desc: 'Modern dedicated branch context switcher', syntax: 'git switch [-c] <branch>', risk: 'SAFE' },
+      { name: 'git checkout', desc: 'Legacy multi-purpose branch and file switch', syntax: 'git checkout <branch>', risk: 'LOW' },
+      { name: 'git merge', desc: 'Combine branch history into current branch', syntax: 'git merge <branch>', risk: 'MEDIUM' },
     ],
   },
   {
     levelNumber: 4,
-    title: 'LEVEL 4 — Remote Collaboration',
-    subtitle: 'Cloning, fetching & pushing',
+    levelCode: '04',
+    title: 'Remote Collaboration',
+    tagline: 'Cloning, remote-tracking branches, pushing & pulling',
+    status: 'upcoming',
     commands: [
-      { name: 'git remote', desc: 'Manage remote connections', syntax: 'git remote -v', level: 4, risk: 'SAFE' },
-      { name: 'git fetch', desc: 'Download remote updates safely', syntax: 'git fetch origin', level: 4, risk: 'SAFE' },
-      { name: 'git pull', desc: 'Fetch + merge remote branch', syntax: 'git pull origin <b-name>', level: 4, risk: 'MEDIUM' },
-      { name: 'git push', desc: 'Upload commits to remote', syntax: 'git push -u origin <b-name>', level: 4, risk: 'MEDIUM' },
-      { name: 'git clone', desc: 'Copy entire remote repository', syntax: 'git clone <url>', level: 4, risk: 'SAFE' },
+      { name: 'git remote', desc: 'Manage connections to remote repositories', syntax: 'git remote -v', risk: 'SAFE' },
+      { name: 'git clone', desc: 'Copy an entire remote repository locally', syntax: 'git clone <url>', risk: 'SAFE' },
+      { name: 'git fetch', desc: 'Download remote updates without modifying code', syntax: 'git fetch origin', risk: 'SAFE' },
+      { name: 'git pull', desc: 'Download remote commits and merge into branch', syntax: 'git pull origin <branch>', risk: 'MEDIUM' },
+      { name: 'git push', desc: 'Upload local commits to remote repository', syntax: 'git push -u origin <branch>', risk: 'MEDIUM' },
     ],
   },
   {
     levelNumber: 5,
-    title: 'LEVEL 5 — Conflicts',
-    subtitle: 'Resolving conflicting histories',
+    levelCode: '05',
+    title: 'Conflict Arena',
+    tagline: 'Resolving merge collisions & understanding conflict markers',
+    status: 'upcoming',
     commands: [
-      { name: 'merge conflicts', desc: 'Read conflict markers (<<<< / >>>>)', syntax: 'git diff', level: 5, risk: 'LOW' },
-      { name: 'git add (resolved)', desc: 'Mark conflict resolved', syntax: 'git add <file>', level: 5, risk: 'SAFE' },
-      { name: 'git merge --continue', desc: 'Finalize resolved merge', syntax: 'git merge --continue', level: 5, risk: 'SAFE' },
-      { name: 'git merge --abort', desc: 'Cancel merge & return to start', syntax: 'git merge --abort', level: 5, risk: 'SAFE' },
+      { name: 'git diff', desc: 'Locate conflict markers (<<<< / ==== / >>>>)', syntax: 'git diff', risk: 'SAFE' },
+      { name: 'git add', desc: 'Stage resolved conflict file', syntax: 'git add <resolved-file>', risk: 'SAFE' },
+      { name: 'git merge --continue', desc: 'Complete merge once conflicts are resolved', syntax: 'git merge --continue', risk: 'SAFE' },
+      { name: 'git merge --abort', desc: 'Safely cancel conflicted merge and reset', syntax: 'git merge --abort', risk: 'SAFE' },
     ],
   },
   {
     levelNumber: 6,
-    title: 'LEVEL 6 — Stashing & Partial Work',
-    subtitle: 'Shelving uncommitted work & patch staging',
+    levelCode: '06',
+    title: 'Stashing & Partial Work',
+    tagline: 'Temporary drawers and hunk-by-hunk selective staging',
+    status: 'upcoming',
     commands: [
-      { name: 'git stash', desc: 'Temporarily shelve dirty changes', syntax: 'git stash push -m "msg"', level: 6, risk: 'SAFE' },
-      { name: 'git stash pop', desc: 'Reapply stash and drop from shelf', syntax: 'git stash pop', level: 6, risk: 'LOW' },
-      { name: 'git stash list', desc: 'View all shelved stashes', syntax: 'git stash list', level: 6, risk: 'SAFE' },
-      { name: 'git add -p', desc: 'Stage hunks interactively', syntax: 'git add -p', level: 6, risk: 'SAFE' },
+      { name: 'git stash', desc: 'Temporarily shelve dirty workspace changes', syntax: 'git stash push -m "wip"', risk: 'SAFE' },
+      { name: 'git stash pop', desc: 'Reapply shelved changes and delete from stash', syntax: 'git stash pop', risk: 'LOW' },
+      { name: 'git stash list', desc: 'View all saved stash shelves', syntax: 'git stash list', risk: 'SAFE' },
+      { name: 'git add -p', desc: 'Interactively review and stage individual hunks', syntax: 'git add -p', risk: 'SAFE' },
     ],
   },
   {
     levelNumber: 7,
-    title: 'LEVEL 7 — History Engineering',
-    subtitle: 'Rebase, cherry-pick & amend',
+    levelCode: '07',
+    title: 'History Engineering',
+    tagline: 'Interactive rebasing, squash, cherry-pick & amend',
+    status: 'upcoming',
     commands: [
-      { name: 'git rebase', desc: 'Replay commits onto new base', syntax: 'git rebase <base>', level: 7, risk: 'HIGH' },
-      { name: 'git rebase -i', desc: 'Interactive rebase (squash/edit)', syntax: 'git rebase -i HEAD~3', level: 7, risk: 'HIGH' },
-      { name: 'git cherry-pick', desc: 'Apply commit to active branch', syntax: 'git cherry-pick <hash>', level: 7, risk: 'MEDIUM' },
-      { name: 'git commit --amend', desc: 'Modify most recent commit', syntax: 'git commit --amend', level: 7, risk: 'LOW' },
+      { name: 'git rebase', desc: 'Replay branch commits on top of another base', syntax: 'git rebase <base>', risk: 'HIGH' },
+      { name: 'git rebase -i', desc: 'Interactive rebase (squash, reword, fixup)', syntax: 'git rebase -i HEAD~3', risk: 'HIGH' },
+      { name: 'git cherry-pick', desc: 'Apply a specific commit to current branch', syntax: 'git cherry-pick <sha>', risk: 'MEDIUM' },
+      { name: 'git commit --amend', desc: 'Modify most recent commit message or files', syntax: 'git commit --amend', risk: 'LOW' },
     ],
   },
   {
     levelNumber: 8,
-    title: 'LEVEL 8 — Investigation',
-    subtitle: 'Blame, bisect & deep log forensics',
+    levelCode: '08',
+    title: 'Forensics & Investigation',
+    tagline: 'Line attribution, pickaxe commit search & bisect',
+    status: 'upcoming',
     commands: [
-      { name: 'git blame', desc: 'Line-by-line author attribution', syntax: 'git blame <file>', level: 8, risk: 'SAFE' },
-      { name: 'git log -S', desc: 'Pickaxe code search in history', syntax: 'git log -S"string"', level: 8, risk: 'SAFE' },
-      { name: 'git log -G', desc: 'Regex search across commit diffs', syntax: 'git log -G"regex"', level: 8, risk: 'SAFE' },
-      { name: 'git bisect', desc: 'Binary search to find bug commit', syntax: 'git bisect start/bad/good', level: 8, risk: 'SAFE' },
+      { name: 'git blame', desc: 'Show who changed each line of code and when', syntax: 'git blame <file>', risk: 'SAFE' },
+      { name: 'git log -S', desc: 'Pickaxe search: find commits introducing a string', syntax: 'git log -S"secret"', risk: 'SAFE' },
+      { name: 'git log -G', desc: 'Regex search across commit patches', syntax: 'git log -G"pattern"', risk: 'SAFE' },
+      { name: 'git bisect', desc: 'Binary search to pinpoint bug-causing commit', syntax: 'git bisect start', risk: 'SAFE' },
     ],
   },
   {
     levelNumber: 9,
-    title: 'LEVEL 9 — Professional Git',
-    subtitle: 'Tags, .gitignore, worktrees & submodules',
+    levelCode: '09',
+    title: 'Professional Git',
+    tagline: 'Tags, .gitignore rules, worktrees, submodules & LFS',
+    status: 'upcoming',
     commands: [
-      { name: 'git tag', desc: 'Create and list release tags', syntax: 'git tag -a v1.0 -m "msg"', level: 9, risk: 'SAFE' },
-      { name: 'git check-ignore', desc: 'Debug .gitignore exclusion rules', syntax: 'git check-ignore -v <file>', level: 9, risk: 'SAFE' },
-      { name: 'git worktree', desc: 'Multiple working trees on branches', syntax: 'git worktree add <dir> <b-name>', level: 9, risk: 'MEDIUM' },
-      { name: 'git submodule', desc: 'Manage nested repositories', syntax: 'git submodule update --init', level: 9, risk: 'MEDIUM' },
-      { name: 'git lfs', desc: 'Large file tracking extension', syntax: 'git lfs track "*.psd"', level: 9, risk: 'LOW' },
+      { name: 'git tag', desc: 'Create annotated release version tag', syntax: 'git tag -a v1.0.0 -m "Release"', risk: 'SAFE' },
+      { name: 'git check-ignore', desc: 'Debug and test .gitignore pattern matching', syntax: 'git check-ignore -v <file>', risk: 'SAFE' },
+      { name: 'git worktree', desc: 'Check out multiple branches in parallel folders', syntax: 'git worktree add <path> <branch>', risk: 'MEDIUM' },
+      { name: 'git submodule', desc: 'Manage external Git repositories inside project', syntax: 'git submodule update --init', risk: 'MEDIUM' },
+      { name: 'git lfs', desc: 'Large file tracking and management', syntax: 'git lfs track "*.zip"', risk: 'LOW' },
     ],
   },
   {
     levelNumber: 10,
-    title: 'LEVEL 10 — Git Internals',
-    subtitle: 'Blobs, trees, commits & object hash math',
+    levelCode: '10',
+    title: 'Git Internals & Objects',
+    tagline: 'Blobs, trees, commit objects, SHA-1 math & repo integrity',
+    status: 'upcoming',
     commands: [
-      { name: 'git cat-file', desc: 'Inspect raw Git objects (-p -t)', syntax: 'git cat-file -p HEAD', level: 10, risk: 'SAFE' },
-      { name: 'git hash-object', desc: 'Compute SHA-1 hash for file', syntax: 'git hash-object -w <file>', level: 10, risk: 'SAFE' },
-      { name: 'git ls-tree', desc: 'Inspect tree object records', syntax: 'git ls-tree HEAD', level: 10, risk: 'SAFE' },
-      { name: 'git rev-parse', desc: 'Resolve ref expressions to SHAs', syntax: 'git rev-parse HEAD~1', level: 10, risk: 'SAFE' },
-      { name: 'git count-objects', desc: 'Count loose objects & disk use', syntax: 'git count-objects -v', level: 10, risk: 'SAFE' },
-      { name: 'git fsck', desc: 'Check object database integrity', syntax: 'git fsck', level: 10, risk: 'SAFE' },
+      { name: 'git cat-file', desc: 'Inspect raw object content and type (-p -t)', syntax: 'git cat-file -p HEAD', risk: 'SAFE' },
+      { name: 'git hash-object', desc: 'Compute SHA-1 hash for raw content', syntax: 'git hash-object -w <file>', risk: 'SAFE' },
+      { name: 'git ls-tree', desc: 'Inspect directory tree hierarchy objects', syntax: 'git ls-tree HEAD', risk: 'SAFE' },
+      { name: 'git rev-parse', desc: 'Resolve branch and ref names to commit hashes', syntax: 'git rev-parse HEAD', risk: 'SAFE' },
+      { name: 'git fsck', desc: 'Verify database integrity and find lost objects', syntax: 'git fsck', risk: 'SAFE' },
+      { name: 'git count-objects', desc: 'Count loose objects and disk space consumption', syntax: 'git count-objects -v', risk: 'SAFE' },
     ],
   },
   {
     levelNumber: 11,
-    title: 'LEVEL 11+ — Expert Git & Plumbing',
-    subtitle: 'Low-level plumbing, gc & maintenance',
+    levelCode: '11',
+    title: 'Plumbing & Repository Maintenance',
+    tagline: 'Low-level plumbing, garbage collection & maintenance tasks',
+    status: 'upcoming',
     commands: [
-      { name: 'git write-tree', desc: 'Create tree object from index', syntax: 'git write-tree', level: 11, risk: 'LOW' },
-      { name: 'git commit-tree', desc: 'Create commit directly from tree', syntax: 'git commit-tree <tree> -m "msg"', level: 11, risk: 'MEDIUM' },
-      { name: 'git update-ref', desc: 'Update branch reference directly', syntax: 'git update-ref refs/heads/main <sha>', level: 11, risk: 'HIGH' },
-      { name: 'git gc', desc: 'Compress objects & cleanup repo', syntax: 'git gc [--prune]', level: 11, risk: 'MEDIUM' },
-      { name: 'git prune', desc: 'Prune unreachable loose objects', syntax: 'git prune', level: 11, risk: 'HIGH' },
-      { name: 'git maintenance', desc: 'Run optimization background jobs', syntax: 'git maintenance run', level: 11, risk: 'SAFE' },
+      { name: 'git write-tree', desc: 'Create tree object from staging area index', syntax: 'git write-tree', risk: 'LOW' },
+      { name: 'git commit-tree', desc: 'Create commit object from tree and parent', syntax: 'git commit-tree <tree> -m "msg"', risk: 'MEDIUM' },
+      { name: 'git update-ref', desc: 'Safely update reference pointer directly', syntax: 'git update-ref refs/heads/main <sha>', risk: 'HIGH' },
+      { name: 'git gc', desc: 'Run garbage collection and optimize repository', syntax: 'git gc [--prune]', risk: 'MEDIUM' },
+      { name: 'git prune', desc: 'Prune unreachable loose objects from database', syntax: 'git prune', risk: 'HIGH' },
+      { name: 'git maintenance', desc: 'Schedule background repository optimization', syntax: 'git maintenance run', risk: 'SAFE' },
     ],
   },
 ];
@@ -185,44 +212,47 @@ export const CommandSidebar: React.FC<CommandSidebarProps> = ({
   onInsertCommand,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [openLevels, setOpenLevels] = useState<Record<number, boolean>>({ 1: true });
-  const [selectedCommand, setSelectedCommand] = useState<CurriculumCommand | null>(null);
+  const [expandedMilestones, setExpandedMilestones] = useState<Record<number, boolean>>({
+    1: true, // Level 1 is expanded by default (Current Chapter)
+  });
 
-  const toggleLevel = (lvl: number) => {
-    setOpenLevels(prev => ({
+  const toggleMilestone = (lvl: number) => {
+    setExpandedMilestones(prev => ({
       ...prev,
       [lvl]: !prev[lvl],
     }));
   };
 
-  const filteredLevels = useMemo(() => {
+  const filteredMilestones = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
-    if (!q) return CURRICULUM_LEVELS;
+    if (!q) return ROADMAP_MILESTONES;
 
-    return CURRICULUM_LEVELS.map(lvl => {
-      const matching = lvl.commands.filter(
+    return ROADMAP_MILESTONES.map(m => {
+      const matchingCommands = m.commands.filter(
         c =>
           c.name.toLowerCase().includes(q) ||
           c.desc.toLowerCase().includes(q) ||
           c.syntax.toLowerCase().includes(q)
       );
+      const titleMatches = m.title.toLowerCase().includes(q) || m.tagline.toLowerCase().includes(q);
+
       return {
-        ...lvl,
-        commands: matching,
+        ...m,
+        commands: titleMatches ? m.commands : matchingCommands,
       };
-    }).filter(lvl => lvl.commands.length > 0);
+    }).filter(m => m.commands.length > 0);
   }, [searchQuery]);
 
-  const totalCommandsCount = useMemo(() => {
-    return CURRICULUM_LEVELS.reduce((acc, lvl) => acc + lvl.commands.length, 0);
+  const totalCount = useMemo(() => {
+    return ROADMAP_MILESTONES.reduce((acc, m) => acc + m.commands.length, 0);
   }, []);
 
   return (
     <aside
       style={{
-        width: '260px',
-        minWidth: '260px',
-        maxWidth: '260px',
+        width: '320px',
+        minWidth: '320px',
+        maxWidth: '320px',
         background: '#070b14',
         borderRight: '1px solid rgba(255, 255, 255, 0.08)',
         display: 'flex',
@@ -232,55 +262,61 @@ export const CommandSidebar: React.FC<CommandSidebarProps> = ({
         flexShrink: 0,
       }}
     >
-      {/* SIDEBAR TITLE & SEARCH */}
+      {/* ROADMAP HEADER */}
       <div
         style={{
-          padding: '0.85rem 0.9rem',
+          padding: '1.1rem 1.25rem 0.9rem 1.25rem',
           borderBottom: '1px solid rgba(255, 255, 255, 0.07)',
-          background: 'rgba(10, 15, 28, 0.95)',
+          background: 'rgba(10, 15, 28, 0.98)',
           display: 'flex',
           flexDirection: 'column',
-          gap: '0.6rem',
+          gap: '0.75rem',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-            <BookOpen size={14} color="#38bdf8" />
-            <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#f8fafc', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-              Git Curriculum
-            </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Compass size={18} color="#38bdf8" />
+            <div>
+              <div style={{ fontSize: '0.86rem', fontWeight: 800, color: '#f8fafc', letterSpacing: '0.02em' }}>
+                Git Mastery Roadmap
+              </div>
+              <div style={{ fontSize: '0.68rem', color: '#94a3b8' }}>
+                12 Intent Levels · {totalCount} Commands
+              </div>
+            </div>
           </div>
+
           <span
             style={{
               fontSize: '0.65rem',
+              fontWeight: 800,
               color: '#38bdf8',
               background: 'rgba(56, 189, 248, 0.12)',
-              border: '1px solid rgba(56, 189, 248, 0.25)',
-              padding: '0.1rem 0.4rem',
+              border: '1px solid rgba(56, 189, 248, 0.3)',
+              padding: '0.15rem 0.45rem',
               borderRadius: '999px',
-              fontWeight: 700,
             }}
           >
-            {totalCommandsCount} cmds
+            Level 1 Active
           </span>
         </div>
 
-        {/* SEARCH BAR */}
+        {/* SEARCH INPUT */}
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '0.4rem',
-            background: 'rgba(15, 23, 42, 0.8)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            borderRadius: '6px',
-            padding: '0.35rem 0.55rem',
+            gap: '0.5rem',
+            background: 'rgba(15, 23, 42, 0.9)',
+            border: '1px solid rgba(255, 255, 255, 0.12)',
+            borderRadius: '7px',
+            padding: '0.45rem 0.7rem',
           }}
         >
-          <Search size={13} color="#64748b" />
+          <Search size={14} color="#64748b" />
           <input
             type="text"
-            placeholder="Filter all commands..."
+            placeholder="Search roadmap commands..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             style={{
@@ -288,7 +324,7 @@ export const CommandSidebar: React.FC<CommandSidebarProps> = ({
               border: 'none',
               outline: 'none',
               color: '#f8fafc',
-              fontSize: '0.75rem',
+              fontSize: '0.78rem',
               width: '100%',
             }}
           />
@@ -297,284 +333,264 @@ export const CommandSidebar: React.FC<CommandSidebarProps> = ({
               onClick={() => setSearchQuery('')}
               style={{ background: 'transparent', border: 'none', color: '#64748b', cursor: 'pointer', padding: 0 }}
             >
-              <X size={12} />
+              <X size={13} />
             </button>
           )}
         </div>
       </div>
 
-      {/* CURRICULUM LEVELS ACCORDION LIST */}
+      {/* ROADMAP TIMELINE TRACK */}
       <div
         style={{
           flex: 1,
           overflowY: 'auto',
-          padding: '0.45rem 0.4rem',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '0.35rem',
+          padding: '1.25rem 1.1rem',
+          position: 'relative',
         }}
       >
-        {filteredLevels.map(lvl => {
-          const isOpen = searchQuery.trim().length > 0 || openLevels[lvl.levelNumber];
-          const hasActiveInLevel = lvl.commands.some(
-            c => currentCommand && currentCommand.toLowerCase().startsWith(c.name.toLowerCase())
-          );
+        {/* VERTICAL CONNECTOR SPINE LINE */}
+        <div
+          style={{
+            position: 'absolute',
+            left: '27px',
+            top: '28px',
+            bottom: '40px',
+            width: '2px',
+            background: 'linear-gradient(to bottom, #38bdf8 0%, rgba(56, 189, 248, 0.3) 25%, rgba(255, 255, 255, 0.08) 100%)',
+            zIndex: 1,
+          }}
+        />
 
-          return (
-            <div
-              key={lvl.levelNumber}
-              style={{
-                borderRadius: '6px',
-                background: hasActiveInLevel
-                  ? 'rgba(56, 189, 248, 0.04)'
-                  : 'rgba(255, 255, 255, 0.02)',
-                border: hasActiveInLevel
-                  ? '1px solid rgba(56, 189, 248, 0.25)'
-                  : '1px solid rgba(255, 255, 255, 0.04)',
-                overflow: 'hidden',
-              }}
-            >
-              {/* LEVEL HEADER BUTTON */}
-              <button
-                onClick={() => toggleLevel(lvl.levelNumber)}
-                style={{
-                  width: '100%',
-                  padding: '0.5rem 0.6rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  background: 'transparent',
-                  border: 'none',
-                  cursor: 'pointer',
-                  textAlign: 'left',
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', overflow: 'hidden' }}>
-                  {isOpen ? <ChevronDown size={13} color="#94a3b8" /> : <ChevronRight size={13} color="#64748b" />}
-                  <div style={{ overflow: 'hidden' }}>
-                    <div
+        {/* MILESTONE CARDS */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', position: 'relative', zIndex: 2 }}>
+          {filteredMilestones.map(milestone => {
+            const isExpanded = searchQuery.trim().length > 0 || expandedMilestones[milestone.levelNumber];
+            const isActiveMilestone = milestone.status === 'active';
+            const isCompletedMilestone = milestone.status === 'completed';
+
+            return (
+              <div key={milestone.levelNumber} style={{ position: 'relative', paddingLeft: '28px' }}>
+                {/* NODE INDICATOR ICON ON THE SPINE */}
+                <div
+                  onClick={() => toggleMilestone(milestone.levelNumber)}
+                  style={{
+                    position: 'absolute',
+                    left: 0,
+                    top: '2px',
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '50%',
+                    background: isActiveMilestone
+                      ? '#0284c7'
+                      : isCompletedMilestone
+                      ? '#10b981'
+                      : '#0f172a',
+                    border: isActiveMilestone
+                      ? '2px solid #38bdf8'
+                      : isCompletedMilestone
+                      ? '2px solid #34d399'
+                      : '2px solid rgba(255, 255, 255, 0.2)',
+                    boxShadow: isActiveMilestone ? '0 0 10px rgba(56, 189, 248, 0.5)' : 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '0.62rem',
+                    fontWeight: 800,
+                    color: isActiveMilestone || isCompletedMilestone ? '#ffffff' : '#94a3b8',
+                    cursor: 'pointer',
+                    zIndex: 3,
+                  }}
+                  title={`Level ${milestone.levelCode}: ${milestone.title}`}
+                >
+                  {isCompletedMilestone ? (
+                    <CheckCircle2 size={12} color="#ffffff" />
+                  ) : (
+                    <span>{milestone.levelCode}</span>
+                  )}
+                </div>
+
+                {/* MILESTONE HEADER CARD */}
+                <div
+                  onClick={() => toggleMilestone(milestone.levelNumber)}
+                  style={{
+                    background: isActiveMilestone
+                      ? 'rgba(56, 189, 248, 0.08)'
+                      : 'rgba(255, 255, 255, 0.02)',
+                    border: isActiveMilestone
+                      ? '1px solid rgba(56, 189, 248, 0.35)'
+                      : '1px solid rgba(255, 255, 255, 0.06)',
+                    borderRadius: '8px',
+                    padding: '0.75rem 0.9rem',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.2rem' }}>
+                    <span
                       style={{
-                        fontSize: '0.72rem',
+                        fontSize: '0.65rem',
                         fontWeight: 800,
-                        color: hasActiveInLevel ? '#38bdf8' : '#e2e8f0',
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.04em',
+                        color: isActiveMilestone ? '#38bdf8' : '#94a3b8',
                       }}
                     >
-                      {lvl.title}
+                      Level {milestone.levelCode}
+                    </span>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                      {milestone.badge && (
+                        <span
+                          style={{
+                            fontSize: '0.58rem',
+                            fontWeight: 800,
+                            textTransform: 'uppercase',
+                            background: '#0284c7',
+                            color: '#ffffff',
+                            padding: '0.12rem 0.35rem',
+                            borderRadius: '3px',
+                          }}
+                        >
+                          {milestone.badge}
+                        </span>
+                      )}
+                      {isExpanded ? (
+                        <ChevronDown size={14} color="#94a3b8" />
+                      ) : (
+                        <ChevronRight size={14} color="#64748b" />
+                      )}
                     </div>
+                  </div>
+
+                  <div
+                    style={{
+                      fontSize: '0.84rem',
+                      fontWeight: 800,
+                      color: isActiveMilestone ? '#f8fafc' : '#e2e8f0',
+                      lineHeight: 1.3,
+                    }}
+                  >
+                    {milestone.title}
+                  </div>
+
+                  <div
+                    style={{
+                      fontSize: '0.7rem',
+                      color: '#94a3b8',
+                      marginTop: '0.25rem',
+                      lineHeight: 1.35,
+                    }}
+                  >
+                    {milestone.tagline}
                   </div>
                 </div>
 
-                {lvl.isCurrent && (
-                  <span
+                {/* COMMANDS CHECKPOINT LIST UNDER THIS MILESTONE */}
+                {isExpanded && (
+                  <div
                     style={{
-                      fontSize: '0.58rem',
-                      fontWeight: 800,
-                      background: '#0284c7',
-                      color: 'white',
-                      padding: '0.1rem 0.35rem',
-                      borderRadius: '3px',
-                      textTransform: 'uppercase',
-                      flexShrink: 0,
+                      marginTop: '0.5rem',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '0.45rem',
+                      paddingLeft: '0.2rem',
                     }}
                   >
-                    Active
-                  </span>
-                )}
-              </button>
+                    {milestone.commands.map(cmd => {
+                      const isCurrentTask =
+                        currentCommand && currentCommand.toLowerCase().startsWith(cmd.name.toLowerCase());
 
-              {/* LEVEL COMMANDS */}
-              {isOpen && (
-                <div
-                  style={{
-                    padding: '0.15rem 0.35rem 0.45rem 0.35rem',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '0.2rem',
-                  }}
-                >
-                  {lvl.commands.map(cmd => {
-                    const isTaskCommand =
-                      currentCommand && currentCommand.toLowerCase().startsWith(cmd.name.toLowerCase());
-                    const isInspected = selectedCommand?.name === cmd.name;
-
-                    return (
-                      <div
-                        key={cmd.name}
-                        onClick={() => setSelectedCommand(cmd)}
-                        style={{
-                          padding: '0.35rem 0.45rem',
-                          borderRadius: '4px',
-                          background: isInspected
-                            ? 'rgba(56, 189, 248, 0.16)'
-                            : isTaskCommand
-                            ? 'rgba(56, 189, 248, 0.08)'
-                            : 'transparent',
-                          border: isInspected
-                            ? '1px solid #38bdf8'
-                            : isTaskCommand
-                            ? '1px dashed rgba(56, 189, 248, 0.4)'
-                            : '1px solid transparent',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          gap: '0.4rem',
-                          transition: 'all 0.12s ease',
-                        }}
-                      >
-                        <div style={{ overflow: 'hidden', flex: 1 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                            <code
-                              style={{
-                                fontSize: '0.74rem',
-                                fontWeight: 700,
-                                color: isTaskCommand ? '#38bdf8' : '#f8fafc',
-                                fontFamily: 'monospace',
-                              }}
-                            >
-                              {cmd.name}
-                            </code>
-                            {isTaskCommand && (
-                              <span
+                      return (
+                        <div
+                          key={cmd.name}
+                          style={{
+                            background: isCurrentTask
+                              ? 'rgba(56, 189, 248, 0.12)'
+                              : 'rgba(15, 23, 42, 0.6)',
+                            border: isCurrentTask
+                              ? '1px solid #38bdf8'
+                              : '1px solid rgba(255, 255, 255, 0.05)',
+                            borderRadius: '6px',
+                            padding: '0.55rem 0.75rem',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '0.2rem',
+                            position: 'relative',
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                              <code
                                 style={{
-                                  fontSize: '0.55rem',
-                                  color: '#38bdf8',
+                                  fontSize: '0.78rem',
                                   fontWeight: 800,
-                                  textTransform: 'uppercase',
+                                  color: isCurrentTask ? '#38bdf8' : '#f1f5f9',
+                                  fontFamily: 'monospace',
                                 }}
                               >
-                                • task
-                              </span>
+                                {cmd.name}
+                              </code>
+
+                              {isCurrentTask && (
+                                <span
+                                  style={{
+                                    fontSize: '0.55rem',
+                                    fontWeight: 800,
+                                    background: '#0284c7',
+                                    color: 'white',
+                                    padding: '0.05rem 0.3rem',
+                                    borderRadius: '3px',
+                                    textTransform: 'uppercase',
+                                  }}
+                                >
+                                  Current Task
+                                </span>
+                              )}
+                            </div>
+
+                            {onInsertCommand && (
+                              <button
+                                onClick={() => onInsertCommand(cmd.syntax)}
+                                title={`Insert "${cmd.syntax}" into terminal`}
+                                style={{
+                                  background: 'rgba(56, 189, 248, 0.1)',
+                                  border: '1px solid rgba(56, 189, 248, 0.3)',
+                                  color: '#38bdf8',
+                                  padding: '0.2rem 0.45rem',
+                                  borderRadius: '4px',
+                                  fontSize: '0.62rem',
+                                  fontWeight: 700,
+                                  cursor: 'pointer',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '0.25rem',
+                                }}
+                              >
+                                <Terminal size={10} />
+                                <span>Try</span>
+                              </button>
                             )}
                           </div>
+
                           <div
                             style={{
-                              fontSize: '0.66rem',
+                              fontSize: '0.7rem',
                               color: '#94a3b8',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              whiteSpace: 'nowrap',
+                              lineHeight: 1.3,
                             }}
                           >
                             {cmd.desc}
                           </div>
                         </div>
-
-                        {onInsertCommand && (
-                          <button
-                            onClick={e => {
-                              e.stopPropagation();
-                              onInsertCommand(cmd.syntax);
-                            }}
-                            title={`Insert "${cmd.syntax}" into terminal`}
-                            style={{
-                              background: 'transparent',
-                              border: 'none',
-                              color: '#64748b',
-                              cursor: 'pointer',
-                              padding: '0.2rem',
-                              display: 'flex',
-                              alignItems: 'center',
-                              borderRadius: '3px',
-                            }}
-                          >
-                            <Terminal size={12} />
-                          </button>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-
-      {/* COMPACT COMMAND INSPECTOR POPUP CARD AT BOTTOM */}
-      {selectedCommand && (
-        <div
-          style={{
-            borderTop: '1px solid rgba(56, 189, 248, 0.3)',
-            background: 'rgba(10, 16, 32, 0.98)',
-            padding: '0.65rem 0.8rem',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0.35rem',
-            boxShadow: '0 -4px 12px rgba(0, 0, 0, 0.4)',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-              <code style={{ fontSize: '0.78rem', fontWeight: 800, color: '#38bdf8' }}>
-                {selectedCommand.name}
-              </code>
-              <span
-                style={{
-                  fontSize: '0.58rem',
-                  padding: '0.05rem 0.3rem',
-                  borderRadius: '3px',
-                  fontWeight: 700,
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  color: selectedCommand.risk === 'SAFE' ? '#4ade80' : selectedCommand.risk === 'HIGH' ? '#ef4444' : '#f59e0b',
-                }}
-              >
-                {selectedCommand.risk || 'SAFE'}
-              </span>
-            </div>
-            <button
-              onClick={() => setSelectedCommand(null)}
-              style={{ background: 'transparent', border: 'none', color: '#64748b', cursor: 'pointer', padding: 0 }}
-            >
-              <X size={13} />
-            </button>
-          </div>
-
-          <div style={{ fontSize: '0.68rem', color: '#cbd5e1', lineHeight: 1.3 }}>
-            {selectedCommand.desc}
-          </div>
-
-          <div
-            style={{
-              background: '#040711',
-              padding: '0.25rem 0.45rem',
-              borderRadius: '4px',
-              fontFamily: 'monospace',
-              fontSize: '0.7rem',
-              color: '#38bdf8',
-            }}
-          >
-            {selectedCommand.syntax}
-          </div>
-
-          {onInsertCommand && (
-            <button
-              onClick={() => onInsertCommand(selectedCommand.syntax)}
-              style={{
-                background: 'rgba(56, 189, 248, 0.15)',
-                border: '1px solid rgba(56, 189, 248, 0.4)',
-                color: '#38bdf8',
-                borderRadius: '4px',
-                padding: '0.25rem 0.5rem',
-                fontSize: '0.68rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.3rem',
-                marginTop: '0.1rem',
-              }}
-            >
-              <Terminal size={11} />
-              <span>Insert in Terminal</span>
-            </button>
-          )}
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
-      )}
+      </div>
     </aside>
   );
 };
