@@ -223,6 +223,44 @@ export const CommandReferenceView: React.FC = () => {
                 <p style={{ color: 'var(--text-secondary)', marginTop: '0.2rem' }}>{selectedCommand.whenNotToUse}</p>
               </div>
             </div>
+
+            {selectedCommand.beginnerDefinition && (
+              <div style={{ background: 'rgba(56, 189, 248, 0.08)', borderLeft: '3px solid #38bdf8', padding: '0.75rem', borderRadius: '0 6px 6px 0', fontSize: '0.85rem' }}>
+                <strong style={{ color: '#38bdf8', textTransform: 'uppercase', fontSize: '0.75rem' }}>In Plain English:</strong>
+                <p style={{ margin: '0.2rem 0 0 0', color: '#f8fafc' }}>{selectedCommand.beginnerDefinition}</p>
+              </div>
+            )}
+
+            {selectedCommand.syntaxVariants && selectedCommand.syntaxVariants.length > 0 && (
+              <div style={{ marginTop: '0.5rem' }}>
+                <strong style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Command Variations:</strong>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginTop: '0.4rem' }}>
+                  {selectedCommand.syntaxVariants.map((v, i) => (
+                    <div key={i} style={{ background: 'var(--bg-app)', border: '1px solid var(--border-color)', padding: '0.5rem 0.75rem', borderRadius: 'var(--radius-sm)', fontSize: '0.8rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <code style={{ color: '#38bdf8', fontWeight: 700 }}>{v.syntax}</code>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{v.description}</span>
+                      </div>
+                      <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', marginTop: '0.15rem' }}>{v.whenToUse}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {selectedCommand.commonMistakes && selectedCommand.commonMistakes.length > 0 && (
+              <div style={{ marginTop: '0.5rem' }}>
+                <strong style={{ fontSize: '0.8rem', color: 'var(--danger)', textTransform: 'uppercase' }}>Common Misconceptions & Mistakes:</strong>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem', marginTop: '0.4rem' }}>
+                  {selectedCommand.commonMistakes.map((m, i) => (
+                    <div key={i} style={{ background: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.2)', padding: '0.5rem 0.75rem', borderRadius: 'var(--radius-sm)', fontSize: '0.8rem' }}>
+                      <div style={{ color: '#fca5a5', fontWeight: 700 }}>❌ {m.mistake}</div>
+                      <div style={{ color: '#86efac', marginTop: '0.15rem' }}>💡 {m.correction}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
