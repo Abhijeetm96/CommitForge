@@ -1,4 +1,9 @@
-# Logs
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Logs & temp
 logs
 *.log
 npm-debug.log*
@@ -6,19 +11,26 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+*.tmp
 
+# Dependencies & build
 node_modules
 dist
 dist-ssr
+coverage
 *.local
 
-# Editor directories and files
+# Editor & IDE directories
 .vscode/*
 !.vscode/extensions.json
 .idea
-.DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# AI / Agent local scratch & cache
+.gemini
+.agents
+
