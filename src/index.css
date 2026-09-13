@@ -850,6 +850,57 @@ body {
   }
 }
 
+@keyframes cyberFlow {
+  0% {
+    stroke-dashoffset: 40;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes laserScan {
+  0% {
+    top: 0%;
+    opacity: 0.8;
+  }
+  50% {
+    top: 100%;
+    opacity: 1;
+  }
+  100% {
+    top: 0%;
+    opacity: 0.8;
+  }
+}
+
+@keyframes radarPing {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  70% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+@keyframes glowBorder {
+  0%, 100% {
+    border-color: rgba(56, 189, 248, 0.3);
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.15);
+  }
+  50% {
+    border-color: rgba(56, 189, 248, 0.7);
+    box-shadow: 0 0 25px rgba(56, 189, 248, 0.35);
+  }
+}
+
+
 /* Tablet & Mobile responsive rules for Animation-First Learn layout */
 @media (max-width: 1024px) {
   .first10-main-layout {

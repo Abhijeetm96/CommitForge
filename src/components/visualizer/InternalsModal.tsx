@@ -1,65 +1,100 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { extractObjectDatabase, GitObject } from '../../git-engine/internals';
-import { Database, FolderTree, FileCode, Check, X, ArrowRight, Layers } from 'lucide-react';
+import { Database, FolderTree, FileCode, Check, X, ArrowRight, Layers, GitBranch, Camera, FileText } from 'lucide-react';
 
 export const InternalsModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const { repo } = useApp();
   const [selectedObject, setSelectedObject] = useState<GitObject | null>(null);
 
   const objects = extractObjectDatabase(repo);
+  const currentBranch = repo.head.type === 'branch' ? repo.head.ref : 'main';
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal-dialog" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '800px', width: '95%' }}>
-        <div className="modal-header">
-          <div className="modal-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Database size={20} color="var(--git-orange)" />
-            Git Internals: The Object Database (.git/objects)
+      <div className="modal-dialog" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '880px', width: '95%', background: '#070b16', border: '1px solid rgba(56, 189, 248, 0.3)' }}>
+        <div className="modal-header" style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
+          <div className="modal-title" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+            <Database size={20} color="#38bdf8" />
+            <span style={{ fontWeight: 800, color: '#f8fafc' }}>
+              Git Internals: The Content-Addressable Object Database (.git/objects)
+            </span>
           </div>
           <button className="icon-btn" onClick={onClose}>
             <X size={16} />
           </button>
         </div>
 
-        <div className="modal-body">
-          {/* Mental model transformation diagram */}
-          <div style={{ background: 'var(--bg-app)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '1rem', marginBottom: '1.2rem' }}>
-            <div style={{ fontWeight: 700, color: 'var(--git-cyan)', marginBottom: '0.4rem', fontSize: '0.85rem' }}>
-              The 5 Core Git Data Primitives:
+        <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+          {/* Mental model cryptographic transformation diagram */}
+          <div style={{ background: '#040711', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '10px', padding: '1.1rem' }}>
+            <div style={{ fontWeight: 800, color: '#38bdf8', marginBottom: '0.65rem', fontSize: '0.85rem' }}>
+              Cryptographic Object Hierarchy (How Git Stores Everything):
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.6rem', textAlign: 'center', fontSize: '0.78rem' }}>
-              <div style={{ background: 'var(--bg-surface)', padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--border-color)' }}>
-                <strong style={{ color: '#38bdf8' }}>📄 Blob</strong>
-                <p style={{ color: 'var(--text-muted)' }}>Raw file contents (SHA-1)</p>
+
+            {/* Visual Hierarchy Flow */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', flexWrap: 'wrap' }}>
+              {/* Step 1: HEAD */}
+              <div style={{ background: 'rgba(245, 158, 11, 0.12)', border: '1px solid #f59e0b', borderRadius: '8px', padding: '0.65rem 0.85rem', textAlign: 'center', minWidth: '120px' }}>
+                <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#f59e0b' }}>📍 HEAD</div>
+                <div style={{ fontSize: '0.68rem', color: '#cbd5e1', marginTop: '0.2rem', fontFamily: 'monospace' }}>
+                  refs/heads/{currentBranch}
+                </div>
               </div>
-              <div style={{ background: 'var(--bg-surface)', padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--border-color)' }}>
-                <strong style={{ color: '#a855f7' }}>📁 Tree</strong>
-                <p style={{ color: 'var(--text-muted)' }}>Folder structure & filenames</p>
+
+              <span style={{ color: '#64748b', fontWeight: 800 }}>➔</span>
+
+              {/* Step 2: Branch */}
+              <div style={{ background: 'rgba(56, 189, 248, 0.12)', border: '1px solid #38bdf8', borderRadius: '8px', padding: '0.65rem 0.85rem', textAlign: 'center', minWidth: '120px' }}>
+                <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#38bdf8' }}>🌿 Branch Ref</div>
+                <div style={{ fontSize: '0.68rem', color: '#cbd5e1', marginTop: '0.2rem', fontFamily: 'monospace' }}>
+                  41-byte text SHA
+                </div>
               </div>
-              <div style={{ background: 'var(--bg-surface)', padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--border-color)' }}>
-                <strong style={{ color: '#f05033' }}>📦 Commit</strong>
-                <p style={{ color: 'var(--text-muted)' }}>Root Tree + Author + Parents</p>
+
+              <span style={{ color: '#64748b', fontWeight: 800 }}>➔</span>
+
+              {/* Step 3: Commit */}
+              <div style={{ background: 'rgba(239, 68, 68, 0.12)', border: '1px solid #ef4444', borderRadius: '8px', padding: '0.65rem 0.85rem', textAlign: 'center', minWidth: '120px' }}>
+                <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#ef4444' }}>📦 Commit</div>
+                <div style={{ fontSize: '0.68rem', color: '#cbd5e1', marginTop: '0.2rem', fontFamily: 'monospace' }}>
+                  Tree + Parent + Author
+                </div>
               </div>
-              <div style={{ background: 'var(--bg-surface)', padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--border-color)' }}>
-                <strong style={{ color: '#10b981' }}>🌿 Branch</strong>
-                <p style={{ color: 'var(--text-muted)' }}>Movable 41-byte text pointer</p>
+
+              <span style={{ color: '#64748b', fontWeight: 800 }}>➔</span>
+
+              {/* Step 4: Tree */}
+              <div style={{ background: 'rgba(168, 85, 247, 0.12)', border: '1px solid #a855f7', borderRadius: '8px', padding: '0.65rem 0.85rem', textAlign: 'center', minWidth: '120px' }}>
+                <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#c084fc' }}>📁 Tree</div>
+                <div style={{ fontSize: '0.68rem', color: '#cbd5e1', marginTop: '0.2rem', fontFamily: 'monospace' }}>
+                  Directory listing
+                </div>
               </div>
-              <div style={{ background: 'var(--bg-surface)', padding: '0.5rem', borderRadius: '4px', border: '1px solid var(--border-color)' }}>
-                <strong style={{ color: '#fbbf24' }}>📍 HEAD</strong>
-                <p style={{ color: 'var(--text-muted)' }}>Points to current branch/SHA</p>
+
+              <span style={{ color: '#64748b', fontWeight: 800 }}>➔</span>
+
+              {/* Step 5: Blobs */}
+              <div style={{ background: 'rgba(16, 185, 129, 0.12)', border: '1px solid #10b981', borderRadius: '8px', padding: '0.65rem 0.85rem', textAlign: 'center', minWidth: '120px' }}>
+                <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#10b981' }}>📄 Blobs</div>
+                <div style={{ fontSize: '0.68rem', color: '#cbd5e1', marginTop: '0.2rem', fontFamily: 'monospace' }}>
+                  Raw file bytes
+                </div>
               </div>
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '1rem', minHeight: '260px' }}>
+          {/* Database Object Explorer */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(240px, 1fr) minmax(300px, 1.4fr)', gap: '1rem', minHeight: '280px' }}>
             {/* Objects List */}
-            <div style={{ background: 'var(--bg-app)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '0.8rem', overflowY: 'auto', maxHeight: '300px' }}>
-              <div style={{ fontWeight: 600, color: 'var(--text-secondary)', fontSize: '0.8rem', marginBottom: '0.5rem' }}>
-                All Objects in .git/objects ({objects.length}):
+            <div style={{ background: '#040711', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '8px', padding: '0.85rem', overflowY: 'auto', maxHeight: '340px' }}>
+              <div style={{ fontWeight: 800, color: '#cbd5e1', fontSize: '0.82rem', marginBottom: '0.65rem' }}>
+                Objects in .git/objects ({objects.length}):
               </div>
               {objects.length === 0 ? (
-                <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>No objects yet. Run git commit first!</div>
+                <div style={{ color: '#64748b', fontSize: '0.8rem', textAlign: 'center', padding: '1rem' }}>
+                  No objects stored yet. Run git commit to generate blobs, trees, and commits!
+                </div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                   {objects.map((obj) => (
@@ -67,29 +102,37 @@ export const InternalsModal: React.FC<{ onClose: () => void }> = ({ onClose }) =
                       key={obj.id}
                       onClick={() => setSelectedObject(obj)}
                       style={{
-                        padding: '0.5rem 0.6rem',
-                        background: selectedObject?.id === obj.id ? 'rgba(240, 80, 51, 0.15)' : 'var(--bg-surface)',
+                        padding: '0.5rem 0.65rem',
+                        background: selectedObject?.id === obj.id ? 'rgba(56, 189, 248, 0.18)' : 'rgba(255, 255, 255, 0.02)',
                         border: '1px solid',
-                        borderColor: selectedObject?.id === obj.id ? 'var(--git-orange)' : 'var(--border-color)',
-                        borderRadius: 'var(--radius-sm)',
-                        fontSize: '0.8rem',
+                        borderColor: selectedObject?.id === obj.id ? '#38bdf8' : 'rgba(255, 255, 255, 0.06)',
+                        borderRadius: '6px',
+                        fontSize: '0.78rem',
                         cursor: 'pointer',
                         display: 'flex',
                         justifyContent: 'space-between',
                         alignItems: 'center',
+                        transition: 'all 0.15s ease',
                       }}
                     >
-                      <span style={{ fontFamily: 'var(--font-mono)' }}>
-                        <span style={{
-                          color: obj.type === 'commit' ? 'var(--git-orange)' : obj.type === 'tree' ? 'var(--git-purple)' : 'var(--git-cyan)',
-                          fontWeight: 700,
-                          marginRight: '6px'
-                        }}>
+                      <span style={{ fontFamily: 'monospace' }}>
+                        <span
+                          style={{
+                            color:
+                              obj.type === 'commit'
+                                ? '#ef4444'
+                                : obj.type === 'tree'
+                                ? '#c084fc'
+                                : '#38bdf8',
+                            fontWeight: 800,
+                            marginRight: '6px',
+                          }}
+                        >
                           [{obj.type.toUpperCase()}]
                         </span>
-                        {obj.id.slice(0, 10)}...
+                        {obj.id.slice(0, 8)}...
                       </span>
-                      <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{obj.size}B</span>
+                      <span style={{ fontSize: '0.7rem', color: '#64748b' }}>{obj.size}B</span>
                     </div>
                   ))}
                 </div>
@@ -97,55 +140,61 @@ export const InternalsModal: React.FC<{ onClose: () => void }> = ({ onClose }) =
             </div>
 
             {/* Object Inspector Payload */}
-            <div style={{ background: 'var(--bg-app)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '0.8rem' }}>
-              <div style={{ fontWeight: 600, color: 'var(--text-secondary)', fontSize: '0.8rem', marginBottom: '0.5rem' }}>
-                Raw Object Payload (git cat-file -p):
+            <div style={{ background: '#040711', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '8px', padding: '0.85rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontWeight: 800, color: '#38bdf8', fontSize: '0.82rem', fontFamily: 'monospace' }}>
+                  $ git cat-file -p {selectedObject?.id.slice(0, 8) || '<object-sha>'}
+                </span>
+                <span style={{ fontSize: '0.68rem', color: '#64748b' }}>Decompressed Payload</span>
               </div>
+
               {selectedObject ? (
-                <div>
-                  <div style={{ fontSize: '0.8rem', marginBottom: '0.5rem', color: 'var(--text-muted)' }}>
-                    <strong>ID:</strong> <code style={{ color: 'var(--git-cyan)' }}>{selectedObject.id}</code>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1 }}>
+                  <div style={{ fontSize: '0.76rem', color: '#94a3b8' }}>
+                    <strong>Full SHA-1:</strong> <code style={{ color: '#38bdf8' }}>{selectedObject.id}</code>
                   </div>
                   <pre
                     style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.8rem',
-                      background: 'var(--bg-surface)',
-                      padding: '0.8rem',
-                      borderRadius: 'var(--radius-sm)',
-                      border: '1px solid var(--border-color)',
+                      background: 'rgba(255, 255, 255, 0.02)',
+                      border: '1px solid rgba(255, 255, 255, 0.06)',
+                      padding: '0.75rem',
+                      borderRadius: '6px',
+                      fontSize: '0.76rem',
+                      fontFamily: 'monospace',
+                      color: '#cbd5e1',
                       whiteSpace: 'pre-wrap',
-                      color: 'var(--text-primary)',
-                      maxHeight: '220px',
                       overflowY: 'auto',
+                      flex: 1,
+                      margin: 0,
                     }}
                   >
                     {selectedObject.content}
                   </pre>
                 </div>
               ) : (
-                <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '2rem', textAlign: 'center' }}>
-                  Click an object on the left to inspect what Git actually stores on disk.
+                <div style={{ color: '#64748b', fontSize: '0.8rem', margin: 'auto', textAlign: 'center' }}>
+                  Select an object on the left to inspect its raw header, directory tree, or file blob.
                 </div>
               )}
             </div>
           </div>
         </div>
 
-        <div className="modal-footer">
+        <div className="modal-footer" style={{ borderTop: '1px solid rgba(255, 255, 255, 0.08)', display: 'flex', justifyContent: 'flex-end' }}>
           <button
             style={{
-              background: 'var(--git-orange)',
+              background: '#2563eb',
               color: 'white',
               border: 'none',
-              padding: '0.5rem 1.2rem',
-              borderRadius: 'var(--radius-sm)',
-              fontWeight: 600,
+              padding: '0.5rem 1.25rem',
+              borderRadius: '6px',
+              fontWeight: 700,
+              fontSize: '0.84rem',
               cursor: 'pointer',
             }}
             onClick={onClose}
           >
-            Close Inspector
+            Close Internals
           </button>
         </div>
       </div>
