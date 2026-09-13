@@ -3,7 +3,11 @@ import { useApp } from '../../context/AppContext';
 import { evaluateDanger, CommandDangerInfo } from '../../git-engine/danger';
 import { AlertTriangle, ShieldAlert, X, Check } from 'lucide-react';
 
-export const Terminal: React.FC = () => {
+interface TerminalProps {
+  autoFocus?: boolean;
+}
+
+export const Terminal: React.FC<TerminalProps> = ({ autoFocus = false }) => {
   const {
     repo,
     terminalHistory,
@@ -15,11 +19,15 @@ export const Terminal: React.FC = () => {
   const [historyIndex, setHistoryIndex] = useState<number | null>(null);
   const [dangerModal, setDangerModal] = useState<{ command: string; danger: CommandDangerInfo } | null>(null);
 
+  const containerRef = useRef<HTMLDivElement>(null);
   const terminalEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    terminalEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // Only scroll the terminal container itself, never outer page
+    if (containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+    }
   }, [terminalHistory]);
 
   const userCommands = terminalHistory
@@ -75,7 +83,7 @@ export const Terminal: React.FC = () => {
     : `detached@${repo.head.ref.slice(0, 7)}`;
 
   return (
-    <div className="terminal-container" onClick={() => inputRef.current?.focus()}>
+    <div ref={containerRef} className="terminal-container" onClick={() => inputRef.current?.focus()}>
       {/* Output lines */}
       {terminalHistory.map((item, idx) => (
         <div key={idx} className="terminal-line">
@@ -131,7 +139,7 @@ export const Terminal: React.FC = () => {
           value={inputVal}
           onChange={(e) => setInputVal(e.target.value)}
           onKeyDown={handleKeyDown}
-          autoFocus
+          autoFocus={autoFocus}
           spellCheck={false}
           autoComplete="off"
         />

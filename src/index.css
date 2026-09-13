@@ -879,7 +879,13 @@ body {
   .learn-bottom-grid {
     grid-template-columns: 1fr !important;
   }
-  .movie-modal-grid {
+}
+
+@media (max-width: 900px) {
+  .three-area-stage-grid {
     grid-template-columns: 1fr !important;
+    gap: 1rem !important;
   }
 }
+
+

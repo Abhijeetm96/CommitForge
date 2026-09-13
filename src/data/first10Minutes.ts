@@ -32,7 +32,7 @@ export const FIRST_10_MINUTES_STEPS: First10Step[] = [
     title: 'What is Git?',
     subtitle: 'A time machine for your code',
     conceptTitle: 'Git Helps Developers Track Changes',
-    conceptBody: 'Send your local commits to a remote repository so others can see your work. Understand how snapshots prevent chaos.',
+    conceptBody: 'Git is a distributed version control system that records snapshots of your project over time. It lets you experiment safely, track changes, and collaborate without losing work.',
     forgeMessage: "👋 Welcome to CommitForge! Git is like a time machine for your code. Let's start from absolute zero!",
     commandId: 'status',
     whatsHappeningSteps: [

@@ -52,5 +52,6 @@ export interface CausalCommandStory {
 }
 
 export type ViewLevel = 'human' | 'git-user' | 'expert';
-export type StageMode = 'animation' | 'diagram' | 'real';
+export type StageMode = 'animation' | 'diagram' | 'tree' | 'real';
 export type TimeState = 'before' | 'during' | 'after';
+

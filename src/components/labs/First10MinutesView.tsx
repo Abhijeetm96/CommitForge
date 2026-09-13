@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { FIRST_10_MINUTES_STEPS, First10Step } from '../../data/first10Minutes';
 import { GitAnimationStage } from '../animation/GitAnimationStage';
+import { StageMode } from '../animation/types';
 import { Terminal } from '../terminal/Terminal';
 import { ForgeAvatar } from '../common/ForgeAvatar';
 import {
@@ -37,9 +38,19 @@ export const First10MinutesView: React.FC = () => {
   } = useApp();
 
   const [bottomTab, setBottomTab] = useState<'terminal' | 'output' | 'notes'>('terminal');
+  const [stageMode, setStageMode] = useState<StageMode>('animation');
   const [hintLevel, setHintLevel] = useState<number>(0);
   const [copiedCmd, setCopiedCmd] = useState(false);
   const [showTransitionModal, setShowTransitionModal] = useState(false);
+
+  const mainRef = useRef<HTMLElement>(null);
+
+  // Keep scroll at top on step navigation so user sees the stage and title
+  useEffect(() => {
+    if (mainRef.current) {
+      mainRef.current.scrollTo({ top: 0, behavior: 'instant' });
+    }
+  }, [first10Step]);
 
   const currentStepData: First10Step =
     FIRST_10_MINUTES_STEPS.find((s) => s.step === first10Step) ||
@@ -246,6 +257,7 @@ export const First10MinutesView: React.FC = () => {
 
       {/* COLUMN 2: Main Interactive Content Area (Matching Mockup) */}
       <main
+        ref={mainRef}
         style={{
           overflowY: 'auto',
           display: 'flex',
@@ -298,6 +310,7 @@ export const First10MinutesView: React.FC = () => {
         {/* Center Stage: The Interactive Git Animation Stage */}
         <GitAnimationStage
           commandId={currentStepData.commandId}
+          stageMode={stageMode}
           repo={repo}
           onExecuteCommand={executeCommand}
           onUpdateFileContent={updateEditorContent}
@@ -411,8 +424,12 @@ export const First10MinutesView: React.FC = () => {
             </div>
 
             {/* Tab Body: Real Terminal Runner or Realistic Output */}
-            <div style={{ height: '280px', overflow: 'hidden' }}>
-              {bottomTab === 'terminal' && <Terminal />}
+            <div style={{ flex: 1, minHeight: '320px', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+              {bottomTab === 'terminal' && (
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+                  <Terminal autoFocus={false} />
+                </div>
+              )}
 
               {bottomTab === 'output' && (
                 <div style={{ padding: '1rem', fontFamily: 'monospace', fontSize: '0.85rem', color: '#cbd5e1', overflowY: 'auto', height: '100%' }}>
