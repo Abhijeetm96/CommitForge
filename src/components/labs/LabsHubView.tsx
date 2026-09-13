@@ -6,19 +6,23 @@ import { ConflictArenaView } from './ConflictArenaView';
 import { GitHospitalView } from './GitHospitalView';
 import { TwoDevView } from './TwoDevView';
 import { CapstoneView } from './CapstoneView';
+import { CommandDiscoveryView } from './CommandDiscoveryView';
 import {
   Swords,
   HeartPulse,
   Bug,
   Flame,
+  Compass,
   ArrowRight,
   ArrowLeft,
   RotateCcw,
 } from 'lucide-react';
 
 export const LabsHubView: React.FC = () => {
-  const { activeLab, setActiveLab } = useApp();
+  const { mode, setMode, activeLab, setActiveLab } = useApp();
   const [selectedLabId, setSelectedLabId] = useState<string | null>(null);
+
+  const activeLabView = selectedLabId || (mode === 'discover' ? 'discover' : null);
 
   const LAB_CARDS = [
     {
@@ -73,10 +77,14 @@ export const LabsHubView: React.FC = () => {
     else if (id === 'hospital') setActiveLab('hospital');
     else if (id === 'break-it') setActiveLab('break-it');
     else if (id === 'bug-detective') setActiveLab('two-dev');
+    else if (id === 'discover') setMode('discover');
   };
 
   const handleBackToLabs = () => {
     setSelectedLabId(null);
+    if (mode === 'discover') {
+      setMode('labs');
+    }
   };
 
   return (
@@ -92,7 +100,7 @@ export const LabsHubView: React.FC = () => {
       }}
     >
       {/* If a lab is active, render lab workspace with a top Back bar */}
-      {selectedLabId ? (
+      {activeLabView ? (
         <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
           <div
             style={{
@@ -122,15 +130,16 @@ export const LabsHubView: React.FC = () => {
             </button>
 
             <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#38bdf8', textTransform: 'capitalize' }}>
-              {selectedLabId.replace('-', ' ')} Active
+              {activeLabView === 'discover' ? 'Command Discovery' : activeLabView.replace('-', ' ')} Active
             </span>
           </div>
 
           <div style={{ flex: 1, overflow: 'hidden' }}>
-            {selectedLabId === 'conflict-arena' && <ConflictArenaView />}
-            {selectedLabId === 'hospital' && <GitHospitalView />}
-            {selectedLabId === 'break-it' && <BreakItView />}
-            {selectedLabId === 'bug-detective' && <TwoDevView />}
+            {activeLabView === 'conflict-arena' && <ConflictArenaView />}
+            {activeLabView === 'hospital' && <GitHospitalView />}
+            {activeLabView === 'break-it' && <BreakItView />}
+            {activeLabView === 'bug-detective' && <TwoDevView />}
+            {activeLabView === 'discover' && <CommandDiscoveryView />}
           </div>
         </div>
       ) : (
@@ -259,6 +268,70 @@ export const LabsHubView: React.FC = () => {
                 </div>
               );
             })}
+          </div>
+
+          {/* Screen 6 Banner: What Should I Do? (Command Discovery) */}
+          <div
+            style={{
+              marginTop: '0.5rem',
+              padding: '1.25rem 1.75rem',
+              background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, rgba(19, 29, 51, 0.8) 100%)',
+              border: '1px solid rgba(56, 189, 248, 0.25)',
+              borderRadius: '16px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: '1.25rem',
+              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1, minWidth: '280px' }}>
+              <div
+                style={{
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '12px',
+                  background: 'rgba(56, 189, 248, 0.15)',
+                  color: '#38bdf8',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                }}
+              >
+                <Compass size={24} />
+              </div>
+              <div>
+                <div style={{ fontWeight: 800, fontSize: '1.05rem', color: '#f8fafc' }}>
+                  What Should I Do? (Screen 6: Command Discovery)
+                </div>
+                <div style={{ fontSize: '0.86rem', color: '#94a3b8', marginTop: '0.15rem' }}>
+                  Compare commands side-by-side with risk badges (SAFE, LOW RISK, HIGH RISK) for real development scenarios.
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => handleEnterLab('discover')}
+              style={{
+                background: '#0284c7',
+                color: '#ffffff',
+                border: 'none',
+                padding: '0.65rem 1.25rem',
+                borderRadius: '8px',
+                fontWeight: 700,
+                fontSize: '0.88rem',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                transition: 'background 0.15s ease',
+              }}
+            >
+              Open Discovery <ArrowRight size={15} />
+            </button>
           </div>
         </div>
       )}

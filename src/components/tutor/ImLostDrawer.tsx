@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import {
   X,
@@ -7,6 +7,7 @@ import {
   ArrowRight,
   HelpCircle,
   AlertTriangle,
+  Compass,
 } from 'lucide-react';
 
 interface ImLostDrawerProps {
@@ -15,8 +16,16 @@ interface ImLostDrawerProps {
 }
 
 export const ImLostDrawer: React.FC<ImLostDrawerProps> = ({ isOpen, onClose }) => {
-  const { repo, resetCurrentExercise, executeCommand, first10Step } = useApp();
+  const { repo, resetCurrentExercise, executeCommand, setMode } = useApp();
   const [selectedIssue, setSelectedIssue] = useState<number | null>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
 
   if (!isOpen) return null;
 
@@ -123,21 +132,24 @@ export const ImLostDrawer: React.FC<ImLostDrawerProps> = ({ isOpen, onClose }) =
           </div>
 
           <button
+            type="button"
+            aria-label="Close"
             onClick={onClose}
             style={{
-              background: 'rgba(255, 255, 255, 0.06)',
+              background: 'rgba(255, 255, 255, 0.08)',
               border: 'none',
               color: '#94a3b8',
               borderRadius: '50%',
-              width: '28px',
-              height: '28px',
+              width: '36px',
+              height: '36px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
+              transition: 'background 0.15s ease',
             }}
           >
-            <X size={16} />
+            <X size={18} />
           </button>
         </div>
 
@@ -196,28 +208,56 @@ export const ImLostDrawer: React.FC<ImLostDrawerProps> = ({ isOpen, onClose }) =
                   >
                     <div>{issue.explanation}</div>
 
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleAction(issue.suggestedCmd);
-                      }}
-                      style={{
-                        background: '#2563eb',
-                        color: 'white',
-                        border: 'none',
-                        padding: '0.6rem 1rem',
-                        borderRadius: '6px',
-                        fontSize: '0.82rem',
-                        fontWeight: 700,
-                        cursor: 'pointer',
-                        alignSelf: 'flex-start',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.4rem',
-                      }}
-                    >
-                      <Play size={13} /> {issue.cmdLabel}
-                    </button>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem' }}>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAction(issue.suggestedCmd);
+                        }}
+                        style={{
+                          background: '#2563eb',
+                          color: 'white',
+                          border: 'none',
+                          padding: '0.6rem 1rem',
+                          borderRadius: '6px',
+                          fontSize: '0.82rem',
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '0.4rem',
+                        }}
+                      >
+                        <Play size={13} /> {issue.cmdLabel}
+                      </button>
+
+                      {issue.id === 'dont-know-cmd' && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setMode('discover');
+                            onClose();
+                          }}
+                          style={{
+                            background: 'rgba(56, 189, 248, 0.15)',
+                            color: '#38bdf8',
+                            border: '1px solid rgba(56, 189, 248, 0.35)',
+                            padding: '0.6rem 1rem',
+                            borderRadius: '6px',
+                            fontSize: '0.82rem',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '0.4rem',
+                          }}
+                        >
+                          <Compass size={14} /> Open "What should I do?" (Screen 6)
+                        </button>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
