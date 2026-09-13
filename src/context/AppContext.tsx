@@ -127,6 +127,8 @@ export interface AppContextType {
   setFirst10Step: (s: number) => void;
   replayTrigger: number;
   triggerReplay: () => void;
+  showGitMovie: boolean;
+  setShowGitMovie: (v: boolean) => void;
 
   // Labs Hub
   activeLab: 'break-it' | 'undo-lab' | 'conflict-arena' | 'hospital' | 'two-dev' | 'capstone' | 'config-lab' | 'discover';
@@ -248,6 +250,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
   const [showLostDrawer, setShowLostDrawer] = useState(false);
   const [activeHumansTerm, setActiveHumansTerm] = useState<string | null>(null);
+  const [showGitMovie, setShowGitMovie] = useState(false);
   const [first10Step, setFirst10Step] = useState(1);
   const [replayTrigger, setReplayTrigger] = useState(0);
   const [activeLab, setActiveLab] = useState<'break-it' | 'undo-lab' | 'conflict-arena' | 'hospital' | 'two-dev' | 'capstone' | 'config-lab' | 'discover'>('break-it');
@@ -479,6 +482,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setFirst10Step,
         replayTrigger,
         triggerReplay,
+        showGitMovie,
+        setShowGitMovie,
         activeLab,
         setActiveLab,
       }}

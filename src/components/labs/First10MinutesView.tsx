@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { FIRST_10_MINUTES_STEPS, First10Step } from '../../data/first10Minutes';
-import { ThreeAreaVisualizer } from '../visualizer/ThreeAreaVisualizer';
+import { GitAnimationStage } from '../animation/GitAnimationStage';
 import { Terminal } from '../terminal/Terminal';
 import { ForgeAvatar } from '../common/ForgeAvatar';
 import {
-  ArrowLeft,
-  ArrowRight,
   CheckCircle2,
   Copy,
+  Terminal as TerminalIcon,
   FileText,
-  Camera,
   HelpCircle,
   Play,
   RotateCcw,
@@ -18,6 +16,10 @@ import {
   LifeBuoy,
   Lock,
   Check,
+  ArrowRight,
+  ArrowLeft,
+  ChevronRight,
+  BookOpen,
 } from 'lucide-react';
 
 export const First10MinutesView: React.FC = () => {
@@ -34,8 +36,8 @@ export const First10MinutesView: React.FC = () => {
     recordSkillEvidence,
   } = useApp();
 
+  const [bottomTab, setBottomTab] = useState<'terminal' | 'output' | 'notes'>('terminal');
   const [hintLevel, setHintLevel] = useState<number>(0);
-  const [selectedKnowledgeChoice, setSelectedKnowledgeChoice] = useState<'know' | 'not-sure' | null>(null);
   const [copiedCmd, setCopiedCmd] = useState(false);
   const [showTransitionModal, setShowTransitionModal] = useState(false);
 
@@ -43,20 +45,15 @@ export const First10MinutesView: React.FC = () => {
     FIRST_10_MINUTES_STEPS.find((s) => s.step === first10Step) ||
     FIRST_10_MINUTES_STEPS[0];
   const isLastStep = first10Step === FIRST_10_MINUTES_STEPS.length;
+  const nextStepData = FIRST_10_MINUTES_STEPS.find((s) => s.step === first10Step + 1);
 
   // Gated verification check
   const isStepCompleted = currentStepData.isComplete(repo, terminalHistory);
 
   const handleNextStep = () => {
-    if (!isStepCompleted && first10Step >= 4 && first10Step !== 7) {
-      // If task requires completion before continuing
-      return;
-    }
-
     if (!isLastStep) {
       setFirst10Step(first10Step + 1);
       setHintLevel(0);
-      setSelectedKnowledgeChoice(null);
       recordSkillEvidence('foundations', 'practiced');
     } else {
       recordSkillEvidence('foundations', 'mastered');
@@ -68,7 +65,6 @@ export const First10MinutesView: React.FC = () => {
     if (first10Step > 1) {
       setFirst10Step(first10Step - 1);
       setHintLevel(0);
-      setSelectedKnowledgeChoice(null);
     } else {
       setMode('dashboard');
     }
@@ -83,736 +79,604 @@ export const First10MinutesView: React.FC = () => {
   const runSampleAction = () => {
     if (currentStepData.expectedCommand) {
       executeCommand(currentStepData.expectedCommand);
-    } else if (currentStepData.requiredActionType === 'editor') {
-      const currentContent = repo.workingDirectory['index.html'] || '<h1>Hello World</h1>';
-      const updated = currentContent.replace(/<h1>.*?<\/h1>/, '<h1>Welcome to My Coffee Shop!</h1>');
-      updateEditorContent('index.html', updated);
-      executeCommand('git status');
+    } else {
+      executeCommand(currentStepData.terminalSampleCommand);
     }
   };
 
-  const progressPercent = Math.round((first10Step / FIRST_10_MINUTES_STEPS.length) * 100);
+  const progressPercent = Math.round(((first10Step - 1) / FIRST_10_MINUTES_STEPS.length) * 100);
 
   return (
     <div
       style={{
-        display: 'flex',
-        flexDirection: 'column',
-        flex: 1,
-        background: '#0b111e',
+        display: 'grid',
+        gridTemplateColumns: '260px 1fr',
+        background: '#070c18',
         color: '#f8fafc',
         height: 'calc(100vh - 60px)',
         overflow: 'hidden',
       }}
+      className="first10-main-layout"
     >
-      {/* Top Sub-Bar: Back button & Progress (Getting Started X / 12) */}
-      <div
+      {/* COLUMN 1: Curriculum Checklist & Progress Sidebar (Matching Mockup) */}
+      <aside
         style={{
-          height: '48px',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          borderRight: '1px solid rgba(255, 255, 255, 0.08)',
+          background: '#0b1120',
+          padding: '1.25rem 1rem',
+          overflowY: 'auto',
           display: 'flex',
-          alignItems: 'center',
+          flexDirection: 'column',
           justifyContent: 'space-between',
-          padding: '0 1.5rem',
-          background: '#0e172a',
-          flexShrink: 0,
+          gap: '1.25rem',
         }}
+        className="curriculum-sidebar"
       >
-        <button
-          onClick={handlePrevStep}
-          style={{
-            background: 'none',
-            border: 'none',
-            color: '#94a3b8',
-            fontSize: '0.85rem',
-            fontWeight: 700,
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.4rem',
-            padding: '0.3rem 0.6rem',
-            borderRadius: '6px',
-          }}
-        >
-          <ArrowLeft size={16} /> Back
-        </button>
-
-        {/* Centered Progress */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', width: '320px', maxWidth: '50%' }}>
-          <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#94a3b8', whiteSpace: 'nowrap' }}>
-            Getting Started
-          </span>
-          <div
-            style={{
-              flex: 1,
-              height: '6px',
-              background: 'rgba(255, 255, 255, 0.1)',
-              borderRadius: '999px',
-              overflow: 'hidden',
-              position: 'relative',
-            }}
-          >
-            <div
-              style={{
-                width: `${progressPercent}%`,
-                height: '100%',
-                background: '#38bdf8',
-                borderRadius: '999px',
-                transition: 'width 0.3s ease',
-              }}
-            />
-          </div>
-          <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#64748b' }}>
-            {first10Step} / 12
-          </span>
-        </div>
-
-        {/* Emergency I'm Lost Button */}
-        <button
-          onClick={() => setShowLostDrawer(true)}
-          style={{
-            background: 'none',
-            border: 'none',
-            color: '#94a3b8',
-            fontSize: '0.8rem',
-            fontWeight: 700,
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.3rem',
-          }}
-        >
-          <LifeBuoy size={14} color="#f05033" /> Need Help?
-        </button>
-      </div>
-
-      {/* Main 3-Column Content Layout (Responsive) */}
-      <div
-        style={{
-          flex: 1,
-          display: 'grid',
-          gridTemplateColumns: '240px 1fr 280px',
-          overflow: 'hidden',
-        }}
-        className="learn-3col-grid"
-      >
-        {/* Column 1: Step Checklist Sidebar */}
-        <div
-          style={{
-            borderRight: '1px solid rgba(255, 255, 255, 0.08)',
-            background: '#0e172a',
-            padding: '1.25rem 1rem',
-            overflowY: 'auto',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '0.4rem',
-          }}
-          className="learn-checklist-sidebar"
-        >
-          <div
-            style={{
-              fontSize: '0.72rem',
-              fontWeight: 800,
-              color: '#64748b',
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              marginBottom: '0.5rem',
-              paddingLeft: '0.5rem',
-            }}
-          >
-            Lessons
-          </div>
-
-          {FIRST_10_MINUTES_STEPS.map((s) => {
-            const isCurrent = s.step === first10Step;
-            const isCompleted = s.step < first10Step;
-            return (
-              <button
-                key={s.step}
-                onClick={() => setFirst10Step(s.step)}
-                style={{
-                  background: isCurrent ? '#2563eb' : 'transparent',
-                  color: isCurrent ? '#ffffff' : isCompleted ? '#94a3b8' : '#64748b',
-                  border: 'none',
-                  borderRadius: '8px',
-                  padding: '0.55rem 0.75rem',
-                  fontSize: '0.82rem',
-                  fontWeight: isCurrent ? 800 : 500,
-                  textAlign: 'left',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.65rem',
-                  transition: 'background 0.15s ease',
-                }}
-              >
-                {isCompleted ? (
-                  <CheckCircle2 size={15} color="#10b981" />
-                ) : (
-                  <div
-                    style={{
-                      width: '18px',
-                      height: '18px',
-                      borderRadius: '50%',
-                      background: isCurrent ? 'rgba(255, 255, 255, 0.25)' : 'rgba(255, 255, 255, 0.05)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '0.72rem',
-                      fontWeight: 800,
-                    }}
-                  >
-                    {s.step}
-                  </div>
-                )}
-                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {s.title.replace(/\s*\(.*?\)/, '')}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Column 2: Center Interactive Content (Screen 2 / Screen 3 / Screen 4) */}
-        <div
-          style={{
-            padding: '2rem',
-            overflowY: 'auto',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '1.75rem',
-            maxWidth: '850px',
-            margin: '0 auto',
-            width: '100%',
-          }}
-        >
-          {/* If Task is Completed on commit/milestone step: Show Screen 3 (After Action - Visual Feedback) */}
-          {isStepCompleted && currentStepData.step >= 11 ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              {/* Success Banner */}
-              <div
-                style={{
-                  background: 'rgba(16, 185, 129, 0.12)',
-                  border: '1px solid #10b981',
-                  borderRadius: '12px',
-                  padding: '1rem 1.25rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.75rem',
-                  color: '#10b981',
-                  fontSize: '1.05rem',
-                  fontWeight: 800,
-                }}
-              >
-                <div
-                  style={{
-                    width: '24px',
-                    height: '24px',
-                    borderRadius: '50%',
-                    background: '#10b981',
-                    color: '#0b111e',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <Check size={16} strokeWidth={3} />
-                </div>
-                <span>Awesome! You just created a commit. Let's see what happened.</span>
-              </div>
-
-              {/* Before vs After Comparison */}
-              <div
-                className="before-after-grid"
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr auto 1fr',
-                  gap: '1rem',
-                  alignItems: 'center',
-                }}
-              >
-                {/* Before Card */}
-                <div
-                  style={{
-                    background: '#131d33',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                    borderRadius: '12px',
-                    padding: '1.25rem',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '0.5rem',
-                  }}
-                >
-                  <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase' }}>
-                    Before
-                  </span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700 }}>
-                    <FileText size={18} color="#94a3b8" />
-                    <span>index.html</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: '#f59e0b', fontSize: '0.8rem', fontWeight: 700 }}>
-                    <span>Changed</span>
-                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#f59e0b' }} />
-                  </div>
-                  <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
-                    Git noticed the change
-                  </div>
-                </div>
-
-                {/* Arrow */}
-                <div style={{ color: '#38bdf8', fontSize: '1.5rem', fontWeight: 900 }}>➔</div>
-
-                {/* After Card */}
-                <div
-                  style={{
-                    background: 'rgba(16, 185, 129, 0.08)',
-                    border: '1px solid rgba(16, 185, 129, 0.3)',
-                    borderRadius: '12px',
-                    padding: '1.25rem',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '0.5rem',
-                  }}
-                >
-                  <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#10b981', textTransform: 'uppercase' }}>
-                    After
-                  </span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 800, color: '#f8fafc' }}>
-                    <CheckCircle2 size={18} color="#10b981" />
-                    <span>Version 1</span>
-                  </div>
-                  <div style={{ fontSize: '0.82rem', color: '#10b981', fontWeight: 600 }}>
-                    Your work is now saved as a commit.
-                  </div>
-                </div>
-              </div>
-
-              {/* The command used box */}
-              <div
-                style={{
-                  background: '#131d33',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
-                  borderRadius: '12px',
-                  padding: '1.25rem',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.8rem',
-                }}
-              >
-                <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#94a3b8' }}>
-                  The command used:
-                </span>
-                <div
-                  style={{
-                    background: '#090e1a',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    borderRadius: '8px',
-                    padding: '0.75rem 1rem',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    fontFamily: 'monospace',
-                    fontSize: '0.92rem',
-                    color: '#38bdf8',
-                  }}
-                >
-                  <code>git commit -m "Save homepage"</code>
-                  <button
-                    onClick={() => handleCopyCommand('git commit -m "Save homepage"')}
-                    style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}
-                    title="Copy command"
-                  >
-                    <Copy size={16} />
-                  </button>
-                </div>
-
-                <button
-                  onClick={handleNextStep}
-                  style={{
-                    background: '#2563eb',
-                    color: 'white',
-                    border: 'none',
-                    padding: '0.85rem 1.5rem',
-                    borderRadius: '8px',
-                    fontWeight: 800,
-                    fontSize: '0.95rem',
-                    cursor: 'pointer',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '0.5rem',
-                    boxShadow: '0 4px 14px rgba(37, 99, 235, 0.4)',
-                    marginTop: '0.4rem',
-                  }}
-                >
-                  Next: See the history →
-                </button>
-              </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {/* Section Header */}
+          <div style={{ paddingLeft: '0.5rem' }}>
+            <div style={{ fontSize: '0.98rem', fontWeight: 900, color: '#f8fafc' }}>
+              Git Foundations
             </div>
-          ) : (
-            /* Otherwise: Show Screen 2 (Concept First) */
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              {/* Mission Header */}
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#f05033', fontSize: '0.8rem', fontWeight: 800, textTransform: 'uppercase' }}>
-                  <Sparkles size={14} /> Your Mission
-                </div>
-                <h1 style={{ fontSize: '2rem', fontWeight: 900, color: '#ffffff', margin: '0.3rem 0 0.6rem' }}>
-                  {currentStepData.title}
-                </h1>
-                <p style={{ fontSize: '1rem', color: '#94a3b8', lineHeight: 1.6, margin: 0 }}>
-                  {currentStepData.conceptBody}
-                </p>
-              </div>
+            <div style={{ fontSize: '0.72rem', color: '#64748b' }}>
+              Essential mental model & workflow
+            </div>
+          </div>
 
-              {/* Concept Visualization Card (Screen 2: Your project -> A saved version) */}
-              <div
-                className="concept-diagram-box"
-                style={{
-                  background: '#131d33',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
-                  borderRadius: '16px',
-                  padding: '1.75rem',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '2rem',
-                }}
-              >
-                {/* Project File Card */}
-                <div
+          {/* 12 Lessons Checklist */}
+          <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+            {FIRST_10_MINUTES_STEPS.map((s) => {
+              const isCurrent = s.step === first10Step;
+              const isDone = s.step < first10Step;
+              return (
+                <button
+                  key={s.step}
+                  onClick={() => setFirst10Step(s.step)}
                   style={{
+                    background: isCurrent ? 'rgba(37, 99, 235, 0.25)' : 'transparent',
+                    border: `1px solid ${isCurrent ? '#3b82f6' : 'transparent'}`,
+                    color: isCurrent ? '#ffffff' : isDone ? '#94a3b8' : '#64748b',
+                    borderRadius: '8px',
+                    padding: '0.5rem 0.65rem',
+                    fontSize: '0.82rem',
+                    fontWeight: isCurrent ? 800 : 500,
+                    textAlign: 'left',
+                    cursor: 'pointer',
                     display: 'flex',
-                    flexDirection: 'column',
                     alignItems: 'center',
                     gap: '0.6rem',
-                    textAlign: 'center',
+                    transition: 'all 0.15s ease',
                   }}
                 >
-                  <div
-                    style={{
-                      width: '64px',
-                      height: '64px',
-                      borderRadius: '12px',
-                      background: 'rgba(255, 255, 255, 0.05)',
-                      border: '1px solid rgba(255, 255, 255, 0.12)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: '#cbd5e1',
-                    }}
-                  >
-                    <FileText size={32} />
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#f8fafc' }}>
-                      Your project
-                    </div>
-                    <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                      (index.html changed)
-                    </div>
-                  </div>
-                </div>
-
-                {/* Green Transition Arrow */}
-                <div style={{ color: '#10b981', fontSize: '1.8rem', fontWeight: 900 }}>➔</div>
-
-                {/* Saved Version (Commit) Card */}
-                <div
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '0.6rem',
-                    textAlign: 'center',
-                  }}
-                >
-                  <div
-                    style={{
-                      width: '64px',
-                      height: '64px',
-                      borderRadius: '50%',
-                      background: 'radial-gradient(circle at 35% 30%, #38bdf8 0%, #1d4ed8 80%)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: '#ffffff',
-                      boxShadow: '0 4px 14px rgba(56, 189, 248, 0.35)',
-                    }}
-                  >
-                    <Camera size={30} />
-                  </div>
-                  <div>
-                    <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#f8fafc' }}>
-                      A saved version
-                    </div>
-                    <div style={{ fontSize: '0.75rem', color: '#38bdf8' }}>
-                      (a commit)
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Interactive Reasoning Box ("What do you think we should do?") */}
-              <div
-                style={{
-                  background: '#131d33',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
-                  borderRadius: '16px',
-                  padding: '1.5rem',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '1rem',
-                }}
-              >
-                <div style={{ fontSize: '0.92rem', fontWeight: 700, color: '#e2e8f0' }}>
-                  What do you think we should do?
-                </div>
-
-                <div style={{ display: 'flex', gap: '0.85rem' }}>
-                  <button
-                    onClick={() => setSelectedKnowledgeChoice('know')}
-                    style={{
-                      flex: 1,
-                      padding: '0.75rem 1rem',
-                      background: selectedKnowledgeChoice === 'know' ? '#2563eb' : '#0e172a',
-                      color: selectedKnowledgeChoice === 'know' ? '#ffffff' : '#94a3b8',
-                      border: `1px solid ${selectedKnowledgeChoice === 'know' ? '#3b82f6' : 'rgba(255, 255, 255, 0.1)'}`,
-                      borderRadius: '8px',
-                      fontWeight: 700,
-                      fontSize: '0.88rem',
-                      cursor: 'pointer',
-                      transition: 'all 0.15s ease',
-                    }}
-                  >
-                    I know
-                  </button>
-
-                  <button
-                    onClick={() => {
-                      setSelectedKnowledgeChoice('not-sure');
-                      setHintLevel(1);
-                    }}
-                    style={{
-                      flex: 1,
-                      padding: '0.75rem 1rem',
-                      background: selectedKnowledgeChoice === 'not-sure' ? 'rgba(245, 158, 11, 0.15)' : '#0e172a',
-                      color: selectedKnowledgeChoice === 'not-sure' ? '#f59e0b' : '#94a3b8',
-                      border: `1px solid ${selectedKnowledgeChoice === 'not-sure' ? '#f59e0b' : 'rgba(255, 255, 255, 0.1)'}`,
-                      borderRadius: '8px',
-                      fontWeight: 700,
-                      fontSize: '0.88rem',
-                      cursor: 'pointer',
-                      transition: 'all 0.15s ease',
-                    }}
-                  >
-                    I'm not sure
-                  </button>
-                </div>
-
-                {/* If user knows or is ready: Interactive Action Button */}
-                <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.4rem', alignItems: 'center' }}>
-                  {currentStepData.requiredActionType === 'terminal' && (
-                    <button
-                      onClick={runSampleAction}
+                  {isDone ? (
+                    <CheckCircle2 size={16} color="#10b981" />
+                  ) : (
+                    <span
                       style={{
-                        background: '#10b981',
-                        color: '#062016',
-                        border: 'none',
-                        padding: '0.65rem 1.25rem',
-                        borderRadius: '8px',
-                        fontSize: '0.85rem',
-                        fontWeight: 800,
-                        cursor: 'pointer',
+                        width: '18px',
+                        height: '18px',
+                        borderRadius: '50%',
+                        background: isCurrent ? '#2563eb' : 'rgba(255, 255, 255, 0.06)',
+                        color: isCurrent ? '#ffffff' : '#64748b',
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '0.4rem',
-                      }}
-                    >
-                      <Play size={14} fill="#062016" /> {currentStepData.primaryActionLabel}
-                    </button>
-                  )}
-
-                  {currentStepData.requiredActionType === 'editor' && (
-                    <button
-                      onClick={runSampleAction}
-                      style={{
-                        background: '#f05033',
-                        color: 'white',
-                        border: 'none',
-                        padding: '0.65rem 1.25rem',
-                        borderRadius: '8px',
-                        fontSize: '0.85rem',
+                        justifyContent: 'center',
+                        fontSize: '0.72rem',
                         fontWeight: 800,
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.4rem',
                       }}
                     >
-                      <Play size={14} /> {currentStepData.primaryActionLabel}
-                    </button>
-                  )}
-
-                  {isStepCompleted && (
-                    <span style={{ fontSize: '0.82rem', color: '#10b981', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                      <CheckCircle2 size={16} /> Task Complete!
+                      {s.step}
                     </span>
                   )}
-                </div>
+                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {s.title} {isCurrent && '✨'}
+                  </span>
+                </button>
+              );
+            })}
+          </nav>
+
+          {/* Next Up Box */}
+          {nextStepData && (
+            <div
+              style={{
+                background: 'rgba(255, 255, 255, 0.03)',
+                border: '1px solid rgba(255, 255, 255, 0.07)',
+                borderRadius: '10px',
+                padding: '0.85rem',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.35rem',
+              }}
+            >
+              <div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase' }}>
+                Next up
               </div>
-
-              {/* If step 7 or later: Show Screen 4 (What Git Sees Visualizer) */}
-              {first10Step >= 7 && (
-                <div style={{ marginTop: '0.5rem' }}>
-                  <ThreeAreaVisualizer />
-                </div>
-              )}
-
-              {/* Embedded Terminal (when on terminal steps 3 to 6, or 9 to 12) */}
-              {first10Step >= 3 && first10Step <= 6 && (
-                <div style={{ height: '240px', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
-                  <Terminal />
-                </div>
-              )}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 800, fontSize: '0.85rem', color: '#cbd5e1' }}>
+                <ChevronRight size={16} color="#38bdf8" /> {nextStepData.title}
+              </div>
+              <div style={{ fontSize: '0.72rem', color: '#64748b' }}>
+                {nextStepData.subtitle}
+              </div>
             </div>
           )}
         </div>
 
-        {/* Column 3: Forge (Your Mentor) Card & Continue Button */}
-        <div
-          style={{
-            borderLeft: '1px solid rgba(255, 255, 255, 0.08)',
-            background: '#0e172a',
-            padding: '1.5rem 1.25rem',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            gap: '1.5rem',
-          }}
-          className="learn-mentor-sidebar"
-        >
-          {/* Mentor Profile & Dialogue */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-            {/* Header with Mascot Avatar */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-              <ForgeAvatar size={48} mood="happy" />
-              <div>
-                <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#f8fafc' }}>
-                  Forge
-                </div>
-                <div style={{ fontSize: '0.72rem', color: '#64748b' }}>
-                  Your Mentor
-                </div>
-              </div>
-            </div>
-
-            {/* Speech Dialogue Bubble */}
+        {/* Bottom Sidebar: Progress Dial & Mentor Quote */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '1rem' }}>
+          {/* Progress Box */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <div
               style={{
-                background: '#131d33',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                borderRadius: '12px',
-                padding: '1rem',
-                fontSize: '0.88rem',
-                color: '#cbd5e1',
-                lineHeight: 1.55,
-                position: 'relative',
+                width: '42px',
+                height: '42px',
+                borderRadius: '50%',
+                background: 'conic-gradient(#38bdf8 0% ' + progressPercent + '%, rgba(255, 255, 255, 0.1) ' + progressPercent + '% 100%)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '0.75rem',
+                fontWeight: 800,
+                color: '#38bdf8',
               }}
             >
-              {isStepCompleted && currentStepData.step >= 11
-                ? "That's it! You just saved your first version. A commit is like a photo of your project at this moment in time."
-                : currentStepData.forgeMessage}
+              <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#0b1120', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {progressPercent}%
+              </div>
             </div>
+            <div>
+              <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#f8fafc' }}>
+                Your Progress
+              </div>
+              <div style={{ fontSize: '0.72rem', color: '#64748b' }}>
+                {first10Step - 1} of 12 lessons completed
+              </div>
+            </div>
+          </div>
 
-            {/* Progressive Hint Button */}
-            {!isStepCompleted && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          {/* Forge Avatar Motivation Bubble */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', background: 'rgba(255, 255, 255, 0.03)', padding: '0.6rem 0.75rem', borderRadius: '8px' }}>
+            <ForgeAvatar size={34} mood="happy" />
+            <div style={{ fontSize: '0.74rem', color: '#cbd5e1', lineHeight: 1.4 }}>
+              "You're doing great! Every expert was once a beginner."
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      {/* COLUMN 2: Main Interactive Content Area (Matching Mockup) */}
+      <main
+        style={{
+          overflowY: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          padding: '1.5rem 2rem',
+          gap: '1.5rem',
+          maxWidth: '1280px',
+          margin: '0 auto',
+          width: '100%',
+        }}
+      >
+        {/* Header Breadcrumbs & Title */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.78rem', color: '#64748b' }}>
+            <span style={{ cursor: 'pointer' }} onClick={() => setMode('dashboard')}>Learn</span>
+            <span>&gt;</span>
+            <span>Git Foundations</span>
+            <span>&gt;</span>
+            <span style={{ color: '#38bdf8', fontWeight: 700 }}>
+              🚀 {currentStepData.title}
+            </span>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <h1 style={{ fontSize: '1.8rem', fontWeight: 900, color: '#f8fafc', margin: 0 }}>
+                {currentStepData.title}
+              </h1>
+              <span
+                style={{
+                  fontSize: '0.75rem',
+                  fontWeight: 800,
+                  color: '#10b981',
+                  background: 'rgba(16, 185, 129, 0.15)',
+                  border: '1px solid rgba(16, 185, 129, 0.3)',
+                  padding: '0.2rem 0.6rem',
+                  borderRadius: '999px',
+                }}
+              >
+                Step {first10Step} of {FIRST_10_MINUTES_STEPS.length}
+              </span>
+            </div>
+          </div>
+
+          <p style={{ fontSize: '0.95rem', color: '#94a3b8', margin: '0.2rem 0 0', lineHeight: 1.5 }}>
+            {currentStepData.conceptBody}
+          </p>
+        </div>
+
+        {/* Center Stage: The Interactive Git Animation Stage */}
+        <GitAnimationStage
+          commandId={currentStepData.commandId}
+          repo={repo}
+          onExecuteCommand={executeCommand}
+          onUpdateFileContent={updateEditorContent}
+        />
+
+        {/* Bottom Section: Left Tabs (Terminal / Output / Notes) + Right Column (Mentor / Takeaways / Try It) */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'minmax(400px, 1.4fr) minmax(320px, 1fr)',
+            gap: '1.5rem',
+          }}
+          className="learn-bottom-grid"
+        >
+          {/* Bottom Left Panel: Tabbed Container */}
+          <div
+            style={{
+              background: '#0b1120',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              borderRadius: '14px',
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'hidden',
+              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)',
+            }}
+          >
+            {/* Tabs Header */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '0 1rem',
+                background: '#0e172a',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+                height: '42px',
+              }}
+            >
+              <div style={{ display: 'flex', gap: '0.35rem' }}>
                 <button
-                  onClick={() => setHintLevel(prev => (prev < 3 ? prev + 1 : 1))}
+                  onClick={() => setBottomTab('terminal')}
                   style={{
-                    background: 'rgba(255, 255, 255, 0.04)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    color: '#94a3b8',
-                    padding: '0.55rem 0.8rem',
-                    borderRadius: '8px',
-                    fontSize: '0.8rem',
+                    background: bottomTab === 'terminal' ? 'rgba(56, 189, 248, 0.15)' : 'transparent',
+                    color: bottomTab === 'terminal' ? '#38bdf8' : '#94a3b8',
+                    border: 'none',
+                    padding: '0.35rem 0.75rem',
+                    borderRadius: '6px',
+                    fontSize: '0.78rem',
                     fontWeight: 700,
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '0.4rem',
+                    gap: '0.35rem',
                   }}
                 >
-                  <HelpCircle size={14} color="#38bdf8" /> Give me a hint
+                  <TerminalIcon size={14} /> Terminal
                 </button>
-
-                {hintLevel > 0 && (
-                  <div
-                    style={{
-                      background: 'rgba(56, 189, 248, 0.08)',
-                      border: '1px solid rgba(56, 189, 248, 0.25)',
-                      borderRadius: '8px',
-                      padding: '0.75rem',
-                      fontSize: '0.8rem',
-                      color: '#38bdf8',
-                      lineHeight: 1.45,
-                    }}
-                  >
-                    💡 {hintLevel === 1 ? currentStepData.hint1 : hintLevel === 2 ? currentStepData.hint2 : currentStepData.hint3}
-                  </div>
-                )}
+                <button
+                  onClick={() => setBottomTab('output')}
+                  style={{
+                    background: bottomTab === 'output' ? 'rgba(56, 189, 248, 0.15)' : 'transparent',
+                    color: bottomTab === 'output' ? '#38bdf8' : '#94a3b8',
+                    border: 'none',
+                    padding: '0.35rem 0.75rem',
+                    borderRadius: '6px',
+                    fontSize: '0.78rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                  }}
+                >
+                  <FileText size={14} /> Output
+                </button>
+                <button
+                  onClick={() => setBottomTab('notes')}
+                  style={{
+                    background: bottomTab === 'notes' ? 'rgba(56, 189, 248, 0.15)' : 'transparent',
+                    color: bottomTab === 'notes' ? '#38bdf8' : '#94a3b8',
+                    border: 'none',
+                    padding: '0.35rem 0.75rem',
+                    borderRadius: '6px',
+                    fontSize: '0.78rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                  }}
+                >
+                  <BookOpen size={14} /> Notes
+                </button>
               </div>
-            )}
+
+              <button
+                onClick={() => handleCopyCommand(currentStepData.terminalSampleCommand)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#94a3b8',
+                  fontSize: '0.72rem',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.3rem',
+                }}
+              >
+                <Copy size={13} /> {copiedCmd ? 'Copied!' : 'Copy'}
+              </button>
+            </div>
+
+            {/* Tab Body: Real Terminal Runner or Realistic Output */}
+            <div style={{ height: '280px', overflow: 'hidden' }}>
+              {bottomTab === 'terminal' && <Terminal />}
+
+              {bottomTab === 'output' && (
+                <div style={{ padding: '1rem', fontFamily: 'monospace', fontSize: '0.85rem', color: '#cbd5e1', overflowY: 'auto', height: '100%' }}>
+                  <div style={{ color: '#38bdf8', marginBottom: '0.5rem' }}>
+                    $ {currentStepData.terminalSampleCommand}
+                  </div>
+                  {currentStepData.terminalSampleOutput.map((line, idx) => (
+                    <div key={idx} style={{ lineHeight: 1.5 }}>
+                      {line}
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {bottomTab === 'notes' && (
+                <div style={{ padding: '1rem', fontSize: '0.85rem', color: '#cbd5e1', lineHeight: 1.6, overflowY: 'auto', height: '100%' }}>
+                  <div style={{ fontWeight: 800, color: '#f8fafc', marginBottom: '0.4rem' }}>
+                    Mental Model Summary
+                  </div>
+                  <p style={{ margin: '0 0 0.75rem' }}>{currentStepData.conceptBody}</p>
+                  <div style={{ fontWeight: 800, color: '#f8fafc', marginBottom: '0.4rem' }}>
+                    Rules of Thumb
+                  </div>
+                  <ul style={{ margin: 0, paddingLeft: '1.2rem' }}>
+                    {currentStepData.keyTakeaways.map((k, idx) => (
+                      <li key={idx} style={{ marginBottom: '0.35rem' }}>{k}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Primary Bottom Action CTA: Continue */}
-          <div>
-            <button
-              onClick={handleNextStep}
+          {/* Bottom Right Column: Mentor, What's Happening, Key Takeaways, Try It Yourself */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {/* Forge (Your Mentor) Card */}
+            <div
               style={{
-                width: '100%',
-                background: isStepCompleted || first10Step < 4 || first10Step === 7 ? '#2563eb' : '#1e293b',
-                color: isStepCompleted || first10Step < 4 || first10Step === 7 ? 'white' : '#64748b',
-                border: 'none',
-                padding: '0.9rem',
-                borderRadius: '8px',
-                fontWeight: 800,
-                fontSize: '0.95rem',
-                cursor: isStepCompleted || first10Step < 4 || first10Step === 7 ? 'pointer' : 'not-allowed',
+                background: '#0b1120',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '14px',
+                padding: '1.1rem',
                 display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '0.4rem',
-                boxShadow: isStepCompleted ? '0 4px 14px rgba(37, 99, 235, 0.4)' : 'none',
-                transition: 'all 0.15s ease',
+                flexDirection: 'column',
+                gap: '0.75rem',
               }}
             >
-              {isStepCompleted || first10Step < 4 || first10Step === 7 ? (
-                <>
-                  Continue <ArrowRight size={18} />
-                </>
-              ) : (
-                <>
-                  <Lock size={15} /> Complete task first
-                </>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                <ForgeAvatar size={38} mood="happy" />
+                <div>
+                  <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#f8fafc' }}>
+                    Forge (Your Mentor)
+                  </div>
+                  <div style={{ fontSize: '0.7rem', color: '#64748b' }}>
+                    Senior Dev Guidance
+                  </div>
+                </div>
+              </div>
+              <div style={{ fontSize: '0.84rem', color: '#cbd5e1', lineHeight: 1.5, background: 'rgba(255, 255, 255, 0.03)', padding: '0.75rem', borderRadius: '8px' }}>
+                {currentStepData.forgeMessage}
+              </div>
+            </div>
+
+            {/* What's Happening? Card (Matching Mockup with numbered steps) */}
+            <div
+              style={{
+                background: '#0b1120',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '14px',
+                padding: '1.1rem',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.75rem',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.85rem', fontWeight: 800, color: '#f8fafc' }}>
+                <span>💡</span> What's happening?
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                {currentStepData.whatsHappeningSteps.map((wh) => (
+                  <div key={wh.number} style={{ display: 'flex', gap: '0.65rem', alignItems: 'flex-start' }}>
+                    <div
+                      style={{
+                        width: '20px',
+                        height: '20px',
+                        borderRadius: '50%',
+                        background: '#2563eb',
+                        color: 'white',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '0.72rem',
+                        fontWeight: 800,
+                        flexShrink: 0,
+                        marginTop: '0.1rem',
+                      }}
+                    >
+                      {wh.number}
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#f8fafc' }}>
+                        {wh.title}
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                        {wh.description}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Key Takeaways Card */}
+            <div
+              style={{
+                background: '#0b1120',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                borderRadius: '14px',
+                padding: '1.1rem',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.6rem',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.85rem', fontWeight: 800, color: '#f8fafc' }}>
+                <span>📖</span> Key Takeaways
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                {currentStepData.keyTakeaways.map((kt, idx) => (
+                  <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.78rem', color: '#cbd5e1' }}>
+                    <CheckCircle2 size={14} color="#10b981" />
+                    <span>{kt}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Try It Yourself Box (Matching Mockup) */}
+            <div
+              style={{
+                background: 'rgba(37, 99, 235, 0.1)',
+                border: '1px solid rgba(37, 99, 235, 0.3)',
+                borderRadius: '14px',
+                padding: '1.1rem',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.75rem',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.85rem', fontWeight: 800, color: '#38bdf8' }}>
+                <span>&gt;_</span> Try it yourself
+              </div>
+              <div style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
+                Run the command to execute this operation on the Git Engine:
+              </div>
+
+              {/* Command Pill */}
+              <div
+                style={{
+                  background: '#090e1a',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  borderRadius: '8px',
+                  padding: '0.6rem 0.85rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  fontFamily: 'monospace',
+                  fontSize: '0.85rem',
+                  color: '#38bdf8',
+                }}
+              >
+                <span>{currentStepData.expectedCommand || currentStepData.terminalSampleCommand}</span>
+                <button
+                  onClick={() => handleCopyCommand(currentStepData.expectedCommand || currentStepData.terminalSampleCommand)}
+                  style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}
+                  title="Copy command"
+                >
+                  <Copy size={14} />
+                </button>
+              </div>
+
+              {/* Run Command Button */}
+              <button
+                onClick={runSampleAction}
+                style={{
+                  background: '#2563eb',
+                  color: 'white',
+                  border: 'none',
+                  padding: '0.75rem 1rem',
+                  borderRadius: '8px',
+                  fontWeight: 800,
+                  fontSize: '0.9rem',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.5rem',
+                  boxShadow: '0 4px 14px rgba(37, 99, 235, 0.4)',
+                }}
+              >
+                <Play size={16} fill="white" /> Run Command
+              </button>
+
+              {/* Navigation Controls: Next Step & Need a hint */}
+              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.25rem' }}>
+                <button
+                  onClick={handleNextStep}
+                  style={{
+                    flex: 1,
+                    background: '#1e293b',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    color: '#f8fafc',
+                    padding: '0.65rem',
+                    borderRadius: '8px',
+                    fontWeight: 700,
+                    fontSize: '0.82rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.35rem',
+                  }}
+                >
+                  Next Step <ArrowRight size={14} />
+                </button>
+
+                <button
+                  onClick={() => setHintLevel((prev) => (prev < 3 ? prev + 1 : 1))}
+                  style={{
+                    background: 'none',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    color: '#f59e0b',
+                    padding: '0.65rem 0.85rem',
+                    borderRadius: '8px',
+                    fontWeight: 700,
+                    fontSize: '0.82rem',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                  }}
+                >
+                  <HelpCircle size={14} /> Hint
+                </button>
+              </div>
+
+              {hintLevel > 0 && (
+                <div style={{ fontSize: '0.78rem', color: '#f59e0b', background: 'rgba(245, 158, 11, 0.1)', padding: '0.5rem 0.75rem', borderRadius: '6px' }}>
+                  💡 {hintLevel === 1 ? currentStepData.hint1 : hintLevel === 2 ? currentStepData.hint2 : currentStepData.hint3}
+                </div>
               )}
-            </button>
+            </div>
           </div>
         </div>
-      </div>
+      </main>
 
-      {/* Transition to Developer IDE Modal (Point 27) */}
+      {/* Transition to Developer IDE Modal */}
       {showTransitionModal && (
         <div
           style={{
             position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0, 0, 0, 0.78)',
+            inset: 0,
+            background: 'rgba(0, 0, 0, 0.8)',
             backdropFilter: 'blur(8px)',
             display: 'flex',
             alignItems: 'center',
@@ -839,10 +703,10 @@ export const First10MinutesView: React.FC = () => {
           >
             <div style={{ fontSize: '3rem' }}>🎉</div>
             <h2 style={{ fontSize: '1.8rem', fontWeight: 900, color: '#f8fafc', margin: 0 }}>
-              You've Learned the Basics!
+              You've Learned Git Foundations!
             </h2>
             <p style={{ color: '#94a3b8', fontSize: '0.98rem', lineHeight: 1.6, margin: 0 }}>
-              You understand the fundamental rhythm of Git: files on your desk, selective packing in the staging box, and permanent snapshot commits in your timeline.
+              You understand the fundamental rhythm of Git: files on your desk, selective packing in the staging box, permanent snapshots in your timeline, and sharing with remote repositories.
             </p>
 
             <div style={{ display: 'flex', gap: '0.8rem', width: '100%', marginTop: '0.5rem' }}>
@@ -871,9 +735,7 @@ export const First10MinutesView: React.FC = () => {
               </button>
 
               <button
-                onClick={() => {
-                  setMode('practice');
-                }}
+                onClick={() => setMode('practice')}
                 style={{
                   flex: 1,
                   background: '#1e293b',

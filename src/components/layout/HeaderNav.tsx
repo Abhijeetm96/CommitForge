@@ -11,6 +11,7 @@ import {
   GitBranch,
   CheckCircle2,
   X,
+  Film,
 } from 'lucide-react';
 
 export const HeaderNav: React.FC = () => {
@@ -25,6 +26,7 @@ export const HeaderNav: React.FC = () => {
     setProjectKey,
     resetCurrentExercise,
     setShowLostDrawer,
+    setShowGitMovie,
     repo,
   } = useApp();
 
@@ -231,19 +233,41 @@ export const HeaderNav: React.FC = () => {
         </button>
       </nav>
 
-      {/* Right Action Icons: Status Badge (in IDE) & Settings Gear */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', position: 'relative' }}>
+      {/* Right Action Icons: Git Movie, Lost Helper, Status Badge, Settings Gear */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', position: 'relative' }}>
+        {/* 🎬 Git Movie Mode Trigger */}
+        <button
+          onClick={() => setShowGitMovie(true)}
+          style={{
+            background: 'linear-gradient(135deg, rgba(240, 80, 51, 0.15), rgba(234, 88, 12, 0.2))',
+            color: '#fb923c',
+            border: '1px solid rgba(240, 80, 51, 0.4)',
+            borderRadius: '999px',
+            padding: '0.35rem 0.85rem',
+            fontSize: '0.78rem',
+            fontWeight: 800,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.4rem',
+            boxShadow: '0 2px 8px rgba(240, 80, 51, 0.2)',
+          }}
+          title="Git Movie - 20–60 second cinematic visual overviews"
+        >
+          <Film size={14} color="#f05033" /> <span>Git Movie</span>
+        </button>
+
         {/* I'm Lost quick helper trigger */}
         <button
           onClick={() => setShowLostDrawer(true)}
           style={{
-            background: 'rgba(240, 80, 51, 0.12)',
-            color: '#f05033',
-            border: '1px solid rgba(240, 80, 51, 0.3)',
+            background: 'rgba(255, 255, 255, 0.05)',
+            color: '#94a3b8',
+            border: '1px solid rgba(255, 255, 255, 0.12)',
             borderRadius: '999px',
-            padding: '0.3rem 0.75rem',
+            padding: '0.35rem 0.75rem',
             fontSize: '0.75rem',
-            fontWeight: 800,
+            fontWeight: 700,
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
@@ -251,7 +275,7 @@ export const HeaderNav: React.FC = () => {
           }}
           title="I'm Lost - Get friendly help"
         >
-          <LifeBuoy size={13} /> <span className="header-lost-label">I'm Lost</span>
+          <LifeBuoy size={13} color="#f05033" /> <span className="header-lost-label">I'm Lost</span>
         </button>
 
         {/* IDE Git Branch & Status Pill (shown in Screen 9) */}

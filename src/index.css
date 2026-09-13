@@ -822,3 +822,64 @@ body {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* 🎬 Animation-First Git Physics Keyframes */
+@keyframes packetStream {
+  0% {
+    left: -35%;
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(56, 189, 248, 0.7);
+  }
+}
+
+/* Tablet & Mobile responsive rules for Animation-First Learn layout */
+@media (max-width: 1024px) {
+  .first10-main-layout {
+    grid-template-columns: 220px 1fr !important;
+  }
+  .learn-bottom-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .first10-main-layout {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .curriculum-sidebar {
+    max-height: 120px !important;
+    flex-shrink: 0 !important;
+    border-right: none !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    padding: 0.65rem !important;
+  }
+  .theater-nodes-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+  .learn-bottom-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .movie-modal-grid {
+    grid-template-columns: 1fr !important;
+  }
+}

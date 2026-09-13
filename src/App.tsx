@@ -20,6 +20,7 @@ import { ForgeTutor } from './components/tutor/ForgeTutor';
 import { ImLostDrawer } from './components/tutor/ImLostDrawer';
 import { OnboardingWizard } from './components/tutor/OnboardingWizard';
 import { GitForHumansModal } from './components/tutor/GitForHumansModal';
+import { GitMovieModal } from './components/animation/GitMovieModal';
 import { Database } from 'lucide-react';
 
 const AppContent: React.FC = () => {
@@ -30,6 +31,10 @@ const AppContent: React.FC = () => {
     setShowOnboarding,
     showLostDrawer,
     setShowLostDrawer,
+    showGitMovie,
+    setShowGitMovie,
+    repo,
+    executeCommand,
     activeHumansTerm,
     closeHumansModal,
   } = useApp();
@@ -105,6 +110,15 @@ const AppContent: React.FC = () => {
 
       {showLostDrawer && (
         <ImLostDrawer isOpen={showLostDrawer} onClose={() => setShowLostDrawer(false)} />
+      )}
+
+      {showGitMovie && (
+        <GitMovieModal
+          isOpen={showGitMovie}
+          onClose={() => setShowGitMovie(false)}
+          repo={repo}
+          onExecuteCommand={executeCommand}
+        />
       )}
 
       {activeHumansTerm && (
