@@ -21,6 +21,7 @@ import { ImLostDrawer } from './components/tutor/ImLostDrawer';
 import { OnboardingWizard } from './components/tutor/OnboardingWizard';
 import { GitForHumansModal } from './components/tutor/GitForHumansModal';
 import { GitMovieModal } from './components/animation/GitMovieModal';
+import { Agentation } from 'agentation';
 import { Database } from 'lucide-react';
 
 const AppContent: React.FC = () => {
@@ -124,6 +125,9 @@ const AppContent: React.FC = () => {
       {activeHumansTerm && (
         <GitForHumansModal termId={activeHumansTerm} onClose={closeHumansModal} />
       )}
+
+      {/* Visual Feedback toolbar for AI Agents & Developers */}
+      <Agentation />
     </>
   );
 };
