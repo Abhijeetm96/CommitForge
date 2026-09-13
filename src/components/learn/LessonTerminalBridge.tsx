@@ -1,21 +1,28 @@
 import React, { useState } from 'react';
-import { Terminal, CheckCircle2, AlertCircle, ArrowRight, Play, Sparkles } from 'lucide-react';
+import { Terminal, CheckCircle2, AlertCircle, ArrowRight, Play, HelpCircle, Sparkles } from 'lucide-react';
 import { GitEngine } from '../../git-engine/engine';
 
 interface LessonTerminalBridgeProps {
   expectedCommand: string;
   engine: GitEngine;
   onSuccess: () => void;
+  progressiveHints?: string[];
 }
 
 export const LessonTerminalBridge: React.FC<LessonTerminalBridgeProps> = ({
   expectedCommand,
   engine,
   onSuccess,
+  progressiveHints = [
+    'What command starts with the action you took?',
+    'Which file did you just touch?',
+    `Type: ${expectedCommand}`,
+  ],
 }) => {
   const [inputValue, setInputValue] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorFeedback, setErrorFeedback] = useState<string | null>(null);
+  const [hintIndex, setHintIndex] = useState<number>(-1);
 
   const handleSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -56,12 +63,12 @@ export const LessonTerminalBridge: React.FC<LessonTerminalBridgeProps> = ({
         setErrorFeedback(errorMsg);
       }
     } else {
-      setErrorFeedback(`Expected: "${expectedCommand}". Try typing the exact command or click Auto-fill.`);
+      setErrorFeedback(`Command not recognized. Type the exact command or ask for a hint below.`);
     }
   };
 
-  const handleAutofill = () => {
-    setInputValue(expectedCommand);
+  const handleNextHint = () => {
+    setHintIndex(prev => Math.min(prev + 1, progressiveHints.length - 1));
   };
 
   return (
@@ -72,16 +79,16 @@ export const LessonTerminalBridge: React.FC<LessonTerminalBridgeProps> = ({
         margin: '0 auto',
       }}
     >
-      {/* Friendly One-sentence beginner explanation */}
+      {/* Friendly One-sentence beginner reminder */}
       <div
         style={{
           fontSize: '0.85rem',
           color: '#94a3b8',
           textAlign: 'center',
-          marginBottom: '1rem',
+          marginBottom: '0.85rem',
         }}
       >
-        A <strong>terminal</strong> lets you control your computer and Git by typing commands.
+        You just did this visually: <code style={{ color: '#38bdf8', fontWeight: 700 }}>{expectedCommand}</code>
       </div>
 
       {/* Terminal Window Box */}
@@ -94,7 +101,7 @@ export const LessonTerminalBridge: React.FC<LessonTerminalBridgeProps> = ({
           boxShadow: '0 12px 32px rgba(0, 0, 0, 0.6)',
         }}
       >
-        {/* Terminal Header Bar */}
+        {/* Terminal Header Bar (Clean, NO giant auto-fill button!) */}
         <div
           style={{
             background: 'rgba(255, 255, 255, 0.04)',
@@ -110,30 +117,31 @@ export const LessonTerminalBridge: React.FC<LessonTerminalBridgeProps> = ({
             <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#eab308' }} />
             <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#22c55e' }} />
             <span style={{ fontSize: '0.75rem', color: '#64748b', marginLeft: '0.5rem', fontFamily: 'monospace' }}>
-              bash — commitforge-terminal
+              bash — commitforge
             </span>
           </div>
 
-          <button
-            onClick={handleAutofill}
-            style={{
-              background: 'rgba(56, 189, 248, 0.1)',
-              border: '1px solid rgba(56, 189, 248, 0.25)',
-              borderRadius: '6px',
-              padding: '0.2rem 0.6rem',
-              color: '#38bdf8',
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.3rem',
-            }}
-            title="Auto-fill recommended command"
-          >
-            <Sparkles size={12} />
-            <span>Auto-fill</span>
-          </button>
+          {/* Quiet "I'm not sure" progressive hint trigger */}
+          {!isSuccess && (
+            <button
+              onClick={handleNextHint}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#94a3b8',
+                fontSize: '0.75rem',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.3rem',
+                padding: '0.2rem 0.5rem',
+                borderRadius: '4px',
+              }}
+            >
+              <HelpCircle size={13} />
+              <span>🤔 I'm not sure</span>
+            </button>
+          )}
         </div>
 
         {/* Terminal Prompt Area */}
@@ -152,7 +160,7 @@ export const LessonTerminalBridge: React.FC<LessonTerminalBridgeProps> = ({
               type="text"
               value={inputValue}
               onChange={e => setInputValue(e.target.value)}
-              placeholder={expectedCommand}
+              placeholder="Type your command here..."
               disabled={isSuccess}
               autoFocus
               style={{
@@ -188,6 +196,44 @@ export const LessonTerminalBridge: React.FC<LessonTerminalBridgeProps> = ({
             )}
           </div>
         </form>
+
+        {/* Progressive Hint Reveal (Hint 1 -> 2 -> 3) */}
+        {hintIndex >= 0 && !isSuccess && (
+          <div
+            style={{
+              padding: '0.65rem 1.25rem',
+              background: 'rgba(56, 189, 248, 0.08)',
+              borderTop: '1px solid rgba(56, 189, 248, 0.2)',
+              fontSize: '0.82rem',
+              color: '#bae6fd',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <div>
+              <strong>Hint {hintIndex + 1}:</strong> {progressiveHints[hintIndex]}
+            </div>
+
+            {/* If reached final hint, allow small fallback autofill */}
+            {hintIndex === progressiveHints.length - 1 && (
+              <button
+                type="button"
+                onClick={() => setInputValue(expectedCommand)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#38bdf8',
+                  fontSize: '0.72rem',
+                  textDecoration: 'underline',
+                  cursor: 'pointer',
+                }}
+              >
+                paste command
+              </button>
+            )}
+          </div>
+        )}
 
         {/* Error Feedback */}
         {errorFeedback && (
@@ -225,7 +271,7 @@ export const LessonTerminalBridge: React.FC<LessonTerminalBridgeProps> = ({
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <CheckCircle2 size={18} color="#22c55e" />
-              <span>✓ Git command successfully executed on the repository!</span>
+              <span>✓ Git command executed successfully!</span>
             </div>
 
             <button

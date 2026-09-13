@@ -9,7 +9,7 @@ import { TechnicalReveal } from './TechnicalReveal';
 import { LessonTerminalBridge } from './LessonTerminalBridge';
 import { ContextualForge } from './ContextualForge';
 import { LessonTopicPicker } from './LessonTopicPicker';
-import { ArrowLeft, ArrowRight, RotateCcw } from 'lucide-react';
+import { ArrowLeft, ArrowRight, HelpCircle, ChevronDown, ChevronUp } from 'lucide-react';
 
 export const FocusLessonView: React.FC = () => {
   const { engine, repo, recordSkillEvidence, recordPrediction } = useApp();
@@ -18,22 +18,29 @@ export const FocusLessonView: React.FC = () => {
   const [currentSceneIndex, setCurrentSceneIndex] = useState<number>(0);
   const [isForgeOpen, setIsForgeOpen] = useState(false);
   const [completedLessons, setCompletedLessons] = useState<string[]>([]);
+  const [showWhyExplanation, setShowWhyExplanation] = useState(false);
 
   // Local interactive scene state overrides
-  const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [stagedFiles, setStagedFiles] = useState<string[]>([]);
   const [packetProgress, setPacketProgress] = useState<number>(0);
 
   const activeLesson = activeLessonId ? FOCUS_LESSONS[activeLessonId] : null;
   const currentScene: FocusScene | null = activeLesson ? activeLesson.scenes[currentSceneIndex] || null : null;
 
-  // Reset interactive overrides when scene changes
+  // Ensure repo is initialized when entering focus lessons
+  useEffect(() => {
+    if (!repo.initialized) {
+      engine.execute('git init');
+    }
+  }, [repo.initialized, engine]);
+
+  // Reset interactive overrides and why explanation when scene changes
   useEffect(() => {
     if (currentScene) {
-      setSelectedFile(null);
       setStagedFiles([...currentScene.visualState.stagingFiles]);
       setPacketProgress(currentScene.visualState.packetTransfer?.progressPercent || 0);
       setIsForgeOpen(false);
+      setShowWhyExplanation(false);
     }
   }, [currentSceneIndex, activeLessonId]);
 
@@ -77,26 +84,16 @@ export const FocusLessonView: React.FC = () => {
     }
   };
 
-  // Scene-specific interactive triggers
-  const handleFileClick = (fileName: string) => {
-    setSelectedFile(fileName);
-    if (currentScene.actionType === 'select_file') {
-      // Advance to prediction
-      handleNextScene();
-    }
-  };
-
+  // Direct physical manipulation handlers
   const handleStageFile = (fileName: string) => {
     setStagedFiles(prev => (prev.includes(fileName) ? prev : [...prev, fileName]));
-    // Synchronize with real GitEngine
-    engine.execute('git add index.html');
+    engine.execute(`git add ${fileName}`);
     setTimeout(() => {
       handleNextScene();
     }, 400);
   };
 
   const handleTakeSnapshot = () => {
-    // Synchronize with real GitEngine
     engine.execute('git commit -m "Add hero section"');
     setStagedFiles([]);
     setTimeout(() => {
@@ -104,9 +101,8 @@ export const FocusLessonView: React.FC = () => {
     }, 450);
   };
 
-  const handleSendPacket = () => {
+  const handleTransferCommit = () => {
     setPacketProgress(100);
-    // Real Git engine remote sync
     engine.execute('git push origin main');
     setTimeout(() => {
       handleNextScene();
@@ -123,7 +119,6 @@ export const FocusLessonView: React.FC = () => {
   // Compute visual state merging defaults and scene overrides
   const workingFiles = currentScene.visualState.workingFiles.map(f => ({
     ...f,
-    isSelected: selectedFile === f.name || f.isSelected,
     status: stagedFiles.includes(f.name) ? ('staged' as const) : f.status,
   }));
 
@@ -141,11 +136,11 @@ export const FocusLessonView: React.FC = () => {
       }}
     >
       {/* ============================================================ */}
-      {/* ZONE 1: MINIMAL TOP BAR */}
+      {/* ZONE 1: MINIMAL TOP BAR (Whisper-quiet, non-slideshow) */}
       {/* ============================================================ */}
       <nav
         style={{
-          height: '52px',
+          height: '48px',
           borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
           display: 'flex',
           alignItems: 'center',
@@ -172,29 +167,20 @@ export const FocusLessonView: React.FC = () => {
             borderRadius: '6px',
             transition: 'color 0.15s ease',
           }}
-          title="Return to lesson topics or previous scene"
+          title="Return to lesson topics or previous step"
         >
           <ArrowLeft size={16} />
           <span>Back</span>
         </button>
 
-        {/* Center: Lesson Name and Scene X / Y */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <span style={{ fontSize: '0.95rem', fontWeight: 800, color: '#f8fafc' }}>
-            {currentScene.lessonTitle}
+        {/* Center: Subtle Title only (No loud Scene 1 / 7 slideshow counter!) */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <span style={{ fontSize: '0.9rem', fontWeight: 800, color: '#f8fafc' }}>
+            {activeLesson.conceptTitle}
           </span>
-          <span
-            style={{
-              fontSize: '0.75rem',
-              color: '#64748b',
-              fontWeight: 700,
-              background: 'rgba(255, 255, 255, 0.05)',
-              padding: '0.15rem 0.55rem',
-              borderRadius: '999px',
-              fontFamily: 'monospace',
-            }}
-          >
-            Scene {currentScene.sceneNumber} / {currentScene.totalScenes}
+          <span style={{ fontSize: '0.75rem', color: '#64748b' }}>•</span>
+          <span style={{ fontSize: '0.78rem', color: '#94a3b8', fontWeight: 600 }}>
+            {activeLesson.title}
           </span>
         </div>
 
@@ -207,20 +193,20 @@ export const FocusLessonView: React.FC = () => {
         />
       </nav>
 
-      {/* Subtle Progress Bar */}
-      <div style={{ height: '2px', background: 'rgba(255, 255, 255, 0.06)', width: '100%' }}>
+      {/* Subtle Progress Line */}
+      <div style={{ height: '2px', background: 'rgba(255, 255, 255, 0.04)', width: '100%' }}>
         <div
           style={{
             height: '100%',
             width: `${(currentScene.sceneNumber / currentScene.totalScenes) * 100}%`,
             background: 'linear-gradient(90deg, #f05033, #38bdf8)',
-            transition: 'width 0.3s ease',
+            transition: 'width 0.35s ease',
           }}
         />
       </div>
 
       {/* ============================================================ */}
-      {/* ZONE 2: CORE VISUAL STAGE (Physical Simulator) */}
+      {/* ZONE 2: CORE VISUAL STAGE (Physical Interactive Simulator) */}
       {/* ============================================================ */}
       <div
         style={{
@@ -228,7 +214,7 @@ export const FocusLessonView: React.FC = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '0.75rem 1.5rem',
+          padding: '0.5rem 1.5rem',
           overflow: 'hidden',
         }}
       >
@@ -248,21 +234,21 @@ export const FocusLessonView: React.FC = () => {
               : undefined
           }
           isInSync={currentScene.visualState.isInSync || packetProgress === 100}
-          onFileClick={handleFileClick}
           onStageFile={handleStageFile}
           onTakeSnapshot={handleTakeSnapshot}
+          onTransferCommit={handleTransferCommit}
         />
       </div>
 
       {/* ============================================================ */}
-      {/* ZONE 3: ONE QUESTION / ONE PRIMARY INTERACTION */}
+      {/* ZONE 3: ONE QUESTION / ONE ACTION (Strictly Mutually Staged!) */}
       {/* ============================================================ */}
       <div
         style={{
           flexShrink: 0,
-          background: 'rgba(15, 23, 42, 0.85)',
+          background: 'rgba(15, 23, 42, 0.88)',
           borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-          padding: '1.25rem 1.5rem 1.5rem',
+          padding: '1.1rem 1.5rem 1.25rem',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
@@ -270,13 +256,13 @@ export const FocusLessonView: React.FC = () => {
           backdropFilter: 'blur(12px)',
         }}
       >
-        {/* Single Prominent Question */}
+        {/* Single Question Header */}
         <SceneQuestion
           question={currentScene.question}
           subQuestion={currentScene.subQuestion}
         />
 
-        {/* Scene Type Specific Primary Interaction */}
+        {/* 1. PREDICTION SCENE: Only prediction options rendered */}
         {currentScene.type === 'prediction' && currentScene.predictionChoices && (
           <PredictionInteraction
             choices={currentScene.predictionChoices}
@@ -284,19 +270,42 @@ export const FocusLessonView: React.FC = () => {
           />
         )}
 
+        {/* 2. INTERACTION SCENE: Physical manipulation only (NO competing buttons!) */}
+        {currentScene.type === 'interaction' && (
+          <div style={{ textAlign: 'center' }}>
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                background: 'rgba(56, 189, 248, 0.08)',
+                border: '1px solid rgba(56, 189, 248, 0.25)',
+                borderRadius: '999px',
+                padding: '0.4rem 1rem',
+                color: '#38bdf8',
+                fontSize: '0.85rem',
+                fontWeight: 600,
+              }}
+            >
+              <span>✋ Drag the object in the world above to perform the action</span>
+            </div>
+          </div>
+        )}
+
+        {/* 3. OBSERVE SCENE: State comparison diff */}
         {currentScene.type === 'observe' && currentScene.stateComparison && (
           <div style={{ width: '100%', textAlign: 'center' }}>
             <StateTransition comparison={currentScene.stateComparison} />
             <button
               onClick={handleNextScene}
               style={{
-                padding: '0.75rem 2rem',
+                padding: '0.7rem 2rem',
                 borderRadius: '999px',
                 background: 'linear-gradient(135deg, #38bdf8 0%, #0284c7 100%)',
                 color: '#0f172a',
                 border: 'none',
                 fontWeight: 800,
-                fontSize: '0.95rem',
+                fontSize: '0.92rem',
                 cursor: 'pointer',
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -310,6 +319,7 @@ export const FocusLessonView: React.FC = () => {
           </div>
         )}
 
+        {/* 4. UNDERSTAND SCENE: Bold mental model takeaway only */}
         {currentScene.type === 'understand' && (
           <TechnicalReveal
             mentalModelText={currentScene.mentalModelText}
@@ -319,110 +329,81 @@ export const FocusLessonView: React.FC = () => {
           />
         )}
 
+        {/* 5. COMMAND SCENE: Terminal bridge prompt with progressive hints */}
         {currentScene.type === 'command' && (
           <LessonTerminalBridge
             expectedCommand={currentScene.technicalCommand || 'git status'}
             engine={engine}
+            progressiveHints={currentScene.progressiveHints}
             onSuccess={handleNextScene}
           />
         )}
 
-        {(currentScene.type === 'situation' ||
-          currentScene.type === 'interaction' ||
-          currentScene.type === 'watch') && (
+        {/* 6. SITUATION / WATCH SCENE: Simple Proceed Button */}
+        {(currentScene.type === 'situation' || currentScene.type === 'watch') && (
           <div style={{ textAlign: 'center' }}>
-            {currentScene.actionType === 'move_to_staging' && (
-              <button
-                onClick={() => handleStageFile('index.html')}
-                style={{
-                  padding: '0.85rem 2.25rem',
-                  borderRadius: '999px',
-                  background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
-                  color: '#ffffff',
-                  border: 'none',
-                  fontWeight: 800,
-                  fontSize: '1rem',
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  boxShadow: '0 4px 16px rgba(34, 197, 94, 0.35)',
-                }}
-              >
-                <span>{currentScene.primaryActionLabel || 'Move to Staging 📦'}</span>
-                <ArrowRight size={16} />
-              </button>
-            )}
+            <button
+              onClick={handleNextScene}
+              style={{
+                padding: '0.75rem 2rem',
+                borderRadius: '999px',
+                background: 'linear-gradient(135deg, #38bdf8 0%, #0284c7 100%)',
+                color: '#0f172a',
+                border: 'none',
+                fontWeight: 800,
+                fontSize: '0.92rem',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                boxShadow: '0 4px 14px rgba(56, 189, 248, 0.35)',
+              }}
+            >
+              <span>{currentScene.primaryActionLabel || 'Continue'}</span>
+              <ArrowRight size={16} />
+            </button>
+          </div>
+        )}
 
-            {currentScene.actionType === 'take_snapshot' && (
-              <button
-                onClick={handleTakeSnapshot}
-                style={{
-                  padding: '0.85rem 2.25rem',
-                  borderRadius: '999px',
-                  background: 'linear-gradient(135deg, #f05033 0%, #ea580c 100%)',
-                  color: '#ffffff',
-                  border: 'none',
-                  fontWeight: 800,
-                  fontSize: '1rem',
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  boxShadow: '0 4px 16px rgba(240, 80, 51, 0.4)',
-                }}
-              >
-                <span>{currentScene.primaryActionLabel || '📸 Take Snapshot'}</span>
-                <ArrowRight size={16} />
-              </button>
-            )}
+        {/* Quiet "Why did that happen?" toggleable causal explanation */}
+        {currentScene.whyExplanation && (
+          <div style={{ marginTop: '0.75rem', textAlign: 'center' }}>
+            <button
+              onClick={() => setShowWhyExplanation(prev => !prev)}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#64748b',
+                fontSize: '0.75rem',
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.3rem',
+                transition: 'color 0.15s ease',
+              }}
+            >
+              <HelpCircle size={13} />
+              <span>Why did that happen?</span>
+              {showWhyExplanation ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+            </button>
 
-            {currentScene.actionType === 'send_packet' && (
-              <button
-                onClick={handleSendPacket}
+            {showWhyExplanation && (
+              <div
                 style={{
-                  padding: '0.85rem 2.25rem',
-                  borderRadius: '999px',
-                  background: 'linear-gradient(135deg, #a855f7 0%, #9333ea 100%)',
-                  color: '#ffffff',
-                  border: 'none',
-                  fontWeight: 800,
-                  fontSize: '1rem',
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  boxShadow: '0 4px 16px rgba(168, 85, 247, 0.4)',
+                  marginTop: '0.4rem',
+                  maxWidth: '560px',
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  borderRadius: '8px',
+                  padding: '0.5rem 0.85rem',
+                  fontSize: '0.8rem',
+                  color: '#94a3b8',
+                  lineHeight: 1.45,
+                  animation: 'fadeIn 0.15s ease-out',
                 }}
               >
-                <span>{currentScene.primaryActionLabel || '🚀 Send C3 to Remote'}</span>
-                <ArrowRight size={16} />
-              </button>
-            )}
-
-            {(currentScene.actionType === 'select_file' ||
-              currentScene.actionType === 'next_scene' ||
-              !currentScene.actionType) && (
-              <button
-                onClick={handleNextScene}
-                style={{
-                  padding: '0.8rem 2rem',
-                  borderRadius: '999px',
-                  background: 'linear-gradient(135deg, #38bdf8 0%, #0284c7 100%)',
-                  color: '#0f172a',
-                  border: 'none',
-                  fontWeight: 800,
-                  fontSize: '0.95rem',
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  boxShadow: '0 4px 14px rgba(56, 189, 248, 0.35)',
-                }}
-              >
-                <span>{currentScene.primaryActionLabel || 'Continue'}</span>
-                <ArrowRight size={16} />
-              </button>
+                {currentScene.whyExplanation}
+              </div>
             )}
           </div>
         )}

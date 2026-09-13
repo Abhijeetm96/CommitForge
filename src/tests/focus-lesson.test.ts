@@ -13,42 +13,8 @@ describe('Focus Lesson Architecture & Scenes (Section 67-69)', () => {
     engine.execute('git init');
   });
 
-  it('Lesson 1 (Git Add) defines 7 strict progressive scenes', () => {
+  it('Lesson 1 (Selecting Changes / Staging) defines progressive scenes with discovery moment', () => {
     const lesson = FOCUS_LESSONS['add'];
-    expect(lesson).toBeDefined();
-    expect(lesson.scenes).toHaveLength(7);
-
-    const types = lesson.scenes.map(s => s.type);
-    expect(types).toEqual([
-      'situation',
-      'prediction',
-      'interaction',
-      'watch',
-      'observe',
-      'understand',
-      'command',
-    ]);
-  });
-
-  it('Lesson 2 (Git Commit) defines 7 strict progressive scenes', () => {
-    const lesson = FOCUS_LESSONS['commit'];
-    expect(lesson).toBeDefined();
-    expect(lesson.scenes).toHaveLength(7);
-
-    const types = lesson.scenes.map(s => s.type);
-    expect(types).toEqual([
-      'situation',
-      'prediction',
-      'interaction',
-      'watch',
-      'observe',
-      'understand',
-      'command',
-    ]);
-  });
-
-  it('Lesson 3 (Git Push) defines 6 strict progressive scenes', () => {
-    const lesson = FOCUS_LESSONS['push'];
     expect(lesson).toBeDefined();
     expect(lesson.scenes).toHaveLength(6);
 
@@ -57,8 +23,39 @@ describe('Focus Lesson Architecture & Scenes (Section 67-69)', () => {
       'situation',
       'prediction',
       'interaction',
-      'watch',
+      'observe',
       'understand',
+      'command',
+    ]);
+  });
+
+  it('Lesson 2 (Saving Snapshots / Commits) defines progressive scenes directly continuing story', () => {
+    const lesson = FOCUS_LESSONS['commit'];
+    expect(lesson).toBeDefined();
+    expect(lesson.scenes).toHaveLength(6);
+
+    const types = lesson.scenes.map(s => s.type);
+    expect(types).toEqual([
+      'situation',
+      'prediction',
+      'interaction',
+      'observe',
+      'understand',
+      'command',
+    ]);
+  });
+
+  it('Lesson 3 (Sending Work to GitHub / Push) defines progressive scenes without premature jargon', () => {
+    const lesson = FOCUS_LESSONS['push'];
+    expect(lesson).toBeDefined();
+    expect(lesson.scenes).toHaveLength(5);
+
+    const types = lesson.scenes.map(s => s.type);
+    expect(types).toEqual([
+      'situation',
+      'prediction',
+      'interaction',
+      'observe',
       'command',
     ]);
   });
