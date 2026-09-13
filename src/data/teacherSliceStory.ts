@@ -513,7 +513,7 @@ export const TEACHING_STEPS: TeachingStep[] = [
     milestoneLabel: 'A Real Developer Mistake',
     title: 'The Accidental .env Staging',
     seniorDeveloperDialogue:
-      'Now let’s experience a real-life situation that every developer encounters. You added a `.env` file on your desk containing secret API keys: `STRIPE_SECRET_KEY=sk_live_secret123`.\n\nWithout thinking, you run:\n`git add .env`\n\nNotice the staging area now has a ⚠️ SECURITY WARNING: A secret file is in the staging box!',
+      'Now let’s experience a real-life situation that every developer encounters. You added a `.env` file on your desk containing secret API keys: `STRIPE_SECRET_KEY=SIMULATED_SECRET`.\n\nWithout thinking, you run:\n`git add .env`\n\nNotice the staging area now has a ⚠️ SECURITY WARNING: A secret file is in the staging box!',
     inPlainEnglish:
       'You accidentally put an envelope containing your private house keys into the mail delivery box.',
     highlightArea: 'staging',
@@ -657,3 +657,27 @@ export const TEACHING_STEPS: TeachingStep[] = [
     },
   },
 ];
+
+export const STATUS_LINE_ANNOTATIONS: Record<string, { title: string; explanation: string }> = {
+  'Changes not staged for commit:': {
+    title: 'Changes not staged for commit',
+    explanation:
+      'Git knows these files differ from the last snapshot, but you haven\'t selected them for the next snapshot yet.',
+  },
+  'modified:   index.html': {
+    title: 'modified: index.html',
+    explanation: 'index.html is different from the version recorded in the last commit (C0).',
+  },
+  'modified:   style.css': {
+    title: 'modified: style.css',
+    explanation: 'style.css has unstaged changes on your computer desk.',
+  },
+  'Changes to be committed:': {
+    title: 'Changes to be committed',
+    explanation: 'These staged changes are packed and ready to be sealed into the next permanent snapshot.',
+  },
+  'Untracked files:': {
+    title: 'Untracked files',
+    explanation: 'Files currently in your working tree that Git has never tracked in any previous commit.',
+  },
+};
