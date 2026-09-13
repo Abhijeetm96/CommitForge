@@ -11,6 +11,7 @@ import { Terminal } from './components/terminal/Terminal';
 import { LessonPanel } from './components/panels/LessonPanel';
 import { DashboardView } from './components/dashboard/DashboardView';
 import { First10MinutesView } from './components/labs/First10MinutesView';
+import { FocusLessonView } from './components/learn/FocusLessonView';
 import { PracticeView } from './components/practice/PracticeView';
 import { DeveloperIdeView } from './components/ide/DeveloperIdeView';
 import { LabsHubView } from './components/labs/LabsHubView';
@@ -55,8 +56,8 @@ const AppContent: React.FC = () => {
         {/* EXPERIENCE 0: HOME / DASHBOARD */}
         {mode === 'dashboard' && <DashboardView />}
 
-        {/* EXPERIENCE 1: 🎓 LEARN (First 10 Minutes & Foundations) */}
-        {(mode === 'learn' || mode === 'first10') && <First10MinutesView />}
+        {/* EXPERIENCE 1: 🎓 LEARN (Interactive Git Simulator - Focus Lesson Mode) */}
+        {(mode === 'learn' || mode === 'first10') && <FocusLessonView />}
 
         {/* EXPERIENCE 2: 🛠️ PRACTICE (Guided Developer Missions) */}
         {mode === 'practice' && <PracticeView />}
