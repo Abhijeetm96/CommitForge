@@ -11,6 +11,7 @@ import { GitRepo, Commit } from '../../git-engine/types';
 import { StateImpactDiff } from './StateImpactDiff';
 import { SyntaxTokenBreakdown } from './SyntaxTokenBreakdown';
 import { ContextualTermPopover } from './ContextualTermPopover';
+import { CommandSidebar } from './CommandSidebar';
 import {
   Sparkles,
   CheckCircle2,
@@ -290,9 +291,17 @@ export const TeacherLessonView: React.FC = () => {
       </header>
 
       {/* ============================================================ */}
-      {/* 2. SPLIT WORKSPACE: MENTOR CONVERSATION & LIVING REPO STATE */}
+      {/* 2. MAIN LAYOUT: COMMANDS SIDEBAR (LEFT) + WORKSPACE (RIGHT) */}
       {/* ============================================================ */}
-      <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1.2fr 1fr', overflow: 'hidden' }}>
+      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+        {/* LEFT SIDEBAR: ALL COMMANDS */}
+        <CommandSidebar
+          currentCommand={currentStep.expectedCommand}
+          onInsertCommand={(cmd) => setTerminalInput(cmd)}
+        />
+
+        {/* REST TO THE RIGHT: SPLIT WORKSPACE (MENTOR CONVERSATION & LIVING REPO STATE) */}
+        <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1.15fr 1fr', overflow: 'hidden' }}>
 
         {/* LEFT COLUMN: THE PATIENT SENIOR DEVELOPER & TEACHING STEP */}
         <div
@@ -814,8 +823,8 @@ export const TeacherLessonView: React.FC = () => {
           </div>
 
         </div>
-
       </div>
+    </div>
 
       {/* MASTERY CERTIFICATE MODAL */}
       {isMilestoneMastered && (
