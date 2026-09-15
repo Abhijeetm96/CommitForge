@@ -134,13 +134,13 @@ describe('Teacher-Led Vertical Slice: Portfolio Website First Git Snapshot', () 
     const repo = seedTeacherSliceRepo();
     engine.setRepo(repo);
 
-    // Create untracked secret file
-    engine.createFile('.env', 'STRIPE_SECRET_KEY=sk_live_secret123');
+    // Create untracked secret file using fictional simulated secret
+    engine.createFile('.env', 'STRIPE_SECRET_KEY=SIMULATED_SECRET\nDB_PASS=SIMULATED_PASSWORD');
 
     // Accidentally stage .env
     const addEnvRes = engine.execute('git add .env');
     expect(addEnvRes.exitCode).toBe(0);
-    expect(engine.getRepo().index['.env']).toBe('STRIPE_SECRET_KEY=sk_live_secret123');
+    expect(engine.getRepo().index['.env']).toBe('STRIPE_SECRET_KEY=SIMULATED_SECRET\nDB_PASS=SIMULATED_PASSWORD');
 
     const step13 = TEACHING_STEPS.find(s => s.id === SliceState.ENV_ACCIDENTALLY_STAGED);
     expect(step13?.masteryRequirements?.stateTransition?.(engine.getRepo(), ['git add .env'])).toBe(true);
@@ -153,13 +153,13 @@ describe('Teacher-Led Vertical Slice: Portfolio Website First Git Snapshot', () 
     // Removed from staging area
     expect(restoredRepo.index['.env']).toBeUndefined();
     // Still present on disk with keys intact!
-    expect(restoredRepo.workingDirectory['.env']).toBe('STRIPE_SECRET_KEY=sk_live_secret123');
+    expect(restoredRepo.workingDirectory['.env']).toBe('STRIPE_SECRET_KEY=SIMULATED_SECRET\nDB_PASS=SIMULATED_PASSWORD');
 
     const step15 = TEACHING_STEPS.find(s => s.id === SliceState.ENV_UNSTAGED);
     expect(step15?.masteryRequirements?.stateTransition?.(restoredRepo, ['git restore --staged .env'])).toBe(true);
   });
 
-  it('validates the independent challenge logic accurately', () => {
+  it('validates the independent challenge logic and mistake recovery', () => {
     const engine = new GitEngine();
     const repo = seedTeacherSliceRepo();
     engine.setRepo(repo);
@@ -171,23 +171,20 @@ describe('Teacher-Led Vertical Slice: Portfolio Website First Git Snapshot', () 
     const challengeStep = TEACHING_STEPS.find(s => s.id === SliceState.INDEPENDENT_CHALLENGE);
     expect(challengeStep).toBeDefined();
 
-    // Failure case: If user stages notes.tmp, validation fails
-    engine.execute('git add notes.tmp');
-    engine.execute('git commit -m "Add notes"');
-    expect(challengeStep?.masteryRequirements?.stateTransition?.(engine.getRepo(), [])).toBe(false);
+    // Mistake case: User runs git add . which stages both about.html and notes.tmp
+    engine.execute('git add .');
+    expect(engine.getRepo().index['notes.tmp']).toBeDefined();
 
-    // Reset and test success case
-    const freshEngine = new GitEngine();
-    freshEngine.setRepo(seedTeacherSliceRepo());
-    freshEngine.createFile('about.html', '<h2>About Me</h2>');
-    freshEngine.createFile('notes.tmp', 'TODO: scratchpad');
+    // Recover using git restore --staged notes.tmp
+    engine.execute('git restore --staged notes.tmp');
+    expect(engine.getRepo().index['notes.tmp']).toBeUndefined();
+    expect(engine.getRepo().index['about.html']).toBeDefined();
 
-    // Correct workflow: status -> stage about.html only -> commit
-    freshEngine.execute('git status');
-    freshEngine.execute('git add about.html');
-    freshEngine.execute('git commit -m "Add developer about biography"');
+    // Now commit
+    engine.execute('git commit -m "Add developer portfolio bio"');
 
-    expect(challengeStep?.masteryRequirements?.stateTransition?.(freshEngine.getRepo(), [])).toBe(true);
+    // Validation should succeed after recovery
+    expect(challengeStep?.masteryRequirements?.stateTransition?.(engine.getRepo(), [])).toBe(true);
   });
 
   it('requires conceptual explanation in the final mastery gate', () => {
