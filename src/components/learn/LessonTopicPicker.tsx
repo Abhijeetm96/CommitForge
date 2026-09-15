@@ -56,7 +56,7 @@ export const LessonTopicPicker: React.FC<LessonTopicPickerProps> = ({
     >
       <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '1rem' }}>
         <button
-          onClick={() => setMode('dashboard')}
+          onClick={() => setMode('learn')}
           style={{
             background: 'none',
             border: 'none',
@@ -72,7 +72,7 @@ export const LessonTopicPicker: React.FC<LessonTopicPickerProps> = ({
           }}
         >
           <ArrowLeft size={16} />
-          <span>Back to Home</span>
+          <span>Back to Git Journey</span>
         </button>
       </div>
 
