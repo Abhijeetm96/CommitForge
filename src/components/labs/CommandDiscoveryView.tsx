@@ -37,63 +37,63 @@ export const CommandDiscoveryView: React.FC = () => {
     {
       id: 'save-version',
       title: 'Save Changed File',
-      prompt: 'You changed a file and want to save it as a new version.',
+      prompt: 'You changed a file and want to save it as a new permanent version in Git.',
       tools: [
         {
           command: 'git add',
           badge: 'SAFE',
-          description: 'Stages the file for commit.',
+          description: 'Stages the file into the packing box.',
           isBestChoice: true,
-          explanation: 'git add prepares the file by placing it into the staging area so you can inspect it before committing.',
+          explanation: 'git add prepares the file by placing it into the staging area so you can review it before sealing the snapshot.',
         },
         {
           command: 'git commit',
           badge: 'LOW RISK',
-          description: 'Saves a new version.',
+          description: 'Saves staged changes into history.',
           isBestChoice: false,
-          explanation: 'git commit seals staged files into a permanent snapshot. Remember to git add first!',
+          explanation: 'git commit seals staged files into permanent history. Remember: you must stage files with git add first!',
         },
         {
           command: 'git reset --hard',
           badge: 'HIGH RISK',
-          description: 'Discards your changes.',
+          description: 'Discards all uncommitted changes.',
           isBestChoice: false,
-          explanation: 'git reset --hard will destroy your changes! Only use this if you truly want to wipe all work.',
+          explanation: 'git reset --hard will destroy your uncommitted work! Only use this if you want to permanently erase changes.',
         },
         {
           command: 'git restore',
           badge: 'MEDIUM',
-          description: 'Undo changes to a file.',
+          description: 'Reverts file edits back to previous commit.',
           isBestChoice: false,
-          explanation: 'git restore will revert this file back to its previous version, discarding current edits.',
+          explanation: 'git restore discards changes in this file instead of saving them.',
         },
       ],
     },
     {
       id: 'undo-file',
       title: 'Discard Mistakes',
-      prompt: 'You made experimental edits to a file that broke the app and you want to throw them away.',
+      prompt: 'You made experimental edits to a file that broke the app and you want to throw them away cleanly.',
       tools: [
         {
           command: 'git restore',
           badge: 'SAFE',
-          description: 'Discards uncommitted working file edits.',
+          description: 'Surgically discards uncommitted file edits.',
           isBestChoice: true,
-          explanation: 'git restore surgically discards edits in the working tree without affecting any other files or commits.',
+          explanation: 'git restore surgically discards edits in the working tree without affecting any other files, branches, or commits.',
         },
         {
           command: 'git add',
           badge: 'MEDIUM',
           description: 'Stages the broken file.',
           isBestChoice: false,
-          explanation: 'Staging broken code prepares it to be committed, which is the opposite of discarding it.',
+          explanation: 'Staging broken code prepares it to be committed, which is the exact opposite of discarding it.',
         },
         {
           command: 'git reset --hard',
           badge: 'HIGH RISK',
-          description: 'Destroys all changes in every file.',
+          description: 'Destroys all changes across every file.',
           isBestChoice: false,
-          explanation: 'Too destructive: it wipes all files across the whole project, not just this one file.',
+          explanation: 'Too destructive: it wipes all files across the whole project, not just this one broken file.',
         },
         {
           command: 'git commit',
@@ -107,35 +107,280 @@ export const CommandDiscoveryView: React.FC = () => {
     {
       id: 'pause-work',
       title: 'Urgent Task Switch',
-      prompt: 'Your manager asks you to urgently switch branches, but your current edits are unfinished.',
+      prompt: 'Your team lead asks you to urgently switch branches, but your current edits are halfway done.',
       tools: [
         {
           command: 'git stash',
           badge: 'SAFE',
-          description: 'Temporarily shelves dirty changes.',
+          description: 'Temporarily shelves dirty changes in a drawer.',
           isBestChoice: true,
-          explanation: 'git stash saves your dirty edits to a temporary clipboard so you can switch branches with a clean slate.',
+          explanation: 'git stash saves your dirty edits to a temporary clipboard shelf so you can switch branches with a clean slate.',
         },
         {
           command: 'git commit',
           badge: 'MEDIUM',
           description: 'Commits unfinished code.',
           isBestChoice: false,
-          explanation: 'Pollutes git history with broken WIP commits.',
+          explanation: 'Pollutes git history with half-finished WIP commits.',
         },
         {
           command: 'git reset --hard',
           badge: 'HIGH RISK',
-          description: 'Erases all progress.',
+          description: 'Erases all progress on your desk.',
           isBestChoice: false,
           explanation: 'Destroys all your work instead of shelving it.',
         },
         {
-          command: 'git checkout',
+          command: 'git switch',
           badge: 'MEDIUM',
-          description: 'May block switch if files conflict.',
+          description: 'May block switch if files collide.',
           isBestChoice: false,
-          explanation: 'Git will refuse to switch branches if dirty files would be overwritten.',
+          explanation: 'Git will refuse to switch branches if dirty files would be overwritten by the destination branch.',
+        },
+      ],
+    },
+    {
+      id: 'merge-conflict',
+      title: 'Collision on Merge',
+      prompt: 'You ran git merge feature/navbar and Git reports CONFLICT in index.html.',
+      tools: [
+        {
+          command: 'git diff',
+          badge: 'SAFE',
+          description: 'Inspects conflict markers (<<<< / ==== / >>>>).',
+          isBestChoice: true,
+          explanation: 'Always inspect conflict markers first to understand what both sides edited before choosing or combining.',
+        },
+        {
+          command: 'git merge --abort',
+          badge: 'SAFE',
+          description: 'Cancels the merge and returns to clean state.',
+          isBestChoice: false,
+          explanation: 'Use git merge --abort when you want to step back, communicate with teammates, and re-attempt later.',
+        },
+        {
+          command: 'git add <file>',
+          badge: 'LOW RISK',
+          description: 'Marks conflict as resolved.',
+          isBestChoice: false,
+          explanation: 'Run git add only AFTER you have manually edited the file to remove conflict markers.',
+        },
+        {
+          command: 'git reset --hard',
+          badge: 'HIGH RISK',
+          description: 'Wipes merge state and uncommitted work.',
+          isBestChoice: false,
+          explanation: 'Prefer `git merge --abort` over reset --hard when aborting a conflicted merge.',
+        },
+      ],
+    },
+    {
+      id: 'accidental-main-commit',
+      title: 'Committed to Main',
+      prompt: 'You committed a new feature directly to main instead of creating a feature branch first.',
+      tools: [
+        {
+          command: 'git branch feature && git reset --soft HEAD~1',
+          badge: 'SAFE',
+          description: 'Preserves commit on feature branch, rewinds main.',
+          isBestChoice: true,
+          explanation: 'Creates the feature branch pointing at your new commit, then safely rewinds main back one commit with your edits intact.',
+        },
+        {
+          command: 'git push --force origin main',
+          badge: 'HIGH RISK',
+          description: 'Forces untested feature straight to production.',
+          isBestChoice: false,
+          explanation: 'Danger! Never force push unreviewed feature commits to the team\'s main branch.',
+        },
+        {
+          command: 'git revert HEAD',
+          badge: 'MEDIUM',
+          description: 'Creates an inverse commit on main.',
+          isBestChoice: false,
+          explanation: 'Leaves an unnecessary commit-revert cycle on main when local history hasn\'t even been pushed yet.',
+        },
+        {
+          command: 'git reset --hard HEAD~1',
+          badge: 'HIGH RISK',
+          description: 'Deletes your new feature code completely.',
+          isBestChoice: false,
+          explanation: 'Wipes the commit and all your hard work from disk without saving it anywhere.',
+        },
+      ],
+    },
+    {
+      id: 'push-rejected',
+      title: 'Remote Push Rejected',
+      prompt: 'You ran git push, but GitHub rejected it: "[rejected - non-fast-forward] fetch first".',
+      tools: [
+        {
+          command: 'git pull --rebase origin <branch>',
+          badge: 'SAFE',
+          description: 'Replays local commits on top of remote updates.',
+          isBestChoice: true,
+          explanation: 'Downloads teammates\' updates and replays your local commits cleanly on top, keeping history linear and conflict-free.',
+        },
+        {
+          command: 'git push --force',
+          badge: 'HIGH RISK',
+          description: 'Overwrites teammates\' work on remote.',
+          isBestChoice: false,
+          explanation: 'Destroys all commits pushed by other teammates since your last fetch!',
+        },
+        {
+          command: 'git clone <url>',
+          badge: 'LOW RISK',
+          description: 'Re-clones the entire repository from scratch.',
+          isBestChoice: false,
+          explanation: 'Wasteful and cumbersome: leaves your local unpushed commits stranded in the old folder.',
+        },
+        {
+          command: 'git reset --hard origin/main',
+          badge: 'HIGH RISK',
+          description: 'Erases all your unpushed commits.',
+          isBestChoice: false,
+          explanation: 'Discards all your local work to match the server instead of integrating it.',
+        },
+      ],
+    },
+    {
+      id: 'regression-hunting',
+      title: 'Pinpoint Regression Bug',
+      prompt: 'A critical bug exists in production that wasn\'t there 2 weeks ago across 200 commits.',
+      tools: [
+        {
+          command: 'git bisect',
+          badge: 'SAFE',
+          description: 'Binary search to pinpoint exact bug commit.',
+          isBestChoice: true,
+          explanation: 'git bisect uses binary search (log2 N), finding the exact commit that introduced the bug in just ~7 test steps instead of 200.',
+        },
+        {
+          command: 'git log -p',
+          badge: 'SAFE',
+          description: 'Manually read 200 commit diffs.',
+          isBestChoice: false,
+          explanation: 'Extremely slow and fatigue-inducing compared to automated binary search with git bisect.',
+        },
+        {
+          command: 'git reset --hard HEAD~50',
+          badge: 'HIGH RISK',
+          description: 'Blindly roll back 50 commits.',
+          isBestChoice: false,
+          explanation: 'Deletes 50 legitimate features without knowing if the bug was even introduced in that window.',
+        },
+        {
+          command: 'git revert HEAD',
+          badge: 'LOW RISK',
+          description: 'Reverts the most recent commit.',
+          isBestChoice: false,
+          explanation: 'Useless if the bug was introduced 10 or 50 commits ago.',
+        },
+      ],
+    },
+    {
+      id: 'detached-head-rescue',
+      title: 'Detached HEAD Rescue',
+      prompt: 'You inspected an old commit, made 2 experimental commits, and now notice "HEAD detached at a1b2c3d".',
+      tools: [
+        {
+          command: 'git switch -c new-feature-branch',
+          badge: 'SAFE',
+          description: 'Attaches a new branch name to current HEAD.',
+          isBestChoice: true,
+          explanation: 'Creates and switches to a new branch at your current commit so your new commits are permanently tracked and safe.',
+        },
+        {
+          command: 'git switch main',
+          badge: 'HIGH RISK',
+          description: 'Abandons detached commits to garbage collection.',
+          isBestChoice: false,
+          explanation: 'If you switch away without creating a branch, your commits become orphans and are eventually deleted.',
+        },
+        {
+          command: 'git reset --hard',
+          badge: 'HIGH RISK',
+          description: 'Erases all detached work.',
+          isBestChoice: false,
+          explanation: 'Immediately deletes all your experimental progress.',
+        },
+        {
+          command: 'git commit --amend',
+          badge: 'LOW RISK',
+          description: 'Modifies the last detached commit.',
+          isBestChoice: false,
+          explanation: 'Does not solve the detached HEAD problem; you still need a branch pointer.',
+        },
+      ],
+    },
+    {
+      id: 'cleanup-wip',
+      title: 'Clean Up Messy Commits',
+      prompt: 'Before opening a PR, your branch has 5 messy commits: "wip", "fix typo", "oops", "works now".',
+      tools: [
+        {
+          command: 'git rebase -i HEAD~5',
+          badge: 'SAFE',
+          description: 'Interactive rebase to squash and reword.',
+          isBestChoice: true,
+          explanation: 'Allows combining (squashing) micro-commits into clean, atomic milestones with professional messages before team review.',
+        },
+        {
+          command: 'git merge --no-ff',
+          badge: 'LOW RISK',
+          description: 'Merges with all messy commits intact.',
+          isBestChoice: false,
+          explanation: 'Pollutes the shared project git history with confusing "wip" and "oops" commits.',
+        },
+        {
+          command: 'git push --force-with-lease',
+          badge: 'MEDIUM',
+          description: 'Pushes messy commits directly.',
+          isBestChoice: false,
+          explanation: 'Does not clean up the commit history.',
+        },
+        {
+          command: 'git reset --hard main',
+          badge: 'HIGH RISK',
+          description: 'Destroys all branch commits completely.',
+          isBestChoice: false,
+          explanation: 'Erases all 5 commits and all feature code.',
+        },
+      ],
+    },
+    {
+      id: 'inspect-internals',
+      title: 'Verify Database & Forensics',
+      prompt: 'You want to verify the cryptographic SHA-1 integrity of your repository and inspect raw objects.',
+      tools: [
+        {
+          command: 'git fsck && git cat-file -p HEAD',
+          badge: 'SAFE',
+          description: 'Verifies DB integrity & inspects commit object.',
+          isBestChoice: true,
+          explanation: 'git fsck verifies internal database integrity, while git cat-file pretty-prints raw blob, tree, and commit metadata safely.',
+        },
+        {
+          command: 'cat .git/objects/*',
+          badge: 'MEDIUM',
+          description: 'Directly reads binary compressed zlib files.',
+          isBestChoice: false,
+          explanation: 'Git object files are zlib-compressed binary hashes; reading them directly outputs unreadable binary gibberish.',
+        },
+        {
+          command: 'rm -rf .git/objects',
+          badge: 'HIGH RISK',
+          description: 'Deletes the entire Git database.',
+          isBestChoice: false,
+          explanation: 'Catastrophic! Permanently deletes every commit, blob, and tree in project history.',
+        },
+        {
+          command: 'git clean -fdx',
+          badge: 'MEDIUM',
+          description: 'Cleans untracked ignored workspace files.',
+          isBestChoice: false,
+          explanation: 'Cleans workspace files but does not verify or inspect the .git internal object database.',
         },
       ],
     },
@@ -146,14 +391,24 @@ export const CommandDiscoveryView: React.FC = () => {
   const handleTryThis = (toolIndex: number, tool: ScenarioTool) => {
     setActiveToolFeedback({ toolIndex, executed: true });
     // Execute safe commands in engine if applicable
-    if (tool.command === 'git add') {
+    if (tool.command.includes('git add')) {
       executeCommand('git add .');
-    } else if (tool.command === 'git commit') {
+    } else if (tool.command.includes('git commit')) {
       executeCommand('git commit -m "Auto save"');
-    } else if (tool.command === 'git restore') {
+    } else if (tool.command.includes('git restore')) {
       executeCommand('git status');
-    } else if (tool.command === 'git stash') {
+    } else if (tool.command.includes('git stash')) {
       executeCommand('git stash');
+    } else if (tool.command.includes('git branch')) {
+      executeCommand('git branch');
+    } else if (tool.command.includes('git diff')) {
+      executeCommand('git diff');
+    } else if (tool.command.includes('git log')) {
+      executeCommand('git log --oneline -n 5');
+    } else if (tool.command.includes('git cat-file')) {
+      executeCommand('git cat-file -p HEAD');
+    } else {
+      executeCommand('git status');
     }
   };
 
@@ -192,7 +447,7 @@ export const CommandDiscoveryView: React.FC = () => {
           </div>
 
           {/* Scenario Switcher Tabs */}
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', gap: '0.45rem', flexWrap: 'wrap', maxWidth: '680px', justifyContent: 'flex-end' }}>
             {SCENARIOS.map((s, idx) => (
               <button
                 key={s.id}
@@ -203,13 +458,14 @@ export const CommandDiscoveryView: React.FC = () => {
                 style={{
                   background: selectedScenarioIndex === idx ? '#2563eb' : '#131d33',
                   color: selectedScenarioIndex === idx ? '#ffffff' : '#94a3b8',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
-                  padding: '0.4rem 0.85rem',
+                  border: selectedScenarioIndex === idx ? '1px solid #38bdf8' : '1px solid rgba(255, 255, 255, 0.08)',
+                  padding: '0.35rem 0.75rem',
                   borderRadius: '999px',
-                  fontSize: '0.78rem',
+                  fontSize: '0.75rem',
                   fontWeight: 700,
                   cursor: 'pointer',
                   transition: 'all 0.15s ease',
+                  boxShadow: selectedScenarioIndex === idx ? '0 2px 10px rgba(37, 99, 235, 0.4)' : 'none',
                 }}
               >
                 {s.title}
