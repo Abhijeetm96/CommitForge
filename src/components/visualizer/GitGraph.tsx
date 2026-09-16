@@ -1,10 +1,16 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Commit } from '../../git-engine/types';
+import { GitRepo, Commit } from '../../git-engine/types';
 import { GitBranch, GitCommit, Tag, Clock, User, Calendar, X, Eye, Shield, FileText, CheckCircle2, ChevronRight } from 'lucide-react';
 
-export const GitGraph: React.FC = () => {
-  const { repo } = useApp();
+export interface GitGraphProps {
+  repo?: GitRepo;
+  onSelectCommit?: (commit: Commit) => void;
+}
+
+export const GitGraph: React.FC<GitGraphProps> = ({ repo: propRepo, onSelectCommit }) => {
+  const { repo: contextRepo } = useApp();
+  const repo = propRepo || contextRepo;
   const [selectedCommit, setSelectedCommit] = useState<Commit | null>(null);
   const [hoveredHash, setHoveredHash] = useState<string | null>(null);
 
@@ -157,7 +163,10 @@ export const GitGraph: React.FC = () => {
             return (
               <g
                 key={c.hash}
-                onClick={() => setSelectedCommit(c)}
+                onClick={() => {
+                  setSelectedCommit(c);
+                  onSelectCommit?.(c);
+                }}
                 onMouseEnter={() => setHoveredHash(c.hash)}
                 onMouseLeave={() => setHoveredHash(null)}
                 style={{ cursor: 'pointer' }}
