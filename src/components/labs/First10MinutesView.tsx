@@ -77,7 +77,7 @@ export const First10MinutesView: React.FC = () => {
       setFirst10Step(first10Step - 1);
       setHintLevel(0);
     } else {
-      setMode('dashboard');
+      setMode('learn');
     }
   };
 
@@ -272,7 +272,7 @@ export const First10MinutesView: React.FC = () => {
         {/* Header Breadcrumbs & Title */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.78rem', color: '#64748b' }}>
-            <span style={{ cursor: 'pointer' }} onClick={() => setMode('dashboard')}>Learn</span>
+            <span style={{ cursor: 'pointer' }} onClick={() => setMode('learn')}>Learn</span>
             <span>&gt;</span>
             <span>Git Foundations</span>
             <span>&gt;</span>
