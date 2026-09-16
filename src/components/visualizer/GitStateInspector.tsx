@@ -11,11 +11,13 @@ import {
   Archive,
   Eye,
   Info,
-  X
+  X,
+  Sparkles,
 } from 'lucide-react';
+import { getKidStatusSummary } from '../../data/kidMetaphors';
 
 export const GitStateInspector: React.FC = () => {
-  const { inspection, repo, lastWhyExplanation, setLastWhyExplanation, lastComparison, setLastComparison } = useApp();
+  const { inspection, repo, lastWhyExplanation, setLastWhyExplanation, lastComparison, setLastComparison, kidMode } = useApp();
   const [showExplanationModal, setShowExplanationModal] = useState(false);
 
   return (
@@ -64,6 +66,25 @@ export const GitStateInspector: React.FC = () => {
             <span>{inspection.remoteSyncSummary}</span>
           </div>
 
+          {/* Kid Status Pill */}
+          {kidMode && (
+            <div
+              className="hud-item"
+              style={{
+                background: 'rgba(245, 158, 11, 0.12)',
+                border: '1px solid rgba(245, 158, 11, 0.35)',
+                borderRadius: '6px',
+                padding: '0.2rem 0.6rem',
+                color: '#fde047',
+                fontWeight: 700,
+                fontSize: '0.74rem',
+              }}
+              title="Kid Status (What's happening right now in plain English)"
+            >
+              <span>{getKidStatusSummary(Object.keys(repo.workingDirectory).length, Object.keys(repo.index).length, Object.keys(repo.commits).length)}</span>
+            </div>
+          )}
+
           {/* Stash Indicator */}
           {repo.stash.length > 0 && (
             <div className="hud-item" style={{ color: 'var(--warning)' }}>
@@ -108,6 +129,25 @@ export const GitStateInspector: React.FC = () => {
             </div>
 
             <div className="modal-body">
+              {/* 10-Year-Old Explanation Card */}
+              <div
+                style={{
+                  background: 'rgba(245, 158, 11, 0.08)',
+                  border: '1px solid rgba(245, 158, 11, 0.3)',
+                  borderRadius: 'var(--radius-md)',
+                  padding: '0.85rem 1rem',
+                  marginBottom: '1rem',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 800, color: '#fbbf24', fontSize: '0.82rem', marginBottom: '0.3rem' }}>
+                  <Sparkles size={14} />
+                  <span>Explain Like I'm 10 (ELI10):</span>
+                </div>
+                <p style={{ margin: 0, fontSize: '0.86rem', color: '#f8fafc', lineHeight: 1.5 }}>
+                  {getKidStatusSummary(Object.keys(repo.workingDirectory).length, Object.keys(repo.index).length, Object.keys(repo.commits).length)}
+                </p>
+              </div>
+
               {lastWhyExplanation && (
                 <div style={{ background: 'rgba(240, 80, 51, 0.08)', border: '1px solid var(--git-orange)', borderRadius: 'var(--radius-md)', padding: '1rem', marginBottom: '1rem' }}>
                   <div style={{ fontWeight: 700, color: 'var(--git-orange)', marginBottom: '0.4rem' }}>
