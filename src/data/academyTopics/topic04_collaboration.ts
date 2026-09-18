@@ -1,3 +1,4 @@
+/* Scenarios Extended */
 import { UniversalConcept } from '../unifiedAcademyData';
 
 export const TOPIC_04_CONCEPTS: Record<string, UniversalConcept> = {
