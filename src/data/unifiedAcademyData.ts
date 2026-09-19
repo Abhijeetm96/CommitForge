@@ -144,30 +144,38 @@ export interface UniversalConcept {
   challenge: ConceptPracticeChallenge;
 
   // Level 6: Reference
-  reference: {
-    synopsis?: string;
-    officialDocUrl?: string;
-    syntaxCheatSheet?: string[];
-    commonErrors?: {
-      error: string;
-      remedy: string;
-    }[];
-    mentalModelDiagram?: {
-      concept: string;
-      explanation: string;
-      storageLocation: string;
-    };
-    options?: {
-      flag: string;
-      description: string;
-    }[];
-    gitInternals?: {
-      objectType: string;
-      explanation: string;
-      storageLocation: string;
-    };
-    edgeCases?: string[];
+  reference: ConceptReference;
+}
+
+export interface ConceptReferenceOption {
+  flag: string;
+  description: string;
+}
+
+export interface ConceptReferenceInternal {
+  objectType: string;
+  explanation: string;
+  storageLocation: string;
+}
+
+export interface ConceptReferenceCommonError {
+  error: string;
+  remedy: string;
+}
+
+export interface ConceptReference {
+  synopsis?: string;
+  officialDocUrl?: string;
+  syntaxCheatSheet?: string[];
+  commonErrors?: ConceptReferenceCommonError[];
+  mentalModelDiagram?: {
+    concept: string;
+    explanation: string;
+    storageLocation: string;
   };
+  options?: ConceptReferenceOption[];
+  gitInternals?: ConceptReferenceInternal;
+  edgeCases?: string[];
 }
 
 export interface AcademyTopic {
@@ -1532,6 +1540,7 @@ import { TOPIC_13_14_CONCEPTS } from './academyTopics/topic13_14_hooks_submodule
 import { TOPIC_15_16_CONCEPTS } from './academyTopics/topic15_16_actions_advanced';
 import { TOPIC_17_18_CONCEPTS } from './academyTopics/topic17_18_devtools_features';
 import { ALL_PRACTICE_CHALLENGES } from './academyChallenges';
+import { ALL_CONCEPT_REFERENCES } from './academyReferences';
 
 const RAW_ALL_ACADEMY_CONCEPTS: Record<string, UniversalConcept> = {
   ...BESPOKE_CONCEPTS,
@@ -1547,22 +1556,35 @@ const RAW_ALL_ACADEMY_CONCEPTS: Record<string, UniversalConcept> = {
   ...TOPIC_17_18_CONCEPTS,
 };
 
-// Merge in all practice challenges for 100% complete practice coverage across all 18 topics
+// Merge in all practice challenges and references for 100% complete coverage across all 18 topics
 export const ALL_ACADEMY_CONCEPTS: Record<string, UniversalConcept> = Object.fromEntries(
   Object.entries(RAW_ALL_ACADEMY_CONCEPTS).map(([id, concept]) => {
+    let updatedConcept = concept;
     if (ALL_PRACTICE_CHALLENGES[id]) {
-      return [
-        id,
-        {
-          ...concept,
-          challenge: {
-            ...concept.challenge,
-            ...ALL_PRACTICE_CHALLENGES[id],
-          },
+      updatedConcept = {
+        ...updatedConcept,
+        challenge: {
+          ...updatedConcept.challenge,
+          ...ALL_PRACTICE_CHALLENGES[id],
         },
-      ];
+      };
     }
-    return [id, concept];
+    const refSupplement = ALL_CONCEPT_REFERENCES[id];
+    if (refSupplement) {
+      updatedConcept = {
+        ...updatedConcept,
+        reference: {
+          ...updatedConcept.reference,
+          ...refSupplement,
+          options: refSupplement.options && refSupplement.options.length > 0 ? refSupplement.options : (updatedConcept.reference?.options || []),
+          syntaxCheatSheet: refSupplement.syntaxCheatSheet && refSupplement.syntaxCheatSheet.length > 0 ? refSupplement.syntaxCheatSheet : (updatedConcept.reference?.syntaxCheatSheet || []),
+          commonErrors: refSupplement.commonErrors && refSupplement.commonErrors.length > 0 ? refSupplement.commonErrors : (updatedConcept.reference?.commonErrors || []),
+          edgeCases: refSupplement.edgeCases && refSupplement.edgeCases.length > 0 ? refSupplement.edgeCases : (updatedConcept.reference?.edgeCases || []),
+          gitInternals: refSupplement.gitInternals || updatedConcept.reference?.gitInternals,
+        },
+      };
+    }
+    return [id, updatedConcept];
   })
 );
 
