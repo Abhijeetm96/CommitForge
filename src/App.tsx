@@ -9,10 +9,14 @@ import { CodeEditor } from './components/editor/CodeEditor';
 import { AppPreview } from './components/editor/AppPreview';
 import { Terminal } from './components/terminal/Terminal';
 import { LessonPanel } from './components/panels/LessonPanel';
-import { DashboardView } from './components/dashboard/DashboardView';
 import { First10MinutesView } from './components/labs/First10MinutesView';
 import { FocusLessonView } from './components/learn/FocusLessonView';
 import { TeacherLessonView } from './components/learn/TeacherLessonView';
+import { GitJourneyView } from './components/journey/GitJourneyView';
+import { GitAcademyView } from './components/academy/GitAcademyView';
+import { GlobalProblemSearchModal } from './components/academy/GlobalProblemSearchModal';
+import { CommandAtlasModal } from './components/navigation/CommandAtlasModal';
+import { PillarsNavigatorModal } from './components/navigation/PillarsNavigatorModal';
 import { PracticeView } from './components/practice/PracticeView';
 import { DeveloperIdeView } from './components/ide/DeveloperIdeView';
 import { LabsHubView } from './components/labs/LabsHubView';
@@ -29,6 +33,7 @@ import { Database } from 'lucide-react';
 const AppContent: React.FC = () => {
   const {
     mode,
+    setMode,
     instructionMode,
     showOnboarding,
     setShowOnboarding,
@@ -36,13 +41,31 @@ const AppContent: React.FC = () => {
     setShowLostDrawer,
     showGitMovie,
     setShowGitMovie,
+    showCommandAtlas,
+    setShowCommandAtlas,
+    showProblemSearch,
+    setShowProblemSearch,
     repo,
     executeCommand,
     activeHumansTerm,
     closeHumansModal,
+    activeLessonConcept,
+    setActiveLessonConcept,
   } = useApp();
 
   const [showInternalsModal, setShowInternalsModal] = useState(false);
+
+  // Global ⌘K / Ctrl+K keyboard shortcut opens the Natural-Language Problem Solver
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setShowProblemSearch(true);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [setShowProblemSearch]);
 
   // Check if current mode is a Labs sub-route
   const isLabsRoute =
@@ -53,12 +76,22 @@ const AppContent: React.FC = () => {
     <>
       <HeaderNav />
 
-      <main className="main-content">
-        {/* EXPERIENCE 0: HOME / DASHBOARD */}
-        {mode === 'dashboard' && <DashboardView />}
-
-        {/* EXPERIENCE 1: 🎓 LEARN (Teacher-Led Git Academy - Portfolio Snapshot Slice) */}
-        {(mode === 'learn' || mode === 'first10') && <TeacherLessonView />}
+      <main
+        className="main-content"
+        style={{
+          flex: '1 1 0%',
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: 0,
+          height: 'calc(100vh - 60px)',
+          maxHeight: 'calc(100vh - 60px)',
+          overflow: 'hidden',
+        }}
+      >
+        {/* CANONICAL UNIFIED EXPERIENCE: 🎓 GIT ACADEMY (18 Topics + Universal Concept View + Sandbox) */}
+        {(mode === 'learn' || mode === 'dashboard' || mode === 'roadmap' || mode === 'first10' || mode === 'visualize' || mode === 'community') && (
+          <GitAcademyView initialConceptId={activeLessonConcept || 'c-git-commit'} />
+        )}
 
         {/* EXPERIENCE 2: 🛠️ PRACTICE (Guided Developer Missions) */}
         {mode === 'practice' && <PracticeView />}
@@ -127,6 +160,29 @@ const AppContent: React.FC = () => {
       {activeHumansTerm && (
         <GitForHumansModal termId={activeHumansTerm} onClose={closeHumansModal} />
       )}
+
+      {/* Global Natural-Language Problem Solver Modal ("What are you trying to do?") */}
+      <GlobalProblemSearchModal
+        isOpen={showProblemSearch}
+        onClose={() => setShowProblemSearch(false)}
+        onSelectConcept={(conceptId) => {
+          setActiveLessonConcept(conceptId);
+          setMode('learn');
+        }}
+      />
+
+      {/* ⌘K Command Atlas Modal (Section 17) */}
+      <CommandAtlasModal
+        isOpen={showCommandAtlas}
+        onClose={() => setShowCommandAtlas(false)}
+        onSelectConcept={(conceptId) => {
+          setActiveLessonConcept(conceptId);
+          setMode('learn');
+        }}
+      />
+
+      {/* 5 Pillars Navigator Modal (Definition, Syntax, Variations, Examples, Explanation) */}
+      <PillarsNavigatorModal />
 
       {/* Visual Feedback toolbar for AI Agents & Developers */}
       <Agentation />
