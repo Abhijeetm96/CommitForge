@@ -43,4 +43,45 @@ describe('Visualization Section All Topics Quality & Completeness Audit', () => 
       }
     }
   });
+
+  it('audits each of the 18 topics individually and logs complete visualization stats', () => {
+    const report: Array<{ topicNum: string; topicTitle: string; conceptCount: number; allVisualized: boolean }> = [];
+
+    ACADEMY_18_TOPICS.forEach((topic) => {
+      const allVisualized = topic.concepts.every((ref) => {
+        const c = ALL_ACADEMY_CONCEPTS[ref.id];
+        return (
+          c &&
+          c.actionStage &&
+          c.actionStage.before &&
+          c.actionStage.running &&
+          c.actionStage.after &&
+          c.actionStage.before.label &&
+          c.actionStage.running.label &&
+          c.actionStage.after.label
+        );
+      });
+
+      expect(allVisualized, `Topic ${topic.number} (${topic.title}) must have all concepts visualized`).toBe(true);
+
+      report.push({
+        topicNum: topic.number,
+        topicTitle: topic.title,
+        conceptCount: topic.concepts.length,
+        allVisualized,
+      });
+    });
+
+    // Verify 18 topics
+    expect(report.length).toBe(18);
+    // Verify sum of concepts across 18 topics is 71
+    const totalConcepts = report.reduce((sum, r) => sum + r.conceptCount, 0);
+    expect(totalConcepts).toBe(71);
+
+    console.log('=== VISUALIZATION COVERAGE AUDIT REPORT: 18 TOPICS / 71 CONCEPTS ===');
+    report.forEach((r) => {
+      console.log(`✓ Topic ${r.topicNum}: ${r.topicTitle.padEnd(45)} | ${r.conceptCount} concepts visualized [100%]`);
+    });
+    console.log(`TOTAL: 18 Topics, 71 Concepts — 100% Populated and Verified`);
+  });
 });
