@@ -929,43 +929,12 @@ body {
     display: flex !important;
     flex-direction: column !important;
   }
-  .curriculum-sidebar {
-    max-height: 120px !important;
-    flex-shrink: 0 !important;
-    border-right: none !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-    padding: 0.65rem !important;
-  }
   .theater-nodes-grid {
     grid-template-columns: 1fr !important;
     gap: 1rem !important;
   }
   .learn-bottom-grid {
     grid-template-columns: 1fr !important;
-  }
-}
-
-/* ============================================================ */
-/* COMMITFORGE BENTO GRID RESPONSIVE LAYOUT (Section 6 & 24)    */
-/* ============================================================ */
-@media (max-width: 1080px) and (min-width: 681px) {
-  .curriculum-bento-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-  .bento-tile {
-    grid-column: span 1 !important;
-  }
-  .bento-span-7, .bento-span-8 {
-    grid-column: span 2 !important;
-  }
-}
-
-@media (max-width: 680px) {
-  .curriculum-bento-grid {
-    grid-template-columns: 1fr !important;
-  }
-  .bento-tile {
-    grid-column: span 1 !important;
   }
 }
 

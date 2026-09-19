@@ -2,7 +2,6 @@ import React, { createContext, useContext, useState, useEffect, useMemo } from '
 import { GitEngine } from '../git-engine/engine';
 import { GitRepo, CommandResult, StateInspectorData, WhyExplanation, CommandComparison } from '../git-engine/types';
 import { PROJECTS, ProjectDefinition } from '../data/projects';
-import { LESSONS, Lesson, LEVELS } from '../data/curriculum';
 
 export type ViewMode =
   | 'dashboard'
@@ -34,6 +33,23 @@ export interface SkillMastery {
   score: number; // 0 to 100
   evidenceCount: number;
 }
+
+export interface Lesson {
+  id: string;
+  title: string;
+  hints: string[];
+  solution: string;
+}
+
+export const DEFAULT_LESSON: Lesson = {
+  id: 'lesson-1',
+  title: 'Git Foundations & Architecture',
+  hints: [
+    'Git tracks snapshots across Working Directory, Staging Area, and Commit History.',
+    'Run git status or git log to inspect your local repository state.',
+  ],
+  solution: 'git status',
+};
 
 export interface EvidenceMastery {
   foundations: SkillMastery;
@@ -144,13 +160,6 @@ export interface AppContextType {
   // Active Teacher Lesson Concept
   activeLessonConcept: string | null;
   setActiveLessonConcept: (c: string | null) => void;
-
-  // 5 Pillars Navigator Modal (Definition, Syntax, Variations, Examples, Explanation)
-  showPillarsModal: boolean;
-  setShowPillarsModal: (v: boolean) => void;
-  pillarsActiveTarget: { chapterId?: string; conceptId?: string } | null;
-  setPillarsActiveTarget: (target: { chapterId?: string; conceptId?: string } | null) => void;
-  openPillarsModal: (target?: { chapterId?: string; conceptId?: string }) => void;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -205,8 +214,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   ]);
 
   // Lessons
-  const [currentLessonId, setCurrentLessonId] = useState<string>(LESSONS[0].id);
-  const currentLesson = useMemo(() => LESSONS.find(l => l.id === currentLessonId) || LESSONS[0], [currentLessonId]);
+  const [currentLessonId, setCurrentLessonId] = useState<string>(DEFAULT_LESSON.id);
+  const currentLesson = DEFAULT_LESSON;
   const [completedLessonIds, setCompletedLessonIds] = useState<string[]>([]);
   const [predictionRecord, setPredictionRecord] = useState<{ total: number; correct: number }>({ total: 0, correct: 0 });
 
@@ -272,18 +281,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [showGitMovie, setShowGitMovie] = useState(false);
   const [showCommandAtlas, setShowCommandAtlas] = useState(false);
   const [showProblemSearch, setShowProblemSearch] = useState(false);
-  const [showPillarsModal, setShowPillarsModal] = useState(false);
-  const [pillarsActiveTarget, setPillarsActiveTarget] = useState<{ chapterId?: string; conceptId?: string } | null>(null);
   const [first10Step, setFirst10Step] = useState(1);
   const [replayTrigger, setReplayTrigger] = useState(0);
   const [activeLab, setActiveLab] = useState<'break-it' | 'undo-lab' | 'conflict-arena' | 'hospital' | 'two-dev' | 'capstone' | 'config-lab' | 'discover'>('break-it');
-
-  const openPillarsModal = (target?: { chapterId?: string; conceptId?: string }) => {
-    if (target) {
-      setPillarsActiveTarget(target);
-    }
-    setShowPillarsModal(true);
-  };
 
   const openHumansTerm = (id: string) => setActiveHumansTerm(id);
   const closeHumansModal = () => setActiveHumansTerm(null);
@@ -518,11 +518,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setShowCommandAtlas,
         showProblemSearch,
         setShowProblemSearch,
-        showPillarsModal,
-        setShowPillarsModal,
-        pillarsActiveTarget,
-        setPillarsActiveTarget,
-        openPillarsModal,
         activeLab,
         setActiveLab,
         activeLessonConcept,

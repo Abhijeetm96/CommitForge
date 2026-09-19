@@ -33,7 +33,6 @@ export const HeaderNav: React.FC = () => {
     setShowCommandAtlas,
     showProblemSearch,
     setShowProblemSearch,
-    openPillarsModal,
     repo,
     setActiveLessonConcept,
   } = useApp();
@@ -237,6 +236,38 @@ export const HeaderNav: React.FC = () => {
         </button>
 
         <button
+          onClick={() => setMode('labs')}
+          style={{
+            background: 'none',
+            border: 'none',
+            color: mode === 'labs' || ['break-it', 'undo-lab', 'conflict-arena', 'hospital', 'two-dev', 'capstone', 'config-lab', 'discover'].includes(mode) ? '#38bdf8' : '#94a3b8',
+            fontSize: '0.86rem',
+            fontWeight: mode === 'labs' || ['break-it', 'undo-lab', 'conflict-arena', 'hospital', 'two-dev', 'capstone', 'config-lab', 'discover'].includes(mode) ? 800 : 600,
+            padding: '0.4rem 0.75rem',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            position: 'relative',
+            transition: 'all 0.15s ease',
+          }}
+        >
+          Labs
+          {(mode === 'labs' || ['break-it', 'undo-lab', 'conflict-arena', 'hospital', 'two-dev', 'capstone', 'config-lab', 'discover'].includes(mode)) && (
+            <div
+              style={{
+                position: 'absolute',
+                bottom: '-8px',
+                left: '20%',
+                right: '20%',
+                height: '2px',
+                background: '#38bdf8',
+                borderRadius: '999px',
+                boxShadow: '0 0 8px #38bdf8',
+              }}
+            />
+          )}
+        </button>
+
+        <button
           onClick={() => setMode('visualize')}
           style={{
             background: 'none',
@@ -415,31 +446,6 @@ export const HeaderNav: React.FC = () => {
         >
           AP
         </div>
-
-        {/* 📚 5 Pillars Navigator Modal Trigger */}
-        <button
-          onClick={() => openPillarsModal()}
-          style={{
-            background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.15) 0%, rgba(14, 165, 233, 0.2) 100%)',
-            color: '#38bdf8',
-            border: '1px solid rgba(56, 189, 248, 0.4)',
-            borderRadius: '8px',
-            padding: '0.3rem 0.6rem',
-            fontSize: '0.74rem',
-            fontWeight: 800,
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.35rem',
-            boxShadow: '0 0 12px rgba(56, 189, 248, 0.15)',
-            transition: 'all 0.15s ease',
-            whiteSpace: 'nowrap',
-          }}
-          title="Open 5 Pillars of Git Mastery (Definition, Syntax, Variations, Examples, Explanation) for Every Chapter & Subtopic"
-        >
-          <BookOpen size={13} />
-          <span>5 Pillars</span>
-        </button>
 
         {/* I'm Lost quick helper trigger (Section 16) */}
         <button
@@ -676,9 +682,11 @@ export const HeaderNav: React.FC = () => {
             </div>
             {[
               { id: 'learn', label: 'Git Academy', desc: '18 Canonical Topics & Live Sandbox' },
-              { id: 'visualize', label: 'Visualization Suite', desc: '3-Stage State Flow & Live Git Graph DAG' },
               { id: 'practice', label: 'Practice Missions', desc: 'Guided interactive developer challenges' },
+              { id: 'labs', label: 'Labs', desc: 'Break, diagnose & recovery simulations' },
+              { id: 'visualize', label: 'Visualization Suite', desc: '3-Stage State Flow & Live Git Graph DAG' },
               { id: 'reference', label: 'Command Reference', desc: 'Detailed options, flags & internals' },
+              { id: 'ide', label: 'Developer IDE', desc: 'Simulated professional developer workspace' },
               { id: 'community', label: 'Community', desc: 'Case scenarios & discussions' },
             ].map((item) => (
               <button

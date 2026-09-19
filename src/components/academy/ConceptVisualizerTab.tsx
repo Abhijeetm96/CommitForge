@@ -102,19 +102,19 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
 
     if (topicFilter !== 'all') {
       if (topicFilter === 'basics') {
-        list = list.filter((c) => c.topicNumber === 1 || c.topicNumber === 2);
+        list = list.filter((c) => parseInt(c.topicNumber, 10) === 1 || parseInt(c.topicNumber, 10) === 2);
       } else if (topicFilter === 'branching') {
-        list = list.filter((c) => c.topicNumber === 3 || c.topicNumber === 4);
+        list = list.filter((c) => parseInt(c.topicNumber, 10) === 3 || parseInt(c.topicNumber, 10) === 4);
       } else if (topicFilter === 'github') {
-        list = list.filter((c) => c.topicNumber === 5 || c.topicNumber === 6);
+        list = list.filter((c) => parseInt(c.topicNumber, 10) === 5 || parseInt(c.topicNumber, 10) === 6);
       } else if (topicFilter === 'merges') {
-        list = list.filter((c) => c.topicNumber === 7 || c.topicNumber === 8);
+        list = list.filter((c) => parseInt(c.topicNumber, 10) === 7 || parseInt(c.topicNumber, 10) === 8);
       } else if (topicFilter === 'teams') {
-        list = list.filter((c) => c.topicNumber === 9 || c.topicNumber === 10);
+        list = list.filter((c) => parseInt(c.topicNumber, 10) === 9 || parseInt(c.topicNumber, 10) === 10);
       } else if (topicFilter === 'intermediate') {
-        list = list.filter((c) => c.topicNumber === 11 || c.topicNumber === 12);
+        list = list.filter((c) => parseInt(c.topicNumber, 10) === 11 || parseInt(c.topicNumber, 10) === 12);
       } else if (topicFilter === 'advanced') {
-        list = list.filter((c) => c.topicNumber >= 13);
+        list = list.filter((c) => parseInt(c.topicNumber, 10) >= 13);
       }
     }
 

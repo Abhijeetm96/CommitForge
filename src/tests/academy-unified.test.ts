@@ -87,12 +87,12 @@ describe('First Vertical Slice Bespoke Concepts', () => {
       expect(concept.sandbox.guidedSteps.length).toBeGreaterThan(0);
       expect(concept.challenge.title).toBeTruthy();
       expect(concept.challenge.hints.length).toBeGreaterThanOrEqual(1);
-      expect(concept.challenge.safeFailure.recoveryCommand).toBeTruthy();
+      expect(concept.challenge.safeFailure?.recoveryCommand).toBeTruthy();
 
       // Level 6: Reference
       expect(concept.reference.synopsis).toBeTruthy();
-      expect(concept.reference.options.length).toBeGreaterThan(0);
-      expect(concept.reference.gitInternals.objectType).toBeTruthy();
+      expect(concept.reference.options?.length).toBeGreaterThan(0);
+      expect(concept.reference.gitInternals?.objectType).toBeTruthy();
     });
   });
 

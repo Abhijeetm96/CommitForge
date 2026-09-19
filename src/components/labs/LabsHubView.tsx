@@ -7,6 +7,7 @@ import { GitHospitalView } from './GitHospitalView';
 import { TwoDevView } from './TwoDevView';
 import { CapstoneView } from './CapstoneView';
 import { CommandDiscoveryView } from './CommandDiscoveryView';
+import { ConfigLabView } from './ConfigLabView';
 import {
   Swords,
   HeartPulse,
@@ -16,6 +17,8 @@ import {
   ArrowRight,
   ArrowLeft,
   RotateCcw,
+  Award,
+  Settings,
 } from 'lucide-react';
 
 export const LabsHubView: React.FC = () => {
@@ -48,9 +51,31 @@ export const LabsHubView: React.FC = () => {
       btnBorder: 'rgba(16, 185, 129, 0.4)',
     },
     {
+      id: 'undo-lab',
+      title: 'Undo Lab',
+      description: 'Master git restore, revert, reset, and reflog recoveries.',
+      icon: RotateCcw,
+      color: '#38bdf8',
+      bgGrad: 'linear-gradient(180deg, rgba(56, 189, 248, 0.15) 0%, rgba(19, 29, 51, 0.95) 100%)',
+      borderColor: 'rgba(56, 189, 248, 0.35)',
+      btnBg: 'rgba(56, 189, 248, 0.2)',
+      btnBorder: 'rgba(56, 189, 248, 0.4)',
+    },
+    {
+      id: 'break-it',
+      title: 'Break It & Fix It',
+      description: 'Deliberately break repositories and learn to recover.',
+      icon: Flame,
+      color: '#f59e0b',
+      bgGrad: 'linear-gradient(180deg, rgba(245, 158, 11, 0.15) 0%, rgba(19, 29, 51, 0.95) 100%)',
+      borderColor: 'rgba(245, 158, 11, 0.35)',
+      btnBg: 'rgba(245, 158, 11, 0.2)',
+      btnBorder: 'rgba(245, 158, 11, 0.4)',
+    },
+    {
       id: 'bug-detective',
-      title: 'Bug Detective',
-      description: 'Find and fix issues in a real project.',
+      title: 'Two-Dev Simulation',
+      description: 'Simulate team workflows, upstream branches, and PRs.',
       icon: Bug,
       color: '#a855f7',
       bgGrad: 'linear-gradient(180deg, rgba(168, 85, 247, 0.15) 0%, rgba(19, 29, 51, 0.95) 100%)',
@@ -59,15 +84,26 @@ export const LabsHubView: React.FC = () => {
       btnBorder: 'rgba(168, 85, 247, 0.4)',
     },
     {
-      id: 'break-it',
-      title: 'Break It',
-      description: 'Deliberately break things and learn to recover.',
-      icon: Flame,
-      color: '#f59e0b',
-      bgGrad: 'linear-gradient(180deg, rgba(245, 158, 11, 0.15) 0%, rgba(19, 29, 51, 0.95) 100%)',
-      borderColor: 'rgba(245, 158, 11, 0.35)',
-      btnBg: 'rgba(245, 158, 11, 0.2)',
-      btnBorder: 'rgba(245, 158, 11, 0.4)',
+      id: 'config-lab',
+      title: 'Configuration Lab',
+      description: 'Configure gitconfig, aliases, credentials, and editors.',
+      icon: Settings,
+      color: '#06b6d4',
+      bgGrad: 'linear-gradient(180deg, rgba(6, 182, 212, 0.15) 0%, rgba(19, 29, 51, 0.95) 100%)',
+      borderColor: 'rgba(6, 182, 212, 0.35)',
+      btnBg: 'rgba(6, 182, 212, 0.2)',
+      btnBorder: 'rgba(6, 182, 212, 0.4)',
+    },
+    {
+      id: 'capstone',
+      title: 'Capstone Challenge',
+      description: 'Multi-stage production project test under real pressure.',
+      icon: Award,
+      color: '#eab308',
+      bgGrad: 'linear-gradient(180deg, rgba(234, 179, 8, 0.15) 0%, rgba(19, 29, 51, 0.95) 100%)',
+      borderColor: 'rgba(234, 179, 8, 0.35)',
+      btnBg: 'rgba(234, 179, 8, 0.2)',
+      btnBorder: 'rgba(234, 179, 8, 0.4)',
     },
   ];
 
@@ -77,6 +113,9 @@ export const LabsHubView: React.FC = () => {
     else if (id === 'hospital') setActiveLab('hospital');
     else if (id === 'break-it') setActiveLab('break-it');
     else if (id === 'bug-detective') setActiveLab('two-dev');
+    else if (id === 'undo-lab') setActiveLab('undo-lab');
+    else if (id === 'capstone') setActiveLab('capstone');
+    else if (id === 'config-lab') setActiveLab('config-lab');
     else if (id === 'discover') setMode('discover');
   };
 
@@ -139,6 +178,9 @@ export const LabsHubView: React.FC = () => {
             {activeLabView === 'hospital' && <GitHospitalView />}
             {activeLabView === 'break-it' && <BreakItView />}
             {activeLabView === 'bug-detective' && <TwoDevView />}
+            {activeLabView === 'undo-lab' && <UndoLabView />}
+            {activeLabView === 'capstone' && <CapstoneView />}
+            {activeLabView === 'config-lab' && <ConfigLabView />}
             {activeLabView === 'discover' && <CommandDiscoveryView />}
           </div>
         </div>

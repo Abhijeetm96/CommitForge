@@ -43,19 +43,26 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
   const initialCommitCountRef = useRef<number>(0);
 
   const challenge = concept.challenge;
+  const initialFiles = challenge.initialFiles || {};
+  const seedCommands = challenge.seedCommands && challenge.seedCommands.length > 0 ? challenge.seedCommands : ['git init'];
+  const expectedCommands = challenge.expectedCommands && challenge.expectedCommands.length > 0 ? challenge.expectedCommands : [concept.command];
+  const safeFailure = challenge.safeFailure || {
+    mistakeTitle: 'Unchecked Working Tree Reset',
+    mistakeCommand: 'git reset --hard HEAD',
+    whatHappened: 'Uncommitted file modifications in the working tree were discarded.',
+    whatWasNotLost: 'Committed history in the object database was preserved.',
+    recoveryCommand: 'git status',
+    recoveryExplanation: 'Always inspect git status before executing destructive resets.',
+  };
 
   // Initialize or reset challenge sandbox
   const handleResetChallenge = () => {
     // Reset index & ensure initial files exist
-    if (challenge.initialFiles) {
-      for (const [fName, content] of Object.entries(challenge.initialFiles)) {
-        engine.createFile(fName, content);
-      }
+    for (const [fName, content] of Object.entries(initialFiles)) {
+      engine.createFile(fName, content);
     }
 
-    const seed = challenge.seedCommands && challenge.seedCommands.length > 0
-      ? challenge.seedCommands
-      : ['git init'];
+    const seed = seedCommands;
 
     const seedLogs: { command: string; output: string[]; isError?: boolean }[] = [];
 
@@ -153,12 +160,12 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
 
   // Safe failure simulator
   const handleSimulateMistake = () => {
-    executeCommand(challenge.safeFailure.mistakeCommand);
+    executeCommand(safeFailure.mistakeCommand);
     setSafeFailureState('triggered');
   };
 
   const handleExecuteRecovery = () => {
-    executeCommand(challenge.safeFailure.recoveryCommand);
+    executeCommand(safeFailure.recoveryCommand);
     setSafeFailureState('recovered');
   };
 
@@ -167,7 +174,7 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
   const hasRunStatus = userCommands.some((c) => c.startsWith('git status'));
   const hasRunTarget = userCommands.some((c) =>
     c.includes(concept.command) ||
-    challenge.expectedCommands.some((ec) => c.startsWith(ec.split(' ')[0] + ' ' + (ec.split(' ')[1] || '')))
+    expectedCommands.some((ec) => c.startsWith(ec.split(' ')[0] + ' ' + (ec.split(' ')[1] || '')))
   );
 
   const headCommitHash = repo.head.type === 'branch'
@@ -180,11 +187,11 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
   const stagedFiles = Object.keys(repo.index);
 
   // Concept-specific criteria
-  const isCommitConcept = concept.command.includes('commit') || challenge.expectedCommands.some((c) => c.includes('commit'));
-  const isAddConcept = concept.command.includes('add') || challenge.expectedCommands.some((c) => c.includes('add'));
+  const isCommitConcept = concept.command.includes('commit') || expectedCommands.some((c) => c.includes('commit'));
+  const isAddConcept = concept.command.includes('add') || expectedCommands.some((c) => c.includes('add'));
 
   // Security check: did user avoid committing sensitive/temporary files?
-  const forbiddenFiles = Object.keys(challenge.initialFiles).filter(
+  const forbiddenFiles = Object.keys(initialFiles).filter(
     (f) => f.includes('secret') || f.includes('temp') || f.includes('.tmp') || f.includes('draft')
   );
   const isForbiddenSafe = forbiddenFiles.length === 0 || forbiddenFiles.every(
@@ -203,7 +210,7 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
 
   // Criterion 2: Action step
   if (isCommitConcept) {
-    const targetFile = Object.keys(challenge.initialFiles).find((f) => !forbiddenFiles.includes(f)) || 'app.js';
+    const targetFile = Object.keys(initialFiles).find((f) => !forbiddenFiles.includes(f)) || 'app.js';
     criteriaList.push({
       title: `Stage Code Changes (\`${targetFile}\`)`,
       desc: `Add the intended file to staging while keeping temporary files untracked`,
@@ -218,7 +225,7 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
   } else {
     criteriaList.push({
       title: `Execute \`${concept.command}\``,
-      desc: `Apply the target command: ${challenge.expectedCommands[0] || concept.command}`,
+      desc: `Apply the target command: ${expectedCommands[0] || concept.command}`,
       passed: hasRunTarget,
     });
   }
@@ -472,7 +479,7 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
               value={inputVal}
               onChange={(e) => setInputVal(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={`Type a command (e.g. ${challenge.expectedCommands[0] || 'git status'})...`}
+              placeholder={`Type a command (e.g. ${expectedCommands[0] || 'git status'})...`}
               style={{
                 flex: 1,
                 background: 'transparent',
@@ -916,7 +923,7 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
           }}
         >
           <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#f87171' }}>
-            Scenario: {challenge.safeFailure.mistakeTitle}
+            Scenario: {safeFailure.mistakeTitle}
           </div>
 
           {safeFailureState === 'idle' && (
@@ -943,7 +950,7 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
                   }}
                 >
                   <Play size={13} />
-                  Simulate Mistake: $ {challenge.safeFailure.mistakeCommand}
+                  Simulate Mistake: $ {safeFailure.mistakeCommand}
                 </button>
               </div>
             </div>
@@ -952,10 +959,10 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
           {safeFailureState === 'triggered' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
               <div style={{ fontSize: '0.84rem', color: '#f87171', fontWeight: 600 }}>
-                💥 What Happened: {challenge.safeFailure.whatHappened}
+                💥 What Happened: {safeFailure.whatHappened}
               </div>
               <div style={{ fontSize: '0.82rem', color: '#22c55e', background: 'rgba(34, 197, 94, 0.08)', padding: '0.65rem', borderRadius: '6px' }}>
-                🛡️ What was NOT lost: {challenge.safeFailure.whatWasNotLost}
+                🛡️ What was NOT lost: {safeFailure.whatWasNotLost}
               </div>
               <div>
                 <button
@@ -976,7 +983,7 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
                   }}
                 >
                   <ArrowRight size={15} />
-                  Execute Recovery: $ {challenge.safeFailure.recoveryCommand}
+                  Execute Recovery: $ {safeFailure.recoveryCommand}
                 </button>
               </div>
             </div>
@@ -996,7 +1003,7 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#22c55e', fontSize: '0.86rem', fontWeight: 700 }}>
                 <CheckCircle2 size={18} />
-                Successfully Recovered! {challenge.safeFailure.recoveryExplanation}
+                Successfully Recovered! {safeFailure.recoveryExplanation}
               </div>
               <button
                 onClick={() => setSafeFailureState('idle')}

@@ -52,7 +52,7 @@ export interface CommandComparisonItem {
 
 export interface ActionStageFile {
   name: string;
-  status: 'modified' | 'staged' | 'untracked' | 'committed';
+  status: 'modified' | 'staged' | 'untracked' | 'committed' | 'conflict';
 }
 
 export interface ActionStageState {
@@ -68,13 +68,16 @@ export interface ActionStageState {
 
 export interface ConceptPracticeChallenge {
   title: string;
-  objective: string;
-  seedCommands: string[];
-  initialFiles: Record<string, string>;
-  expectedCommands: string[];
+  objective?: string;
+  instructions?: string | string[];
+  startingState?: string;
+  goalState?: string;
+  seedCommands?: string[];
+  initialFiles?: Record<string, string>;
+  expectedCommands?: string[];
   hints: string[];
-  solutionExplanation: string;
-  safeFailure: {
+  solutionExplanation?: string;
+  safeFailure?: {
     mistakeTitle: string;
     mistakeCommand: string;
     whatHappened: string;
@@ -142,17 +145,28 @@ export interface UniversalConcept {
 
   // Level 6: Reference
   reference: {
-    synopsis: string;
-    options: {
+    synopsis?: string;
+    officialDocUrl?: string;
+    syntaxCheatSheet?: string[];
+    commonErrors?: {
+      error: string;
+      remedy: string;
+    }[];
+    mentalModelDiagram?: {
+      concept: string;
+      explanation: string;
+      storageLocation: string;
+    };
+    options?: {
       flag: string;
       description: string;
     }[];
-    gitInternals: {
+    gitInternals?: {
       objectType: string;
       explanation: string;
       storageLocation: string;
     };
-    edgeCases: string[];
+    edgeCases?: string[];
   };
 }
 

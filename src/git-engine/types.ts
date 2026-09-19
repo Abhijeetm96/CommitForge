@@ -153,6 +153,8 @@ export interface CommandResult {
   dangerLevel: DangerLevel;
   stateChanged: boolean;
   repo: GitRepo;
+  error?: string;
+  success?: boolean;
   whyExplanation?: WhyExplanation;
   comparisons?: CommandComparison;
   educationalFeedback?: string;

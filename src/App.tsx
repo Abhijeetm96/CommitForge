@@ -1,28 +1,14 @@
 import React, { useState } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import { HeaderNav } from './components/layout/HeaderNav';
-import { GitStateInspector } from './components/visualizer/GitStateInspector';
-import { ThreeAreaVisualizer } from './components/visualizer/ThreeAreaVisualizer';
-import { GitGraph } from './components/visualizer/GitGraph';
-import { FileExplorer } from './components/editor/FileExplorer';
-import { CodeEditor } from './components/editor/CodeEditor';
-import { AppPreview } from './components/editor/AppPreview';
-import { Terminal } from './components/terminal/Terminal';
-import { LessonPanel } from './components/panels/LessonPanel';
-import { First10MinutesView } from './components/labs/First10MinutesView';
-import { FocusLessonView } from './components/learn/FocusLessonView';
-import { TeacherLessonView } from './components/learn/TeacherLessonView';
-import { GitJourneyView } from './components/journey/GitJourneyView';
 import { GitAcademyView } from './components/academy/GitAcademyView';
 import { GlobalProblemSearchModal } from './components/academy/GlobalProblemSearchModal';
 import { CommandAtlasModal } from './components/navigation/CommandAtlasModal';
-import { PillarsNavigatorModal } from './components/navigation/PillarsNavigatorModal';
 import { PracticeView } from './components/practice/PracticeView';
 import { DeveloperIdeView } from './components/ide/DeveloperIdeView';
 import { LabsHubView } from './components/labs/LabsHubView';
 import { CommandReferenceView } from './components/labs/CommandReferenceView';
 import { InternalsModal } from './components/visualizer/InternalsModal';
-import { ForgeTutor } from './components/tutor/ForgeTutor';
 import { ImLostDrawer } from './components/tutor/ImLostDrawer';
 import { OnboardingWizard } from './components/tutor/OnboardingWizard';
 import { GitForHumansModal } from './components/tutor/GitForHumansModal';
@@ -180,9 +166,6 @@ const AppContent: React.FC = () => {
           setMode('learn');
         }}
       />
-
-      {/* 5 Pillars Navigator Modal (Definition, Syntax, Variations, Examples, Explanation) */}
-      <PillarsNavigatorModal />
 
       {/* Visual Feedback toolbar for AI Agents & Developers */}
       <Agentation />
