@@ -155,7 +155,7 @@ export const BreakItView: React.FC = () => {
   };
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '460px 1fr', height: 'calc(100vh - 100px)', overflow: 'hidden' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(320px, 440px) 1fr', height: '700px', width: '100%', maxWidth: '100%', boxSizing: 'border-box', overflow: 'hidden' }}>
       {/* Left Column: 6-Step Diagnostic Experience */}
       <div
         style={{
@@ -397,7 +397,7 @@ export const BreakItView: React.FC = () => {
                 <div style={{ fontSize: '0.88rem', color: 'var(--text-primary)', lineHeight: 1.45 }}>
                   {currentDisaster.inspectTip}
                 </div>
-                <div style={{ display: 'flex', gap: '0.4rem' }}>
+                <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
                   <button
                     onClick={() => {
                       executeCommand(currentDisaster.recommendedInspectCmd);
@@ -495,9 +495,12 @@ export const BreakItView: React.FC = () => {
                       display: 'flex',
                       alignItems: 'center',
                       gap: '0.3rem',
+                      maxWidth: '100%',
+                      wordBreak: 'break-word',
+                      whiteSpace: 'normal',
                     }}
                   >
-                    Execute Recovery: <code>{currentDisaster.strategyOptions[selectedStrategy].command}</code>
+                    Execute Recovery: <code style={{ wordBreak: 'break-all' }}>{currentDisaster.strategyOptions[selectedStrategy].command}</code>
                   </button>
                 )}
               </div>

@@ -416,14 +416,16 @@ export const CommandDiscoveryView: React.FC = () => {
     <div
       style={{
         flex: 1,
-        padding: '2.5rem 2rem',
-        background: '#0b111e',
-        color: '#f8fafc',
+        width: '100%',
+        maxWidth: '100%',
+        boxSizing: 'border-box',
+        padding: '1.5rem',
+        background: 'var(--bg-app)',
+        color: 'var(--text-primary)',
         overflowY: 'auto',
-        minHeight: 'calc(100vh - 60px)',
       }}
     >
-      <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+      <div style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
         {/* Title Bar (Screen 6: What should I do?) */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>

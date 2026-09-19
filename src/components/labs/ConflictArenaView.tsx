@@ -32,7 +32,7 @@ export const ConflictArenaView: React.FC = () => {
   };
 
   return (
-    <div style={{ padding: '1.5rem', maxWidth: '1100px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+    <div style={{ padding: '1.5rem', width: '100%', maxWidth: '100%', boxSizing: 'border-box', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       <div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--danger)', fontWeight: 700, fontSize: '0.85rem', textTransform: 'uppercase' }}>
           <Swords size={16} /> Conflict Resolution Battleground

@@ -56,56 +56,56 @@ interface LabDefinition {
 const LAB_ITEMS: LabDefinition[] = [
   {
     id: 'conflict-arena',
-    title: 'Conflict Arena',
-    category: 'Merge Conflicts',
-    badge: '⚔️ Arena',
-    description: 'Resolve merge conflicts like a seasoned professional. Decode anatomical conflict markers and stage clean resolutions.',
+    title: 'Merge Conflict Colosseum',
+    category: 'Branch Diplomacy',
+    badge: '⚔️ Colosseum',
+    description: 'Resolve code collisions without yelling at teammates. Decode three-way conflict markers, stage peace treaties, and master git merge --abort.',
     icon: Swords,
     color: '#ef4444',
     bgGrad: 'linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(185, 28, 28, 0.25) 100%)',
     borderColor: 'rgba(239, 68, 68, 0.35)',
     commands: ['git merge', 'git diff', 'git add', 'git merge --abort'],
     objectives: [
-      'Decode <<<<<<< HEAD, =======, and >>>>>>> marker boundaries',
-      'Resolve single-line and multi-file code collisions',
-      'Stage conflict resolutions with git add without panic',
-      'Understand how git merge --abort returns you to safe ground',
+      'Decode <<<<<<< HEAD, =======, and >>>>>>> marker boundaries without panic',
+      'Resolve single-line and multi-file code collisions with human diplomacy',
+      'Stage clean conflict resolutions with git add before committing',
+      'Understand how git merge --abort returns you to safe ground unscathed',
     ],
-    scenario: 'Two developers modified the same files on parallel branches. When attempting to merge, Git flagged conflicting changes that require human judgment to reconcile.',
+    scenario: 'Two developers modified the exact same function on parallel branches. Git threw up its hands, refused to guess who is right, and dropped conflict markers into the file. Step into the Colosseum to negotiate a peaceful resolution.',
     recoveryTips: [
-      'If conflicts become overwhelming, run `git merge --abort` to return to your exact starting state.',
-      'Never leave conflict markers inside source files before committing.',
+      'If conflicts become overwhelming, run `git merge --abort` to return to your exact starting state with zero casualties.',
+      'Never leave conflict markers inside source files unless you want CI to roast you in front of the team.',
     ],
   },
   {
     id: 'hospital',
-    title: 'Git Hospital',
-    category: 'Emergency Surgery',
-    badge: '🏥 Surgery',
-    description: 'Diagnose repository health, recover detached HEAD commits, repair corrupt indexes, and fix common disasters.',
+    title: 'Git ER & Intensive Care',
+    category: 'Triage & CPR',
+    badge: '🏥 ER Ward',
+    description: 'Detached HEAD triage & CPR for comatose repositories. Resuscitate orphaned commits, repair index trauma, and restore healthy vital signs.',
     icon: HeartPulse,
     color: '#10b981',
     bgGrad: 'linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.25) 100%)',
     borderColor: 'rgba(16, 185, 129, 0.35)',
     commands: ['git status', 'git fsck', 'git reflog', 'git branch'],
     objectives: [
-      'Spot detached HEAD states and diagnose why they happen',
-      'Rescue orphaned commits created in detached HEAD before switching',
-      'Inspect repository integrity using git fsck',
-      'Reattach lost commits to a named recovery branch',
+      'Spot detached HEAD states and diagnose why developers wander into them',
+      'Rescue orphaned commits created in detached HEAD before switching away',
+      'Inspect repository structural integrity using git fsck',
+      'Reattach lost commits to a named recovery branch before garbage collection',
     ],
-    scenario: 'A developer was inspecting old commits and made changes in detached HEAD state. Now they cannot find their new commits in git branch.',
+    scenario: 'A developer was casually inspecting old history and made 5 urgent commits directly in detached HEAD mode. Now their branch pointer is gone and panic has set in. Perform surgical reflog resuscitation.',
     recoveryTips: [
-      'Check `git reflog` immediately — all commit SHAs are recorded locally for at least 30 days.',
-      'Run `git branch recovery <sha>` to rescue orphaned commits instantly.',
+      'Do not flatline: `git reflog` records every commit SHA locally for at least 30 days. Your work is almost never dead.',
+      'Run `git branch recovery-squad <sha>` to rescue orphaned commits instantly.',
     ],
   },
   {
     id: 'undo-lab',
-    title: 'Undo Lab',
-    category: 'Time Travel',
+    title: 'Time Machine & Regret Eraser',
+    category: 'Ctrl+Z Deluxe',
     badge: '⏪ Time Travel',
-    description: 'Master git restore, revert, reset (--soft, --mixed, --hard), and reflog recoveries with complete confidence.',
+    description: 'Erase bad life choices across working tree, index, and history. Master git restore, revert, and soft/mixed/hard resets safely.',
     icon: RotateCcw,
     color: '#38bdf8',
     bgGrad: 'linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(37, 99, 235, 0.25) 100%)',
@@ -113,114 +113,114 @@ const LAB_ITEMS: LabDefinition[] = [
     commands: ['git restore', 'git restore --staged', 'git revert', 'git reset'],
     objectives: [
       'Surgically discard uncommitted working modifications with git restore',
-      'Unstage accidentally packaged files without touching disk files',
-      'Differentiate soft vs mixed vs hard resets clearly',
-      'Create forward-moving inverse commits using git revert for shared history',
+      'Unstage accidentally packaged secrets without touching disk files',
+      'Differentiate soft vs mixed vs hard resets clearly before pulling the trigger',
+      'Create forward-moving inverse commits with git revert for polite public history',
     ],
-    scenario: 'You accidentally staged API secrets, modified the wrong file, and need to undo mistakes at three different levels without losing your valid work.',
+    scenario: 'You accidentally staged API secrets, broke the CSS layout, and need to undo mistakes across 3 distinct zones without incinerating valid work.',
     recoveryTips: [
-      'Use `git restore --staged <file>` to unstage files safely without discarding edits.',
+      'Use `git restore --staged <file>` to unstage files discreetly without discarding edits.',
       'Use `git revert` instead of `git reset` if commits have already been pushed to teammates.',
     ],
   },
   {
     id: 'break-it',
-    title: 'Break It & Fix It',
+    title: 'Controlled Demolition Lab',
     category: 'Chaos Engineering',
     badge: '🔥 Chaos Lab',
-    description: 'Deliberately break repositories under controlled conditions and learn the exact step-by-step procedures to recover them.',
+    description: 'Deliberately break repositories in a blast-proof sandbox. Practice calm diagnosis until terminal error messages stop raising your heart rate.',
     icon: Flame,
     color: '#f59e0b',
     bgGrad: 'linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(217, 119, 6, 0.25) 100%)',
     borderColor: 'rgba(245, 158, 11, 0.35)',
     commands: ['git reset --hard', 'git reflog', 'git checkout', 'git branch'],
     objectives: [
-      'Experience worst-case Git accidents in a safe simulator',
-      'Eliminate fear of terminal errors through repeated recovery practice',
+      'Experience worst-case Git disasters in a blast-proof simulator',
+      'Eliminate fear of terminal red text through repeated recovery drills',
       'Understand how Git preserves content-addressable objects under the hood',
-      'Build rapid reflexes for recovering corrupted repository states',
+      'Build lightning-fast reflexes for recovering corrupted repository states',
     ],
-    scenario: 'Chaos engineering: simulate deleted branches, overwriting index files, and hard resets, then execute surgical recovery procedures.',
+    scenario: 'Chaos engineering: trigger deleted branches, overwrite index files, and execute accidental hard resets, then practice surgical self-rescue.',
     recoveryTips: [
-      'Git almost never deletes your data immediately. Even hard resets leave commits in the reflog.',
-      'Practice calm diagnosis before typing panic commands.',
+      'Git almost never deletes your data immediately. Even hard resets leave commits lingering in the reflog.',
+      'Practice calm diagnosis before typing panic commands — 90% of crises are cured in 10 seconds with `git reflog`.',
     ],
   },
   {
     id: 'two-dev',
-    title: 'Two-Dev Simulation',
-    category: 'Team Collaboration',
-    badge: '👥 Team Lab',
-    description: 'Simulate team workflows where two developers push concurrent commits, triggering upstream divergence and pull requests.',
+    title: 'Teammate Collision Chamber',
+    category: 'Multiplayer Drama',
+    badge: '👥 4:59 PM Push',
+    description: 'Simulate what happens when two developers push simultaneously. Rebase without tears, decode non-fast-forward rejections, and keep friendships intact.',
     icon: Bug,
     color: '#a855f7',
     bgGrad: 'linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(126, 34, 206, 0.25) 100%)',
     borderColor: 'rgba(168, 85, 247, 0.35)',
     commands: ['git fetch', 'git pull --rebase', 'git push', 'git switch'],
     objectives: [
-      'Understand remote tracking branch references (origin/main)',
-      'Resolve "rejected: non-fast-forward" push errors gracefully',
-      'Use git pull --rebase to keep linear history on shared teams',
-      'Inspect incoming team commits before merging with git fetch',
+      'Demystify remote tracking branch references (origin/main)',
+      'Resolve "[rejected - non-fast-forward]" push errors without breaking a sweat',
+      'Use git pull --rebase to keep commit history linear and civilized',
+      'Inspect incoming team commits before merging using git fetch',
     ],
-    scenario: 'Alice pushes a commit to origin while you work offline. When you try to push, Git rejects your update because your branch is behind upstream.',
+    scenario: 'It is Friday at 4:59 PM. Alice pushes a commit to origin while you work offline. When you try to push, Git slams the door in your face. Rebase gracefully.',
     recoveryTips: [
-      'Run `git fetch origin` first to inspect what teammates pushed before merging.',
+      'Run `git fetch origin` first to inspect what teammates pushed before letting Git merge blindly.',
       'Use `git pull --rebase` to replay your local commits cleanly on top of upstream changes.',
     ],
   },
   {
     id: 'config-lab',
-    title: 'Configuration Lab',
-    category: 'Developer Workflow',
-    badge: '⚙️ Settings',
-    description: 'Configure global and local gitconfig, productivity aliases, credential helpers, default branches, and diff tools.',
+    title: 'Git Interior Design Studio',
+    category: 'Workflow Tuning',
+    badge: '⚙️ Atelier',
+    description: 'Deck out your .gitconfig, forge muscle-memory aliases, configure diff tools, and stop typing 40-character commands like a peasant.',
     icon: Settings,
     color: '#06b6d4',
     bgGrad: 'linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(14, 116, 144, 0.25) 100%)',
     borderColor: 'rgba(6, 182, 212, 0.35)',
     commands: ['git config --global', 'git config --list', 'core.editor', 'init.defaultBranch'],
     objectives: [
-      'Master the 3 Git configuration scopes: system, global, and local repository',
-      'Create high-speed aliases for frequent multi-flag commands',
+      'Master the 3 Git configuration scopes: system, global (~/.gitconfig), and local repo',
+      'Forge high-speed aliases (co, br, lg, amend) for frequent multi-flag commands',
       'Configure modern default branch names (init.defaultBranch main)',
-      'Set preferred code editors and whitespace line ending rules',
+      'Set preferred code editors and sensible cross-platform line ending rules',
     ],
-    scenario: 'You set up a fresh developer machine. Configure author identity, helpful aliases like `git co` and `git lg`, and sensible defaults.',
+    scenario: 'A fresh developer laptop with unconfigured Git is like an apartment with folding chairs. Deck it out with custom aliases, diff tools, and sensible defaults.',
     recoveryTips: [
       'View where all active settings come from with `git config --list --show-origin`.',
-      'To remove a faulty setting, run `git config --global --unset <key>`.',
+      'To remove a faulty alias or setting, run `git config --global --unset <key>`.',
     ],
   },
   {
     id: 'capstone',
-    title: 'Capstone Challenge',
-    category: 'Production Test',
-    badge: '🏆 Capstone',
-    description: 'A multi-stage production project challenge under realistic workplace conditions. Prove complete end-to-end Git mastery.',
+    title: 'The Friday Production Gauntlet',
+    category: 'Final Boss Battle',
+    badge: '🏆 Final Boss',
+    description: 'The release deadline is in 20 minutes. Feature branches are flying in, hotfixes are urgent, and the CTO is watching the log. Ship with zero errors.',
     icon: Award,
     color: '#eab308',
     bgGrad: 'linear-gradient(135deg, rgba(234, 179, 8, 0.2) 0%, rgba(161, 98, 7, 0.25) 100%)',
     borderColor: 'rgba(234, 179, 8, 0.35)',
     commands: ['git init', 'git branch', 'git merge', 'git tag', 'git rebase'],
     objectives: [
-      'Execute a full production release lifecycle from initial commit to production tag',
+      'Execute a complete production release lifecycle from initial commit to tagged release',
       'Handle urgent production hotfixes while feature branches are in flight',
       'Merge feature branches and resolve simulated staging collisions',
       'Seal release tags with cryptographic milestone annotations',
     ],
-    scenario: 'You are the lead engineer on a fast-growing platform. Build a clean release, navigate an unexpected hotfix, and tag v1.0.0 for deployment.',
+    scenario: 'You are the lead engineer on a fast-growing platform. Build a clean release, navigate an unexpected hotfix, and tag v1.0.0 for deployment before the weekend.',
     recoveryTips: [
-      'Plan your branch names and commit messages before executing commands.',
-      'Check `git status` and `git log --oneline` at every transition step.',
+      'Always run `git status` and `git log --oneline` at every step before pulling triggers.',
+      'Check for clean working trees before initiating branch switches or tag deployments.',
     ],
   },
   {
     id: 'discover',
-    title: 'Command Discovery',
-    category: 'Decision Matrix',
-    badge: '🧭 Discovery',
-    description: 'Compare commands side-by-side with risk badges (SAFE, LOW RISK, HIGH RISK) for real-world development scenarios.',
+    title: 'The "What Did I Just Do?" Oracle',
+    category: 'Survival Compass',
+    badge: '🧭 The Oracle',
+    description: 'Side-by-side risk ratings and command matrices so you don\'t blow up the repository. Compare reset, restore, revert, and switch at a glance.',
     icon: Compass,
     color: '#38bdf8',
     bgGrad: 'linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(37, 99, 235, 0.25) 100%)',
@@ -232,7 +232,7 @@ const LAB_ITEMS: LabDefinition[] = [
       'Identify DESTRUCTIVE commands that require caution and backups',
       'Quickly choose the right tool for specific developer problems',
     ],
-    scenario: 'You need to undo changes or inspect branches, but are unsure whether to use checkout, switch, restore, reset, or revert. Explore side-by-side comparisons.',
+    scenario: 'You need to undo something, but you can\'t remember whether reset, revert, restore, checkout, or switch will vaporize your afternoon\'s work. Consult the Oracle.',
     recoveryTips: [
       'Commands labeled SAFE never alter repository history or destroy working files.',
       'When in doubt between reset and restore, prefer `git restore` for targeted safety.',
@@ -627,11 +627,17 @@ export const LabsHubView: React.FC = () => {
             flexDirection: 'column',
             gap: '1.5rem',
             boxSizing: 'border-box',
+            width: '100%',
+            maxWidth: '100%',
           }}
         >
           {/* Hero Header (Matching Learn Page Visual Polish) */}
           <div
             style={{
+              flexShrink: 0,
+              width: '100%',
+              maxWidth: '100%',
+              boxSizing: 'border-box',
               background: 'var(--bg-card)',
               border: '1px solid var(--border-color)',
               borderRadius: '16px',
@@ -820,6 +826,11 @@ export const LabsHubView: React.FC = () => {
           {activeTab === 'arena' && (
             <div
               style={{
+                flexShrink: 0,
+                width: '100%',
+                maxWidth: '100%',
+                boxSizing: 'border-box',
+                minWidth: 0,
                 background: 'var(--bg-card)',
                 border: '1px solid var(--border-color)',
                 borderRadius: '16px',
@@ -845,7 +856,18 @@ export const LabsHubView: React.FC = () => {
           {/* TAB 2: MISSION BRIEFING                                          */}
           {/* ================================================================ */}
           {activeTab === 'briefing' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            <div
+              style={{
+                flexShrink: 0,
+                width: '100%',
+                maxWidth: '100%',
+                boxSizing: 'border-box',
+                minWidth: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1.25rem',
+              }}
+            >
               {/* Scenario Card */}
               <div
                 style={{
@@ -937,7 +959,18 @@ export const LabsHubView: React.FC = () => {
           {/* TAB 3: CORE COMMANDS                                             */}
           {/* ================================================================ */}
           {activeTab === 'commands' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            <div
+              style={{
+                flexShrink: 0,
+                width: '100%',
+                maxWidth: '100%',
+                boxSizing: 'border-box',
+                minWidth: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1.25rem',
+              }}
+            >
               <div style={{ fontSize: '0.82rem', fontWeight: 800, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                 Commands Exercised in {currentLab.title}
               </div>
@@ -1002,7 +1035,18 @@ export const LabsHubView: React.FC = () => {
           {/* TAB 4: EMERGENCY RECOVERY GUIDE                                  */}
           {/* ================================================================ */}
           {activeTab === 'recovery' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            <div
+              style={{
+                flexShrink: 0,
+                width: '100%',
+                maxWidth: '100%',
+                boxSizing: 'border-box',
+                minWidth: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '1.25rem',
+              }}
+            >
               <div
                 style={{
                   background: 'var(--bg-card)',
@@ -1053,7 +1097,9 @@ export const LabsHubView: React.FC = () => {
           className="labs-bottom-bar"
           style={{
             flexShrink: 0,
-            padding: '0.65rem 1.25rem',
+            width: '100%',
+            maxWidth: '100%',
+            padding: '0.65rem 1.5rem',
             borderTop: '1px solid var(--border-color)',
             background: 'var(--bg-surface)',
             display: 'flex',

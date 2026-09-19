@@ -59,7 +59,7 @@ export const ConfigLabView: React.FC = () => {
   ].join('\n');
 
   return (
-    <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '2rem 1.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+    <div style={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box', margin: '0 auto', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       {/* Header */}
       <div style={{ background: 'linear-gradient(135deg, rgba(240, 80, 51, 0.12) 0%, rgba(6, 182, 212, 0.08) 100%)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-lg)', padding: '1.75rem' }}>
         <div style={{ display: 'inline-flex', padding: '0.25rem 0.75rem', background: 'rgba(240, 80, 51, 0.2)', border: '1px solid var(--git-orange)', borderRadius: '999px', color: 'var(--git-orange)', fontWeight: 800, fontSize: '0.75rem', textTransform: 'uppercase', marginBottom: '0.6rem' }}>
