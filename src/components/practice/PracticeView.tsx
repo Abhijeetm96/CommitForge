@@ -279,11 +279,16 @@ export const PracticeView: React.FC = () => {
       className="practice-view-container"
       style={{
         flex: 1,
-        padding: '2.5rem 2rem',
+        width: '100%',
+        height: '100%',
+        maxHeight: '100%',
+        minHeight: 0,
+        padding: '2.5rem 2rem 6rem 2rem',
         background: 'var(--bg-app)',
         color: 'var(--text-primary)',
         overflowY: 'auto',
-        minHeight: 'calc(100vh - 60px)',
+        overflowX: 'hidden',
+        boxSizing: 'border-box',
       }}
     >
       <div style={{ maxWidth: '1100px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '2rem' }}>

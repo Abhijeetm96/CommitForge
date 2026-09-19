@@ -131,12 +131,18 @@ export const LabsHubView: React.FC = () => {
       className="labs-hub-container"
       style={{
         flex: 1,
+        width: '100%',
+        height: '100%',
+        maxHeight: '100%',
+        minHeight: 0,
         display: 'flex',
         flexDirection: 'column',
         background: 'var(--bg-app)',
         color: 'var(--text-primary)',
-        minHeight: 'calc(100vh - 60px)',
         overflowY: 'auto',
+        overflowX: 'hidden',
+        boxSizing: 'border-box',
+        paddingBottom: activeLabView ? '0' : '6rem',
       }}
     >
       {/* If a lab is active, render lab workspace with a top Back bar */}

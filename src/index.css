@@ -376,7 +376,8 @@ body {
   max-height: calc(100% - 60px);
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* State Inspector HUD Bar ("What's Git Thinking?") */

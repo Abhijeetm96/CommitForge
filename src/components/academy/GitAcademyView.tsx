@@ -180,7 +180,7 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
           flex: '1 1 0%',
           minHeight: 0,
           overflowY: 'auto',
-          padding: '0.75rem 0.5rem 3rem 0.5rem',
+          padding: '0.75rem 0.5rem 5rem 0.5rem',
           display: 'flex',
           flexDirection: 'column',
           gap: '0.35rem',

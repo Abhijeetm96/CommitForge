@@ -71,7 +71,8 @@ const AppContent: React.FC = () => {
           minHeight: 0,
           height: 'calc(100vh - 60px)',
           maxHeight: 'calc(100vh - 60px)',
-          overflow: 'hidden',
+          overflowY: mode === 'ide' ? 'hidden' : 'auto',
+          overflowX: 'hidden',
         }}
       >
         {/* CANONICAL UNIFIED EXPERIENCE: 🎓 GIT ACADEMY (18 Topics + Universal Concept View + Sandbox) */}

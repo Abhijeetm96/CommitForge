@@ -46,7 +46,20 @@ export const CommandReferenceView: React.FC = () => {
   });
 
   return (
-    <div style={{ padding: '1.5rem', maxWidth: '1150px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+    <div
+      className="command-reference-view-container"
+      style={{
+        flex: 1,
+        width: '100%',
+        height: '100%',
+        minHeight: 0,
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        boxSizing: 'border-box',
+        padding: '1.5rem 1.5rem 6rem 1.5rem',
+      }}
+    >
+      <div style={{ maxWidth: '1150px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem', width: '100%' }}>
       <div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--git-orange)', fontWeight: 700, fontSize: '0.85rem', textTransform: 'uppercase' }}>
           <BookMarked size={16} /> Knowledge Base & Command Encyclopedia
@@ -524,6 +537,7 @@ export const CommandReferenceView: React.FC = () => {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 };
