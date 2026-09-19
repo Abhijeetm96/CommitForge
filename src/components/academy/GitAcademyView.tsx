@@ -590,40 +590,6 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
               <CheckCircle2 size={14} />
               <span>{isConceptDone ? 'Learned ✓' : 'Mark as Learned'}</span>
             </button>
-
-            <button
-              onClick={() => setShowProblemSearch(true)}
-              title="Open Natural-Language Problem Solver (⌘K)"
-              style={{
-                background: 'rgba(255, 255, 255, 0.03)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
-                color: '#94a3b8',
-                padding: '0.42rem 0.75rem',
-                borderRadius: '8px',
-                fontSize: '0.74rem',
-                fontWeight: 500,
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.45rem',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              <Search size={13} color="#64748b" />
-              <span className="academy-bottom-label">Problem Solver</span>
-              <kbd
-                style={{
-                  background: 'rgba(255, 255, 255, 0.08)',
-                  borderRadius: '4px',
-                  padding: '0.1rem 0.35rem',
-                  fontSize: '0.65rem',
-                  fontFamily: 'monospace',
-                  color: '#cbd5e1',
-                }}
-              >
-                ⌘K
-              </kbd>
-            </button>
           </div>
 
           {/* Next Concept Button */}

@@ -119,55 +119,8 @@ export const HeaderNav: React.FC = () => {
         </div>
       </div>
 
-      {/* Prominent Center Search Bar (Reference UI) */}
-      <div
-        onClick={() => setShowProblemSearch(true)}
-        style={{
-          flex: '1 1 0',
-          maxWidth: '380px',
-          margin: '0 0.85rem',
-          background: 'rgba(15, 23, 42, 0.75)',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          borderRadius: '10px',
-          padding: '0.4rem 0.85rem',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '0.6rem',
-          cursor: 'pointer',
-          transition: 'all 0.15s ease',
-        }}
-        className="header-search-bar"
-      >
-        <Search size={15} color="#38bdf8" />
-        <span
-          style={{
-            fontSize: '0.82rem',
-            color: '#94a3b8',
-            flex: 1,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          Search commands, topics or ask a question... e.g. "undo last commit"
-        </span>
-        <span
-          style={{
-            fontSize: '0.65rem',
-            fontWeight: 700,
-            background: 'rgba(255, 255, 255, 0.06)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            padding: '0.15rem 0.45rem',
-            borderRadius: '4px',
-            color: '#64748b',
-          }}
-        >
-          ⌘K
-        </span>
-      </div>
-
-      {/* Main Nav Tabs: Learn, Practice, Labs, IDE (Section 3) */}
-      <nav className="header-nav-tabs" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+      {/* Main Nav Tabs: Learn, Practice, Labs, IDE, Reference, Problem Solver */}
+      <nav className="header-nav-tabs" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
         <button
           onClick={() => {
             setActiveLessonConcept(null);
@@ -268,13 +221,13 @@ export const HeaderNav: React.FC = () => {
         </button>
 
         <button
-          onClick={() => setMode('visualize')}
+          onClick={() => setMode('ide')}
           style={{
             background: 'none',
             border: 'none',
-            color: mode === 'visualize' ? '#38bdf8' : '#94a3b8',
+            color: mode === 'ide' ? '#38bdf8' : '#94a3b8',
             fontSize: '0.86rem',
-            fontWeight: mode === 'visualize' ? 800 : 600,
+            fontWeight: mode === 'ide' ? 800 : 600,
             padding: '0.4rem 0.75rem',
             borderRadius: '6px',
             cursor: 'pointer',
@@ -282,8 +235,8 @@ export const HeaderNav: React.FC = () => {
             transition: 'all 0.15s ease',
           }}
         >
-          Visualizer
-          {mode === 'visualize' && (
+          IDE
+          {mode === 'ide' && (
             <div
               style={{
                 position: 'absolute',
@@ -331,36 +284,41 @@ export const HeaderNav: React.FC = () => {
           )}
         </button>
 
+        {/* Problem Solver Trigger Button in Top Nav Bar */}
         <button
-          onClick={() => setMode('community')}
+          onClick={() => setShowProblemSearch(true)}
           style={{
-            background: 'none',
-            border: 'none',
-            color: mode === 'community' ? '#38bdf8' : '#94a3b8',
-            fontSize: '0.86rem',
-            fontWeight: mode === 'community' ? 800 : 600,
-            padding: '0.4rem 0.75rem',
-            borderRadius: '6px',
+            background: 'rgba(56, 189, 248, 0.08)',
+            border: '1px solid rgba(56, 189, 248, 0.25)',
+            color: '#38bdf8',
+            fontSize: '0.82rem',
+            fontWeight: 700,
+            padding: '0.38rem 0.75rem',
+            borderRadius: '8px',
             cursor: 'pointer',
-            position: 'relative',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.45rem',
             transition: 'all 0.15s ease',
+            marginLeft: '0.35rem',
           }}
+          title="Open Natural-Language Problem Solver (⌘K)"
         >
-          Community
-          {mode === 'community' && (
-            <div
-              style={{
-                position: 'absolute',
-                bottom: '-8px',
-                left: '20%',
-                right: '20%',
-                height: '2px',
-                background: '#38bdf8',
-                borderRadius: '999px',
-                boxShadow: '0 0 8px #38bdf8',
-              }}
-            />
-          )}
+          <Search size={13} color="#38bdf8" />
+          <span>Problem Solver</span>
+          <kbd
+            style={{
+              background: 'rgba(56, 189, 248, 0.18)',
+              border: '1px solid rgba(56, 189, 248, 0.28)',
+              borderRadius: '4px',
+              padding: '0.1rem 0.35rem',
+              fontSize: '0.65rem',
+              fontFamily: 'monospace',
+              color: '#e0f2fe',
+            }}
+          >
+            ⌘K
+          </kbd>
         </button>
       </nav>
 
@@ -684,10 +642,8 @@ export const HeaderNav: React.FC = () => {
               { id: 'learn', label: 'Git Academy', desc: '18 Canonical Topics & Live Sandbox' },
               { id: 'practice', label: 'Practice Missions', desc: 'Guided interactive developer challenges' },
               { id: 'labs', label: 'Labs', desc: 'Break, diagnose & recovery simulations' },
-              { id: 'visualize', label: 'Visualization Suite', desc: '3-Stage State Flow & Live Git Graph DAG' },
-              { id: 'reference', label: 'Command Reference', desc: 'Detailed options, flags & internals' },
               { id: 'ide', label: 'Developer IDE', desc: 'Simulated professional developer workspace' },
-              { id: 'community', label: 'Community', desc: 'Case scenarios & discussions' },
+              { id: 'reference', label: 'Command Reference', desc: 'Detailed options, flags & internals' },
             ].map((item) => (
               <button
                 key={item.id}
