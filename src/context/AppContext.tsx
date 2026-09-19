@@ -6,6 +6,7 @@ import { LESSONS, Lesson, LEVELS } from '../data/curriculum';
 
 export type ViewMode =
   | 'dashboard'
+  | 'roadmap'
   | 'first10'
   | 'learn'
   | 'practice'
@@ -20,7 +21,9 @@ export type ViewMode =
   | 'two-dev'
   | 'capstone'
   | 'reference'
-  | 'config-lab';
+  | 'config-lab'
+  | 'visualize'
+  | 'community';
 
 export type InstructionMode = 'beginner' | 'intermediate' | 'advanced' | 'expert';
 
@@ -129,21 +132,55 @@ export interface AppContextType {
   triggerReplay: () => void;
   showGitMovie: boolean;
   setShowGitMovie: (v: boolean) => void;
+  showCommandAtlas: boolean;
+  setShowCommandAtlas: (v: boolean) => void;
+  showProblemSearch: boolean;
+  setShowProblemSearch: (v: boolean) => void;
 
   // Labs Hub
   activeLab: 'break-it' | 'undo-lab' | 'conflict-arena' | 'hospital' | 'two-dev' | 'capstone' | 'config-lab' | 'discover';
   setActiveLab: (l: 'break-it' | 'undo-lab' | 'conflict-arena' | 'hospital' | 'two-dev' | 'capstone' | 'config-lab' | 'discover') => void;
+
+  // Active Teacher Lesson Concept
+  activeLessonConcept: string | null;
+  setActiveLessonConcept: (c: string | null) => void;
+
+  // 10-Year-Old Super Simple / Kid Mode
+  kidMode: boolean;
+  setKidMode: (k: boolean) => void;
+  toggleKidMode: () => void;
+
+  // 5 Pillars Navigator Modal (Definition, Syntax, Variations, Examples, Explanation)
+  showPillarsModal: boolean;
+  setShowPillarsModal: (v: boolean) => void;
+  pillarsActiveTarget: { chapterId?: string; conceptId?: string } | null;
+  setPillarsActiveTarget: (target: { chapterId?: string; conceptId?: string } | null) => void;
+  openPillarsModal: (target?: { chapterId?: string; conceptId?: string }) => void;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [mode, setModeState] = useState<ViewMode>('dashboard');
+  const [mode, setModeState] = useState<ViewMode>('learn');
+  const [activeLessonConcept, setActiveLessonConcept] = useState<string | null>(null);
   const [instructionMode, setInstructionModeState] = useState<InstructionMode>(() => {
     return (localStorage.getItem('commitforge_instruction_mode') as InstructionMode) || 'beginner';
   });
+  const [kidMode, setKidModeState] = useState<boolean>(() => {
+    const saved = localStorage.getItem('commitforge_kid_mode');
+    return saved !== null ? saved === 'true' : true; // Default to true for easy friendly learning!
+  });
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [projectKey, setProjectKeyState] = useState<string>('personal-website');
+
+  const setKidMode = (val: boolean) => {
+    setKidModeState(val);
+    localStorage.setItem('commitforge_kid_mode', String(val));
+  };
+
+  const toggleKidMode = () => {
+    setKidMode(!kidMode);
+  };
 
   const setInstructionMode = (im: InstructionMode) => {
     setInstructionModeState(im);
@@ -251,9 +288,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [showLostDrawer, setShowLostDrawer] = useState(false);
   const [activeHumansTerm, setActiveHumansTerm] = useState<string | null>(null);
   const [showGitMovie, setShowGitMovie] = useState(false);
+  const [showCommandAtlas, setShowCommandAtlas] = useState(false);
+  const [showProblemSearch, setShowProblemSearch] = useState(false);
+  const [showPillarsModal, setShowPillarsModal] = useState(false);
+  const [pillarsActiveTarget, setPillarsActiveTarget] = useState<{ chapterId?: string; conceptId?: string } | null>(null);
   const [first10Step, setFirst10Step] = useState(1);
   const [replayTrigger, setReplayTrigger] = useState(0);
   const [activeLab, setActiveLab] = useState<'break-it' | 'undo-lab' | 'conflict-arena' | 'hospital' | 'two-dev' | 'capstone' | 'config-lab' | 'discover'>('break-it');
+
+  const openPillarsModal = (target?: { chapterId?: string; conceptId?: string }) => {
+    if (target) {
+      setPillarsActiveTarget(target);
+    }
+    setShowPillarsModal(true);
+  };
 
   const openHumansTerm = (id: string) => setActiveHumansTerm(id);
   const closeHumansModal = () => setActiveHumansTerm(null);
@@ -484,8 +532,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         triggerReplay,
         showGitMovie,
         setShowGitMovie,
+        showCommandAtlas,
+        setShowCommandAtlas,
+        showProblemSearch,
+        setShowProblemSearch,
+        showPillarsModal,
+        setShowPillarsModal,
+        pillarsActiveTarget,
+        setPillarsActiveTarget,
+        openPillarsModal,
         activeLab,
         setActiveLab,
+        activeLessonConcept,
+        setActiveLessonConcept,
+        kidMode,
+        setKidMode,
+        toggleKidMode,
       }}
     >
       <div className={`app-root ${theme}`}>{children}</div>
