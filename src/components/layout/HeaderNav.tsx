@@ -4,8 +4,6 @@ import { PROJECTS } from '../../data/projects';
 import {
   Flame,
   Settings,
-  Sun,
-  Moon,
   RotateCcw,
   LifeBuoy,
   GitBranch,
@@ -23,8 +21,6 @@ export const HeaderNav: React.FC = () => {
     setMode,
     instructionMode,
     setInstructionMode,
-    theme,
-    setTheme,
     currentProject,
     setProjectKey,
     resetCurrentExercise,
@@ -361,50 +357,6 @@ export const HeaderNav: React.FC = () => {
         >
           {showMobileNav ? <X size={18} /> : <Menu size={18} />}
         </button>
-
-        {/* Quick Theme Toggle (Sun/Moon) */}
-        <button
-          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: '#94a3b8',
-            padding: '0.35rem',
-            borderRadius: '6px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'all 0.15s ease',
-          }}
-          title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-        >
-          {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
-        </button>
-
-        {/* User Profile Avatar Circle (matches AP in reference image) */}
-        <div
-          style={{
-            width: '30px',
-            height: '30px',
-            borderRadius: '50%',
-            background: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-            fontWeight: 800,
-            fontSize: '0.76rem',
-            boxShadow: '0 2px 8px rgba(99, 102, 241, 0.4)',
-            cursor: 'pointer',
-            userSelect: 'none',
-            flexShrink: 0,
-          }}
-          title="Account Profile (AP)"
-        >
-          AP
-        </div>
-
         {/* I'm Lost quick helper trigger (Section 16) */}
         <button
           onClick={() => setShowLostDrawer(true)}
@@ -555,28 +507,8 @@ export const HeaderNav: React.FC = () => {
               </select>
             </div>
 
-            {/* Theme Toggle & Reset Exercise */}
-            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.2rem' }}>
-              <button
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                style={{
-                  flex: 1,
-                  background: '#0b111e',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  color: '#94a3b8',
-                  padding: '0.4rem',
-                  borderRadius: '6px',
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '0.3rem',
-                }}
-              >
-                {theme === 'dark' ? <Sun size={13} /> : <Moon size={13} />} {theme === 'dark' ? 'Light' : 'Dark'}
-              </button>
+            {/* Reset Exercise */}
+            <div style={{ marginTop: '0.2rem' }}>
 
               <button
                 onClick={() => {
