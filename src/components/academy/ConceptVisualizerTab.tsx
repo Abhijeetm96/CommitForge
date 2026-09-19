@@ -1,4 +1,3 @@
-/* Git Internal Architecture Integration */
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import {
   UniversalConcept,

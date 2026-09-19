@@ -1,4 +1,3 @@
-/* Gallery Registry Enhanced */
 export type ConceptDifficulty = 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert';
 
 export interface SyntaxToken {

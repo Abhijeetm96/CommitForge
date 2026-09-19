@@ -1,4 +1,3 @@
-/* Guided Challenges */
 import { UniversalConcept } from '../unifiedAcademyData';
 
 export const TOPIC_11_12_CONCEPTS: Record<string, UniversalConcept> = {

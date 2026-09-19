@@ -1,4 +1,3 @@
-/* Action Stages Enhanced */
 import { UniversalConcept } from '../unifiedAcademyData';
 
 export const TOPIC_15_16_CONCEPTS: Record<string, UniversalConcept> = {

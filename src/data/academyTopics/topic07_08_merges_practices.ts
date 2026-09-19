@@ -1,4 +1,3 @@
-/* Comparisons Extended */
 import { UniversalConcept } from '../unifiedAcademyData';
 
 export const TOPIC_07_08_CONCEPTS: Record<string, UniversalConcept> = {

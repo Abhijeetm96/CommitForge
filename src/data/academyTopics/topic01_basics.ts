@@ -1,4 +1,3 @@
-/* Variations Extended */
 import { UniversalConcept } from '../unifiedAcademyData';
 
 export const TOPIC_01_CONCEPTS: Record<string, UniversalConcept> = {

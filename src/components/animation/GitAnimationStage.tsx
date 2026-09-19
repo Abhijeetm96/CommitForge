@@ -657,10 +657,12 @@ export const GitAnimationStage: React.FC<GitAnimationStageProps> = ({
               <div
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: 'minmax(210px, 1fr) auto minmax(210px, 1fr) auto minmax(210px, 1fr)',
+                  gridTemplateColumns: 'minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr)',
                   alignItems: 'center',
                   gap: '0.85rem',
                   width: '100%',
+                  maxWidth: '100%',
+                  boxSizing: 'border-box',
                 }}
                 className="three-area-stage-grid"
               >
