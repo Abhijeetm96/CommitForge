@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { BreakItView } from './BreakItView';
 import { UndoLabView } from './UndoLabView';
@@ -11,379 +11,1120 @@ import { ConfigLabView } from './ConfigLabView';
 import {
   Swords,
   HeartPulse,
-  Bug,
   Flame,
+  Bug,
+  Settings,
+  Award,
   Compass,
+  RotateCcw,
+  CheckCircle2,
+  Play,
   ArrowRight,
   ArrowLeft,
-  RotateCcw,
-  Award,
-  Settings,
+  Search,
+  ChevronDown,
+  Sparkles,
+  Zap,
+  BookOpen,
+  ShieldAlert,
+  Code2,
+  Terminal as TerminalIcon,
+  HelpCircle,
+  X,
+  Layers,
+  FlaskConical,
 } from 'lucide-react';
 
+export type LabTab = 'arena' | 'briefing' | 'commands' | 'recovery';
+
+interface LabDefinition {
+  id: string;
+  title: string;
+  category: string;
+  badge: string;
+  description: string;
+  icon: React.ComponentType<{ size?: number; color?: string }>;
+  color: string;
+  bgGrad: string;
+  borderColor: string;
+  commands: string[];
+  objectives: string[];
+  scenario: string;
+  recoveryTips: string[];
+}
+
+const LAB_ITEMS: LabDefinition[] = [
+  {
+    id: 'conflict-arena',
+    title: 'Conflict Arena',
+    category: 'Merge Conflicts',
+    badge: '⚔️ Arena',
+    description: 'Resolve merge conflicts like a seasoned professional. Decode anatomical conflict markers and stage clean resolutions.',
+    icon: Swords,
+    color: '#ef4444',
+    bgGrad: 'linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(185, 28, 28, 0.25) 100%)',
+    borderColor: 'rgba(239, 68, 68, 0.35)',
+    commands: ['git merge', 'git diff', 'git add', 'git merge --abort'],
+    objectives: [
+      'Decode <<<<<<< HEAD, =======, and >>>>>>> marker boundaries',
+      'Resolve single-line and multi-file code collisions',
+      'Stage conflict resolutions with git add without panic',
+      'Understand how git merge --abort returns you to safe ground',
+    ],
+    scenario: 'Two developers modified the same files on parallel branches. When attempting to merge, Git flagged conflicting changes that require human judgment to reconcile.',
+    recoveryTips: [
+      'If conflicts become overwhelming, run `git merge --abort` to return to your exact starting state.',
+      'Never leave conflict markers inside source files before committing.',
+    ],
+  },
+  {
+    id: 'hospital',
+    title: 'Git Hospital',
+    category: 'Emergency Surgery',
+    badge: '🏥 Surgery',
+    description: 'Diagnose repository health, recover detached HEAD commits, repair corrupt indexes, and fix common disasters.',
+    icon: HeartPulse,
+    color: '#10b981',
+    bgGrad: 'linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(5, 150, 105, 0.25) 100%)',
+    borderColor: 'rgba(16, 185, 129, 0.35)',
+    commands: ['git status', 'git fsck', 'git reflog', 'git branch'],
+    objectives: [
+      'Spot detached HEAD states and diagnose why they happen',
+      'Rescue orphaned commits created in detached HEAD before switching',
+      'Inspect repository integrity using git fsck',
+      'Reattach lost commits to a named recovery branch',
+    ],
+    scenario: 'A developer was inspecting old commits and made changes in detached HEAD state. Now they cannot find their new commits in git branch.',
+    recoveryTips: [
+      'Check `git reflog` immediately — all commit SHAs are recorded locally for at least 30 days.',
+      'Run `git branch recovery <sha>` to rescue orphaned commits instantly.',
+    ],
+  },
+  {
+    id: 'undo-lab',
+    title: 'Undo Lab',
+    category: 'Time Travel',
+    badge: '⏪ Time Travel',
+    description: 'Master git restore, revert, reset (--soft, --mixed, --hard), and reflog recoveries with complete confidence.',
+    icon: RotateCcw,
+    color: '#38bdf8',
+    bgGrad: 'linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(37, 99, 235, 0.25) 100%)',
+    borderColor: 'rgba(56, 189, 248, 0.35)',
+    commands: ['git restore', 'git restore --staged', 'git revert', 'git reset'],
+    objectives: [
+      'Surgically discard uncommitted working modifications with git restore',
+      'Unstage accidentally packaged files without touching disk files',
+      'Differentiate soft vs mixed vs hard resets clearly',
+      'Create forward-moving inverse commits using git revert for shared history',
+    ],
+    scenario: 'You accidentally staged API secrets, modified the wrong file, and need to undo mistakes at three different levels without losing your valid work.',
+    recoveryTips: [
+      'Use `git restore --staged <file>` to unstage files safely without discarding edits.',
+      'Use `git revert` instead of `git reset` if commits have already been pushed to teammates.',
+    ],
+  },
+  {
+    id: 'break-it',
+    title: 'Break It & Fix It',
+    category: 'Chaos Engineering',
+    badge: '🔥 Chaos Lab',
+    description: 'Deliberately break repositories under controlled conditions and learn the exact step-by-step procedures to recover them.',
+    icon: Flame,
+    color: '#f59e0b',
+    bgGrad: 'linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(217, 119, 6, 0.25) 100%)',
+    borderColor: 'rgba(245, 158, 11, 0.35)',
+    commands: ['git reset --hard', 'git reflog', 'git checkout', 'git branch'],
+    objectives: [
+      'Experience worst-case Git accidents in a safe simulator',
+      'Eliminate fear of terminal errors through repeated recovery practice',
+      'Understand how Git preserves content-addressable objects under the hood',
+      'Build rapid reflexes for recovering corrupted repository states',
+    ],
+    scenario: 'Chaos engineering: simulate deleted branches, overwriting index files, and hard resets, then execute surgical recovery procedures.',
+    recoveryTips: [
+      'Git almost never deletes your data immediately. Even hard resets leave commits in the reflog.',
+      'Practice calm diagnosis before typing panic commands.',
+    ],
+  },
+  {
+    id: 'two-dev',
+    title: 'Two-Dev Simulation',
+    category: 'Team Collaboration',
+    badge: '👥 Team Lab',
+    description: 'Simulate team workflows where two developers push concurrent commits, triggering upstream divergence and pull requests.',
+    icon: Bug,
+    color: '#a855f7',
+    bgGrad: 'linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(126, 34, 206, 0.25) 100%)',
+    borderColor: 'rgba(168, 85, 247, 0.35)',
+    commands: ['git fetch', 'git pull --rebase', 'git push', 'git switch'],
+    objectives: [
+      'Understand remote tracking branch references (origin/main)',
+      'Resolve "rejected: non-fast-forward" push errors gracefully',
+      'Use git pull --rebase to keep linear history on shared teams',
+      'Inspect incoming team commits before merging with git fetch',
+    ],
+    scenario: 'Alice pushes a commit to origin while you work offline. When you try to push, Git rejects your update because your branch is behind upstream.',
+    recoveryTips: [
+      'Run `git fetch origin` first to inspect what teammates pushed before merging.',
+      'Use `git pull --rebase` to replay your local commits cleanly on top of upstream changes.',
+    ],
+  },
+  {
+    id: 'config-lab',
+    title: 'Configuration Lab',
+    category: 'Developer Workflow',
+    badge: '⚙️ Settings',
+    description: 'Configure global and local gitconfig, productivity aliases, credential helpers, default branches, and diff tools.',
+    icon: Settings,
+    color: '#06b6d4',
+    bgGrad: 'linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(14, 116, 144, 0.25) 100%)',
+    borderColor: 'rgba(6, 182, 212, 0.35)',
+    commands: ['git config --global', 'git config --list', 'core.editor', 'init.defaultBranch'],
+    objectives: [
+      'Master the 3 Git configuration scopes: system, global, and local repository',
+      'Create high-speed aliases for frequent multi-flag commands',
+      'Configure modern default branch names (init.defaultBranch main)',
+      'Set preferred code editors and whitespace line ending rules',
+    ],
+    scenario: 'You set up a fresh developer machine. Configure author identity, helpful aliases like `git co` and `git lg`, and sensible defaults.',
+    recoveryTips: [
+      'View where all active settings come from with `git config --list --show-origin`.',
+      'To remove a faulty setting, run `git config --global --unset <key>`.',
+    ],
+  },
+  {
+    id: 'capstone',
+    title: 'Capstone Challenge',
+    category: 'Production Test',
+    badge: '🏆 Capstone',
+    description: 'A multi-stage production project challenge under realistic workplace conditions. Prove complete end-to-end Git mastery.',
+    icon: Award,
+    color: '#eab308',
+    bgGrad: 'linear-gradient(135deg, rgba(234, 179, 8, 0.2) 0%, rgba(161, 98, 7, 0.25) 100%)',
+    borderColor: 'rgba(234, 179, 8, 0.35)',
+    commands: ['git init', 'git branch', 'git merge', 'git tag', 'git rebase'],
+    objectives: [
+      'Execute a full production release lifecycle from initial commit to production tag',
+      'Handle urgent production hotfixes while feature branches are in flight',
+      'Merge feature branches and resolve simulated staging collisions',
+      'Seal release tags with cryptographic milestone annotations',
+    ],
+    scenario: 'You are the lead engineer on a fast-growing platform. Build a clean release, navigate an unexpected hotfix, and tag v1.0.0 for deployment.',
+    recoveryTips: [
+      'Plan your branch names and commit messages before executing commands.',
+      'Check `git status` and `git log --oneline` at every transition step.',
+    ],
+  },
+  {
+    id: 'discover',
+    title: 'Command Discovery',
+    category: 'Decision Matrix',
+    badge: '🧭 Discovery',
+    description: 'Compare commands side-by-side with risk badges (SAFE, LOW RISK, HIGH RISK) for real-world development scenarios.',
+    icon: Compass,
+    color: '#38bdf8',
+    bgGrad: 'linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(37, 99, 235, 0.25) 100%)',
+    borderColor: 'rgba(56, 189, 248, 0.35)',
+    commands: ['git status', 'git restore', 'git reset', 'git revert'],
+    objectives: [
+      'Understand exactly what changes vs what stays untouched for every command',
+      'Identify SAFE commands that can be run on airplanes with zero side effects',
+      'Identify DESTRUCTIVE commands that require caution and backups',
+      'Quickly choose the right tool for specific developer problems',
+    ],
+    scenario: 'You need to undo changes or inspect branches, but are unsure whether to use checkout, switch, restore, reset, or revert. Explore side-by-side comparisons.',
+    recoveryTips: [
+      'Commands labeled SAFE never alter repository history or destroy working files.',
+      'When in doubt between reset and restore, prefer `git restore` for targeted safety.',
+    ],
+  },
+];
+
 export const LabsHubView: React.FC = () => {
-  const { mode, setMode, activeLab, setActiveLab } = useApp();
-  const [selectedLabId, setSelectedLabId] = useState<string | null>(null);
+  const { mode, setMode, activeLab, setActiveLab, completedLessonIds, markLessonComplete } = useApp();
 
-  const activeLabView = selectedLabId || (mode === 'discover' ? 'discover' : null);
+  // Selected Lab state
+  const [selectedLabId, setSelectedLabId] = useState<string>(() => {
+    if (mode === 'discover') return 'discover';
+    if (activeLab === 'two-dev' || mode === 'two-dev') return 'two-dev';
+    if (mode && mode !== 'labs') return mode;
+    return 'conflict-arena';
+  });
 
-  const LAB_CARDS = [
-    {
-      id: 'conflict-arena',
-      title: 'Conflict Arena',
-      description: 'Resolve merge conflicts like a pro.',
-      icon: Swords,
-      color: '#ef4444',
-      bgGrad: 'linear-gradient(180deg, rgba(239, 68, 68, 0.12) 0%, var(--bg-card) 100%)',
-      borderColor: 'rgba(239, 68, 68, 0.35)',
-      btnBg: 'rgba(239, 68, 68, 0.15)',
-      btnBorder: 'rgba(239, 68, 68, 0.35)',
-    },
-    {
-      id: 'hospital',
-      title: 'Git Hospital',
-      description: 'Recover lost work and fix common problems.',
-      icon: HeartPulse,
-      color: '#10b981',
-      bgGrad: 'linear-gradient(180deg, rgba(16, 185, 129, 0.12) 0%, var(--bg-card) 100%)',
-      borderColor: 'rgba(16, 185, 129, 0.35)',
-      btnBg: 'rgba(16, 185, 129, 0.15)',
-      btnBorder: 'rgba(16, 185, 129, 0.35)',
-    },
-    {
-      id: 'undo-lab',
-      title: 'Undo Lab',
-      description: 'Master git restore, revert, reset, and reflog recoveries.',
-      icon: RotateCcw,
-      color: '#38bdf8',
-      bgGrad: 'linear-gradient(180deg, rgba(56, 189, 248, 0.12) 0%, var(--bg-card) 100%)',
-      borderColor: 'rgba(56, 189, 248, 0.35)',
-      btnBg: 'rgba(56, 189, 248, 0.15)',
-      btnBorder: 'rgba(56, 189, 248, 0.35)',
-    },
-    {
-      id: 'break-it',
-      title: 'Break It & Fix It',
-      description: 'Deliberately break repositories and learn to recover.',
-      icon: Flame,
-      color: '#f59e0b',
-      bgGrad: 'linear-gradient(180deg, rgba(245, 158, 11, 0.12) 0%, var(--bg-card) 100%)',
-      borderColor: 'rgba(245, 158, 11, 0.35)',
-      btnBg: 'rgba(245, 158, 11, 0.15)',
-      btnBorder: 'rgba(245, 158, 11, 0.35)',
-    },
-    {
-      id: 'bug-detective',
-      title: 'Two-Dev Simulation',
-      description: 'Simulate team workflows, upstream branches, and PRs.',
-      icon: Bug,
-      color: '#a855f7',
-      bgGrad: 'linear-gradient(180deg, rgba(168, 85, 247, 0.12) 0%, var(--bg-card) 100%)',
-      borderColor: 'rgba(168, 85, 247, 0.35)',
-      btnBg: 'rgba(168, 85, 247, 0.15)',
-      btnBorder: 'rgba(168, 85, 247, 0.35)',
-    },
-    {
-      id: 'config-lab',
-      title: 'Configuration Lab',
-      description: 'Configure gitconfig, aliases, credentials, and editors.',
-      icon: Settings,
-      color: '#06b6d4',
-      bgGrad: 'linear-gradient(180deg, rgba(6, 182, 212, 0.12) 0%, var(--bg-card) 100%)',
-      borderColor: 'rgba(6, 182, 212, 0.35)',
-      btnBg: 'rgba(6, 182, 212, 0.15)',
-      btnBorder: 'rgba(6, 182, 212, 0.35)',
-    },
-    {
-      id: 'capstone',
-      title: 'Capstone Challenge',
-      description: 'Multi-stage production project test under real pressure.',
-      icon: Award,
-      color: '#eab308',
-      bgGrad: 'linear-gradient(180deg, rgba(234, 179, 8, 0.12) 0%, var(--bg-card) 100%)',
-      borderColor: 'rgba(234, 179, 8, 0.35)',
-      btnBg: 'rgba(234, 179, 8, 0.15)',
-      btnBorder: 'rgba(234, 179, 8, 0.35)',
-    },
-  ];
+  const [activeTab, setActiveTab] = useState<LabTab>('arena');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showMobileDrawer, setShowMobileDrawer] = useState(false);
 
-  const handleEnterLab = (id: string) => {
-    setSelectedLabId(id);
-    if (id === 'conflict-arena') setActiveLab('conflict-arena');
-    else if (id === 'hospital') setActiveLab('hospital');
-    else if (id === 'break-it') setActiveLab('break-it');
-    else if (id === 'bug-detective') setActiveLab('two-dev');
-    else if (id === 'undo-lab') setActiveLab('undo-lab');
-    else if (id === 'capstone') setActiveLab('capstone');
-    else if (id === 'config-lab') setActiveLab('config-lab');
-    else if (id === 'discover') setMode('discover');
+  // Active lab object
+  const currentLab = useMemo(() => {
+    return LAB_ITEMS.find((l) => l.id === selectedLabId) || LAB_ITEMS[0];
+  }, [selectedLabId]);
+
+  // Is completed
+  const isLabCompleted = completedLessonIds.includes(`lab-${currentLab.id}`);
+
+  // Filtered labs
+  const filteredLabs = useMemo(() => {
+    if (!searchQuery.trim()) return LAB_ITEMS;
+    const q = searchQuery.toLowerCase();
+    return LAB_ITEMS.filter(
+      (l) =>
+        l.title.toLowerCase().includes(q) ||
+        l.category.toLowerCase().includes(q) ||
+        l.description.toLowerCase().includes(q) ||
+        l.commands.some((c) => c.toLowerCase().includes(q))
+    );
+  }, [searchQuery]);
+
+  // Progress count
+  const completedCount = useMemo(() => {
+    return LAB_ITEMS.filter((l) => completedLessonIds.includes(`lab-${l.id}`)).length;
+  }, [completedLessonIds]);
+
+  const progressPercent = Math.round((completedCount / LAB_ITEMS.length) * 100);
+
+  // Previous & Next navigation
+  const currentIndex = LAB_ITEMS.findIndex((l) => l.id === selectedLabId);
+  const prevLab = currentIndex > 0 ? LAB_ITEMS[currentIndex - 1] : null;
+  const nextLab = currentIndex < LAB_ITEMS.length - 1 ? LAB_ITEMS[currentIndex + 1] : null;
+
+  const handleSelectLab = (labId: string) => {
+    setSelectedLabId(labId);
+    setShowMobileDrawer(false);
   };
 
-  const handleBackToLabs = () => {
-    setSelectedLabId(null);
-    if (mode === 'discover') {
-      setMode('labs');
-    }
+  const handleToggleComplete = () => {
+    markLessonComplete(`lab-${currentLab.id}`);
   };
+
+  const IconComponent = currentLab.icon;
 
   return (
     <div
-      className="labs-hub-container"
       style={{
+        display: 'flex',
         flex: 1,
         width: '100%',
         height: '100%',
         maxHeight: '100%',
         minHeight: 0,
-        display: 'flex',
-        flexDirection: 'column',
         background: 'var(--bg-app)',
         color: 'var(--text-primary)',
-        overflowY: 'auto',
-        overflowX: 'hidden',
-        boxSizing: 'border-box',
-        paddingBottom: activeLabView ? '0' : '6rem',
+        overflow: 'hidden',
       }}
     >
-      {/* If a lab is active, render lab workspace with a top Back bar */}
-      {activeLabView ? (
-        <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-          <div
-            style={{
-              padding: '0.6rem 1.5rem',
-              background: 'var(--bg-surface)',
-              borderBottom: '1px solid var(--border-color)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            <button
-              onClick={handleBackToLabs}
+      {/* ================================================================ */}
+      {/* COLUMN 1: LEFT SIDEBAR (8 Interactive Labs + Progress Tracker)   */}
+      {/* ================================================================ */}
+      <aside
+        className="labs-sidebar-desktop"
+        style={{
+          width: '270px',
+          minWidth: '270px',
+          maxWidth: '270px',
+          background: 'var(--bg-surface)',
+          borderRight: '1px solid var(--border-color)',
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
+          maxHeight: '100%',
+          minHeight: 0,
+          flexShrink: 0,
+          overflow: 'hidden',
+        }}
+      >
+        {/* Sidebar Header */}
+        <div
+          style={{
+            padding: '1.15rem 1rem 0.85rem 1rem',
+            borderBottom: '1px solid var(--border-color)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            background: 'var(--bg-surface)',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+            <div
               style={{
-                background: 'none',
-                border: 'none',
-                color: 'var(--text-secondary)',
-                fontSize: '0.85rem',
-                fontWeight: 700,
-                cursor: 'pointer',
+                width: '32px',
+                height: '32px',
+                borderRadius: '8px',
+                background: 'rgba(239, 68, 68, 0.15)',
+                border: '1px solid rgba(239, 68, 68, 0.3)',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.4rem',
+                justifyContent: 'center',
+                color: '#ef4444',
               }}
             >
-              <ArrowLeft size={16} /> Back to Labs
-            </button>
+              <FlaskConical size={18} />
+            </div>
+            <div>
+              <div style={{ fontSize: '0.96rem', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.15 }}>
+                Git Labs Hub
+              </div>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 500 }}>
+                8 Simulation Arenas • Live
+              </div>
+            </div>
+          </div>
+        </div>
 
-            <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#38bdf8', textTransform: 'capitalize' }}>
-              {activeLabView === 'discover' ? 'Command Discovery' : activeLabView.replace('-', ' ')} Active
+        {/* Quick Search Bar */}
+        <div style={{ padding: '0.65rem 0.85rem', borderBottom: '1px solid var(--border-color)' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border-color)',
+              borderRadius: '8px',
+              padding: '0.4rem 0.65rem',
+            }}
+          >
+            <Search size={14} color="var(--text-muted)" />
+            <input
+              type="text"
+              placeholder="Filter simulation labs..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                outline: 'none',
+                color: 'var(--text-primary)',
+                fontSize: '0.78rem',
+                width: '100%',
+              }}
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: 0 }}
+              >
+                <X size={13} />
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* 8 Labs List */}
+        <div
+          style={{
+            flex: '1 1 0%',
+            minHeight: 0,
+            overflowY: 'auto',
+            padding: '0.6rem 0.5rem 5rem 0.5rem',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.35rem',
+          }}
+        >
+          {filteredLabs.map((lab, index) => {
+            const isActive = lab.id === selectedLabId;
+            const isDone = completedLessonIds.includes(`lab-${lab.id}`);
+            const LabIcon = lab.icon;
+
+            return (
+              <div
+                key={lab.id}
+                onClick={() => handleSelectLab(lab.id)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.65rem',
+                  padding: '0.6rem 0.75rem',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  background: isActive ? `${lab.color}18` : 'transparent',
+                  borderLeft: isActive ? `3px solid ${lab.color}` : '3px solid transparent',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <div
+                  style={{
+                    width: '28px',
+                    height: '28px',
+                    borderRadius: '6px',
+                    background: isActive ? `${lab.color}25` : 'var(--bg-card)',
+                    border: `1px solid ${isActive ? lab.color : 'var(--border-color)'}`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: lab.color,
+                    flexShrink: 0,
+                  }}
+                >
+                  <LabIcon size={14} />
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, flex: 1 }}>
+                  <span
+                    style={{
+                      fontSize: '0.82rem',
+                      fontWeight: isActive ? 800 : 600,
+                      color: isActive ? 'var(--text-primary)' : 'var(--text-primary)',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {lab.title}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: '0.68rem',
+                      color: isActive ? lab.color : 'var(--text-muted)',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {lab.category}
+                  </span>
+                </div>
+
+                {isDone && (
+                  <CheckCircle2 size={14} color="#22c55e" style={{ flexShrink: 0 }} />
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Progress Tracker Footer */}
+        <div
+          style={{
+            flexShrink: 0,
+            padding: '0.85rem 1.15rem',
+            borderTop: '1px solid var(--border-color)',
+            background: 'var(--bg-surface)',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.45rem',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-secondary)' }}>
+              Labs Completed
+            </span>
+            <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#38bdf8' }}>
+              {progressPercent}%
             </span>
           </div>
 
-          <div style={{ flex: 1, overflow: 'hidden' }}>
-            {activeLabView === 'conflict-arena' && <ConflictArenaView />}
-            {activeLabView === 'hospital' && <GitHospitalView />}
-            {activeLabView === 'break-it' && <BreakItView />}
-            {activeLabView === 'bug-detective' && <TwoDevView />}
-            {activeLabView === 'undo-lab' && <UndoLabView />}
-            {activeLabView === 'capstone' && <CapstoneView />}
-            {activeLabView === 'config-lab' && <ConfigLabView />}
-            {activeLabView === 'discover' && <CommandDiscoveryView />}
+          <div
+            style={{
+              width: '100%',
+              height: '6px',
+              borderRadius: '999px',
+              background: 'var(--border-color)',
+              overflow: 'hidden',
+            }}
+          >
+            <div
+              style={{
+                width: `${progressPercent}%`,
+                height: '100%',
+                background: 'linear-gradient(90deg, #38bdf8 0%, #22c55e 100%)',
+                borderRadius: '999px',
+                transition: 'width 0.3s ease',
+              }}
+            />
+          </div>
+
+          <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+            {completedCount} of {LAB_ITEMS.length} arenas completed
           </div>
         </div>
-      ) : (
-        /* Screen 8: Labs Grid Overview */
+      </aside>
+
+      {/* ================================================================ */}
+      {/* COLUMN 2: CENTER PANEL (Selected Lab Experience)                 */}
+      {/* ================================================================ */}
+      <main
+        className="labs-center-main"
+        style={{
+          flex: 1,
+          minWidth: 0,
+          minHeight: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
+          maxHeight: '100%',
+          overflow: 'hidden',
+          background: 'var(--bg-app)',
+        }}
+      >
+        {/* Mobile / Tablet Header (<1200px) */}
         <div
+          className="labs-mobile-topbar"
           style={{
-            maxWidth: '1050px',
-            margin: '0 auto',
-            width: '100%',
-            padding: '3rem 2rem',
+            flexShrink: 0,
+            padding: '0.5rem 0.85rem',
+            background: 'var(--bg-surface)',
+            borderBottom: '1px solid var(--border-color)',
             display: 'flex',
-            flexDirection: 'column',
-            gap: '2.5rem',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '0.5rem',
           }}
         >
-          {/* Header */}
-          <div>
-            <h1
-              style={{
-                fontSize: '2.2rem',
-                fontWeight: 900,
-                color: 'var(--text-primary)',
-                letterSpacing: '-0.02em',
-                margin: 0,
-              }}
-            >
-              Labs
-            </h1>
-            <p
-              style={{
-                fontSize: '1.05rem',
-                color: 'var(--text-secondary)',
-                marginTop: '0.4rem',
-                lineHeight: 1.5,
-              }}
-            >
-              Break things. Then fix them. Build real confidence.
-            </p>
-          </div>
-
-          {/* 4 Colored Cards (Screen 8) */}
-          <div
+          <button
+            onClick={() => setShowMobileDrawer(!showMobileDrawer)}
             style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-              gap: '1.5rem',
-            }}
-          >
-            {LAB_CARDS.map((card) => {
-              const Icon = card.icon;
-              return (
-                <div
-                  key={card.id}
-                  style={{
-                    background: card.bgGrad,
-                    border: `1px solid ${card.borderColor}`,
-                    borderRadius: '20px',
-                    padding: '1.75rem 1.5rem',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                    minHeight: '260px',
-                    boxShadow: 'var(--shadow-md)',
-                    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-                  }}
-                >
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    {/* Icon Circle */}
-                    <div
-                      style={{
-                        width: '44px',
-                        height: '44px',
-                        borderRadius: '12px',
-                        background: 'rgba(0, 0, 0, 0.2)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: card.color,
-                      }}
-                    >
-                      <Icon size={24} />
-                    </div>
-
-                    {/* Title & Description */}
-                    <div>
-                      <h2 style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
-                        {card.title}
-                      </h2>
-                      <p
-                        style={{
-                          fontSize: '0.9rem',
-                          color: 'var(--text-secondary)',
-                          marginTop: '0.4rem',
-                          lineHeight: 1.45,
-                        }}
-                      >
-                        {card.description}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Enter Lab Button */}
-                  <div>
-                    <button
-                      onClick={() => handleEnterLab(card.id)}
-                      style={{
-                        width: '100%',
-                        background: card.btnBg,
-                        border: `1px solid ${card.btnBorder}`,
-                        color: 'var(--text-primary)',
-                        padding: '0.75rem 1rem',
-                        borderRadius: '8px',
-                        fontSize: '0.88rem',
-                        fontWeight: 700,
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '0.4rem',
-                        transition: 'background 0.15s ease',
-                      }}
-                    >
-                      Enter Lab <ArrowRight size={15} />
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Screen 6 Banner: What Should I Do? (Command Discovery) */}
-          <div
-            style={{
-              marginTop: '0.5rem',
-              padding: '1.25rem 1.75rem',
-              background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, var(--bg-card) 100%)',
-              border: '1px solid var(--border-color)',
-              borderRadius: '16px',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'space-between',
-              flexWrap: 'wrap',
-              gap: '1.25rem',
-              boxShadow: 'var(--shadow-md)',
+              gap: '0.45rem',
+              background: `${currentLab.color}15`,
+              border: `1px solid ${currentLab.color}40`,
+              borderRadius: '8px',
+              padding: '0.35rem 0.65rem',
+              color: currentLab.color,
+              fontSize: '0.78rem',
+              fontWeight: 700,
+              cursor: 'pointer',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1, minWidth: '280px' }}>
-              <div
-                style={{
-                  width: '44px',
-                  height: '44px',
-                  borderRadius: '12px',
-                  background: 'rgba(56, 189, 248, 0.15)',
-                  color: '#38bdf8',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                }}
-              >
-                <Compass size={24} />
+            <IconComponent size={15} />
+            <span>Labs ({LAB_ITEMS.length}) • {currentLab.title}</span>
+            <ChevronDown size={13} />
+          </button>
+
+          <button
+            onClick={() => setActiveTab('arena')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              background: 'rgba(34, 197, 94, 0.15)',
+              border: '1px solid rgba(34, 197, 94, 0.3)',
+              borderRadius: '8px',
+              padding: '0.35rem 0.65rem',
+              color: '#22c55e',
+              fontSize: '0.76rem',
+              fontWeight: 700,
+              cursor: 'pointer',
+            }}
+          >
+            <Play size={13} />
+            <span>Open Arena</span>
+          </button>
+        </div>
+
+        {/* Scrollable Center Body */}
+        <div
+          className="labs-content-container"
+          style={{
+            flex: '1 1 0%',
+            minHeight: 0,
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            padding: '1.25rem 2rem 6.5rem 2rem',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1.5rem',
+            boxSizing: 'border-box',
+          }}
+        >
+          {/* Hero Header (Matching Learn Page Visual Polish) */}
+          <div
+            style={{
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border-color)',
+              borderRadius: '16px',
+              padding: '1.5rem 1.75rem',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '1.15rem',
+              boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)',
+            }}
+          >
+            {/* Top Row: Badges & Status */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap' }}>
+                <span
+                  style={{
+                    fontSize: '0.72rem',
+                    fontWeight: 800,
+                    color: currentLab.color,
+                    background: `${currentLab.color}15`,
+                    border: `1px solid ${currentLab.color}35`,
+                    padding: '0.2rem 0.6rem',
+                    borderRadius: '999px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.04em',
+                  }}
+                >
+                  {currentLab.badge}
+                </span>
+
+                <span
+                  style={{
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    color: 'var(--accent-primary)',
+                    background: 'rgba(56, 189, 248, 0.1)',
+                    border: '1px solid rgba(56, 189, 248, 0.25)',
+                    padding: '0.2rem 0.6rem',
+                    borderRadius: '999px',
+                  }}
+                >
+                  {currentLab.category}
+                </span>
+
+                <span
+                  style={{
+                    fontSize: '0.72rem',
+                    fontWeight: 700,
+                    color: 'var(--text-secondary)',
+                    background: 'var(--bg-surface)',
+                    border: '1px solid var(--border-color)',
+                    padding: '0.2rem 0.6rem',
+                    borderRadius: '999px',
+                  }}
+                >
+                  Interactive Simulation
+                </span>
               </div>
-              <div>
-                <div style={{ fontWeight: 800, fontSize: '1.05rem', color: 'var(--text-primary)' }}>
-                  What Should I Do? (Screen 6: Command Discovery)
-                </div>
-                <div style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>
-                  Compare commands side-by-side with risk badges (SAFE, LOW RISK, HIGH RISK) for real development scenarios.
-                </div>
+
+              {/* Status & Completion Toggle Button */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                <button
+                  onClick={handleToggleComplete}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.45rem',
+                    background: isLabCompleted ? 'rgba(34, 197, 94, 0.15)' : 'var(--bg-surface)',
+                    border: isLabCompleted ? '1px solid rgba(34, 197, 94, 0.4)' : '1px solid var(--border-color)',
+                    borderRadius: '8px',
+                    padding: '0.45rem 0.95rem',
+                    color: isLabCompleted ? '#22c55e' : 'var(--text-secondary)',
+                    fontWeight: 700,
+                    fontSize: '0.8rem',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  <CheckCircle2 size={15} color={isLabCompleted ? '#22c55e' : 'var(--text-muted)'} />
+                  <span>{isLabCompleted ? 'Completed' : 'Mark Complete'}</span>
+                </button>
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={() => handleEnterLab('discover')}
+            {/* Title & Description Section */}
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
+              <div
+                style={{
+                  width: '52px',
+                  height: '52px',
+                  borderRadius: '12px',
+                  background: `${currentLab.color}25`,
+                  border: `1px solid ${currentLab.color}45`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: currentLab.color,
+                  flexShrink: 0,
+                  boxShadow: `0 4px 12px ${currentLab.color}20`,
+                }}
+              >
+                <IconComponent size={26} />
+              </div>
+              <div>
+                <h1 style={{ margin: 0, fontSize: '1.7rem', fontWeight: 900, color: 'var(--text-primary)', lineHeight: 1.2 }}>
+                  {currentLab.title}
+                </h1>
+                <p style={{ margin: '0.35rem 0 0 0', fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                  {currentLab.description}
+                </p>
+              </div>
+            </div>
+
+            {/* Command Pills Bar */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '0.74rem', fontWeight: 700, color: 'var(--text-muted)' }}>Target Commands:</span>
+              {currentLab.commands.map((cmd, i) => (
+                <span
+                  key={i}
+                  style={{
+                    fontFamily: 'ui-monospace, monospace',
+                    fontSize: '0.78rem',
+                    fontWeight: 700,
+                    color: 'var(--accent-primary)',
+                    background: 'var(--bg-surface)',
+                    border: '1px solid var(--border-color)',
+                    padding: '0.2rem 0.55rem',
+                    borderRadius: '6px',
+                  }}
+                >
+                  $ {cmd}
+                </span>
+              ))}
+            </div>
+
+            {/* Sub-Tabs Navigation (Matching Learn Page) */}
+            <div
               style={{
-                background: '#0284c7',
-                color: '#ffffff',
-                border: 'none',
-                padding: '0.65rem 1.25rem',
-                borderRadius: '8px',
-                fontWeight: 700,
-                fontSize: '0.88rem',
-                cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.4rem',
-                transition: 'background 0.15s ease',
+                borderTop: '1px solid var(--border-color)',
+                paddingTop: '0.9rem',
+                overflowX: 'auto',
               }}
             >
-              Open Discovery <ArrowRight size={15} />
-            </button>
+              {[
+                { id: 'arena' as LabTab, label: 'Interactive Lab Arena', icon: Play },
+                { id: 'briefing' as LabTab, label: 'Mission Briefing', icon: BookOpen },
+                { id: 'commands' as LabTab, label: 'Core Commands', icon: Code2 },
+                { id: 'recovery' as LabTab, label: 'Emergency Recovery Guide', icon: ShieldAlert },
+              ].map((tab) => {
+                const isTabActive = activeTab === tab.id;
+                const TabIcon = tab.icon;
+
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.45rem',
+                      padding: '0.5rem 0.95rem',
+                      borderRadius: '8px',
+                      fontSize: '0.82rem',
+                      fontWeight: isTabActive ? 800 : 600,
+                      color: isTabActive ? '#38bdf8' : 'var(--text-secondary)',
+                      background: isTabActive ? 'rgba(56, 189, 248, 0.12)' : 'transparent',
+                      border: isTabActive ? '1px solid rgba(56, 189, 248, 0.35)' : '1px solid transparent',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    <TabIcon size={15} />
+                    <span>{tab.label}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
+
+          {/* ================================================================ */}
+          {/* TAB 1: INTERACTIVE LAB ARENA                                     */}
+          {/* ================================================================ */}
+          {activeTab === 'arena' && (
+            <div
+              style={{
+                background: 'var(--bg-card)',
+                border: '1px solid var(--border-color)',
+                borderRadius: '16px',
+                overflow: 'hidden',
+                display: 'flex',
+                flexDirection: 'column',
+                boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)',
+              }}
+            >
+              {/* Dynamic Lab Component */}
+              {selectedLabId === 'conflict-arena' && <ConflictArenaView />}
+              {selectedLabId === 'hospital' && <GitHospitalView />}
+              {selectedLabId === 'break-it' && <BreakItView />}
+              {selectedLabId === 'two-dev' && <TwoDevView />}
+              {selectedLabId === 'undo-lab' && <UndoLabView />}
+              {selectedLabId === 'capstone' && <CapstoneView />}
+              {selectedLabId === 'config-lab' && <ConfigLabView />}
+              {selectedLabId === 'discover' && <CommandDiscoveryView />}
+            </div>
+          )}
+
+          {/* ================================================================ */}
+          {/* TAB 2: MISSION BRIEFING                                          */}
+          {/* ================================================================ */}
+          {activeTab === 'briefing' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              {/* Scenario Card */}
+              <div
+                style={{
+                  background: 'var(--bg-card)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: '12px',
+                  padding: '1.25rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.65rem',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: currentLab.color }}>
+                  <Sparkles size={16} />
+                  <span style={{ fontSize: '0.78rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    Scenario Briefing
+                  </span>
+                </div>
+                <div style={{ fontSize: '0.92rem', color: 'var(--text-primary)', lineHeight: 1.6 }}>
+                  {currentLab.scenario}
+                </div>
+              </div>
+
+              {/* Objectives Checklist Card */}
+              <div
+                style={{
+                  background: 'var(--bg-card)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: '12px',
+                  padding: '1.25rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.75rem',
+                }}
+              >
+                <div style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  Learning Outcomes & Objectives ({currentLab.objectives.length})
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '0.65rem' }}>
+                  {currentLab.objectives.map((obj, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        background: 'var(--bg-surface)',
+                        border: '1px solid var(--border-color)',
+                        borderRadius: '8px',
+                        padding: '0.7rem 0.85rem',
+                        fontSize: '0.82rem',
+                        color: 'var(--text-primary)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.55rem',
+                      }}
+                    >
+                      <CheckCircle2 size={16} color="#22c55e" style={{ flexShrink: 0 }} />
+                      <span>{obj}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Call to action */}
+              <div>
+                <button
+                  onClick={() => setActiveTab('arena')}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.55rem',
+                    background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                    color: 'white',
+                    border: 'none',
+                    padding: '0.8rem 1.6rem',
+                    borderRadius: '10px',
+                    fontWeight: 800,
+                    fontSize: '0.92rem',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 14px rgba(37, 99, 235, 0.4)',
+                  }}
+                >
+                  <span>Enter {currentLab.title}</span>
+                  <ArrowRight size={18} />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* ================================================================ */}
+          {/* TAB 3: CORE COMMANDS                                             */}
+          {/* ================================================================ */}
+          {activeTab === 'commands' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              <div style={{ fontSize: '0.82rem', fontWeight: 800, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Commands Exercised in {currentLab.title}
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                {currentLab.commands.map((cmd, idx) => (
+                  <div
+                    key={idx}
+                    style={{
+                      background: 'var(--bg-card)',
+                      border: '1px solid var(--border-color)',
+                      borderRadius: '10px',
+                      padding: '1rem 1.25rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      flexWrap: 'wrap',
+                      gap: '0.75rem',
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontFamily: 'ui-monospace, monospace',
+                        fontSize: '0.9rem',
+                        fontWeight: 800,
+                        color: 'var(--accent-primary)',
+                        background: 'var(--bg-surface)',
+                        padding: '0.35rem 0.65rem',
+                        borderRadius: '6px',
+                        border: '1px solid var(--border-color)',
+                      }}
+                    >
+                      $ {cmd}
+                    </span>
+
+                    <button
+                      onClick={() => setActiveTab('arena')}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.35rem',
+                        background: 'rgba(56, 189, 248, 0.12)',
+                        border: '1px solid rgba(56, 189, 248, 0.3)',
+                        borderRadius: '6px',
+                        padding: '0.35rem 0.75rem',
+                        fontSize: '0.78rem',
+                        fontWeight: 700,
+                        color: '#38bdf8',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <Play size={12} />
+                      <span>Practice in Arena</span>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ================================================================ */}
+          {/* TAB 4: EMERGENCY RECOVERY GUIDE                                  */}
+          {/* ================================================================ */}
+          {activeTab === 'recovery' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              <div
+                style={{
+                  background: 'var(--bg-card)',
+                  border: '1px solid rgba(239, 68, 68, 0.35)',
+                  borderRadius: '14px',
+                  padding: '1.35rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '1rem',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#ef4444' }}>
+                  <ShieldAlert size={18} />
+                  <span style={{ fontSize: '0.88rem', fontWeight: 800 }}>
+                    Emergency Diagnostic & Recovery Protocol
+                  </span>
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                  {currentLab.recoveryTips.map((tip, idx) => (
+                    <div
+                      key={idx}
+                      style={{
+                        background: 'var(--bg-surface)',
+                        border: '1px solid var(--border-color)',
+                        borderRadius: '8px',
+                        padding: '0.85rem 1rem',
+                        fontSize: '0.84rem',
+                        color: 'var(--text-primary)',
+                        lineHeight: 1.5,
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: '0.55rem',
+                      }}
+                    >
+                      <span style={{ color: '#10b981', fontWeight: 800 }}>•</span>
+                      <span>{tip}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
-      )}
+
+        {/* Pinned Bottom Navigation Bar (matching GitAcademyView) */}
+        <div
+          className="labs-bottom-bar"
+          style={{
+            flexShrink: 0,
+            padding: '0.65rem 1.25rem',
+            borderTop: '1px solid var(--border-color)',
+            background: 'var(--bg-surface)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '0.5rem',
+            boxSizing: 'border-box',
+          }}
+        >
+          {/* Previous Lab Button */}
+          <button
+            disabled={!prevLab}
+            onClick={() => prevLab && handleSelectLab(prevLab.id)}
+            title={prevLab ? `Go to ${prevLab.title}` : 'No previous lab'}
+            style={{
+              background: prevLab ? 'var(--bg-card)' : 'transparent',
+              border: prevLab ? '1px solid var(--border-color)' : '1px solid transparent',
+              color: prevLab ? 'var(--text-primary)' : 'var(--text-muted)',
+              padding: '0.45rem 0.85rem',
+              borderRadius: '8px',
+              cursor: prevLab ? 'pointer' : 'not-allowed',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              fontSize: '0.8rem',
+              fontWeight: 600,
+              opacity: prevLab ? 1 : 0.4,
+              transition: 'all 0.15s ease',
+            }}
+          >
+            <ArrowLeft size={14} />
+            <span className="nav-btn-text">Previous</span>
+          </button>
+
+          {/* Current Lab Status Indicator */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
+            <span style={{ fontSize: '0.8rem', fontWeight: 800, color: currentLab.color }}>
+              Lab {currentIndex + 1} of {LAB_ITEMS.length}
+            </span>
+            <span style={{ color: 'var(--text-muted)' }}>•</span>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
+              {currentLab.title}
+            </span>
+          </div>
+
+          {/* Next Lab Button */}
+          <button
+            disabled={!nextLab}
+            onClick={() => nextLab && handleSelectLab(nextLab.id)}
+            title={nextLab ? `Go to ${nextLab.title}` : 'No next lab'}
+            style={{
+              background: nextLab ? 'var(--bg-card)' : 'transparent',
+              border: nextLab ? '1px solid var(--border-color)' : '1px solid transparent',
+              color: nextLab ? 'var(--text-primary)' : 'var(--text-muted)',
+              padding: '0.45rem 0.85rem',
+              borderRadius: '8px',
+              cursor: nextLab ? 'pointer' : 'not-allowed',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              fontSize: '0.8rem',
+              fontWeight: 600,
+              opacity: nextLab ? 1 : 0.4,
+              transition: 'all 0.15s ease',
+            }}
+          >
+            <span className="nav-btn-text">Next</span>
+            <ArrowRight size={14} />
+          </button>
+        </div>
+      </main>
     </div>
   );
 };
