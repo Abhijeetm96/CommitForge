@@ -1531,8 +1531,9 @@ import { TOPIC_11_12_CONCEPTS } from './academyTopics/topic11_12_intermediate_ta
 import { TOPIC_13_14_CONCEPTS } from './academyTopics/topic13_14_hooks_submodules';
 import { TOPIC_15_16_CONCEPTS } from './academyTopics/topic15_16_actions_advanced';
 import { TOPIC_17_18_CONCEPTS } from './academyTopics/topic17_18_devtools_features';
+import { ALL_PRACTICE_CHALLENGES } from './academyChallenges';
 
-export const ALL_ACADEMY_CONCEPTS: Record<string, UniversalConcept> = {
+const RAW_ALL_ACADEMY_CONCEPTS: Record<string, UniversalConcept> = {
   ...BESPOKE_CONCEPTS,
   ...TOPIC_01_CONCEPTS,
   ...TOPIC_03_CONCEPTS,
@@ -1545,6 +1546,25 @@ export const ALL_ACADEMY_CONCEPTS: Record<string, UniversalConcept> = {
   ...TOPIC_15_16_CONCEPTS,
   ...TOPIC_17_18_CONCEPTS,
 };
+
+// Merge in all practice challenges for 100% complete practice coverage across all 18 topics
+export const ALL_ACADEMY_CONCEPTS: Record<string, UniversalConcept> = Object.fromEntries(
+  Object.entries(RAW_ALL_ACADEMY_CONCEPTS).map(([id, concept]) => {
+    if (ALL_PRACTICE_CHALLENGES[id]) {
+      return [
+        id,
+        {
+          ...concept,
+          challenge: {
+            ...concept.challenge,
+            ...ALL_PRACTICE_CHALLENGES[id],
+          },
+        },
+      ];
+    }
+    return [id, concept];
+  })
+);
 
 // Returns bespoke concept data across all 18 topics
 export function getUniversalConcept(conceptId: string): UniversalConcept {
