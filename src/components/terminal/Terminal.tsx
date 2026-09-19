@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { evaluateDanger, CommandDangerInfo } from '../../git-engine/danger';
 import { AlertTriangle, ShieldAlert, X, Check, Sparkles } from 'lucide-react';
-import { KID_COMMAND_CHIPS } from '../../data/kidMetaphors';
 
 interface TerminalProps {
   autoFocus?: boolean;
@@ -14,7 +13,6 @@ export const Terminal: React.FC<TerminalProps> = ({ autoFocus = false }) => {
     terminalHistory,
     executeCommand,
     clearTerminal,
-    kidMode,
   } = useApp();
 
   const [inputVal, setInputVal] = useState('');
@@ -127,82 +125,6 @@ export const Terminal: React.FC<TerminalProps> = ({ autoFocus = false }) => {
             ))}
         </div>
       ))}
-
-      {/* 🪄 Kid Mode / Beginner Quick Action Chips */}
-      {kidMode && (
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.4rem',
-            padding: '0.4rem 0.75rem',
-            background: 'rgba(245, 158, 11, 0.08)',
-            borderTop: '1px solid rgba(245, 158, 11, 0.2)',
-            borderBottom: '1px solid rgba(245, 158, 11, 0.2)',
-            overflowX: 'auto',
-            flexWrap: 'wrap',
-            userSelect: 'none',
-          }}
-        >
-          <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#fbbf24', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-            <span>🪄 Magic Wand:</span>
-          </span>
-          {KID_COMMAND_CHIPS.map((chip) => (
-            <button
-              key={chip.cmd}
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                setInputVal(chip.cmd);
-                inputRef.current?.focus();
-              }}
-              onDoubleClick={(e) => {
-                e.stopPropagation();
-                executeCommand(chip.cmd);
-                setInputVal('');
-              }}
-              style={{
-                background: 'rgba(0, 0, 0, 0.5)',
-                border: `1px solid ${chip.color}55`,
-                color: chip.color,
-                borderRadius: '6px',
-                padding: '0.2rem 0.5rem',
-                fontSize: '0.72rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.3rem',
-                transition: 'all 0.15s ease',
-              }}
-              title={`${chip.hint} (Click to fill, double-click to run)`}
-            >
-              <span>{chip.label}</span>
-              <span style={{ opacity: 0.6, fontSize: '0.65rem' }}>({chip.cmd})</span>
-            </button>
-          ))}
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              clearTerminal();
-            }}
-            style={{
-              background: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              color: '#94a3b8',
-              borderRadius: '6px',
-              padding: '0.2rem 0.5rem',
-              fontSize: '0.72rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-            }}
-            title="Clear the terminal screen"
-          >
-            🧹 Clear
-          </button>
-        </div>
-      )}
 
       {/* Prompt line */}
       <div className="terminal-prompt-line">

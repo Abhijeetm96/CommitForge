@@ -60,7 +60,6 @@ export const TeachingCanvas: React.FC<Props> = ({
   onResetChallenge,
   mistakeAttempts,
 }) => {
-  const { kidMode } = useApp();
   const [activeStatusAnnotation, setActiveStatusAnnotation] = useState<{
     title: string;
     explanation: string;
@@ -668,8 +667,8 @@ export const TeachingCanvas: React.FC<Props> = ({
 
           {currentStep.expectedCommand && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: '0.72rem', color: kidMode ? '#fbbf24' : '#38bdf8' }}>
-                {kidMode ? '🪄 Magic Command:' : 'Target command:'}
+              <span style={{ fontSize: '0.72rem', color: '#38bdf8', fontWeight: 600 }}>
+                Target command:
               </span>
               <code style={{ color: '#f8fafc', background: 'rgba(56, 189, 248, 0.12)', padding: '0.15rem 0.45rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 700 }}>
                 {currentStep.expectedCommand}

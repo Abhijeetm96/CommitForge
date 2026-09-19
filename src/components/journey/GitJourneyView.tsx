@@ -32,7 +32,7 @@ export const GitJourneyView: React.FC<GitJourneyViewProps> = ({
   onStartTeacherLesson,
   onOpenCommandAtlas,
 }) => {
-  const { setMode, setShowLostDrawer, kidMode, openPillarsModal } = useApp();
+  const { setMode, setShowLostDrawer, openPillarsModal } = useApp();
   const [selectedCategory, setSelectedCategory] = useState<BentoCategory | null>(null);
   const [viewMode, setViewMode] = useState<'bento' | 'atlas'>('bento');
   const [searchQuery, setSearchQuery] = useState('');
@@ -141,42 +141,23 @@ export const GitJourneyView: React.FC<GitJourneyViewProps> = ({
             >
               CommitForge Academy
             </span>
-            {kidMode ? (
-              <span
-                style={{
-                  background: 'rgba(245, 158, 11, 0.15)',
-                  border: '1px solid rgba(245, 158, 11, 0.4)',
-                  color: '#fbbf24',
-                  fontSize: '0.72rem',
-                  fontWeight: 800,
-                  padding: '0.2rem 0.65rem',
-                  borderRadius: '999px',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.35rem',
-                }}
-              >
-                <span>🧒 Kid Mode Active • The Magic Time Machine</span>
-              </span>
-            ) : (
-              <span
-                style={{
-                  background: 'rgba(56, 189, 248, 0.1)',
-                  border: '1px solid rgba(56, 189, 248, 0.25)',
-                  color: '#38bdf8',
-                  fontSize: '0.68rem',
-                  fontWeight: 700,
-                  padding: '0.15rem 0.5rem',
-                  borderRadius: '999px',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '0.25rem',
-                }}
-              >
-                <Sparkles size={11} />
-                100% Roadmap Parity • {totalConceptCount} Topics • {totalSubtopicCount} Subtopics
-              </span>
-            )}
+            <span
+              style={{
+                background: 'rgba(56, 189, 248, 0.1)',
+                border: '1px solid rgba(56, 189, 248, 0.25)',
+                color: '#38bdf8',
+                fontSize: '0.68rem',
+                fontWeight: 700,
+                padding: '0.15rem 0.5rem',
+                borderRadius: '999px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.25rem',
+              }}
+            >
+              <Sparkles size={11} />
+              100% Roadmap Parity • {totalConceptCount} Topics • {totalSubtopicCount} Subtopics
+            </span>
           </div>
 
           <h1
@@ -189,7 +170,7 @@ export const GitJourneyView: React.FC<GitJourneyViewProps> = ({
               lineHeight: 1.15,
             }}
           >
-            {kidMode ? 'Your Git Adventure' : 'Your Git Journey'}
+            Your Git Journey
           </h1>
           <p
             style={{
@@ -200,73 +181,9 @@ export const GitJourneyView: React.FC<GitJourneyViewProps> = ({
               lineHeight: 1.5,
             }}
           >
-            {kidMode
-              ? 'Git is a Magic Time Machine Camera! Take Polaroid snapshots of your code and games so you can rewind mistakes and explore alternate timelines anytime!'
-              : 'From your first local commit to Git internals, branching strategies, and GitHub engineering. Every concept from the curriculum is structured and interactive.'}
+            From your first local commit to Git internals, branching strategies, and GitHub engineering. Every concept from the curriculum is structured and interactive.
           </p>
         </div>
-
-        {/* ============================================================ */}
-        {/* 🧒 KID MODE 3-STEP VISUAL STORY BANNER                       */}
-        {/* ============================================================ */}
-        {kidMode && (
-          <div
-            style={{
-              background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(56, 189, 248, 0.08) 100%)',
-              border: '1.5px solid rgba(245, 158, 11, 0.35)',
-              borderRadius: '16px',
-              padding: '1.25rem 1.5rem',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '0.85rem',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.85rem', fontWeight: 800, color: '#fde047' }}>
-              <span>🚀 The Secret to Git in 3 Fun Steps:</span>
-            </div>
-
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-                gap: '1rem',
-              }}
-            >
-              {/* Step 1 */}
-              <div style={{ background: '#070b14', border: '1px solid rgba(245, 158, 11, 0.25)', borderRadius: '10px', padding: '1rem' }}>
-                <div style={{ fontSize: '1.4rem', marginBottom: '0.3rem' }}>🎨</div>
-                <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#f8fafc', marginBottom: '0.2rem' }}>
-                  1. Build on your Desk
-                </div>
-                <div style={{ fontSize: '0.74rem', color: '#94a3b8', lineHeight: 1.4 }}>
-                  This is your <strong>Working Tree</strong>. Write stories or code. It’s like drawing on your craft desk.
-                </div>
-              </div>
-
-              {/* Step 2 */}
-              <div style={{ background: '#070b14', border: '1px solid rgba(56, 189, 248, 0.25)', borderRadius: '10px', padding: '1rem' }}>
-                <div style={{ fontSize: '1.4rem', marginBottom: '0.3rem' }}>🎒</div>
-                <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#f8fafc', marginBottom: '0.2rem' }}>
-                  2. Pack your Backpack
-                </div>
-                <div style={{ fontSize: '0.74rem', color: '#94a3b8', lineHeight: 1.4 }}>
-                  Type <code>git add</code> to choose which drawings are ready for your next adventure photo.
-                </div>
-              </div>
-
-              {/* Step 3 */}
-              <div style={{ background: '#070b14', border: '1px solid rgba(74, 222, 128, 0.25)', borderRadius: '10px', padding: '1rem' }}>
-                <div style={{ fontSize: '1.4rem', marginBottom: '0.3rem' }}>📸</div>
-                <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#f8fafc', marginBottom: '0.2rem' }}>
-                  3. Snap a Polaroid Photo
-                </div>
-                <div style={{ fontSize: '0.74rem', color: '#94a3b8', lineHeight: 1.4 }}>
-                  Type <code>git commit</code>! You’ve sealed a game save point in your photo album forever.
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* ============================================================ */}
         {/* DOMINANT HERO: CONTINUE LEARNING CARD                        */}

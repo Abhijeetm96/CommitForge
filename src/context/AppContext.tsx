@@ -145,11 +145,6 @@ export interface AppContextType {
   activeLessonConcept: string | null;
   setActiveLessonConcept: (c: string | null) => void;
 
-  // 10-Year-Old Super Simple / Kid Mode
-  kidMode: boolean;
-  setKidMode: (k: boolean) => void;
-  toggleKidMode: () => void;
-
   // 5 Pillars Navigator Modal (Definition, Syntax, Variations, Examples, Explanation)
   showPillarsModal: boolean;
   setShowPillarsModal: (v: boolean) => void;
@@ -166,21 +161,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [instructionMode, setInstructionModeState] = useState<InstructionMode>(() => {
     return (localStorage.getItem('commitforge_instruction_mode') as InstructionMode) || 'beginner';
   });
-  const [kidMode, setKidModeState] = useState<boolean>(() => {
-    const saved = localStorage.getItem('commitforge_kid_mode');
-    return saved !== null ? saved === 'true' : true; // Default to true for easy friendly learning!
-  });
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [projectKey, setProjectKeyState] = useState<string>('personal-website');
-
-  const setKidMode = (val: boolean) => {
-    setKidModeState(val);
-    localStorage.setItem('commitforge_kid_mode', String(val));
-  };
-
-  const toggleKidMode = () => {
-    setKidMode(!kidMode);
-  };
 
   const setInstructionMode = (im: InstructionMode) => {
     setInstructionModeState(im);
@@ -545,9 +527,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setActiveLab,
         activeLessonConcept,
         setActiveLessonConcept,
-        kidMode,
-        setKidMode,
-        toggleKidMode,
       }}
     >
       <div className={`app-root ${theme}`}>{children}</div>

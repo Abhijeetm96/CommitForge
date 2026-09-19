@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useApp } from '../../context/AppContext';
 import { TopicPillars, getTopicPillars } from '../../data/topicPillars';
 import {
   BookOpen,
@@ -31,7 +30,6 @@ export const KnowledgePillarsCard: React.FC<KnowledgePillarsCardProps> = ({
   onApplyCommand,
   compact = false,
 }) => {
-  const { kidMode } = useApp();
   const [activeTab, setActiveTab] = useState<PillarTab>('definition');
   const [selectedSubtopic, setSelectedSubtopic] = useState<string | undefined>(undefined);
   const [isExpanded, setIsExpanded] = useState<boolean>(!compact);
@@ -94,21 +92,6 @@ export const KnowledgePillarsCard: React.FC<KnowledgePillarsCardProps> = ({
               >
                 {pillars.chapterTitle} • 5 Core Pillars
               </span>
-              {kidMode && (
-                <span
-                  style={{
-                    fontSize: '0.68rem',
-                    background: 'rgba(245, 158, 11, 0.15)',
-                    color: '#fbbf24',
-                    border: '1px solid rgba(245, 158, 11, 0.3)',
-                    padding: '0.05rem 0.35rem',
-                    borderRadius: '4px',
-                    fontWeight: 700,
-                  }}
-                >
-                  🧒 Kid Friendly
-                </span>
-              )}
             </div>
             <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#f8fafc' }}>
               {pillars.conceptTitle}

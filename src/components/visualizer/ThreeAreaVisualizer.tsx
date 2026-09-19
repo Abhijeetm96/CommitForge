@@ -15,31 +15,20 @@ import {
   Zap,
   Play,
 } from 'lucide-react';
-import { getKidStatusSummary } from '../../data/kidMetaphors';
 
 export interface ThreeAreaVisualizerProps {
   repo?: GitRepo;
 }
 
 export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: propRepo }) => {
-  const { repo: contextRepo, openFileTab, executeCommand, kidMode } = useApp();
+  const { repo: contextRepo, openFileTab, executeCommand } = useApp();
   const repo = propRepo || contextRepo;
-  const [viewMode, setViewMode] = useState<'kid' | 'simple' | 'technical'>(() => kidMode ? 'kid' : 'simple');
-
-  // Sync if kidMode changes
-  React.useEffect(() => {
-    if (kidMode && viewMode !== 'kid') {
-      setViewMode('kid');
-    } else if (!kidMode && viewMode === 'kid') {
-      setViewMode('simple');
-    }
-  }, [kidMode]);
+  const [viewMode, setViewMode] = useState<'conceptual' | 'technical'>('conceptual');
 
   const workingFiles = Object.keys(repo.workingDirectory);
   const stagedFiles = Object.keys(repo.index);
   const commits = Object.values(repo.commits);
 
-  const isKid = viewMode === 'kid';
   const isTechnical = viewMode === 'technical';
   const currentBranch = repo.head.type === 'branch' ? repo.head.ref : 'main';
   const headHash = repo.branches[currentBranch]?.targetCommitHash?.slice(0, 7) || 'a3f2e1d';
@@ -79,12 +68,12 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
               width: '32px',
               height: '32px',
               borderRadius: '8px',
-              background: 'rgba(56, 189, 248, 0.15)',
+              background: 'linear-gradient(135deg, #0284c7 0%, #38bdf8 100%)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#38bdf8',
-              boxShadow: '0 0 12px rgba(56, 189, 248, 0.25)',
+              color: 'white',
+              boxShadow: '0 2px 8px rgba(56, 189, 248, 0.3)',
             }}
           >
             <Layers size={18} />
@@ -113,14 +102,12 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <button
             onClick={() => {
-              if (viewMode === 'kid') setViewMode('simple');
-              else if (viewMode === 'simple') setViewMode('technical');
-              else setViewMode('kid');
+              setViewMode(viewMode === 'conceptual' ? 'technical' : 'conceptual');
             }}
             style={{
-              background: isKid ? 'rgba(245, 158, 11, 0.15)' : '#0f172a',
-              border: isKid ? '1px solid #f59e0b' : '1px solid rgba(255, 255, 255, 0.15)',
-              color: isKid ? '#fbbf24' : '#cbd5e1',
+              background: '#0f172a',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              color: '#cbd5e1',
               padding: '0.4rem 0.85rem',
               borderRadius: '8px',
               fontSize: '0.8rem',
@@ -133,11 +120,9 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
             }}
           >
             <span>
-              {isKid
-                ? '🧒 Kid Mode (Desk / Backpack / Album)'
-                : isTechnical
-                ? '🔬 Technical (Internals)'
-                : '✨ Conceptual (Desk / Box / Vault)'}
+              {isTechnical
+                ? '🔬 Technical (Internals & Cache)'
+                : '✨ Conceptual (Workflow & Zones)'}
             </span>
             <ChevronDown size={14} />
           </button>
@@ -161,13 +146,13 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
         <div
           style={{
             background: 'rgba(11, 18, 33, 0.92)',
-            border: isKid ? '1.5px solid #f59e0b' : '1px solid rgba(245, 158, 11, 0.35)',
+            border: '1px solid rgba(245, 158, 11, 0.35)',
             borderRadius: '12px',
             padding: '0.9rem',
             display: 'flex',
             flexDirection: 'column',
             gap: '0.65rem',
-            boxShadow: isKid ? '0 8px 24px rgba(245, 158, 11, 0.15)' : '0 8px 24px rgba(0, 0, 0, 0.4)',
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)',
             minWidth: 0,
             maxWidth: '100%',
             overflow: 'hidden',
@@ -178,20 +163,18 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.45rem', minWidth: 0, flex: 1 }}>
               <FileText size={17} color="#f59e0b" style={{ flexShrink: 0, marginTop: '1px' }} />
               <div style={{ fontSize: '0.84rem', fontWeight: 800, color: '#f8fafc', lineHeight: 1.25, wordBreak: 'break-word' }}>
-                {isKid ? '🎨 1. Lego Craft Desk' : '1. Working Tree'}
+                1. Working Tree
               </div>
             </div>
             <span style={{ fontSize: '0.66rem', color: '#f59e0b', background: 'rgba(245, 158, 11, 0.12)', padding: '0.12rem 0.4rem', borderRadius: '4px', flexShrink: 0, fontWeight: 700 }}>
-              {isKid ? 'Your Desk' : 'Local Disk'}
+              Local Disk
             </span>
           </div>
 
           <div style={{ fontSize: '0.72rem', color: '#94a3b8', lineHeight: 1.35 }}>
-            {isKid
-              ? 'Your messy desk where you draw pictures, edit files, and build things'
-              : isTechnical
+            {isTechnical
               ? 'Uncommitted file modifications on filesystem'
-              : 'Your physical desk where files are drafted'}
+              : 'Your active workspace where files are drafted and edited'}
           </div>
 
           {/* Files List */}
@@ -253,8 +236,8 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
             <button
               onClick={() => executeCommand('git add .')}
               style={{
-                background: isKid ? 'rgba(245, 158, 11, 0.18)' : 'rgba(245, 158, 11, 0.1)',
-                border: isKid ? '1px solid #f59e0b' : '1px solid rgba(245, 158, 11, 0.3)',
+                background: 'rgba(245, 158, 11, 0.1)',
+                border: '1px solid rgba(245, 158, 11, 0.3)',
                 color: '#f59e0b',
                 padding: '0.4rem 0.5rem',
                 borderRadius: '6px',
@@ -272,7 +255,7 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
             >
               <Zap size={13} style={{ flexShrink: 0 }} />
               <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {isKid ? '🎒 Pack All: ' : 'Stage All: '}<code>git add .</code>
+                Stage All: <code>git add .</code>
               </span>
             </button>
           )}
@@ -304,7 +287,7 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
               borderRadius: '6px',
               boxShadow: '0 0 10px rgba(56, 189, 248, 0.2)',
             }}
-            title={isKid ? 'Pack into backpack: git add' : 'Stage changes: git add'}
+            title="Stage changes: git add"
           >
             git add
           </span>
@@ -317,9 +300,7 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
         <div
           style={{
             background: 'rgba(11, 18, 33, 0.92)',
-            border: isKid
-              ? stagedFiles.length > 0 ? '1.5px solid #38bdf8' : '1px solid rgba(56, 189, 248, 0.35)'
-              : stagedFiles.length > 0 ? '1px solid #38bdf8' : '1px solid rgba(255, 255, 255, 0.1)',
+            border: stagedFiles.length > 0 ? '1px solid #38bdf8' : '1px solid rgba(255, 255, 255, 0.1)',
             borderRadius: '12px',
             padding: '0.9rem',
             display: 'flex',
@@ -336,20 +317,18 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.45rem', minWidth: 0, flex: 1 }}>
               <Database size={17} color="#38bdf8" style={{ flexShrink: 0, marginTop: '1px' }} />
               <div style={{ fontSize: '0.84rem', fontWeight: 800, color: '#f8fafc', lineHeight: 1.25, wordBreak: 'break-word' }}>
-                {isKid ? '🎒 2. Adventure Backpack' : '2. Staging Area'}
+                2. Staging Area
               </div>
             </div>
             <span style={{ fontSize: '0.66rem', color: '#38bdf8', background: 'rgba(56, 189, 248, 0.12)', padding: '0.12rem 0.4rem', borderRadius: '4px', flexShrink: 0, fontWeight: 700 }}>
-              {isKid ? 'Packed' : '.git/index'}
+              .git/index
             </span>
           </div>
 
           <div style={{ fontSize: '0.72rem', color: '#94a3b8', lineHeight: 1.35 }}>
-            {isKid
-              ? 'Your travel backpack where you choose what toys to save in the next photo'
-              : isTechnical
+            {isTechnical
               ? 'Binary tree manifest mapping filenames to blob SHAs'
-              : 'The packing crate ready for next milestone'}
+              : 'The preparation zone before committing snapshots'}
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', minWidth: 0 }}>
@@ -364,9 +343,9 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
                   fontSize: '0.76rem',
                 }}
               >
-                <div>{isKid ? '🎒 (Backpack empty)' : '(Packing crate empty)'}</div>
+                <div>(Staging area empty)</div>
                 <div style={{ fontSize: '0.7rem', marginTop: '0.2rem' }}>
-                  {isKid ? 'Pack with git add' : 'Run git add to prepare files'}
+                  Run git add to prepare files
                 </div>
               </div>
             ) : (
@@ -403,7 +382,7 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
                       whiteSpace: 'nowrap',
                     }}
                   >
-                    {isKid ? 'PACKED' : 'STAGED'}
+                    STAGED
                   </span>
                 </div>
               ))
@@ -414,8 +393,8 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
             <button
               onClick={() => executeCommand('git commit -m "Update project milestones"')}
               style={{
-                background: isKid ? 'rgba(16, 185, 129, 0.2)' : 'rgba(16, 185, 129, 0.12)',
-                border: isKid ? '1px solid #10b981' : '1px solid rgba(16, 185, 129, 0.35)',
+                background: 'rgba(16, 185, 129, 0.12)',
+                border: '1px solid rgba(16, 185, 129, 0.35)',
                 color: '#10b981',
                 padding: '0.4rem 0.5rem',
                 borderRadius: '6px',
@@ -433,7 +412,7 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
             >
               <CheckCircle2 size={13} style={{ flexShrink: 0 }} />
               <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {isKid ? '📸 Snap: ' : 'Seal: '}<code>git commit</code>
+                Seal: <code>git commit</code>
               </span>
             </button>
           )}
@@ -465,7 +444,7 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
               borderRadius: '6px',
               boxShadow: '0 0 10px rgba(16, 185, 129, 0.2)',
             }}
-            title={isKid ? 'Snap picture: git commit' : 'Commit milestone: git commit'}
+            title="Create commit: git commit"
           >
             git commit
           </span>
@@ -478,13 +457,13 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
         <div
           style={{
             background: 'rgba(11, 18, 33, 0.92)',
-            border: isKid ? '1.5px solid #10b981' : '1px solid rgba(16, 185, 129, 0.35)',
+            border: '1px solid rgba(16, 185, 129, 0.35)',
             borderRadius: '12px',
             padding: '0.9rem',
             display: 'flex',
             flexDirection: 'column',
             gap: '0.65rem',
-            boxShadow: isKid ? '0 8px 24px rgba(16, 185, 129, 0.15)' : '0 8px 24px rgba(0, 0, 0, 0.4)',
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)',
             minWidth: 0,
             maxWidth: '100%',
             overflow: 'hidden',
@@ -493,22 +472,20 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
         >
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.4rem' }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.45rem', minWidth: 0, flex: 1 }}>
-              <Camera size={17} color="#10b981" style={{ flexShrink: 0, marginTop: '1px' }} />
+              <Database size={17} color="#10b981" style={{ flexShrink: 0, marginTop: '1px' }} />
               <div style={{ fontSize: '0.84rem', fontWeight: 800, color: '#f8fafc', lineHeight: 1.25, wordBreak: 'break-word' }}>
-                {isKid ? '📚 3. Magic Photo Album' : '3. Local Repository'}
+                3. Local Repository
               </div>
             </div>
             <span style={{ fontSize: '0.66rem', color: '#10b981', background: 'rgba(16, 185, 129, 0.12)', padding: '0.12rem 0.4rem', borderRadius: '4px', flexShrink: 0, fontWeight: 700 }}>
-              {isKid ? 'Memory Vault' : '.git/objects'}
+              .git/objects
             </span>
           </div>
 
           <div style={{ fontSize: '0.72rem', color: '#94a3b8', lineHeight: 1.35 }}>
-            {isKid
-              ? 'Indestructible photo album holding all your game save checkpoints forever'
-              : isTechnical
+            {isTechnical
               ? 'Immutable cryptographic DAG of commit snapshots'
-              : 'Indestructible time machine vault'}
+              : 'Permanent database of committed project milestones'}
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', minWidth: 0 }}>
@@ -526,7 +503,7 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
               >
                 <Database size={20} color="#475569" />
                 <div style={{ fontSize: '0.76rem' }}>
-                  {isKid ? 'No Polaroid photos taken yet' : 'No commits sealed yet'}
+                  No commits sealed yet
                 </div>
               </div>
             ) : (
@@ -556,7 +533,7 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
                   </div>
                   {idx === 0 && (
                     <span style={{ fontSize: '0.62rem', fontWeight: 800, background: '#2563eb', color: 'white', padding: '0.1rem 0.3rem', borderRadius: '4px', flexShrink: 0 }}>
-                      {isKid ? '📍 YOU' : 'HEAD'}
+                      HEAD
                     </span>
                   )}
                 </div>
@@ -565,7 +542,7 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
           </div>
 
           <div style={{ fontSize: '0.68rem', color: '#10b981', textAlign: 'center', fontWeight: 700, background: 'rgba(16, 185, 129, 0.08)', padding: '0.3rem 0.45rem', borderRadius: '6px', wordBreak: 'break-word', lineHeight: 1.3 }}>
-            {isKid ? '✨ All photos locked in time machine!' : '✓ Permanent snapshot chain active'}
+            ✓ Permanent snapshot chain active
           </div>
         </div>
       </div>
@@ -573,14 +550,14 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
       {/* Bottom Educational Status Banner */}
       <div
         style={{
-          background: isKid ? 'rgba(245, 158, 11, 0.09)' : 'rgba(56, 189, 248, 0.08)',
-          border: isKid ? '1px solid rgba(245, 158, 11, 0.3)' : '1px solid rgba(56, 189, 248, 0.25)',
+          background: 'rgba(56, 189, 248, 0.08)',
+          border: '1px solid rgba(56, 189, 248, 0.25)',
           borderRadius: '10px',
           padding: '0.75rem 1rem',
           display: 'flex',
           alignItems: 'center',
           gap: '0.65rem',
-          color: isKid ? '#fde047' : '#38bdf8',
+          color: '#38bdf8',
           fontSize: '0.85rem',
           fontWeight: 600,
           minWidth: 0,
@@ -590,9 +567,7 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
       >
         <Info size={18} style={{ flexShrink: 0 }} />
         <span style={{ wordBreak: 'break-word', flex: 1, minWidth: 0, lineHeight: 1.4 }}>
-          {isKid
-            ? getKidStatusSummary(workingFiles.length, stagedFiles.length, commits.length)
-            : stagedFiles.length > 0
+          {stagedFiles.length > 0
             ? `You have ${stagedFiles.length} file(s) in staging ready to be sealed into a commit.`
             : workingFiles.length > 0
             ? `You have ${workingFiles.length} changed file(s). Stage them with git add, then commit to create a savepoint.`

@@ -14,7 +14,7 @@ export const CurriculumBento: React.FC<CurriculumBentoProps> = ({
   onSelectCategory,
   activeCategoryId,
 }) => {
-  const { kidMode, openPillarsModal } = useApp();
+  const { openPillarsModal } = useApp();
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   return (
@@ -111,7 +111,7 @@ export const CurriculumBento: React.FC<CurriculumBentoProps> = ({
                       color: '#94a3b8',
                     }}
                   >
-                    {kidMode && chapterMeta ? chapterMeta.emoji + ' ' + cat.tagline : cat.tagline}
+                    {cat.tagline}
                   </span>
                 </div>
 
@@ -171,7 +171,7 @@ export const CurriculumBento: React.FC<CurriculumBentoProps> = ({
                   margin: '0 0 0.4rem 0',
                 }}
               >
-                {kidMode && chapterMeta ? `${chapterMeta.emoji} ${cat.title}` : cat.title}
+                {cat.title}
               </h3>
 
               <p
@@ -182,7 +182,7 @@ export const CurriculumBento: React.FC<CurriculumBentoProps> = ({
                   margin: '0 0 0.85rem 0',
                 }}
               >
-                {kidMode && chapterMeta ? chapterMeta.kidMetaphor : cat.description}
+                {cat.description}
               </p>
 
               {/* Concepts List (3-4 bullet tags) */}

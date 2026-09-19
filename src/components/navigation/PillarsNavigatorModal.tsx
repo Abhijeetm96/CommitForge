@@ -27,7 +27,6 @@ export const PillarsNavigatorModal: React.FC = () => {
     executeCommand,
     setActiveLessonConcept,
     setMode,
-    kidMode,
   } = useApp();
 
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>(
@@ -498,7 +497,7 @@ export const PillarsNavigatorModal: React.FC = () => {
                     {activeCategory.title} — 5 Foundations of Git
                   </h3>
                   <p style={{ margin: 0, fontSize: '0.88rem', color: '#94a3b8', lineHeight: 1.5 }}>
-                    {kidMode && chapterMeta ? chapterMeta.kidMetaphor : activeCategory.description}
+                    {activeCategory.description}
                   </p>
                 </div>
 
@@ -511,7 +510,7 @@ export const PillarsNavigatorModal: React.FC = () => {
                     {chapterPillars.definition.technical}
                   </div>
                   <div style={{ fontSize: '0.82rem', color: '#fbbf24', marginTop: '0.5rem', fontStyle: 'italic' }}>
-                    🧒 Kid-Friendly Metaphor: {chapterPillars.definition.beginner}
+                    💡 Intuitive Analogy: {chapterPillars.definition.beginner}
                   </div>
                 </div>
 

@@ -29,7 +29,7 @@ interface PracticeMission {
 }
 
 export const PracticeView: React.FC = () => {
-  const { executeCommand, repo, kidMode } = useApp();
+  const { executeCommand, repo } = useApp();
   const [selectedLevel, setSelectedLevel] = useState<number>(1);
   const [activeMission, setActiveMission] = useState<PracticeMission | null>(null);
   const [isCompleted, setIsCompleted] = useState(false);
@@ -520,21 +520,19 @@ export const PracticeView: React.FC = () => {
 
             <div
               style={{
-                background: kidMode ? 'rgba(245, 158, 11, 0.08)' : 'rgba(56, 189, 248, 0.06)',
-                border: kidMode ? '1px solid rgba(245, 158, 11, 0.25)' : '1px solid rgba(56, 189, 248, 0.2)',
+                background: 'rgba(56, 189, 248, 0.06)',
+                border: '1px solid rgba(56, 189, 248, 0.2)',
                 borderRadius: '8px',
                 padding: '0.75rem 1rem',
                 fontSize: '0.82rem',
-                color: kidMode ? '#fde047' : '#94a3b8',
+                color: '#94a3b8',
                 lineHeight: 1.5,
               }}
             >
-              <strong style={{ color: kidMode ? '#fbbf24' : '#38bdf8' }}>
-                {kidMode ? '🧒 Explorer Tip: ' : '💡 Mentor Tip: '}
+              <strong style={{ color: '#38bdf8' }}>
+                💡 Mentor Tip:{' '}
               </strong>
-              {kidMode
-                ? 'Think of this like an adventure puzzle! Everything runs safely in your browser. You can click "🪄 Auto-Solve" if you ever want to see the magic solution!'
-                : 'Each mission runs inside the live in-browser Git engine. Use the interactive terminal below to practice real commands.'}
+              Each mission runs inside the live in-browser Git engine. Use the interactive terminal below to practice real commands.
             </div>
           </div>
         </div>
@@ -564,36 +562,11 @@ export const PracticeView: React.FC = () => {
                 gap: '0.5rem',
               }}
             >
-              <div style={{ fontSize: '0.88rem', fontWeight: 800, color: kidMode ? '#fbbf24' : '#38bdf8' }}>
-                {kidMode ? '🎮 Quest Active: ' : 'Mission Active: '}{activeMission.title}
+              <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#38bdf8' }}>
+                Mission Active: {activeMission.title}
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                {kidMode && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      executeCommand(activeMission.solutionCommand);
-                      setIsCompleted(true);
-                    }}
-                    style={{
-                      background: 'rgba(245, 158, 11, 0.18)',
-                      border: '1px solid #f59e0b',
-                      color: '#fbbf24',
-                      padding: '0.4rem 0.85rem',
-                      borderRadius: '6px',
-                      fontSize: '0.8rem',
-                      fontWeight: 800,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.35rem',
-                    }}
-                    title="Run the solution command automatically"
-                  >
-                    🪄 Auto-Solve (Run For Me)
-                  </button>
-                )}
 
                 <button
                   type="button"

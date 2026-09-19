@@ -36,8 +36,6 @@ export const HeaderNav: React.FC = () => {
     openPillarsModal,
     repo,
     setActiveLessonConcept,
-    kidMode,
-    toggleKidMode,
   } = useApp();
 
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
@@ -418,41 +416,6 @@ export const HeaderNav: React.FC = () => {
           AP
         </div>
 
-        {/* Kid Mode / Explain Like I'm 10 Quick Toggle */}
-        <button
-          onClick={toggleKidMode}
-          style={{
-            background: kidMode
-              ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.18) 0%, rgba(249, 115, 22, 0.22) 100%)'
-              : 'rgba(255, 255, 255, 0.04)',
-            color: kidMode ? '#fbbf24' : '#94a3b8',
-            border: kidMode ? '1px solid rgba(245, 158, 11, 0.5)' : '1px solid rgba(255, 255, 255, 0.1)',
-            borderRadius: '8px',
-            padding: '0.3rem 0.6rem',
-            fontSize: '0.74rem',
-            fontWeight: 800,
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.35rem',
-            boxShadow: kidMode ? '0 0 14px rgba(245, 158, 11, 0.25)' : 'none',
-            transition: 'all 0.15s ease',
-            whiteSpace: 'nowrap',
-          }}
-          title={kidMode ? "Kid Mode is ON! Simple 10-year-old analogies are active. Click to switch to Pro Mode." : "Switch to Kid Mode (Explain Like I'm 10)"}
-        >
-          <span>{kidMode ? '🧒 Kid' : '👨‍💻 Pro'}</span>
-          <span
-            style={{
-              width: '6px',
-              height: '6px',
-              borderRadius: '50%',
-              background: kidMode ? '#22c55e' : '#64748b',
-              boxShadow: kidMode ? '0 0 8px #22c55e' : 'none',
-            }}
-          />
-        </button>
-
         {/* 📚 5 Pillars Navigator Modal Trigger */}
         <button
           onClick={() => openPillarsModal()}
@@ -626,35 +589,6 @@ export const HeaderNav: React.FC = () => {
                   </option>
                 ))}
               </select>
-            </div>
-
-            {/* Kid Mode Setting */}
-            <div>
-              <label style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 700, display: 'block', marginBottom: '0.3rem' }}>
-                LEARNING SIMPLICITY
-              </label>
-              <button
-                onClick={toggleKidMode}
-                style={{
-                  width: '100%',
-                  background: kidMode ? 'rgba(245, 158, 11, 0.15)' : '#0b111e',
-                  border: kidMode ? '1px solid #f59e0b' : '1px solid rgba(255, 255, 255, 0.1)',
-                  color: kidMode ? '#fbbf24' : '#cbd5e1',
-                  padding: '0.45rem 0.75rem',
-                  borderRadius: '6px',
-                  fontSize: '0.78rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <span>{kidMode ? '🧒 Kid Mode (Super Simple)' : '👨‍💻 Pro Developer Mode'}</span>
-                <span style={{ fontSize: '0.7rem', color: kidMode ? '#4ade80' : '#64748b' }}>
-                  {kidMode ? 'Active' : 'Off'}
-                </span>
-              </button>
             </div>
 
             {/* Theme Toggle & Reset Exercise */}

@@ -14,7 +14,6 @@ import {
   ChevronDown,
   ChevronUp,
 } from 'lucide-react';
-import { useApp } from '../../context/AppContext';
 import { CHAPTER_METAS } from '../../data/chapterCurations';
 import { getChapterPillars } from '../../data/topicPillars';
 import { KnowledgePillarsCard } from '../learn/KnowledgePillarsCard';
@@ -30,7 +29,6 @@ export const ExpandedCurriculumSection: React.FC<ExpandedCurriculumSectionProps>
   onBack,
   onSelectConcept,
 }) => {
-  const { kidMode } = useApp();
   const [showChapterPillars, setShowChapterPillars] = useState<boolean>(true);
   const [inspectedConceptId, setInspectedConceptId] = useState<string | null>(null);
 
@@ -115,39 +113,14 @@ export const ExpandedCurriculumSection: React.FC<ExpandedCurriculumSectionProps>
               marginBottom: '0.35rem',
             }}
           >
-            {kidMode && chapterMeta ? `${chapterMeta.emoji} ${chapterMeta.themeTitle}` : category.tagline}
+            {category.tagline}
           </div>
           <h2 style={{ fontSize: '2rem', fontWeight: 900, color: '#f8fafc', margin: '0 0 0.5rem 0', letterSpacing: '-0.02em' }}>
-            {kidMode && chapterMeta ? `${chapterMeta.emoji} Chapter ${category.number}: ${category.title}` : category.title}
+            Chapter {category.number}: {category.title}
           </h2>
           <p style={{ fontSize: '0.95rem', color: '#94a3b8', margin: 0, maxWidth: '700px', lineHeight: 1.5 }}>
-            {kidMode && chapterMeta ? chapterMeta.kidMetaphor : category.description}
+            {category.description}
           </p>
-
-          {kidMode && chapterMeta && (
-            <div
-              style={{
-                marginTop: '1rem',
-                background: 'rgba(245, 158, 11, 0.1)',
-                border: '1.5px solid rgba(245, 158, 11, 0.3)',
-                borderRadius: '12px',
-                padding: '0.9rem 1.1rem',
-                display: 'flex',
-                alignItems: 'flex-start',
-                gap: '0.75rem',
-              }}
-            >
-              <span style={{ fontSize: '1.3rem' }}>{chapterMeta.emoji}</span>
-              <div>
-                <div style={{ fontSize: '0.82rem', fontWeight: 800, color: '#fde047', marginBottom: '0.2rem' }}>
-                  Chapter Adventure: {chapterMeta.themeTitle}
-                </div>
-                <div style={{ fontSize: '0.78rem', color: '#cbd5e1', lineHeight: 1.45 }}>
-                  {chapterMeta.kidStory}
-                </div>
-              </div>
-            </div>
-          )}
 
           {/* Chapter 5-Pillars Core Reference Button */}
           <div style={{ marginTop: '0.85rem' }}>
