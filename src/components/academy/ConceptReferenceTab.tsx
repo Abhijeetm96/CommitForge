@@ -30,7 +30,7 @@ export const ConceptReferenceTab: React.FC<Props> = ({ concept }) => {
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
             <ExternalLink size={16} color="#38bdf8" />
-            <span style={{ fontSize: '0.85rem', color: '#f8fafc', fontWeight: 600 }}>
+            <span style={{ fontSize: '0.85rem', color: 'var(--text-primary)', fontWeight: 600 }}>
               Official Documentation & Specs
             </span>
           </div>
@@ -40,7 +40,7 @@ export const ConceptReferenceTab: React.FC<Props> = ({ concept }) => {
             rel="noreferrer"
             style={{
               fontSize: '0.8rem',
-              color: '#38bdf8',
+              color: 'var(--accent-primary)',
               textDecoration: 'none',
               fontWeight: 700,
               display: 'inline-flex',
@@ -57,7 +57,7 @@ export const ConceptReferenceTab: React.FC<Props> = ({ concept }) => {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <Terminal size={18} color="#38bdf8" />
-          <h2 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: '#f8fafc' }}>
+          <h2 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)' }}>
             Synopsis
           </h2>
         </div>
@@ -65,11 +65,11 @@ export const ConceptReferenceTab: React.FC<Props> = ({ concept }) => {
           style={{
             fontFamily: 'ui-monospace, monospace',
             fontSize: '0.86rem',
-            background: '#090e1a',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border-color)',
             padding: '1rem',
             borderRadius: '10px',
-            color: '#38bdf8',
+            color: 'var(--accent-primary)',
           }}
         >
           {ref.synopsis || concept.command}
@@ -81,14 +81,14 @@ export const ConceptReferenceTab: React.FC<Props> = ({ concept }) => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Code2 size={18} color="#38bdf8" />
-            <h2 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: '#f8fafc' }}>
+            <h2 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)' }}>
               Command Syntax Cheatsheet
             </h2>
           </div>
           <div
             style={{
-              background: '#090e1a',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border-color)',
               borderRadius: '10px',
               padding: '1rem',
               display: 'flex',
@@ -102,9 +102,9 @@ export const ConceptReferenceTab: React.FC<Props> = ({ concept }) => {
                 style={{
                   fontFamily: 'ui-monospace, monospace',
                   fontSize: '0.82rem',
-                  color: '#e2e8f0',
+                  color: 'var(--text-primary)',
                   padding: '0.35rem 0.6rem',
-                  background: 'rgba(255, 255, 255, 0.02)',
+                  background: 'var(--bg-surface)',
                   borderRadius: '6px',
                   borderLeft: '3px solid #38bdf8',
                 }}
@@ -121,24 +121,24 @@ export const ConceptReferenceTab: React.FC<Props> = ({ concept }) => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Code2 size={18} color="#f59e0b" />
-            <h2 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: '#f8fafc' }}>
+            <h2 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)' }}>
               Options & Flags
             </h2>
           </div>
 
           <div
             style={{
-              background: '#090e1a',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border-color)',
               borderRadius: '10px',
               overflow: 'hidden',
             }}
           >
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem' }}>
               <thead>
-                <tr style={{ background: 'rgba(255, 255, 255, 0.03)', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
-                  <th style={{ textAlign: 'left', padding: '0.75rem 1rem', color: '#94a3b8', width: '30%' }}>Flag</th>
-                  <th style={{ textAlign: 'left', padding: '0.75rem 1rem', color: '#94a3b8' }}>Description</th>
+                <tr style={{ background: 'var(--bg-surface)', borderBottom: '1px solid var(--border-color)' }}>
+                  <th style={{ textAlign: 'left', padding: '0.75rem 1rem', color: 'var(--text-secondary)', width: '30%' }}>Flag</th>
+                  <th style={{ textAlign: 'left', padding: '0.75rem 1rem', color: 'var(--text-secondary)' }}>Description</th>
                 </tr>
               </thead>
               <tbody>
@@ -146,13 +146,13 @@ export const ConceptReferenceTab: React.FC<Props> = ({ concept }) => {
                   <tr
                     key={idx}
                     style={{
-                      borderBottom: idx < options.length - 1 ? '1px solid rgba(255, 255, 255, 0.04)' : 'none',
+                      borderBottom: idx < options.length - 1 ? '1px solid var(--border-color)' : 'none',
                     }}
                   >
-                    <td style={{ padding: '0.75rem 1rem', fontFamily: 'ui-monospace, monospace', color: '#38bdf8', fontWeight: 700 }}>
+                    <td style={{ padding: '0.75rem 1rem', fontFamily: 'ui-monospace, monospace', color: 'var(--accent-primary)', fontWeight: 700 }}>
                       {opt.flag}
                     </td>
-                    <td style={{ padding: '0.75rem 1rem', color: '#cbd5e1', lineHeight: 1.5 }}>
+                    <td style={{ padding: '0.75rem 1rem', color: 'var(--text-primary)', lineHeight: 1.5 }}>
                       {opt.description}
                     </td>
                   </tr>
@@ -168,15 +168,15 @@ export const ConceptReferenceTab: React.FC<Props> = ({ concept }) => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Database size={18} color="#a855f7" />
-            <h2 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: '#f8fafc' }}>
+            <h2 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)' }}>
               Git Internals & Architecture
             </h2>
           </div>
 
           <div
             style={{
-              background: '#090e1a',
-              border: '1px solid rgba(168, 85, 247, 0.25)',
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border-color)',
               borderRadius: '12px',
               padding: '1.25rem',
               display: 'flex',
@@ -184,18 +184,19 @@ export const ConceptReferenceTab: React.FC<Props> = ({ concept }) => {
               gap: '0.75rem',
             }}
           >
-            <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#c084fc' }}>
+            <div style={{ fontSize: '0.88rem', fontWeight: 700, color: '#a855f7' }}>
               Database Object: {ref.gitInternals.objectType}
             </div>
-            <div style={{ fontSize: '0.82rem', color: '#cbd5e1', lineHeight: 1.6 }}>
+            <div style={{ fontSize: '0.82rem', color: 'var(--text-primary)', lineHeight: 1.6 }}>
               {ref.gitInternals.explanation}
             </div>
             <div
               style={{
                 fontFamily: 'ui-monospace, monospace',
                 fontSize: '0.76rem',
-                color: '#94a3b8',
-                background: 'rgba(255, 255, 255, 0.03)',
+                color: 'var(--text-muted)',
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border-color)',
                 padding: '0.5rem 0.75rem',
                 borderRadius: '6px',
               }}
@@ -211,7 +212,7 @@ export const ConceptReferenceTab: React.FC<Props> = ({ concept }) => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <AlertTriangle size={18} color="#ef4444" />
-            <h2 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: '#f8fafc' }}>
+            <h2 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)' }}>
               Common Errors & Solutions
             </h2>
           </div>
@@ -220,8 +221,8 @@ export const ConceptReferenceTab: React.FC<Props> = ({ concept }) => {
               <div
                 key={idx}
                 style={{
-                  background: '#090e1a',
-                  border: '1px solid rgba(239, 68, 68, 0.25)',
+                  background: 'var(--bg-card)',
+                  border: '1px solid rgba(239, 68, 68, 0.3)',
                   borderRadius: '10px',
                   padding: '1rem',
                   display: 'flex',
@@ -229,11 +230,11 @@ export const ConceptReferenceTab: React.FC<Props> = ({ concept }) => {
                   gap: '0.5rem',
                 }}
               >
-                <div style={{ color: '#f87171', fontSize: '0.84rem', fontWeight: 700 }}>
+                <div style={{ color: '#ef4444', fontSize: '0.84rem', fontWeight: 700 }}>
                   🚨 {err.error}
                 </div>
-                <div style={{ color: '#94a3b8', fontSize: '0.82rem', lineHeight: 1.5 }}>
-                  <strong style={{ color: '#22c55e' }}>Remedy:</strong> {err.remedy}
+                <div style={{ color: 'var(--text-secondary)', fontSize: '0.82rem', lineHeight: 1.5 }}>
+                  <strong style={{ color: '#10b981' }}>Remedy:</strong> {err.remedy}
                 </div>
               </div>
             ))}
@@ -246,7 +247,7 @@ export const ConceptReferenceTab: React.FC<Props> = ({ concept }) => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Cpu size={18} color="#22c55e" />
-            <h2 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: '#f8fafc' }}>
+            <h2 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)' }}>
               Edge Cases & Advanced Behaviors
             </h2>
           </div>
@@ -256,12 +257,12 @@ export const ConceptReferenceTab: React.FC<Props> = ({ concept }) => {
               <div
                 key={idx}
                 style={{
-                  background: 'rgba(255, 255, 255, 0.02)',
-                  border: '1px solid rgba(255, 255, 255, 0.06)',
+                  background: 'var(--bg-card)',
+                  border: '1px solid var(--border-color)',
                   borderRadius: '8px',
                   padding: '0.75rem 1rem',
                   fontSize: '0.82rem',
-                  color: '#cbd5e1',
+                  color: 'var(--text-primary)',
                   lineHeight: 1.5,
                 }}
               >

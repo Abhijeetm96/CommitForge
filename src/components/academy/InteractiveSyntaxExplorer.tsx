@@ -132,11 +132,11 @@ export const InteractiveSyntaxExplorer: React.FC<Props> = ({ syntaxCode, syntaxT
   return (
     <div
       style={{
-        background: '#090e1a',
+        background: 'var(--bg-card)',
         borderRadius: '12px',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
+        border: '1px solid var(--border-color)',
         overflow: 'hidden',
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+        boxShadow: 'var(--card-shadow, 0 4px 20px rgba(0, 0, 0, 0.15))',
       }}
     >
       {/* Code Header with bash badge, instruction hint, and Copy button */}
@@ -146,8 +146,8 @@ export const InteractiveSyntaxExplorer: React.FC<Props> = ({ syntaxCode, syntaxT
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: '0.65rem 1rem',
-          background: 'rgba(255, 255, 255, 0.03)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+          background: 'var(--bg-surface)',
+          borderBottom: '1px solid var(--border-color)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
@@ -156,16 +156,17 @@ export const InteractiveSyntaxExplorer: React.FC<Props> = ({ syntaxCode, syntaxT
               fontSize: '0.72rem',
               fontWeight: 700,
               textTransform: 'lowercase',
-              color: '#94a3b8',
+              color: 'var(--text-secondary)',
               letterSpacing: '0.05em',
-              background: 'rgba(255, 255, 255, 0.06)',
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border-color)',
               padding: '0.15rem 0.5rem',
               borderRadius: '4px',
             }}
           >
             bash
           </span>
-          <span style={{ fontSize: '0.76rem', color: '#64748b' }}>
+          <span style={{ fontSize: '0.76rem', color: 'var(--text-muted)' }}>
             Select any token to inspect its role and real-world example
           </span>
         </div>
@@ -176,11 +177,11 @@ export const InteractiveSyntaxExplorer: React.FC<Props> = ({ syntaxCode, syntaxT
             display: 'flex',
             alignItems: 'center',
             gap: '0.4rem',
-            background: 'rgba(255, 255, 255, 0.06)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border-color)',
             borderRadius: '6px',
             padding: '0.25rem 0.65rem',
-            color: copiedCode ? '#22c55e' : '#cbd5e1',
+            color: copiedCode ? '#22c55e' : 'var(--text-primary)',
             fontSize: '0.75rem',
             fontWeight: 600,
             cursor: 'pointer',
@@ -242,9 +243,9 @@ export const InteractiveSyntaxExplorer: React.FC<Props> = ({ syntaxCode, syntaxT
         <div
           style={{
             padding: '1.15rem 1.25rem',
-            background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.85) 0%, rgba(9, 14, 26, 0.98) 100%)',
+            background: 'var(--bg-surface)',
             borderTop: `2px solid ${activeTheme.border}`,
-            borderBottom: `1px solid ${activeTheme.borderGlow}`,
+            borderBottom: `1px solid var(--border-color)`,
             display: 'flex',
             flexDirection: 'column',
             gap: '1rem',
@@ -294,16 +295,16 @@ export const InteractiveSyntaxExplorer: React.FC<Props> = ({ syntaxCode, syntaxT
 
             {/* Stepper Navigation */}
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-              <span style={{ fontSize: '0.74rem', color: '#94a3b8', marginRight: '0.25rem' }}>
+              <span style={{ fontSize: '0.74rem', color: 'var(--text-secondary)', marginRight: '0.25rem' }}>
                 Token <strong style={{ color: activeTheme.text }}>{currentIdx + 1}</strong> of {syntaxTokens.length}
               </span>
               <button
                 disabled={currentIdx === 0}
                 onClick={() => setActiveTokenIndex((prev) => Math.max(0, prev - 1))}
                 style={{
-                  background: currentIdx > 0 ? 'rgba(255, 255, 255, 0.05)' : 'transparent',
-                  border: currentIdx > 0 ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid transparent',
-                  color: currentIdx > 0 ? '#cbd5e1' : '#475569',
+                  background: currentIdx > 0 ? 'var(--bg-card)' : 'transparent',
+                  border: currentIdx > 0 ? '1px solid var(--border-color)' : '1px solid transparent',
+                  color: currentIdx > 0 ? 'var(--text-primary)' : 'var(--text-muted)',
                   borderRadius: '6px',
                   width: '26px',
                   height: '26px',
@@ -320,9 +321,9 @@ export const InteractiveSyntaxExplorer: React.FC<Props> = ({ syntaxCode, syntaxT
                 disabled={currentIdx >= syntaxTokens.length - 1}
                 onClick={() => setActiveTokenIndex((prev) => Math.min(syntaxTokens.length - 1, prev + 1))}
                 style={{
-                  background: currentIdx < syntaxTokens.length - 1 ? 'rgba(255, 255, 255, 0.05)' : 'transparent',
-                  border: currentIdx < syntaxTokens.length - 1 ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid transparent',
-                  color: currentIdx < syntaxTokens.length - 1 ? '#cbd5e1' : '#475569',
+                  background: currentIdx < syntaxTokens.length - 1 ? 'var(--bg-card)' : 'transparent',
+                  border: currentIdx < syntaxTokens.length - 1 ? '1px solid var(--border-color)' : '1px solid transparent',
+                  color: currentIdx < syntaxTokens.length - 1 ? 'var(--text-primary)' : 'var(--text-muted)',
                   borderRadius: '6px',
                   width: '26px',
                   height: '26px',
@@ -341,8 +342,8 @@ export const InteractiveSyntaxExplorer: React.FC<Props> = ({ syntaxCode, syntaxT
           {/* Details Section */}
           <div
             style={{
-              background: 'rgba(255, 255, 255, 0.02)',
-              border: `1px solid ${activeTheme.borderGlow}`,
+              background: 'var(--bg-card)',
+              border: `1px solid var(--border-color)`,
               borderRadius: '8px',
               padding: '0.85rem 1rem',
               display: 'flex',
@@ -353,7 +354,7 @@ export const InteractiveSyntaxExplorer: React.FC<Props> = ({ syntaxCode, syntaxT
             <div style={{ fontSize: '0.72rem', fontWeight: 700, color: activeTheme.text, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
               Role & Explanation
             </div>
-            <div style={{ fontSize: '0.86rem', color: '#e2e8f0', lineHeight: 1.55 }}>
+            <div style={{ fontSize: '0.86rem', color: 'var(--text-primary)', lineHeight: 1.55 }}>
               {activeToken.explanation}
             </div>
           </div>

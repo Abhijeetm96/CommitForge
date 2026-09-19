@@ -129,41 +129,58 @@ body.light {
 }
 
 /* Hardcoded inline style fallbacks for legacy components */
-.app-root.light [style*="background: #070b14"],
-.app-root.light [style*="background: rgb(7, 11, 20)"],
-.app-root.light [style*="background: #080d19"],
-.app-root.light [style*="background: #0c1322"],
-.app-root.light [style*="background: #090e1a"] {
+.app-root.light [style*="background: #070b14"]:not(.terminal):not([class*="terminal"]):not([data-terminal]):not(pre):not(code),
+.app-root.light [style*="background: rgb(7, 11, 20)"]:not(.terminal):not([class*="terminal"]):not([data-terminal]):not(pre):not(code),
+.app-root.light [style*="background: #080d19"]:not(.terminal):not([class*="terminal"]):not([data-terminal]):not(pre):not(code),
+.app-root.light [style*="background: #0c1322"]:not(.terminal):not([class*="terminal"]):not([data-terminal]):not(pre):not(code),
+.app-root.light [style*="background: #090e1a"]:not(.terminal):not([class*="terminal"]):not([data-terminal]):not(pre):not(code) {
   background: #ffffff !important;
 }
 
-.app-root.light [style*="background: rgba(15, 23, 42, 0.95)"],
-.app-root.light [style*="background: #0f172a"],
-.app-root.light [style*="background: #131d33"],
-.app-root.light [style*="background: #111827"] {
+.app-root.light [style*="background: rgba(15, 23, 42, 0.95)"]:not(.terminal):not([class*="terminal"]):not([data-terminal]):not(pre):not(code),
+.app-root.light [style*="background: #0f172a"]:not(.terminal):not([class*="terminal"]):not([data-terminal]):not(pre):not(code),
+.app-root.light [style*="background: #131d33"]:not(.terminal):not([class*="terminal"]):not([data-terminal]):not(pre):not(code),
+.app-root.light [style*="background: #111827"]:not(.terminal):not([class*="terminal"]):not([data-terminal]):not(pre):not(code) {
   background: #ffffff !important;
 }
 
-.app-root.light [style*="color: #f8fafc"],
-.app-root.light [style*="color: rgb(248, 250, 252)"] {
+.app-root.light [style*="color: #f8fafc"]:not(.terminal *):not([class*="terminal"] *):not([data-terminal] *):not(pre *):not(code *),
+.app-root.light [style*="color: rgb(248, 250, 252)"]:not(.terminal *):not([class*="terminal"] *):not([data-terminal] *):not(pre *):not(code *) {
   color: #0f172a !important;
 }
 
-.app-root.light [style*="color: #cbd5e1"],
-.app-root.light [style*="color: rgb(203, 213, 225)"] {
+.app-root.light [style*="color: #cbd5e1"]:not(.terminal *):not([class*="terminal"] *):not([data-terminal] *):not(pre *):not(code *),
+.app-root.light [style*="color: rgb(203, 213, 225)"]:not(.terminal *):not([class*="terminal"] *):not([data-terminal] *):not(pre *):not(code *) {
   color: #334155 !important;
 }
 
-.app-root.light [style*="color: #94a3b8"],
-.app-root.light [style*="color: rgb(148, 163, 184)"] {
+.app-root.light [style*="color: #94a3b8"]:not(.terminal *):not([class*="terminal"] *):not([data-terminal] *):not(pre *):not(code *),
+.app-root.light [style*="color: rgb(148, 163, 184)"]:not(.terminal *):not([class*="terminal"] *):not([data-terminal] *):not(pre *):not(code *) {
   color: #475569 !important;
 }
 
-.app-root.light [style*="border: 1px solid rgba(255, 255, 255"],
-.app-root.light [style*="border-bottom: 1px solid rgba(255, 255, 255"],
-.app-root.light [style*="border-top: 1px solid rgba(255, 255, 255"],
-.app-root.light [style*="border-right: 1px solid rgba(255, 255, 255"] {
+.app-root.light [style*="border: 1px solid rgba(255, 255, 255"]:not(.terminal):not([class*="terminal"]),
+.app-root.light [style*="border-bottom: 1px solid rgba(255, 255, 255"]:not(.terminal):not([class*="terminal"]),
+.app-root.light [style*="border-top: 1px solid rgba(255, 255, 255"]:not(.terminal):not([class*="terminal"]),
+.app-root.light [style*="border-right: 1px solid rgba(255, 255, 255"]:not(.terminal):not([class*="terminal"]) {
   border-color: #e2e8f0 !important;
+}
+
+/* Terminal & Code Protection in Light Mode */
+.app-root.light .terminal,
+.app-root.light [class*="terminal-output"],
+.app-root.light [class*="terminal-body"],
+.app-root.light [data-terminal],
+.app-root.light pre,
+.app-root.light code:not(button code):not(a code) {
+  background-color: var(--terminal-bg) !important;
+  color: var(--terminal-text) !important;
+}
+
+button code,
+a code {
+  background: transparent !important;
+  color: inherit !important;
 }
 
 * {

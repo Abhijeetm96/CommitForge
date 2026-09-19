@@ -186,11 +186,11 @@ export const GitAnimationStage: React.FC<GitAnimationStageProps> = ({
         display: 'flex',
         flexDirection: 'column',
         gap: '0.85rem',
-        background: '#070b16',
-        border: '1px solid rgba(56, 189, 248, 0.25)',
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border-color)',
         borderRadius: '16px',
         padding: '1.25rem',
-        boxShadow: '0 12px 36px rgba(0, 0, 0, 0.55)',
+        boxShadow: 'var(--shadow-sm)',
         position: 'relative',
         width: '100%',
         boxSizing: 'border-box',
@@ -204,7 +204,7 @@ export const GitAnimationStage: React.FC<GitAnimationStageProps> = ({
           justifyContent: 'space-between',
           flexWrap: 'wrap',
           gap: '0.75rem',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          borderBottom: '1px solid var(--border-color)',
           paddingBottom: '0.75rem',
         }}
       >
@@ -219,7 +219,7 @@ export const GitAnimationStage: React.FC<GitAnimationStageProps> = ({
               animation: 'radarPing 2s infinite ease-out',
             }}
           />
-          <span style={{ fontSize: '0.92rem', fontWeight: 800, color: '#f8fafc' }}>
+          <span style={{ fontSize: '0.92rem', fontWeight: 800, color: 'var(--text-primary)' }}>
             Interactive Git Stage: <span style={{ color: '#38bdf8', fontFamily: 'monospace' }}>git {commandId}</span>
           </span>
           <span
@@ -247,17 +247,17 @@ export const GitAnimationStage: React.FC<GitAnimationStageProps> = ({
             display: 'flex',
             alignItems: 'center',
             gap: '0.35rem',
-            background: '#040711',
+            background: 'var(--bg-surface)',
             padding: '0.25rem',
             borderRadius: '8px',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
+            border: '1px solid var(--border-color)',
           }}
         >
           <button
             onClick={() => setCurrentStageMode('animation')}
             style={{
               background: currentStageMode === 'animation' ? '#2563eb' : 'transparent',
-              color: currentStageMode === 'animation' ? '#ffffff' : '#94a3b8',
+              color: currentStageMode === 'animation' ? '#ffffff' : 'var(--text-secondary)',
               border: 'none',
               padding: '0.35rem 0.8rem',
               borderRadius: '6px',
@@ -279,7 +279,7 @@ export const GitAnimationStage: React.FC<GitAnimationStageProps> = ({
             onClick={() => setCurrentStageMode('diagram')}
             style={{
               background: currentStageMode === 'diagram' ? '#2563eb' : 'transparent',
-              color: currentStageMode === 'diagram' ? '#ffffff' : '#94a3b8',
+              color: currentStageMode === 'diagram' ? '#ffffff' : 'var(--text-secondary)',
               border: 'none',
               padding: '0.35rem 0.8rem',
               borderRadius: '6px',

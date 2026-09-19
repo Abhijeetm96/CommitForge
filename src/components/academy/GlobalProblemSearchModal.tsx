@@ -83,17 +83,18 @@ export const GlobalProblemSearchModal: React.FC<Props> = ({
       onClick={onClose}
     >
       <div
+        className="problem-search-modal-box"
         style={{
           width: '100%',
           maxWidth: '780px',
-          background: '#090e1a',
-          border: '1px solid rgba(56, 189, 248, 0.3)',
+          background: 'var(--bg-surface)',
+          border: '1px solid var(--border-color)',
           borderRadius: '16px',
-          boxShadow: '0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 40px rgba(56, 189, 248, 0.15)',
+          boxShadow: 'var(--shadow-md)',
           overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
-          color: '#f8fafc',
+          color: 'var(--text-primary)',
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -104,8 +105,8 @@ export const GlobalProblemSearchModal: React.FC<Props> = ({
             alignItems: 'center',
             gap: '0.75rem',
             padding: '1rem 1.25rem',
-            background: 'rgba(255, 255, 255, 0.03)',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+            background: 'var(--bg-surface-elevated)',
+            borderBottom: '1px solid var(--border-color)',
           }}
         >
           <Search size={20} color="#38bdf8" />
@@ -123,7 +124,7 @@ export const GlobalProblemSearchModal: React.FC<Props> = ({
               background: 'transparent',
               border: 'none',
               outline: 'none',
-              color: '#f8fafc',
+              color: 'var(--text-primary)',
               fontSize: '1rem',
               fontWeight: 500,
             }}
@@ -134,7 +135,7 @@ export const GlobalProblemSearchModal: React.FC<Props> = ({
                 setSearchQuery('');
                 setActiveProblem(null);
               }}
-              style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer' }}
+              style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
             >
               <X size={16} />
             </button>
@@ -142,11 +143,11 @@ export const GlobalProblemSearchModal: React.FC<Props> = ({
           <button
             onClick={onClose}
             style={{
-              background: 'rgba(255, 255, 255, 0.06)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
+              background: 'var(--bg-surface)',
+              border: '1px solid var(--border-color)',
               borderRadius: '6px',
               padding: '0.2rem 0.5rem',
-              color: '#94a3b8',
+              color: 'var(--text-secondary)',
               fontSize: '0.72rem',
               cursor: 'pointer',
             }}
@@ -160,14 +161,14 @@ export const GlobalProblemSearchModal: React.FC<Props> = ({
           <div
             style={{
               padding: '0.85rem 1.25rem',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
-              background: 'rgba(12, 19, 34, 0.5)',
+              borderBottom: '1px solid var(--border-color)',
+              background: 'var(--bg-surface)',
               display: 'flex',
               flexDirection: 'column',
               gap: '0.5rem',
             }}
           >
-            <div style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>
+            <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>
               Frequently Asked Situations
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
@@ -177,8 +178,8 @@ export const GlobalProblemSearchModal: React.FC<Props> = ({
                   onClick={() => handlePickProblem(p)}
                   style={{
                     background: 'rgba(56, 189, 248, 0.08)',
-                    border: '1px solid rgba(56, 189, 248, 0.2)',
-                    color: '#e2e8f0',
+                    border: '1px solid rgba(56, 189, 248, 0.25)',
+                    color: 'var(--text-primary)',
                     padding: '0.35rem 0.75rem',
                     borderRadius: '999px',
                     fontSize: '0.78rem',
@@ -370,7 +371,7 @@ export const GlobalProblemSearchModal: React.FC<Props> = ({
               {/* Direct Concept Matches */}
               {matchingConcepts.length > 0 && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <div style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>
+                  <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>
                     Git Commands & Topics
                   </div>
                   {matchingConcepts.map((c) => (
@@ -383,8 +384,8 @@ export const GlobalProblemSearchModal: React.FC<Props> = ({
                       style={{
                         padding: '0.75rem 1rem',
                         borderRadius: '8px',
-                        background: 'rgba(255, 255, 255, 0.03)',
-                        border: '1px solid rgba(255, 255, 255, 0.06)',
+                        background: 'var(--bg-card)',
+                        border: '1px solid var(--border-color)',
                         cursor: 'pointer',
                         display: 'flex',
                         alignItems: 'center',
@@ -395,15 +396,15 @@ export const GlobalProblemSearchModal: React.FC<Props> = ({
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                         <Terminal size={16} color="#38bdf8" />
                         <div>
-                          <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 700, color: '#f8fafc', fontSize: '0.86rem' }}>
+                          <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.86rem' }}>
                             {c.command}
                           </span>
-                          <span style={{ fontSize: '0.78rem', color: '#94a3b8', marginLeft: '0.5rem' }}>
+                          <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginLeft: '0.5rem' }}>
                             {c.title}
                           </span>
                         </div>
                       </div>
-                      <span style={{ fontSize: '0.72rem', color: '#64748b' }}>
+                      <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
                         {c.topicTitle} →
                       </span>
                     </div>
@@ -413,7 +414,7 @@ export const GlobalProblemSearchModal: React.FC<Props> = ({
 
               {/* Problem Matches */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <div style={{ fontSize: '0.74rem', color: '#64748b', fontWeight: 700, textTransform: 'uppercase' }}>
+                <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontWeight: 700, textTransform: 'uppercase' }}>
                   Problem Solutions & Guidance
                 </div>
                 {filteredProblems.map((p) => (
@@ -423,8 +424,8 @@ export const GlobalProblemSearchModal: React.FC<Props> = ({
                     style={{
                       padding: '0.85rem 1rem',
                       borderRadius: '8px',
-                      background: 'rgba(255, 255, 255, 0.03)',
-                      border: '1px solid rgba(255, 255, 255, 0.06)',
+                      background: 'var(--bg-card)',
+                      border: '1px solid var(--border-color)',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
@@ -435,15 +436,15 @@ export const GlobalProblemSearchModal: React.FC<Props> = ({
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                       <LifeBuoy size={16} color="#f05033" />
                       <div>
-                        <div style={{ fontSize: '0.86rem', fontWeight: 700, color: '#f8fafc' }}>
+                        <div style={{ fontSize: '0.86rem', fontWeight: 700, color: 'var(--text-primary)' }}>
                           {p.problemTitle}
                         </div>
-                        <div style={{ fontSize: '0.76rem', color: '#94a3b8' }}>
+                        <div style={{ fontSize: '0.76rem', color: 'var(--text-secondary)' }}>
                           {p.description}
                         </div>
                       </div>
                     </div>
-                    <ChevronRight size={16} color="#64748b" />
+                    <ChevronRight size={16} color="var(--text-muted)" />
                   </div>
                 ))}
               </div>

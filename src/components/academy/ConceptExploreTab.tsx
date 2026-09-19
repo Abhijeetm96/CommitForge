@@ -232,8 +232,8 @@ export const ConceptExploreTab: React.FC<Props> = ({
             <div
               key={idx}
               style={{
-                background: '#090e1a',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                background: 'var(--bg-card)',
+                border: '1px solid var(--border-color)',
                 borderRadius: '12px',
                 padding: '1.15rem',
                 display: 'flex',
@@ -363,24 +363,24 @@ export const ConceptExploreTab: React.FC<Props> = ({
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-            <HelpCircle size={16} color="#f59e0b" />
-            <h3 style={{ margin: 0, fontSize: '0.98rem', fontWeight: 800, color: '#f8fafc' }}>
-              Real-World Case Scenarios & Challenges
-            </h3>
-            <span
-              style={{
-                fontSize: '0.7rem',
-                fontWeight: 700,
-                color: '#f59e0b',
-                background: 'rgba(245, 158, 11, 0.12)',
-                padding: '0.1rem 0.45rem',
-                borderRadius: '999px',
-              }}
-            >
-              {c.scenarios.length} scenarios
-            </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <HelpCircle size={18} color="#f59e0b" />
+            <h2 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+              Real-World Case Scenarios & Decision Framework
+            </h2>
           </div>
+          <span
+            style={{
+              fontSize: '0.72rem',
+              fontWeight: 700,
+              color: '#f59e0b',
+              background: 'rgba(245, 158, 11, 0.12)',
+              padding: '0.15rem 0.55rem',
+              borderRadius: '999px',
+            }}
+          >
+            {c.scenarios.length} scenarios
+          </span>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
@@ -393,8 +393,8 @@ export const ConceptExploreTab: React.FC<Props> = ({
               <div
                 key={scenarioKey}
                 style={{
-                  background: '#090e1a',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  background: 'var(--bg-card)',
+                  border: '1px solid var(--border-color)',
                   borderRadius: '12px',
                   padding: '1.15rem 1.25rem',
                   display: 'flex',
@@ -403,7 +403,7 @@ export const ConceptExploreTab: React.FC<Props> = ({
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
-                  <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#f8fafc' }}>
+                  <div style={{ fontSize: '0.92rem', fontWeight: 800, color: 'var(--text-primary)' }}>
                     {sc.title}
                   </div>
                   <span
@@ -421,13 +421,13 @@ export const ConceptExploreTab: React.FC<Props> = ({
                 </div>
 
                 {sc.context && (
-                  <div style={{ fontSize: '0.82rem', color: '#94a3b8', fontStyle: 'italic' }}>
+                  <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', fontStyle: 'italic' }}>
                     Situation: {sc.context}
                   </div>
                 )}
 
                 {sc.question && (
-                  <div style={{ fontSize: '0.86rem', fontWeight: 600, color: '#cbd5e1' }}>
+                  <div style={{ fontSize: '0.86rem', fontWeight: 600, color: 'var(--text-primary)' }}>
                     {sc.question}
                   </div>
                 )}
@@ -602,8 +602,8 @@ export const ConceptExploreTab: React.FC<Props> = ({
             <div
               key={idx}
               style={{
-                background: '#090e1a',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                background: 'var(--bg-card)',
+                border: '1px solid var(--border-color)',
                 borderRadius: '12px',
                 padding: '1.15rem',
                 display: 'flex',
@@ -611,7 +611,7 @@ export const ConceptExploreTab: React.FC<Props> = ({
                 gap: '0.75rem',
               }}
             >
-              <div style={{ fontSize: '0.86rem', fontWeight: 800, color: '#f8fafc' }}>
+              <div style={{ fontSize: '0.86rem', fontWeight: 800, color: 'var(--text-primary)' }}>
                 {cc.aspect}: <span style={{ color: '#38bdf8' }}>{cc.commandA}</span> vs{' '}
                 <span style={{ color: '#f59e0b' }}>{cc.commandB}</span>
               </div>
@@ -619,8 +619,8 @@ export const ConceptExploreTab: React.FC<Props> = ({
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '0.85rem' }}>
                 <div
                   style={{
-                    background: 'rgba(56, 189, 248, 0.05)',
-                    border: '1px solid rgba(56, 189, 248, 0.2)',
+                    background: 'rgba(56, 189, 248, 0.08)',
+                    border: '1px solid rgba(56, 189, 248, 0.25)',
                     borderRadius: '8px',
                     padding: '0.85rem',
                     display: 'flex',
@@ -902,8 +902,8 @@ export const ConceptExploreTab: React.FC<Props> = ({
       {/* Top Experience Switcher & Quick Navigation Bar */}
       <div
         style={{
-          background: '#090e1a',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border-color)',
           borderRadius: '12px',
           padding: '0.85rem 1.25rem',
           display: 'flex',
@@ -915,7 +915,7 @@ export const ConceptExploreTab: React.FC<Props> = ({
       >
         {/* Left: View Mode Pills */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-          <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#94a3b8', marginRight: '0.25rem' }}>
+          <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-secondary)', marginRight: '0.25rem' }}>
             VIEW MODE:
           </div>
 
@@ -924,20 +924,20 @@ export const ConceptExploreTab: React.FC<Props> = ({
             style={{
               padding: '0.4rem 0.85rem',
               borderRadius: '8px',
-              border: viewMode === 'current' ? '1px solid #38bdf8' : '1px solid rgba(255, 255, 255, 0.1)',
-              background: viewMode === 'current' ? 'rgba(56, 189, 248, 0.15)' : 'rgba(255, 255, 255, 0.03)',
-              color: viewMode === 'current' ? '#38bdf8' : '#94a3b8',
+              border: viewMode === 'current' ? '1px solid #38bdf8' : '1px solid var(--border-color)',
+              background: viewMode === 'current' ? 'rgba(56, 189, 248, 0.15)' : 'var(--bg-surface)',
+              color: viewMode === 'current' ? 'var(--accent-primary)' : 'var(--text-secondary)',
               fontSize: '0.8rem',
               fontWeight: 700,
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '0.4rem',
+              gap: '0.35rem',
               transition: 'all 0.15s ease',
             }}
           >
-            <Compass size={14} />
-            <span>Active Concept ({concept.command})</span>
+            <BookOpen size={14} />
+            <span>This Concept ({concept.command})</span>
           </button>
 
           <button
@@ -945,15 +945,15 @@ export const ConceptExploreTab: React.FC<Props> = ({
             style={{
               padding: '0.4rem 0.85rem',
               borderRadius: '8px',
-              border: viewMode === 'all' ? '1px solid #f59e0b' : '1px solid rgba(255, 255, 255, 0.1)',
-              background: viewMode === 'all' ? 'rgba(245, 158, 11, 0.15)' : 'rgba(255, 255, 255, 0.03)',
-              color: viewMode === 'all' ? '#f59e0b' : '#94a3b8',
+              border: viewMode === 'all' ? '1px solid #f59e0b' : '1px solid var(--border-color)',
+              background: viewMode === 'all' ? 'rgba(245, 158, 11, 0.15)' : 'var(--bg-surface)',
+              color: viewMode === 'all' ? '#f59e0b' : 'var(--text-secondary)',
               fontSize: '0.8rem',
               fontWeight: 700,
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '0.4rem',
+              gap: '0.35rem',
               transition: 'all 0.15s ease',
             }}
           >
@@ -990,9 +990,9 @@ export const ConceptExploreTab: React.FC<Props> = ({
               value={concept.id}
               onChange={(e) => onSelectConcept(e.target.value)}
               style={{
-                background: '#0c1322',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
-                color: '#cbd5e1',
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border-color)',
+                color: 'var(--text-primary)',
                 borderRadius: '8px',
                 padding: '0.38rem 0.65rem',
                 fontSize: '0.76rem',
@@ -1191,8 +1191,8 @@ export const ConceptExploreTab: React.FC<Props> = ({
           {/* Universe Filter & Search Bar */}
           <div
             style={{
-              background: '#090e1a',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border-color)',
               borderRadius: '12px',
               padding: '1rem 1.25rem',
               display: 'flex',
@@ -1206,13 +1206,13 @@ export const ConceptExploreTab: React.FC<Props> = ({
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.65rem',
-                background: 'rgba(255, 255, 255, 0.03)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border-color)',
                 borderRadius: '8px',
                 padding: '0.55rem 0.85rem',
               }}
             >
-              <Search size={16} color="#64748b" />
+              <Search size={16} color="var(--text-muted)" />
               <input
                 type="text"
                 value={searchQuery}
@@ -1222,7 +1222,7 @@ export const ConceptExploreTab: React.FC<Props> = ({
                   background: 'transparent',
                   border: 'none',
                   outline: 'none',
-                  color: '#f8fafc',
+                  color: 'var(--text-primary)',
                   fontSize: '0.84rem',
                   width: '100%',
                 }}
@@ -1391,8 +1391,8 @@ export const ConceptExploreTab: React.FC<Props> = ({
           {filteredConcepts.length === 0 ? (
             <div
               style={{
-                background: '#090e1a',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                background: 'var(--bg-card)',
+                border: '1px solid var(--border-color)',
                 borderRadius: '12px',
                 padding: '3rem 2rem',
                 textAlign: 'center',
@@ -1403,10 +1403,10 @@ export const ConceptExploreTab: React.FC<Props> = ({
               }}
             >
               <Lightbulb size={28} color="#f59e0b" />
-              <div style={{ fontSize: '1rem', fontWeight: 700, color: '#f8fafc' }}>
+              <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-primary)' }}>
                 No concepts found matching your filters
               </div>
-              <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                 Try adjusting your search query or selecting "All Topics".
               </div>
               <button

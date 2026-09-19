@@ -276,11 +276,12 @@ export const PracticeView: React.FC = () => {
 
   return (
     <div
+      className="practice-view-container"
       style={{
         flex: 1,
         padding: '2.5rem 2rem',
-        background: '#0b111e',
-        color: '#f8fafc',
+        background: 'var(--bg-app)',
+        color: 'var(--text-primary)',
         overflowY: 'auto',
         minHeight: 'calc(100vh - 60px)',
       }}
@@ -306,17 +307,17 @@ export const PracticeView: React.FC = () => {
                 13 Curriculum Levels • All Topics & Subtopics
               </span>
             </div>
-            <h1 style={{ fontSize: '2rem', fontWeight: 900, color: '#ffffff', margin: 0 }}>
+            <h1 style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--text-primary)', margin: 0 }}>
               Guided Practice Missions
             </h1>
-            <p style={{ color: '#94a3b8', fontSize: '0.95rem', marginTop: '0.3rem', margin: 0 }}>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', marginTop: '0.3rem', margin: 0 }}>
               Apply what you've learned with hands-on challenges across the complete Git toolchain.
             </p>
           </div>
 
           {/* Level Dropdown: All 13 Levels */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#94a3b8' }}>Select Level:</span>
+            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-secondary)' }}>Select Level:</span>
             <select
               value={selectedLevel}
               onChange={(e) => {
@@ -325,16 +326,16 @@ export const PracticeView: React.FC = () => {
                 setIsCompleted(false);
               }}
               style={{
-                background: '#131d33',
-                border: '1px solid rgba(56, 189, 248, 0.3)',
-                color: '#f8fafc',
+                background: 'var(--bg-surface-elevated)',
+                border: '1px solid var(--border-color)',
+                color: 'var(--text-primary)',
                 padding: '0.55rem 1.25rem',
                 borderRadius: '10px',
                 fontSize: '0.88rem',
                 fontWeight: 700,
                 outline: 'none',
                 cursor: 'pointer',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                boxShadow: 'var(--shadow-sm)',
               }}
             >
               {MISSIONS.map((m) => (
@@ -349,15 +350,15 @@ export const PracticeView: React.FC = () => {
         {/* Challenge Card (Screen 7 Horizontal Split) */}
         <div
           style={{
-            background: '#131d33',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border-color)',
             borderRadius: '20px',
             padding: '2rem',
             display: 'grid',
             gridTemplateColumns: '1.2fr 1fr',
             gap: '2.5rem',
             alignItems: 'start',
-            boxShadow: '0 12px 36px rgba(0, 0, 0, 0.35)',
+            boxShadow: 'var(--shadow-md)',
           }}
         >
           {/* Left Side: Mission Info & Start CTA */}
@@ -376,9 +377,9 @@ export const PracticeView: React.FC = () => {
               >
                 {currentMission.badge}
               </span>
-              <span style={{ color: '#475569' }}>•</span>
-              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#94a3b8' }}>
-                Topic: <strong style={{ color: '#e2e8f0' }}>{currentMission.topic}</strong>
+              <span style={{ color: 'var(--text-muted)' }}>•</span>
+              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)' }}>
+                Topic: <strong style={{ color: 'var(--text-primary)' }}>{currentMission.topic}</strong>
               </span>
             </div>
 
@@ -398,20 +399,20 @@ export const PracticeView: React.FC = () => {
               >
                 <Wrench size={24} />
               </div>
-              <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#f8fafc', margin: 0 }}>
+              <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
                 {currentMission.title}
               </h2>
             </div>
 
-            <p style={{ fontSize: '0.95rem', color: '#94a3b8', lineHeight: 1.6, margin: 0 }}>
+            <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>
               {currentMission.description}
             </p>
 
             {/* Subtopics Covered in this Challenge */}
             <div
               style={{
-                background: 'rgba(255, 255, 255, 0.02)',
-                border: '1px solid rgba(255, 255, 255, 0.06)',
+                background: 'var(--bg-surface-elevated)',
+                border: '1px solid var(--border-color)',
                 borderRadius: '10px',
                 padding: '0.85rem 1rem',
                 display: 'flex',
@@ -436,7 +437,7 @@ export const PracticeView: React.FC = () => {
                     key={i}
                     style={{
                       fontSize: '0.8rem',
-                      color: '#cbd5e1',
+                      color: 'var(--text-secondary)',
                       display: 'flex',
                       alignItems: 'flex-start',
                       gap: '0.4rem',
@@ -476,7 +477,7 @@ export const PracticeView: React.FC = () => {
           {/* Right Side: Skills you'll use */}
           <div
             style={{
-              borderLeft: '1px solid rgba(255, 255, 255, 0.08)',
+              borderLeft: '1px solid var(--border-color)',
               paddingLeft: '2rem',
               display: 'flex',
               flexDirection: 'column',
@@ -487,7 +488,7 @@ export const PracticeView: React.FC = () => {
               style={{
                 fontSize: '0.82rem',
                 fontWeight: 800,
-                color: '#64748b',
+                color: 'var(--text-muted)',
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em',
               }}
@@ -500,13 +501,13 @@ export const PracticeView: React.FC = () => {
                 <div
                   key={skill}
                   style={{
-                    background: 'rgba(255, 255, 255, 0.03)',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    background: 'var(--bg-surface-elevated)',
+                    border: '1px solid var(--border-color)',
                     borderRadius: '8px',
                     padding: '0.6rem 1rem',
                     fontFamily: 'monospace',
                     fontSize: '0.9rem',
-                    color: '#cbd5e1',
+                    color: 'var(--text-primary)',
                     display: 'flex',
                     alignItems: 'center',
                     gap: '0.5rem',
@@ -520,12 +521,12 @@ export const PracticeView: React.FC = () => {
 
             <div
               style={{
-                background: 'rgba(56, 189, 248, 0.06)',
-                border: '1px solid rgba(56, 189, 248, 0.2)',
+                background: 'rgba(56, 189, 248, 0.08)',
+                border: '1px solid rgba(56, 189, 248, 0.25)',
                 borderRadius: '8px',
                 padding: '0.75rem 1rem',
                 fontSize: '0.82rem',
-                color: '#94a3b8',
+                color: 'var(--text-secondary)',
                 lineHeight: 1.5,
               }}
             >
@@ -541,20 +542,20 @@ export const PracticeView: React.FC = () => {
         {activeMission && (
           <div
             style={{
-              background: '#131d33',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border-color)',
               borderRadius: '20px',
               overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column',
-              boxShadow: '0 16px 40px rgba(0, 0, 0, 0.5)',
+              boxShadow: 'var(--shadow-md)',
             }}
           >
             <div
               style={{
                 padding: '0.75rem 1.25rem',
-                background: '#0e172a',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                background: 'var(--bg-surface)',
+                borderBottom: '1px solid var(--border-color)',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',

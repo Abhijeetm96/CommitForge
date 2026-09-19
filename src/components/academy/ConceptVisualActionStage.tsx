@@ -66,11 +66,11 @@ export const ConceptVisualActionStage: React.FC<Props> = ({ concept, onOpenVisua
   return (
     <div
       style={{
-        background: '#090e1a',
+        background: 'var(--bg-card)',
         borderRadius: '12px',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
+        border: '1px solid var(--border-color)',
         overflow: 'hidden',
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+        boxShadow: 'var(--card-shadow, 0 4px 20px rgba(0, 0, 0, 0.15))',
       }}
     >
       {/* Header with Step Toggles & Auto-Play */}
@@ -80,8 +80,8 @@ export const ConceptVisualActionStage: React.FC<Props> = ({ concept, onOpenVisua
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: '0.75rem 1.25rem',
-          background: 'rgba(255, 255, 255, 0.03)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+          background: 'var(--bg-surface)',
+          borderBottom: '1px solid var(--border-color)',
           flexWrap: 'wrap',
           gap: '0.75rem',
         }}
@@ -98,9 +98,9 @@ export const ConceptVisualActionStage: React.FC<Props> = ({ concept, onOpenVisua
               fontSize: '0.8rem',
               fontWeight: 700,
               cursor: 'pointer',
-              border: activeStep === 'before' ? '1px solid #38bdf8' : '1px solid rgba(255, 255, 255, 0.1)',
-              background: activeStep === 'before' ? 'rgba(56, 189, 248, 0.2)' : 'rgba(255, 255, 255, 0.03)',
-              color: activeStep === 'before' ? '#38bdf8' : '#94a3b8',
+              border: activeStep === 'before' ? '1px solid #38bdf8' : '1px solid var(--border-color)',
+              background: activeStep === 'before' ? 'rgba(56, 189, 248, 0.2)' : 'var(--bg-card)',
+              color: activeStep === 'before' ? '#38bdf8' : 'var(--text-secondary)',
               transition: 'all 0.15s ease',
             }}
           >
@@ -247,7 +247,7 @@ export const ConceptVisualActionStage: React.FC<Props> = ({ concept, onOpenVisua
       <div
         style={{
           padding: '1rem',
-          background: '#070b14',
+          background: 'var(--bg-app)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -260,8 +260,8 @@ export const ConceptVisualActionStage: React.FC<Props> = ({ concept, onOpenVisua
           style={{
             flex: '1 1 0',
             minWidth: '135px',
-            background: 'rgba(15, 23, 42, 0.85)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
+            background: 'var(--bg-surface)',
+            border: '1px solid var(--border-color)',
             borderRadius: '10px',
             padding: '0.85rem',
             display: 'flex',
@@ -276,7 +276,7 @@ export const ConceptVisualActionStage: React.FC<Props> = ({ concept, onOpenVisua
               gap: '0.4rem',
               fontSize: '0.78rem',
               fontWeight: 700,
-              color: '#94a3b8',
+              color: 'var(--text-secondary)',
               whiteSpace: 'nowrap',
             }}
           >
@@ -285,7 +285,7 @@ export const ConceptVisualActionStage: React.FC<Props> = ({ concept, onOpenVisua
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
             {currentStage.workingDirectory.length === 0 ? (
-              <div style={{ fontSize: '0.74rem', color: '#64748b', fontStyle: 'italic' }}>
+              <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>
                 Clean working directory
               </div>
             ) : (
@@ -298,15 +298,15 @@ export const ConceptVisualActionStage: React.FC<Props> = ({ concept, onOpenVisua
                     gap: '0.35rem',
                     fontSize: '0.74rem',
                     fontFamily: 'ui-monospace, monospace',
-                    background: 'rgba(255, 255, 255, 0.03)',
+                    background: 'var(--bg-card)',
                     padding: '0.3rem 0.45rem',
                     borderRadius: '6px',
-                    border: '1px solid rgba(255, 255, 255, 0.05)',
+                    border: '1px solid var(--border-color)',
                     minWidth: 0,
                   }}
                 >
                   <FileCode size={12} color={file.status === 'modified' ? '#f59e0b' : '#38bdf8'} style={{ flexShrink: 0 }} />
-                  <span style={{ color: '#f8fafc', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <span style={{ color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {file.name}
                   </span>
                   <span
@@ -326,7 +326,7 @@ export const ConceptVisualActionStage: React.FC<Props> = ({ concept, onOpenVisua
         </div>
 
         {/* Arrow 1 */}
-        <div style={{ color: '#475569', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+        <div style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
           <ArrowRight size={16} />
         </div>
 
@@ -335,9 +335,9 @@ export const ConceptVisualActionStage: React.FC<Props> = ({ concept, onOpenVisua
           style={{
             flex: '1 1 0',
             minWidth: '135px',
-            background: 'rgba(15, 23, 42, 0.85)',
+            background: 'var(--bg-surface)',
             border: activeStep === 'after' && currentStage.stagingArea.length === 0
-              ? '1px dashed rgba(255, 255, 255, 0.15)'
+              ? '1px dashed var(--border-color)'
               : '1px solid rgba(56, 189, 248, 0.25)',
             borderRadius: '10px',
             padding: '0.85rem',
@@ -365,7 +365,7 @@ export const ConceptVisualActionStage: React.FC<Props> = ({ concept, onOpenVisua
               <div
                 style={{
                   fontSize: '0.74rem',
-                  color: '#64748b',
+                  color: 'var(--text-muted)',
                   fontStyle: 'italic',
                   padding: '0.4rem 0',
                   textAlign: 'center',
@@ -391,11 +391,11 @@ export const ConceptVisualActionStage: React.FC<Props> = ({ concept, onOpenVisua
                   }}
                 >
                   <FileCode size={12} color="#38bdf8" style={{ flexShrink: 0 }} />
-                  <span style={{ color: '#f8fafc', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  <span style={{ color: '#38bdf8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {file.name}
                   </span>
-                  <span style={{ marginLeft: 'auto', fontSize: '0.66rem', color: '#38bdf8', flexShrink: 0 }}>
-                    (staged)
+                  <span style={{ marginLeft: 'auto', fontSize: '0.66rem', color: '#22c55e', flexShrink: 0 }}>
+                    STAGED
                   </span>
                 </div>
               ))
@@ -403,36 +403,30 @@ export const ConceptVisualActionStage: React.FC<Props> = ({ concept, onOpenVisua
           </div>
         </div>
 
-        {/* Arrow 2 */}
-        <div style={{ color: '#475569', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
-          <ArrowRight size={16} />
-        </div>
-
-        {/* Action Pill */}
+        {/* Action Command Center Badge */}
         <div
           style={{
-            background: activeStep === 'running'
-              ? 'linear-gradient(135deg, #f05033 0%, #ea580c 100%)'
-              : 'rgba(255, 255, 255, 0.08)',
-            border: activeStep === 'running'
-              ? '1px solid #f05033'
-              : '1px solid rgba(255, 255, 255, 0.15)',
-            color: '#f8fafc',
-            padding: '0.45rem 0.8rem',
-            borderRadius: '999px',
-            fontSize: '0.76rem',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '0.2rem',
+            padding: '0.45rem 0.65rem',
+            background: 'rgba(56, 189, 248, 0.1)',
+            border: '1px solid rgba(56, 189, 248, 0.3)',
+            borderRadius: '8px',
             fontFamily: 'ui-monospace, monospace',
-            fontWeight: 700,
-            whiteSpace: 'nowrap',
+            fontSize: '0.72rem',
+            color: '#38bdf8',
+            fontWeight: 800,
             flexShrink: 0,
-            boxShadow: activeStep === 'running' ? '0 0 15px rgba(240, 80, 51, 0.4)' : 'none',
+            textAlign: 'center',
           }}
         >
           {concept.command}
         </div>
 
         {/* Arrow 3 */}
-        <div style={{ color: '#475569', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+        <div style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
           <ArrowRight size={16} />
         </div>
 
@@ -441,8 +435,8 @@ export const ConceptVisualActionStage: React.FC<Props> = ({ concept, onOpenVisua
           style={{
             flex: '1.2 1 0',
             minWidth: '160px',
-            background: 'rgba(15, 23, 42, 0.85)',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
+            background: 'var(--bg-surface)',
+            border: '1px solid var(--border-color)',
             borderRadius: '10px',
             padding: '0.85rem',
             display: 'flex',
@@ -457,7 +451,7 @@ export const ConceptVisualActionStage: React.FC<Props> = ({ concept, onOpenVisua
               gap: '0.4rem',
               fontSize: '0.78rem',
               fontWeight: 700,
-              color: '#94a3b8',
+              color: 'var(--text-secondary)',
               whiteSpace: 'nowrap',
             }}
           >
@@ -473,8 +467,8 @@ export const ConceptVisualActionStage: React.FC<Props> = ({ concept, onOpenVisua
                   alignItems: 'center',
                   gap: '0.45rem',
                   fontSize: '0.74rem',
-                  background: cmt.isNew ? 'rgba(34, 197, 94, 0.12)' : 'rgba(255, 255, 255, 0.03)',
-                  border: cmt.isNew ? '1px solid rgba(34, 197, 94, 0.3)' : '1px solid rgba(255, 255, 255, 0.05)',
+                  background: cmt.isNew ? 'rgba(34, 197, 94, 0.12)' : 'var(--bg-card)',
+                  border: cmt.isNew ? '1px solid rgba(34, 197, 94, 0.3)' : '1px solid var(--border-color)',
                   padding: '0.3rem 0.5rem',
                   borderRadius: '6px',
                   minWidth: 0,
@@ -490,10 +484,10 @@ export const ConceptVisualActionStage: React.FC<Props> = ({ concept, onOpenVisua
                     flexShrink: 0,
                   }}
                 />
-                <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 700, color: cmt.isNew ? '#22c55e' : '#cbd5e1', flexShrink: 0 }}>
+                <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 700, color: cmt.isNew ? '#22c55e' : 'var(--text-primary)', flexShrink: 0 }}>
                   {cmt.hash}
                 </span>
-                <span style={{ color: '#94a3b8', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>
+                <span style={{ color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>
                   {cmt.message}
                 </span>
               </div>
@@ -506,10 +500,10 @@ export const ConceptVisualActionStage: React.FC<Props> = ({ concept, onOpenVisua
       <div
         style={{
           padding: '0.75rem 1rem',
-          background: 'rgba(255, 255, 255, 0.02)',
-          borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+          background: 'var(--bg-surface)',
+          borderTop: '1px solid var(--border-color)',
           fontSize: '0.82rem',
-          color: '#cbd5e1',
+          color: 'var(--text-primary)',
           lineHeight: 1.45,
         }}
       >
@@ -523,15 +517,15 @@ export const ConceptVisualActionStage: React.FC<Props> = ({ concept, onOpenVisua
           gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
           gap: '0.75rem',
           padding: '1rem',
-          background: '#070b14',
-          borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+          background: 'var(--bg-app)',
+          borderTop: '1px solid var(--border-color)',
         }}
       >
         {/* Green Check: What Changed? */}
         <div
           style={{
-            background: 'rgba(34, 197, 94, 0.06)',
-            border: '1px solid rgba(34, 197, 94, 0.2)',
+            background: 'rgba(34, 197, 94, 0.08)',
+            border: '1px solid rgba(34, 197, 94, 0.25)',
             borderRadius: '10px',
             padding: '0.85rem',
             display: 'flex',

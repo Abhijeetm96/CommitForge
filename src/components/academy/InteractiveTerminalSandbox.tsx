@@ -88,11 +88,11 @@ export const InteractiveTerminalSandbox: React.FC<Props> = ({ concept, onOpenCen
   return (
     <div
       style={{
-        background: '#090e1a',
+        background: 'var(--bg-card)',
         borderRadius: '12px',
-        border: '1px solid rgba(34, 197, 94, 0.25)',
+        border: '1px solid var(--border-color)',
         overflow: 'hidden',
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+        boxShadow: 'var(--card-shadow, 0 4px 20px rgba(0, 0, 0, 0.15))',
         display: 'flex',
         flexDirection: 'column',
       }}
@@ -101,8 +101,8 @@ export const InteractiveTerminalSandbox: React.FC<Props> = ({ concept, onOpenCen
       <div
         style={{
           padding: '0.85rem 1rem 0.65rem 1rem',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
-          background: 'rgba(34, 197, 94, 0.04)',
+          borderBottom: '1px solid var(--border-color)',
+          background: 'var(--bg-surface)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.2rem' }}>
@@ -110,7 +110,7 @@ export const InteractiveTerminalSandbox: React.FC<Props> = ({ concept, onOpenCen
             <span style={{ color: '#22c55e', display: 'flex', alignItems: 'center' }}>
               <TerminalIcon size={16} />
             </span>
-            <span style={{ fontSize: '0.94rem', fontWeight: 800, color: '#f8fafc' }}>
+            <span style={{ fontSize: '0.94rem', fontWeight: 800, color: 'var(--text-primary)' }}>
               Live Sandbox
             </span>
           </div>
@@ -120,9 +120,9 @@ export const InteractiveTerminalSandbox: React.FC<Props> = ({ concept, onOpenCen
                 value={concept.id}
                 onChange={(e) => onSelectConcept(e.target.value, 'Sandbox')}
                 style={{
-                  background: '#040711',
-                  border: '1px solid rgba(255, 255, 255, 0.12)',
-                  color: '#cbd5e1',
+                  background: 'var(--bg-card)',
+                  border: '1px solid var(--border-color)',
+                  color: 'var(--text-primary)',
                   borderRadius: '6px',
                   padding: '0.2rem 0.5rem',
                   fontSize: '0.72rem',
@@ -165,7 +165,7 @@ export const InteractiveTerminalSandbox: React.FC<Props> = ({ concept, onOpenCen
                 style={{
                   background: 'none',
                   border: 'none',
-                  color: '#38bdf8',
+                  color: 'var(--accent-primary)',
                   fontSize: '0.72rem',
                   fontWeight: 600,
                   cursor: 'pointer',
@@ -182,7 +182,7 @@ export const InteractiveTerminalSandbox: React.FC<Props> = ({ concept, onOpenCen
             )}
           </div>
         </div>
-        <div style={{ fontSize: '0.74rem', color: '#94a3b8' }}>
+        <div style={{ fontSize: '0.74rem', color: 'var(--text-secondary)' }}>
           Run real Git commands in an isolated interactive repository.
         </div>
       </div>
@@ -194,8 +194,8 @@ export const InteractiveTerminalSandbox: React.FC<Props> = ({ concept, onOpenCen
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: '0.4rem 0.75rem',
-          background: 'rgba(255, 255, 255, 0.03)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+          background: 'var(--bg-surface)',
+          borderBottom: '1px solid var(--border-color)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
@@ -205,7 +205,7 @@ export const InteractiveTerminalSandbox: React.FC<Props> = ({ concept, onOpenCen
               background: activeTab === 'terminal' ? 'rgba(56, 189, 248, 0.15)' : 'transparent',
               border: 'none',
               borderRadius: '6px',
-              color: activeTab === 'terminal' ? '#38bdf8' : '#94a3b8',
+              color: activeTab === 'terminal' ? 'var(--accent-primary)' : 'var(--text-secondary)',
               fontSize: '0.74rem',
               fontWeight: 700,
               padding: '0.25rem 0.55rem',
@@ -221,7 +221,7 @@ export const InteractiveTerminalSandbox: React.FC<Props> = ({ concept, onOpenCen
               background: activeTab === 'guided' ? 'rgba(56, 189, 248, 0.15)' : 'transparent',
               border: 'none',
               borderRadius: '6px',
-              color: activeTab === 'guided' ? '#38bdf8' : '#94a3b8',
+              color: activeTab === 'guided' ? 'var(--accent-primary)' : 'var(--text-secondary)',
               fontSize: '0.74rem',
               fontWeight: 700,
               padding: '0.25rem 0.55rem',
@@ -241,7 +241,7 @@ export const InteractiveTerminalSandbox: React.FC<Props> = ({ concept, onOpenCen
             gap: '0.3rem',
             background: 'transparent',
             border: 'none',
-            color: '#64748b',
+            color: 'var(--text-muted)',
             fontSize: '0.72rem',
             cursor: 'pointer',
             padding: '0.2rem 0.4rem',

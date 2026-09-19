@@ -36,14 +36,14 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
   return (
     <div
       style={{
-        background: '#070b16',
-        border: '1px solid rgba(56, 189, 248, 0.25)',
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border-color)',
         borderRadius: '16px',
         padding: '1.25rem',
         display: 'flex',
         flexDirection: 'column',
         gap: '1.25rem',
-        boxShadow: '0 12px 36px rgba(0, 0, 0, 0.5)',
+        boxShadow: 'var(--shadow-sm)',
         width: '100%',
         maxWidth: '100%',
         boxSizing: 'border-box',
@@ -58,7 +58,7 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
           alignItems: 'center',
           flexWrap: 'wrap',
           gap: '0.75rem',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          borderBottom: '1px solid var(--border-color)',
           paddingBottom: '0.75rem',
         }}
       >
@@ -83,7 +83,7 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
               style={{
                 fontSize: '1.15rem',
                 fontWeight: 900,
-                color: '#f8fafc',
+                color: 'var(--text-primary)',
                 margin: 0,
                 display: 'flex',
                 alignItems: 'center',
@@ -92,7 +92,7 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
             >
               The Three Core Git Areas
             </h2>
-            <div style={{ fontSize: '0.74rem', color: '#94a3b8' }}>
+            <div style={{ fontSize: '0.74rem', color: 'var(--text-secondary)' }}>
               Working Directory ➔ Staging Index ➔ Local Repository
             </div>
           </div>
@@ -105,9 +105,9 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
               setViewMode(viewMode === 'conceptual' ? 'technical' : 'conceptual');
             }}
             style={{
-              background: '#0f172a',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-              color: '#cbd5e1',
+              background: 'var(--bg-surface)',
+              border: '1px solid var(--border-color)',
+              color: 'var(--text-primary)',
               padding: '0.4rem 0.85rem',
               borderRadius: '8px',
               fontSize: '0.8rem',
@@ -145,14 +145,14 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
         {/* Card 1: Working Tree */}
         <div
           style={{
-            background: 'rgba(11, 18, 33, 0.92)',
+            background: 'var(--bg-surface)',
             border: '1px solid rgba(245, 158, 11, 0.35)',
             borderRadius: '12px',
             padding: '0.9rem',
             display: 'flex',
             flexDirection: 'column',
             gap: '0.65rem',
-            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)',
+            boxShadow: 'var(--shadow-sm)',
             minWidth: 0,
             maxWidth: '100%',
             overflow: 'hidden',
@@ -162,7 +162,7 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.4rem' }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.45rem', minWidth: 0, flex: 1 }}>
               <FileText size={17} color="#f59e0b" style={{ flexShrink: 0, marginTop: '1px' }} />
-              <div style={{ fontSize: '0.84rem', fontWeight: 800, color: '#f8fafc', lineHeight: 1.25, wordBreak: 'break-word' }}>
+              <div style={{ fontSize: '0.84rem', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.25, wordBreak: 'break-word' }}>
                 1. Working Tree
               </div>
             </div>
@@ -171,7 +171,7 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
             </span>
           </div>
 
-          <div style={{ fontSize: '0.72rem', color: '#94a3b8', lineHeight: 1.35 }}>
+          <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', lineHeight: 1.35 }}>
             {isTechnical
               ? 'Uncommitted file modifications on filesystem'
               : 'Your active workspace where files are drafted and edited'}
@@ -180,7 +180,7 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
           {/* Files List */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', minWidth: 0 }}>
             {workingFiles.length === 0 ? (
-              <div style={{ fontSize: '0.76rem', color: '#64748b', textAlign: 'center', padding: '0.85rem' }}>
+              <div style={{ fontSize: '0.76rem', color: 'var(--text-secondary)', textAlign: 'center', padding: '0.85rem' }}>
                 No files in working tree
               </div>
             ) : (
@@ -192,8 +192,8 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
                     key={file}
                     onClick={() => openFileTab(file)}
                     style={{
-                      background: '#040711',
-                      border: '1px solid rgba(255, 255, 255, 0.06)',
+                      background: 'var(--bg-card)',
+                      border: '1px solid var(--border-color)',
                       borderRadius: '6px',
                       padding: '0.4rem 0.55rem',
                       display: 'flex',
@@ -204,8 +204,8 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
                       minWidth: 0,
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.78rem', color: '#e2e8f0', minWidth: 0, flex: 1 }}>
-                      <FileText size={13} color="#94a3b8" style={{ flexShrink: 0 }} />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.78rem', color: 'var(--text-primary)', minWidth: 0, flex: 1 }}>
+                      <FileText size={13} color="var(--text-secondary)" style={{ flexShrink: 0 }} />
                       <span style={{ fontFamily: 'monospace', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {file}
                       </span>
@@ -281,7 +281,7 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
               color: '#38bdf8',
               fontFamily: 'monospace',
               whiteSpace: 'nowrap',
-              background: '#040711',
+              background: 'var(--bg-surface)',
               border: '1px solid rgba(56, 189, 248, 0.5)',
               padding: '0.18rem 0.4rem',
               borderRadius: '6px',
@@ -299,14 +299,14 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
         {/* Card 2: Staging Area */}
         <div
           style={{
-            background: 'rgba(11, 18, 33, 0.92)',
-            border: stagedFiles.length > 0 ? '1px solid #38bdf8' : '1px solid rgba(255, 255, 255, 0.1)',
+            background: 'var(--bg-surface)',
+            border: stagedFiles.length > 0 ? '1px solid #38bdf8' : '1px solid var(--border-color)',
             borderRadius: '12px',
             padding: '0.9rem',
             display: 'flex',
             flexDirection: 'column',
             gap: '0.65rem',
-            boxShadow: stagedFiles.length > 0 ? '0 0 20px rgba(56, 189, 248, 0.2)' : 'none',
+            boxShadow: stagedFiles.length > 0 ? '0 0 20px rgba(56, 189, 248, 0.2)' : 'var(--shadow-sm)',
             minWidth: 0,
             maxWidth: '100%',
             overflow: 'hidden',
@@ -316,7 +316,7 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.4rem' }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.45rem', minWidth: 0, flex: 1 }}>
               <Database size={17} color="#38bdf8" style={{ flexShrink: 0, marginTop: '1px' }} />
-              <div style={{ fontSize: '0.84rem', fontWeight: 800, color: '#f8fafc', lineHeight: 1.25, wordBreak: 'break-word' }}>
+              <div style={{ fontSize: '0.84rem', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.25, wordBreak: 'break-word' }}>
                 2. Staging Area
               </div>
             </div>
@@ -325,7 +325,7 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
             </span>
           </div>
 
-          <div style={{ fontSize: '0.72rem', color: '#94a3b8', lineHeight: 1.35 }}>
+          <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', lineHeight: 1.35 }}>
             {isTechnical
               ? 'Binary tree manifest mapping filenames to blob SHAs'
               : 'The preparation zone before committing snapshots'}
@@ -335,11 +335,11 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
             {stagedFiles.length === 0 ? (
               <div
                 style={{
-                  border: '1.5px dashed rgba(255, 255, 255, 0.12)',
+                  border: '1.5px dashed var(--border-color)',
                   borderRadius: '8px',
                   padding: '1rem',
                   textAlign: 'center',
-                  color: '#64748b',
+                  color: 'var(--text-secondary)',
                   fontSize: '0.76rem',
                 }}
               >
@@ -353,7 +353,7 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
                 <div
                   key={file}
                   style={{
-                    background: '#040711',
+                    background: 'var(--bg-card)',
                     border: '1px solid rgba(56, 189, 248, 0.3)',
                     borderRadius: '6px',
                     padding: '0.4rem 0.55rem',
@@ -438,7 +438,7 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
               color: '#10b981',
               fontFamily: 'monospace',
               whiteSpace: 'nowrap',
-              background: '#040711',
+              background: 'var(--bg-surface)',
               border: '1px solid rgba(16, 185, 129, 0.5)',
               padding: '0.18rem 0.4rem',
               borderRadius: '6px',
@@ -456,14 +456,14 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
         {/* Card 3: Local Repository */}
         <div
           style={{
-            background: 'rgba(11, 18, 33, 0.92)',
+            background: 'var(--bg-surface)',
             border: '1px solid rgba(16, 185, 129, 0.35)',
             borderRadius: '12px',
             padding: '0.9rem',
             display: 'flex',
             flexDirection: 'column',
             gap: '0.65rem',
-            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)',
+            boxShadow: 'var(--shadow-sm)',
             minWidth: 0,
             maxWidth: '100%',
             overflow: 'hidden',
@@ -473,7 +473,7 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '0.4rem' }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.45rem', minWidth: 0, flex: 1 }}>
               <Database size={17} color="#10b981" style={{ flexShrink: 0, marginTop: '1px' }} />
-              <div style={{ fontSize: '0.84rem', fontWeight: 800, color: '#f8fafc', lineHeight: 1.25, wordBreak: 'break-word' }}>
+              <div style={{ fontSize: '0.84rem', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.25, wordBreak: 'break-word' }}>
                 3. Local Repository
               </div>
             </div>
@@ -482,7 +482,7 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
             </span>
           </div>
 
-          <div style={{ fontSize: '0.72rem', color: '#94a3b8', lineHeight: 1.35 }}>
+          <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', lineHeight: 1.35 }}>
             {isTechnical
               ? 'Immutable cryptographic DAG of commit snapshots'
               : 'Permanent database of committed project milestones'}
@@ -498,7 +498,7 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
                   justifyContent: 'center',
                   padding: '1rem',
                   gap: '0.35rem',
-                  color: '#64748b',
+                  color: 'var(--text-secondary)',
                 }}
               >
                 <Database size={20} color="#475569" />
@@ -511,8 +511,8 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
                 <div
                   key={c.hash}
                   style={{
-                    background: '#040711',
-                    border: idx === 0 ? '1px solid #10b981' : '1px solid rgba(255, 255, 255, 0.06)',
+                    background: 'var(--bg-card)',
+                    border: idx === 0 ? '1px solid #10b981' : '1px solid var(--border-color)',
                     borderRadius: '6px',
                     padding: '0.4rem 0.55rem',
                     display: 'flex',
@@ -527,7 +527,7 @@ export const ThreeAreaVisualizer: React.FC<ThreeAreaVisualizerProps> = ({ repo: 
                     <span style={{ fontFamily: 'monospace', color: '#10b981', fontSize: '0.76rem', fontWeight: 800, flexShrink: 0 }}>
                       {c.shortHash}
                     </span>
-                    <span style={{ fontSize: '0.74rem', color: '#f8fafc', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <span style={{ fontSize: '0.74rem', color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {c.message}
                     </span>
                   </div>

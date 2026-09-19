@@ -252,14 +252,14 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
       {/* 1. Mission Briefing Banner */}
       <div
         style={{
-          background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(9, 14, 26, 0.95) 100%)',
-          border: '1px solid rgba(56, 189, 248, 0.3)',
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border-color)',
           borderRadius: '14px',
           padding: '1.25rem 1.5rem',
           display: 'flex',
           flexDirection: 'column',
           gap: '0.85rem',
-          boxShadow: '0 8px 30px rgba(0, 0, 0, 0.4)',
+          boxShadow: 'var(--card-shadow, 0 8px 30px rgba(0, 0, 0, 0.08))',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
@@ -280,10 +280,10 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
               <Sparkles size={18} />
             </span>
             <div>
-              <h2 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, color: '#f8fafc' }}>
+              <h2 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 900, color: 'var(--text-primary)' }}>
                 {challenge.title}
               </h2>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
                 Interactive Hands-On Practice Mission for <code>{concept.command}</code>
               </div>
             </div>
@@ -309,9 +309,9 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.35rem',
-                background: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
-                color: '#cbd5e1',
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border-color)',
+                color: 'var(--text-primary)',
                 padding: '0.35rem 0.75rem',
                 borderRadius: '8px',
                 fontSize: '0.75rem',
@@ -327,7 +327,7 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
           </div>
         </div>
 
-        <div style={{ fontSize: '0.9rem', color: '#cbd5e1', lineHeight: 1.55, background: 'rgba(56, 189, 248, 0.04)', padding: '0.85rem 1rem', borderRadius: '8px', borderLeft: '3px solid #38bdf8' }}>
+        <div style={{ fontSize: '0.9rem', color: 'var(--text-primary)', lineHeight: 1.55, background: 'rgba(56, 189, 248, 0.08)', padding: '0.85rem 1rem', borderRadius: '8px', borderLeft: '3px solid #38bdf8' }}>
           <strong>Objective:</strong> {challenge.objective}
         </div>
       </div>
@@ -518,8 +518,8 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
           {/* Mission Verification Checklist */}
           <div
             style={{
-              background: '#090e1a',
-              border: allCriteriaPassed ? '1.5px solid #10b981' : '1px solid rgba(255, 255, 255, 0.1)',
+              background: 'var(--bg-card)',
+              border: allCriteriaPassed ? '1.5px solid #10b981' : '1px solid var(--border-color)',
               borderRadius: '12px',
               padding: '1.15rem',
               display: 'flex',
@@ -532,7 +532,7 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
                 <Trophy size={16} color={allCriteriaPassed ? '#10b981' : '#38bdf8'} />
-                <span style={{ fontSize: '0.9rem', fontWeight: 800, color: '#f8fafc' }}>
+                <span style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--text-primary)' }}>
                   Mission Criteria
                 </span>
               </div>
@@ -540,8 +540,8 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
                 style={{
                   fontSize: '0.72rem',
                   fontWeight: 800,
-                  color: allCriteriaPassed ? '#10b981' : '#94a3b8',
-                  background: allCriteriaPassed ? 'rgba(16, 185, 129, 0.15)' : 'rgba(255, 255, 255, 0.05)',
+                  color: allCriteriaPassed ? '#10b981' : 'var(--text-secondary)',
+                  background: allCriteriaPassed ? 'rgba(16, 185, 129, 0.15)' : 'var(--bg-surface)',
                   padding: '0.15rem 0.55rem',
                   borderRadius: '999px',
                 }}
@@ -559,8 +559,8 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
                     alignItems: 'flex-start',
                     gap: '0.65rem',
                     padding: '0.65rem 0.75rem',
-                    background: crit.passed ? 'rgba(16, 185, 129, 0.08)' : '#040711',
-                    border: crit.passed ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid rgba(255, 255, 255, 0.05)',
+                    background: crit.passed ? 'rgba(16, 185, 129, 0.08)' : 'var(--bg-surface)',
+                    border: crit.passed ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid var(--border-color)',
                     borderRadius: '8px',
                     transition: 'all 0.15s ease',
                   }}
@@ -573,10 +573,10 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
                     )}
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.15rem', minWidth: 0, flex: 1 }}>
-                    <div style={{ fontSize: '0.82rem', fontWeight: 700, color: crit.passed ? '#f8fafc' : '#cbd5e1' }}>
+                    <div style={{ fontSize: '0.82rem', fontWeight: 700, color: crit.passed ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
                       {crit.title}
                     </div>
-                    <div style={{ fontSize: '0.72rem', color: crit.passed ? '#10b981' : '#94a3b8', lineHeight: 1.35 }}>
+                    <div style={{ fontSize: '0.72rem', color: crit.passed ? '#10b981' : 'var(--text-muted)', lineHeight: 1.35 }}>
                       {crit.desc}
                     </div>
                   </div>
@@ -634,8 +634,8 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
           {/* Live 3-Area Inspector (Mini) */}
           <div
             style={{
-              background: '#090e1a',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border-color)',
               borderRadius: '12px',
               padding: '1.15rem',
               display: 'flex',
@@ -646,11 +646,11 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
                 <Layers size={16} color="#38bdf8" />
-                <span style={{ fontSize: '0.88rem', fontWeight: 800, color: '#f8fafc' }}>
+                <span style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--text-primary)' }}>
                   Live Repository State
                 </span>
               </div>
-              <span style={{ fontSize: '0.68rem', color: '#64748b' }}>
+              <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
                 Real-time Inspection
               </span>
             </div>
@@ -659,8 +659,8 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
               {/* Working Tree Box */}
               <div
                 style={{
-                  background: '#040711',
-                  border: '1px solid rgba(245, 158, 11, 0.25)',
+                  background: 'var(--bg-surface)',
+                  border: '1px solid var(--border-color)',
                   borderRadius: '8px',
                   padding: '0.65rem',
                   display: 'flex',
@@ -674,10 +674,10 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', maxHeight: '75px', overflowY: 'auto' }}>
                   {workingFiles.length === 0 ? (
-                    <span style={{ fontSize: '0.7rem', color: '#64748b' }}>Empty</span>
+                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Empty</span>
                   ) : (
                     workingFiles.map((f) => (
-                      <div key={f} style={{ fontSize: '0.7rem', fontFamily: 'monospace', color: '#cbd5e1', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <div key={f} style={{ fontSize: '0.7rem', fontFamily: 'monospace', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{f}</span>
                         <span style={{ fontSize: '0.6rem', color: repo.index[f] ? '#38bdf8' : '#f59e0b' }}>
                           {repo.index[f] ? 'staged' : 'untracked'}
@@ -691,8 +691,8 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
               {/* Staging Area Box */}
               <div
                 style={{
-                  background: '#040711',
-                  border: '1px solid rgba(56, 189, 248, 0.25)',
+                  background: 'var(--bg-surface)',
+                  border: '1px solid var(--border-color)',
                   borderRadius: '8px',
                   padding: '0.65rem',
                   display: 'flex',
@@ -706,7 +706,7 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', maxHeight: '75px', overflowY: 'auto' }}>
                   {stagedFiles.length === 0 ? (
-                    <span style={{ fontSize: '0.7rem', color: '#64748b' }}>Nothing staged</span>
+                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Nothing staged</span>
                   ) : (
                     stagedFiles.map((f) => (
                       <div key={f} style={{ fontSize: '0.7rem', fontFamily: 'monospace', color: '#38bdf8', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -722,8 +722,8 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
             {/* Latest Commit Box */}
             <div
               style={{
-                background: '#040711',
-                border: '1px solid rgba(16, 185, 129, 0.25)',
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border-color)',
                 borderRadius: '8px',
                 padding: '0.65rem',
                 display: 'flex',
@@ -737,12 +737,12 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
                   <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#10b981' }}>
                     HEAD Commit
                   </div>
-                  <div style={{ fontSize: '0.7rem', color: '#cbd5e1', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'monospace' }}>
                     {headCommit ? `${headCommit.shortHash} - ${headCommit.message}` : 'No commits yet'}
                   </div>
                 </div>
               </div>
-              <span style={{ fontSize: '0.64rem', color: '#64748b', fontFamily: 'monospace', flexShrink: 0 }}>
+              <span style={{ fontSize: '0.64rem', color: 'var(--text-muted)', fontFamily: 'monospace', flexShrink: 0 }}>
                 Total: {commitCount}
               </span>
             </div>
@@ -819,8 +819,8 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
       {/* 4. Progressive Hints */}
       <div
         style={{
-          background: 'rgba(255, 255, 255, 0.02)',
-          border: '1px solid rgba(255, 255, 255, 0.06)',
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border-color)',
           borderRadius: '12px',
           padding: '1.15rem 1.25rem',
           display: 'flex',
@@ -844,9 +844,9 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
                   fontSize: '0.74rem',
                   fontWeight: 700,
                   cursor: 'pointer',
-                  background: hintLevel >= lvl ? 'rgba(245, 158, 11, 0.2)' : 'rgba(255, 255, 255, 0.04)',
-                  border: hintLevel >= lvl ? '1px solid #f59e0b' : '1px solid rgba(255, 255, 255, 0.08)',
-                  color: hintLevel >= lvl ? '#f59e0b' : '#94a3b8',
+                  background: hintLevel >= lvl ? 'rgba(245, 158, 11, 0.2)' : 'var(--bg-surface)',
+                  border: hintLevel >= lvl ? '1px solid #f59e0b' : '1px solid var(--border-color)',
+                  color: hintLevel >= lvl ? '#f59e0b' : 'var(--text-secondary)',
                 }}
               >
                 Hint {lvl}
@@ -860,9 +860,9 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
                 fontSize: '0.74rem',
                 fontWeight: 700,
                 cursor: 'pointer',
-                background: hintLevel === 4 ? 'rgba(56, 189, 248, 0.2)' : 'rgba(255, 255, 255, 0.04)',
-                border: hintLevel === 4 ? '1px solid #38bdf8' : '1px solid rgba(255, 255, 255, 0.08)',
-                color: hintLevel === 4 ? '#38bdf8' : '#94a3b8',
+                background: hintLevel === 4 ? 'rgba(56, 189, 248, 0.2)' : 'var(--bg-surface)',
+                border: hintLevel === 4 ? '1px solid #38bdf8' : '1px solid var(--border-color)',
+                color: hintLevel === 4 ? '#38bdf8' : 'var(--text-secondary)',
               }}
             >
               Show Solution
@@ -874,9 +874,9 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
           <div
             style={{
               fontSize: '0.84rem',
-              color: '#e2e8f0',
+              color: 'var(--text-primary)',
               padding: '0.75rem 1rem',
-              background: 'rgba(255, 255, 255, 0.03)',
+              background: 'var(--bg-surface)',
               borderRadius: '8px',
               borderLeft: '3px solid #f59e0b',
               lineHeight: 1.5,
@@ -892,8 +892,8 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
       {/* 5. Safe Failure & Recovery Laboratory */}
       <div
         style={{
-          background: '#090e1a',
-          border: '1px solid rgba(239, 68, 68, 0.25)',
+          background: 'var(--bg-card)',
+          border: '1px solid rgba(239, 68, 68, 0.3)',
           borderRadius: '14px',
           padding: '1.5rem',
           display: 'flex',
@@ -903,18 +903,18 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <ShieldAlert size={20} color="#ef4444" />
-          <h2 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: '#f8fafc' }}>
+          <h2 style={{ margin: 0, fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)' }}>
             Safe Failure Laboratory: Make a Mistake Without Fear
           </h2>
         </div>
-        <div style={{ fontSize: '0.84rem', color: '#94a3b8' }}>
+        <div style={{ fontSize: '0.84rem', color: 'var(--text-secondary)' }}>
           Senior developers are distinguished by how calmly they recover from mistakes. Test this real-world slip-up safely:
         </div>
 
         <div
           style={{
             background: 'rgba(239, 68, 68, 0.05)',
-            border: '1px solid rgba(239, 68, 68, 0.15)',
+            border: '1px solid rgba(239, 68, 68, 0.2)',
             borderRadius: '10px',
             padding: '1.25rem',
             display: 'flex',
@@ -922,13 +922,13 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
             gap: '0.75rem',
           }}
         >
-          <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#f87171' }}>
+          <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#ef4444' }}>
             Scenario: {safeFailure.mistakeTitle}
           </div>
 
           {safeFailureState === 'idle' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              <div style={{ fontSize: '0.82rem', color: '#cbd5e1' }}>
+              <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
                 Simulate running the careless command:
               </div>
               <div>
@@ -938,9 +938,9 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '0.45rem',
-                    background: 'rgba(239, 68, 68, 0.2)',
+                    background: 'rgba(239, 68, 68, 0.15)',
                     border: '1px solid #ef4444',
-                    color: '#f87171',
+                    color: '#ef4444',
                     padding: '0.5rem 1rem',
                     borderRadius: '8px',
                     fontSize: '0.82rem',
@@ -958,10 +958,10 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
 
           {safeFailureState === 'triggered' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-              <div style={{ fontSize: '0.84rem', color: '#f87171', fontWeight: 600 }}>
+              <div style={{ fontSize: '0.84rem', color: '#ef4444', fontWeight: 600 }}>
                 💥 What Happened: {safeFailure.whatHappened}
               </div>
-              <div style={{ fontSize: '0.82rem', color: '#22c55e', background: 'rgba(34, 197, 94, 0.08)', padding: '0.65rem', borderRadius: '6px' }}>
+              <div style={{ fontSize: '0.82rem', color: '#10b981', background: 'rgba(16, 185, 129, 0.08)', padding: '0.65rem', borderRadius: '6px' }}>
                 🛡️ What was NOT lost: {safeFailure.whatWasNotLost}
               </div>
               <div>
@@ -971,9 +971,9 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: '0.45rem',
-                    background: '#22c55e',
+                    background: '#10b981',
                     border: 'none',
-                    color: '#090e1a',
+                    color: '#ffffff',
                     padding: '0.55rem 1.15rem',
                     borderRadius: '8px',
                     fontSize: '0.84rem',
@@ -995,22 +995,22 @@ export const ConceptPracticeTab: React.FC<Props> = ({ concept }) => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                background: 'rgba(34, 197, 94, 0.15)',
-                border: '1px solid #22c55e',
+                background: 'rgba(16, 185, 129, 0.15)',
+                border: '1px solid #10b981',
                 borderRadius: '8px',
                 padding: '0.85rem 1rem',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#22c55e', fontSize: '0.86rem', fontWeight: 700 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#10b981', fontSize: '0.86rem', fontWeight: 700 }}>
                 <CheckCircle2 size={18} />
                 Successfully Recovered! {safeFailure.recoveryExplanation}
               </div>
               <button
                 onClick={() => setSafeFailureState('idle')}
                 style={{
-                  background: 'none',
-                  border: '1px solid rgba(255, 255, 255, 0.2)',
-                  color: '#cbd5e1',
+                  background: 'var(--bg-surface)',
+                  border: '1px solid var(--border-color)',
+                  color: 'var(--text-primary)',
                   borderRadius: '6px',
                   padding: '0.3rem 0.65rem',
                   fontSize: '0.74rem',

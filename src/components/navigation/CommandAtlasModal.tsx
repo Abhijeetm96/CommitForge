@@ -224,17 +224,19 @@ export const CommandAtlasModal: React.FC<CommandAtlasModalProps> = ({
       onClick={onClose}
     >
       <div
+        className="command-atlas-modal-box"
         style={{
           width: '680px',
           maxWidth: '92vw',
           maxHeight: '75vh',
-          background: '#0d1527',
-          border: '1px solid rgba(56, 189, 248, 0.3)',
+          background: 'var(--bg-surface)',
+          border: '1px solid var(--border-color)',
           borderRadius: '16px',
-          boxShadow: '0 24px 64px rgba(0, 0, 0, 0.8), 0 0 32px rgba(56, 189, 248, 0.1)',
+          boxShadow: 'var(--shadow-md)',
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
+          color: 'var(--text-primary)',
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -242,11 +244,11 @@ export const CommandAtlasModal: React.FC<CommandAtlasModalProps> = ({
         <div
           style={{
             padding: '1rem 1.25rem',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+            borderBottom: '1px solid var(--border-color)',
             display: 'flex',
             alignItems: 'center',
             gap: '0.75rem',
-            background: '#121c33',
+            background: 'var(--bg-surface-elevated)',
           }}
         >
           <Search size={18} color="#38bdf8" />
@@ -261,7 +263,7 @@ export const CommandAtlasModal: React.FC<CommandAtlasModalProps> = ({
               background: 'transparent',
               border: 'none',
               outline: 'none',
-              color: '#f8fafc',
+              color: 'var(--text-primary)',
               fontSize: '0.95rem',
               fontWeight: 500,
             }}
@@ -269,10 +271,10 @@ export const CommandAtlasModal: React.FC<CommandAtlasModalProps> = ({
           <button
             onClick={onClose}
             style={{
-              background: 'rgba(255, 255, 255, 0.05)',
-              border: 'none',
+              background: 'var(--bg-surface)',
+              border: '1px solid var(--border-color)',
               borderRadius: '6px',
-              color: '#94a3b8',
+              color: 'var(--text-muted)',
               padding: '0.3rem',
               cursor: 'pointer',
             }}
@@ -293,7 +295,7 @@ export const CommandAtlasModal: React.FC<CommandAtlasModalProps> = ({
           }}
         >
           {filtered.length === 0 ? (
-            <div style={{ padding: '3rem 1rem', textAlign: 'center', color: '#64748b', fontSize: '0.9rem' }}>
+            <div style={{ padding: '3rem 1rem', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
               No commands matching "{query}". Try searching by intent like "undo", "stash", or "rebase".
             </div>
           ) : (
@@ -301,8 +303,8 @@ export const CommandAtlasModal: React.FC<CommandAtlasModalProps> = ({
               <div
                 key={entry.id}
                 style={{
-                  background: 'rgba(255, 255, 255, 0.02)',
-                  border: '1px solid rgba(255, 255, 255, 0.06)',
+                  background: 'var(--bg-card)',
+                  border: '1px solid var(--border-color)',
                   borderRadius: '10px',
                   padding: '1rem',
                   display: 'flex',
@@ -310,17 +312,9 @@ export const CommandAtlasModal: React.FC<CommandAtlasModalProps> = ({
                   gap: '0.4rem',
                   transition: 'background 0.15s ease, border-color 0.15s ease',
                 }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(56, 189, 248, 0.04)';
-                  e.currentTarget.style.borderColor = 'rgba(56, 189, 248, 0.25)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.02)';
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.06)';
-                }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
-                  <span style={{ fontSize: '0.88rem', fontWeight: 800, color: '#f8fafc' }}>
+                  <span style={{ fontSize: '0.88rem', fontWeight: 800, color: 'var(--text-primary)' }}>
                     {entry.intent}
                   </span>
                   <span
@@ -342,19 +336,19 @@ export const CommandAtlasModal: React.FC<CommandAtlasModalProps> = ({
                     style={{
                       fontFamily: 'var(--font-mono, monospace)',
                       fontSize: '0.82rem',
-                      color: '#34d399',
-                      background: 'rgba(0, 0, 0, 0.5)',
+                      color: '#10b981',
+                      background: 'var(--terminal-bg)',
                       padding: '0.2rem 0.5rem',
                       borderRadius: '4px',
-                      border: '1px solid rgba(16, 185, 129, 0.2)',
+                      border: '1px solid var(--terminal-border)',
                     }}
                   >
                     {entry.command}
                   </code>
                 </div>
 
-                <p style={{ fontSize: '0.78rem', color: '#94a3b8', margin: '0.2rem 0 0 0', lineHeight: 1.4 }}>
-                  <strong style={{ color: '#cbd5e1' }}>When:</strong> {entry.whenToUse}
+                <p style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', margin: '0.2rem 0 0 0', lineHeight: 1.4 }}>
+                  <strong style={{ color: 'var(--text-primary)' }}>When:</strong> {entry.whenToUse}
                 </p>
 
                 {entry.relatedConceptId && (
@@ -391,13 +385,13 @@ export const CommandAtlasModal: React.FC<CommandAtlasModalProps> = ({
         <div
           style={{
             padding: '0.65rem 1.25rem',
-            background: '#090e1a',
-            borderTop: '1px solid rgba(255, 255, 255, 0.05)',
+            background: 'var(--bg-surface)',
+            borderTop: '1px solid var(--border-color)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             fontSize: '0.72rem',
-            color: '#64748b',
+            color: 'var(--text-secondary)',
           }}
         >
           <span>Tip: Type intent words like "undo", "stash", or "rebase"</span>

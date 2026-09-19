@@ -34,10 +34,10 @@ export const LabsHubView: React.FC = () => {
       description: 'Resolve merge conflicts like a pro.',
       icon: Swords,
       color: '#ef4444',
-      bgGrad: 'linear-gradient(180deg, rgba(239, 68, 68, 0.15) 0%, rgba(19, 29, 51, 0.95) 100%)',
+      bgGrad: 'linear-gradient(180deg, rgba(239, 68, 68, 0.12) 0%, var(--bg-card) 100%)',
       borderColor: 'rgba(239, 68, 68, 0.35)',
-      btnBg: 'rgba(239, 68, 68, 0.2)',
-      btnBorder: 'rgba(239, 68, 68, 0.4)',
+      btnBg: 'rgba(239, 68, 68, 0.15)',
+      btnBorder: 'rgba(239, 68, 68, 0.35)',
     },
     {
       id: 'hospital',
@@ -45,10 +45,10 @@ export const LabsHubView: React.FC = () => {
       description: 'Recover lost work and fix common problems.',
       icon: HeartPulse,
       color: '#10b981',
-      bgGrad: 'linear-gradient(180deg, rgba(16, 185, 129, 0.15) 0%, rgba(19, 29, 51, 0.95) 100%)',
+      bgGrad: 'linear-gradient(180deg, rgba(16, 185, 129, 0.12) 0%, var(--bg-card) 100%)',
       borderColor: 'rgba(16, 185, 129, 0.35)',
-      btnBg: 'rgba(16, 185, 129, 0.2)',
-      btnBorder: 'rgba(16, 185, 129, 0.4)',
+      btnBg: 'rgba(16, 185, 129, 0.15)',
+      btnBorder: 'rgba(16, 185, 129, 0.35)',
     },
     {
       id: 'undo-lab',
@@ -56,10 +56,10 @@ export const LabsHubView: React.FC = () => {
       description: 'Master git restore, revert, reset, and reflog recoveries.',
       icon: RotateCcw,
       color: '#38bdf8',
-      bgGrad: 'linear-gradient(180deg, rgba(56, 189, 248, 0.15) 0%, rgba(19, 29, 51, 0.95) 100%)',
+      bgGrad: 'linear-gradient(180deg, rgba(56, 189, 248, 0.12) 0%, var(--bg-card) 100%)',
       borderColor: 'rgba(56, 189, 248, 0.35)',
-      btnBg: 'rgba(56, 189, 248, 0.2)',
-      btnBorder: 'rgba(56, 189, 248, 0.4)',
+      btnBg: 'rgba(56, 189, 248, 0.15)',
+      btnBorder: 'rgba(56, 189, 248, 0.35)',
     },
     {
       id: 'break-it',
@@ -67,10 +67,10 @@ export const LabsHubView: React.FC = () => {
       description: 'Deliberately break repositories and learn to recover.',
       icon: Flame,
       color: '#f59e0b',
-      bgGrad: 'linear-gradient(180deg, rgba(245, 158, 11, 0.15) 0%, rgba(19, 29, 51, 0.95) 100%)',
+      bgGrad: 'linear-gradient(180deg, rgba(245, 158, 11, 0.12) 0%, var(--bg-card) 100%)',
       borderColor: 'rgba(245, 158, 11, 0.35)',
-      btnBg: 'rgba(245, 158, 11, 0.2)',
-      btnBorder: 'rgba(245, 158, 11, 0.4)',
+      btnBg: 'rgba(245, 158, 11, 0.15)',
+      btnBorder: 'rgba(245, 158, 11, 0.35)',
     },
     {
       id: 'bug-detective',
@@ -78,10 +78,10 @@ export const LabsHubView: React.FC = () => {
       description: 'Simulate team workflows, upstream branches, and PRs.',
       icon: Bug,
       color: '#a855f7',
-      bgGrad: 'linear-gradient(180deg, rgba(168, 85, 247, 0.15) 0%, rgba(19, 29, 51, 0.95) 100%)',
+      bgGrad: 'linear-gradient(180deg, rgba(168, 85, 247, 0.12) 0%, var(--bg-card) 100%)',
       borderColor: 'rgba(168, 85, 247, 0.35)',
-      btnBg: 'rgba(168, 85, 247, 0.2)',
-      btnBorder: 'rgba(168, 85, 247, 0.4)',
+      btnBg: 'rgba(168, 85, 247, 0.15)',
+      btnBorder: 'rgba(168, 85, 247, 0.35)',
     },
     {
       id: 'config-lab',
@@ -89,10 +89,10 @@ export const LabsHubView: React.FC = () => {
       description: 'Configure gitconfig, aliases, credentials, and editors.',
       icon: Settings,
       color: '#06b6d4',
-      bgGrad: 'linear-gradient(180deg, rgba(6, 182, 212, 0.15) 0%, rgba(19, 29, 51, 0.95) 100%)',
+      bgGrad: 'linear-gradient(180deg, rgba(6, 182, 212, 0.12) 0%, var(--bg-card) 100%)',
       borderColor: 'rgba(6, 182, 212, 0.35)',
-      btnBg: 'rgba(6, 182, 212, 0.2)',
-      btnBorder: 'rgba(6, 182, 212, 0.4)',
+      btnBg: 'rgba(6, 182, 212, 0.15)',
+      btnBorder: 'rgba(6, 182, 212, 0.35)',
     },
     {
       id: 'capstone',
@@ -100,10 +100,10 @@ export const LabsHubView: React.FC = () => {
       description: 'Multi-stage production project test under real pressure.',
       icon: Award,
       color: '#eab308',
-      bgGrad: 'linear-gradient(180deg, rgba(234, 179, 8, 0.15) 0%, rgba(19, 29, 51, 0.95) 100%)',
+      bgGrad: 'linear-gradient(180deg, rgba(234, 179, 8, 0.12) 0%, var(--bg-card) 100%)',
       borderColor: 'rgba(234, 179, 8, 0.35)',
-      btnBg: 'rgba(234, 179, 8, 0.2)',
-      btnBorder: 'rgba(234, 179, 8, 0.4)',
+      btnBg: 'rgba(234, 179, 8, 0.15)',
+      btnBorder: 'rgba(234, 179, 8, 0.35)',
     },
   ];
 
@@ -128,12 +128,13 @@ export const LabsHubView: React.FC = () => {
 
   return (
     <div
+      className="labs-hub-container"
       style={{
         flex: 1,
         display: 'flex',
         flexDirection: 'column',
-        background: '#0b111e',
-        color: '#f8fafc',
+        background: 'var(--bg-app)',
+        color: 'var(--text-primary)',
         minHeight: 'calc(100vh - 60px)',
         overflowY: 'auto',
       }}
@@ -144,8 +145,8 @@ export const LabsHubView: React.FC = () => {
           <div
             style={{
               padding: '0.6rem 1.5rem',
-              background: '#0e172a',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'var(--bg-surface)',
+              borderBottom: '1px solid var(--border-color)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
@@ -156,7 +157,7 @@ export const LabsHubView: React.FC = () => {
               style={{
                 background: 'none',
                 border: 'none',
-                color: '#94a3b8',
+                color: 'var(--text-secondary)',
                 fontSize: '0.85rem',
                 fontWeight: 700,
                 cursor: 'pointer',
@@ -203,7 +204,7 @@ export const LabsHubView: React.FC = () => {
               style={{
                 fontSize: '2.2rem',
                 fontWeight: 900,
-                color: '#ffffff',
+                color: 'var(--text-primary)',
                 letterSpacing: '-0.02em',
                 margin: 0,
               }}
@@ -213,7 +214,7 @@ export const LabsHubView: React.FC = () => {
             <p
               style={{
                 fontSize: '1.05rem',
-                color: '#94a3b8',
+                color: 'var(--text-secondary)',
                 marginTop: '0.4rem',
                 lineHeight: 1.5,
               }}
@@ -244,7 +245,7 @@ export const LabsHubView: React.FC = () => {
                     flexDirection: 'column',
                     justifyContent: 'space-between',
                     minHeight: '260px',
-                    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.4)',
+                    boxShadow: 'var(--shadow-md)',
                     transition: 'transform 0.2s ease, box-shadow 0.2s ease',
                   }}
                 >
@@ -255,7 +256,7 @@ export const LabsHubView: React.FC = () => {
                         width: '44px',
                         height: '44px',
                         borderRadius: '12px',
-                        background: 'rgba(0, 0, 0, 0.25)',
+                        background: 'rgba(0, 0, 0, 0.2)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -267,13 +268,13 @@ export const LabsHubView: React.FC = () => {
 
                     {/* Title & Description */}
                     <div>
-                      <h2 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#f8fafc', margin: 0 }}>
+                      <h2 style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
                         {card.title}
                       </h2>
                       <p
                         style={{
                           fontSize: '0.9rem',
-                          color: '#cbd5e1',
+                          color: 'var(--text-secondary)',
                           marginTop: '0.4rem',
                           lineHeight: 1.45,
                         }}
@@ -291,7 +292,7 @@ export const LabsHubView: React.FC = () => {
                         width: '100%',
                         background: card.btnBg,
                         border: `1px solid ${card.btnBorder}`,
-                        color: '#f8fafc',
+                        color: 'var(--text-primary)',
                         padding: '0.75rem 1rem',
                         borderRadius: '8px',
                         fontSize: '0.88rem',
@@ -317,15 +318,15 @@ export const LabsHubView: React.FC = () => {
             style={{
               marginTop: '0.5rem',
               padding: '1.25rem 1.75rem',
-              background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, rgba(19, 29, 51, 0.8) 100%)',
-              border: '1px solid rgba(56, 189, 248, 0.25)',
+              background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, var(--bg-card) 100%)',
+              border: '1px solid var(--border-color)',
               borderRadius: '16px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
               flexWrap: 'wrap',
               gap: '1.25rem',
-              boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
+              boxShadow: 'var(--shadow-md)',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1, minWidth: '280px' }}>
@@ -345,10 +346,10 @@ export const LabsHubView: React.FC = () => {
                 <Compass size={24} />
               </div>
               <div>
-                <div style={{ fontWeight: 800, fontSize: '1.05rem', color: '#f8fafc' }}>
+                <div style={{ fontWeight: 800, fontSize: '1.05rem', color: 'var(--text-primary)' }}>
                   What Should I Do? (Screen 6: Command Discovery)
                 </div>
-                <div style={{ fontSize: '0.86rem', color: '#94a3b8', marginTop: '0.15rem' }}>
+                <div style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>
                   Compare commands side-by-side with risk badges (SAFE, LOW RISK, HIGH RISK) for real development scenarios.
                 </div>
               </div>

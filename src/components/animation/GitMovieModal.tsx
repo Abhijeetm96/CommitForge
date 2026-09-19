@@ -49,8 +49,8 @@ export const GitMovieModal: React.FC<GitMovieModalProps> = ({
     >
       <div
         style={{
-          background: '#0a0f1d',
-          border: '1px solid rgba(56, 189, 248, 0.3)',
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border-color)',
           borderRadius: '20px',
           maxWidth: '1100px',
           width: '100%',
@@ -58,18 +58,18 @@ export const GitMovieModal: React.FC<GitMovieModalProps> = ({
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
-          boxShadow: '0 30px 60px rgba(0, 0, 0, 0.8)',
+          boxShadow: 'var(--shadow-lg)',
         }}
       >
         {/* Cinema Header */}
         <div
           style={{
             padding: '1.25rem 2rem',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+            borderBottom: '1px solid var(--border-color)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            background: '#0d1527',
+            background: 'var(--bg-card)',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -88,10 +88,10 @@ export const GitMovieModal: React.FC<GitMovieModalProps> = ({
               <Film size={20} />
             </div>
             <div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#f8fafc' }}>
+              <div style={{ fontSize: '1.2rem', fontWeight: 900, color: 'var(--text-primary)' }}>
                 🎬 Git Movie Theater
               </div>
-              <div style={{ fontSize: '0.78rem', color: '#94a3b8' }}>
+              <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
                 20–60 second cinematic overviews: watch Git happen before you do it yourself
               </div>
             </div>
@@ -102,7 +102,7 @@ export const GitMovieModal: React.FC<GitMovieModalProps> = ({
             style={{
               background: 'none',
               border: 'none',
-              color: '#94a3b8',
+              color: 'var(--text-secondary)',
               cursor: 'pointer',
               padding: '0.4rem',
             }}
@@ -124,8 +124,8 @@ export const GitMovieModal: React.FC<GitMovieModalProps> = ({
           {/* Left Shelf: Command Selector */}
           <div
             style={{
-              background: '#0e172a',
-              borderRight: '1px solid rgba(255, 255, 255, 0.08)',
+              background: 'var(--bg-surface)',
+              borderRight: '1px solid var(--border-color)',
               padding: '1.25rem 1rem',
               overflowY: 'auto',
               display: 'flex',
@@ -133,7 +133,7 @@ export const GitMovieModal: React.FC<GitMovieModalProps> = ({
               gap: '0.5rem',
             }}
           >
-            <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', marginBottom: '0.4rem' }}>
+            <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: '0.4rem' }}>
               Select Movie Feature
             </div>
 
@@ -158,10 +158,10 @@ export const GitMovieModal: React.FC<GitMovieModalProps> = ({
                 >
                   <span style={{ fontSize: '1.2rem' }}>{m.icon}</span>
                   <div style={{ overflow: 'hidden' }}>
-                    <div style={{ fontSize: '0.85rem', fontWeight: isSelected ? 800 : 600, color: isSelected ? '#38bdf8' : '#f8fafc' }}>
+                    <div style={{ fontSize: '0.85rem', fontWeight: isSelected ? 800 : 600, color: isSelected ? '#38bdf8' : 'var(--text-primary)' }}>
                       {m.title}
                     </div>
-                    <div style={{ fontSize: '0.72rem', color: '#64748b', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    <div style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       {m.subtitle}
                     </div>
                   </div>
@@ -171,7 +171,7 @@ export const GitMovieModal: React.FC<GitMovieModalProps> = ({
           </div>
 
           {/* Right: Embedded Active Stage */}
-          <div style={{ padding: '1.5rem', overflowY: 'auto', background: '#090e1a' }}>
+          <div style={{ padding: '1.5rem', overflowY: 'auto', background: 'var(--bg-app)' }}>
             <GitAnimationStage
               commandId={selectedMovie}
               repo={repo}

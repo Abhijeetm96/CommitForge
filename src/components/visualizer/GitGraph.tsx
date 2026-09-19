@@ -22,12 +22,12 @@ export const GitGraph: React.FC<GitGraphProps> = ({ repo: propRepo, onSelectComm
         className="git-graph-container"
         style={{
           textAlign: 'center',
-          color: '#64748b',
+          color: 'var(--text-secondary)',
           fontSize: '0.85rem',
           padding: '2.5rem 1rem',
-          background: '#070b16',
+          background: 'var(--bg-card)',
           borderRadius: '12px',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
+          border: '1px solid var(--border-color)',
         }}
       >
         <GitCommit size={28} color="#475569" style={{ margin: '0 auto 0.5rem' }} />
@@ -66,11 +66,11 @@ export const GitGraph: React.FC<GitGraphProps> = ({ repo: propRepo, onSelectComm
     <div
       className="git-graph-container"
       style={{
-        background: '#070b16',
-        border: '1px solid rgba(56, 189, 248, 0.25)',
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border-color)',
         borderRadius: '14px',
         padding: '1.25rem',
-        boxShadow: '0 8px 30px rgba(0, 0, 0, 0.4)',
+        boxShadow: 'var(--shadow-sm)',
         display: 'flex',
         flexDirection: 'column',
         gap: '0.75rem',
@@ -78,12 +78,12 @@ export const GitGraph: React.FC<GitGraphProps> = ({ repo: propRepo, onSelectComm
     >
       {/* Header Bar */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
-        <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <div style={{ fontSize: '0.92rem', fontWeight: 800, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#38bdf8', boxShadow: '0 0 10px #38bdf8' }} />
           <GitCommit size={16} color="#38bdf8" />
           Commit Directed Acyclic Graph (DAG)
         </div>
-        <div style={{ fontSize: '0.74rem', color: '#94a3b8' }}>
+        <div style={{ fontSize: '0.74rem', color: 'var(--text-secondary)' }}>
           Click any commit node to inspect its tree snapshot and parent pointers
         </div>
       </div>
@@ -92,11 +92,10 @@ export const GitGraph: React.FC<GitGraphProps> = ({ repo: propRepo, onSelectComm
       <div
         style={{
           overflowX: 'auto',
-          background: 'radial-gradient(ellipse at 50% 10%, #0d162d 0%, #050812 100%)',
-          border: '1px solid rgba(255, 255, 255, 0.08)',
+          background: 'var(--bg-surface)',
+          border: '1px solid var(--border-color)',
           borderRadius: '10px',
           padding: '0.75rem',
-          boxShadow: 'inset 0 0 40px rgba(0, 0, 0, 0.7)',
         }}
       >
         <svg width={width} height={height} className="graph-svg" style={{ overflow: 'visible' }}>
@@ -248,9 +247,9 @@ export const GitGraph: React.FC<GitGraphProps> = ({ repo: propRepo, onSelectComm
       {/* Selected Commit Inspector Modal */}
       {selectedCommit && (
         <div className="modal-backdrop" onClick={() => setSelectedCommit(null)}>
-          <div className="modal-dialog" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '600px' }}>
-            <div className="modal-header">
-              <div className="modal-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div className="modal-dialog" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '600px', background: 'var(--bg-card)', border: '1px solid var(--border-color)', boxShadow: 'var(--shadow-lg)' }}>
+            <div className="modal-header" style={{ borderBottom: '1px solid var(--border-color)' }}>
+              <div className="modal-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-primary)' }}>
                 <GitCommit size={18} color="#38bdf8" />
                 Commit Snapshot: <code style={{ color: '#38bdf8' }}>{selectedCommit.shortHash}</code>
               </div>
@@ -261,22 +260,22 @@ export const GitGraph: React.FC<GitGraphProps> = ({ repo: propRepo, onSelectComm
 
             <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <div>
-                <div style={{ fontWeight: 800, fontSize: '1.15rem', color: '#f8fafc' }}>
+                <div style={{ fontWeight: 800, fontSize: '1.15rem', color: 'var(--text-primary)' }}>
                   {selectedCommit.message}
                 </div>
-                <div style={{ fontSize: '0.78rem', color: '#94a3b8', marginTop: '0.35rem', display: 'flex', gap: '1.25rem', flexWrap: 'wrap' }}>
+                <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginTop: '0.35rem', display: 'flex', gap: '1.25rem', flexWrap: 'wrap' }}>
                   <span><User size={12} style={{ display: 'inline', marginRight: '4px' }} /> {selectedCommit.author}</span>
                   <span><Calendar size={12} style={{ display: 'inline', marginRight: '4px' }} /> {new Date(selectedCommit.timestamp).toLocaleString()}</span>
                 </div>
               </div>
 
-              <div style={{ background: '#050811', padding: '0.85rem', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.08)', fontSize: '0.82rem', display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                <div><strong style={{ color: '#94a3b8' }}>Full SHA-1:</strong> <code style={{ color: '#38bdf8' }}>{selectedCommit.hash}</code></div>
-                <div><strong style={{ color: '#94a3b8' }}>Parent commits:</strong> {selectedCommit.parents.length > 0 ? selectedCommit.parents.map((p) => p.slice(0, 7)).join(', ') : 'None (Root Commit)'}</div>
+              <div style={{ background: 'var(--bg-surface)', padding: '0.85rem', borderRadius: '8px', border: '1px solid var(--border-color)', fontSize: '0.82rem', display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                <div><strong style={{ color: 'var(--text-secondary)' }}>Full SHA-1:</strong> <code style={{ color: '#38bdf8' }}>{selectedCommit.hash}</code></div>
+                <div><strong style={{ color: 'var(--text-secondary)' }}>Parent commits:</strong> {selectedCommit.parents.length > 0 ? selectedCommit.parents.map((p) => p.slice(0, 7)).join(', ') : 'None (Root Commit)'}</div>
               </div>
 
               <div>
-                <div style={{ fontWeight: 700, color: '#f8fafc', marginBottom: '0.45rem', fontSize: '0.84rem' }}>
+                <div style={{ fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.45rem', fontSize: '0.84rem' }}>
                   Files in this sealed snapshot ({Object.keys(selectedCommit.files).length}):
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
@@ -284,8 +283,8 @@ export const GitGraph: React.FC<GitGraphProps> = ({ repo: propRepo, onSelectComm
                     <div
                       key={path}
                       style={{
-                        background: '#040711',
-                        border: '1px solid rgba(255, 255, 255, 0.06)',
+                        background: 'var(--bg-surface)',
+                        border: '1px solid var(--border-color)',
                         padding: '0.45rem 0.65rem',
                         borderRadius: '6px',
                         fontSize: '0.78rem',
@@ -295,15 +294,15 @@ export const GitGraph: React.FC<GitGraphProps> = ({ repo: propRepo, onSelectComm
                         alignItems: 'center',
                       }}
                     >
-                      <span style={{ color: '#cbd5e1' }}>📄 {path}</span>
-                      <span style={{ color: '#64748b' }}>{selectedCommit.files[path]?.length || 0} bytes</span>
+                      <span style={{ color: 'var(--text-primary)' }}>📄 {path}</span>
+                      <span style={{ color: 'var(--text-secondary)' }}>{selectedCommit.files[path]?.length || 0} bytes</span>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
 
-            <div className="modal-footer">
+            <div className="modal-footer" style={{ borderTop: '1px solid var(--border-color)' }}>
               <button
                 style={{
                   background: '#2563eb',

@@ -30,12 +30,12 @@ export const WhyDidGitDoThatModal: React.FC<WhyDidGitDoThatModalProps> = ({
     >
       <div
         style={{
-          background: '#0e172a',
+          background: 'var(--bg-card)',
           border: '1px solid rgba(245, 158, 11, 0.35)',
           borderRadius: '16px',
           maxWidth: '580px',
           width: '100%',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7)',
+          boxShadow: 'var(--shadow-lg)',
           overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
@@ -45,11 +45,11 @@ export const WhyDidGitDoThatModal: React.FC<WhyDidGitDoThatModalProps> = ({
         <div
           style={{
             padding: '1.25rem 1.5rem',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+            borderBottom: '1px solid var(--border-color)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            background: '#131d33',
+            background: 'var(--bg-card)',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
@@ -68,10 +68,10 @@ export const WhyDidGitDoThatModal: React.FC<WhyDidGitDoThatModalProps> = ({
               <HelpCircle size={18} />
             </div>
             <div>
-              <div style={{ fontSize: '1.05rem', fontWeight: 800, color: '#f8fafc' }}>
+              <div style={{ fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-primary)' }}>
                 Why Did Git Do That?
               </div>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
                 Causal reasoning derived directly from Git's internal rules
               </div>
             </div>
@@ -82,7 +82,7 @@ export const WhyDidGitDoThatModal: React.FC<WhyDidGitDoThatModalProps> = ({
             style={{
               background: 'none',
               border: 'none',
-              color: '#94a3b8',
+              color: 'var(--text-secondary)',
               cursor: 'pointer',
               padding: '0.4rem',
             }}
@@ -97,8 +97,8 @@ export const WhyDidGitDoThatModal: React.FC<WhyDidGitDoThatModalProps> = ({
           {currentStep && (
             <div
               style={{
-                background: 'rgba(255, 255, 255, 0.03)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border-color)',
                 borderRadius: '10px',
                 padding: '1rem',
               }}
@@ -106,10 +106,10 @@ export const WhyDidGitDoThatModal: React.FC<WhyDidGitDoThatModalProps> = ({
               <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#f59e0b', textTransform: 'uppercase', marginBottom: '0.25rem' }}>
                 Active Operation Step: {currentStep.label}
               </div>
-              <div style={{ fontSize: '0.95rem', fontWeight: 700, color: '#f8fafc' }}>
+              <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)' }}>
                 {currentStep.title}
               </div>
-              <div style={{ fontSize: '0.85rem', color: '#cbd5e1', marginTop: '0.5rem', lineHeight: 1.55 }}>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '0.5rem', lineHeight: 1.55 }}>
                 {currentStep.whyDidGitDoThat || currentStep.description}
               </div>
             </div>
@@ -128,7 +128,7 @@ export const WhyDidGitDoThatModal: React.FC<WhyDidGitDoThatModalProps> = ({
               <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#10b981', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
                 What Physically Changed in the Repository:
               </div>
-              <ul style={{ margin: 0, paddingLeft: '1.2rem', fontSize: '0.84rem', color: '#cbd5e1', lineHeight: 1.6 }}>
+              <ul style={{ margin: 0, paddingLeft: '1.2rem', fontSize: '0.84rem', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
                 {stateDelta.summary.map((item, idx) => (
                   <li key={idx}>{item}</li>
                 ))}
@@ -141,7 +141,8 @@ export const WhyDidGitDoThatModal: React.FC<WhyDidGitDoThatModalProps> = ({
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               <div
                 style={{
-                  background: '#131d33',
+                  background: 'var(--bg-surface)',
+                  border: '1px solid var(--border-color)',
                   borderRadius: '8px',
                   padding: '0.85rem 1rem',
                   fontSize: '0.82rem',
@@ -150,25 +151,25 @@ export const WhyDidGitDoThatModal: React.FC<WhyDidGitDoThatModalProps> = ({
                 <div style={{ fontWeight: 800, color: '#38bdf8', marginBottom: '0.3rem' }}>
                   👶 Simple Mental Model:
                 </div>
-                <div style={{ color: '#e2e8f0', lineHeight: 1.5 }}>
+                <div style={{ color: 'var(--text-primary)', lineHeight: 1.5 }}>
                   {currentStep.simpleExplanation}
                 </div>
               </div>
 
               <div
                 style={{
-                  background: '#090e1a',
-                  border: '1px solid rgba(255, 255, 255, 0.06)',
+                  background: 'var(--bg-surface)',
+                  border: '1px solid var(--border-color)',
                   borderRadius: '8px',
                   padding: '0.85rem 1rem',
                   fontSize: '0.8rem',
                   fontFamily: 'monospace',
                 }}
               >
-                <div style={{ fontWeight: 800, color: '#94a3b8', marginBottom: '0.3rem', fontFamily: 'sans-serif' }}>
+                <div style={{ fontWeight: 800, color: 'var(--text-secondary)', marginBottom: '0.3rem', fontFamily: 'sans-serif' }}>
                   ⚙️ Technical Architecture:
                 </div>
-                <div style={{ color: '#94a3b8', lineHeight: 1.5 }}>
+                <div style={{ color: 'var(--text-secondary)', lineHeight: 1.5 }}>
                   {currentStep.technicalExplanation}
                 </div>
               </div>
@@ -180,8 +181,8 @@ export const WhyDidGitDoThatModal: React.FC<WhyDidGitDoThatModalProps> = ({
         <div
           style={{
             padding: '1rem 1.5rem',
-            borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-            background: '#131d33',
+            borderTop: '1px solid var(--border-color)',
+            background: 'var(--bg-card)',
             display: 'flex',
             justifyContent: 'flex-end',
           }}

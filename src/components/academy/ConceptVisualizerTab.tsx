@@ -184,6 +184,10 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
     else if (simulationStep === 'running') setSimulationStep('before');
   };
 
+  const handlePlay = handleStartPlay;
+  const handleResetSim = handleResetSimulation;
+  const handleToggleSpeed = () => setPlaybackSpeed((prev) => (prev === 1 ? 2 : 1));
+
   const handleSelectTargetConcept = (conceptId: string) => {
     setSelectedConceptId(conceptId);
     setSimulationStep('before');
@@ -210,14 +214,14 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
       {/* Top Banner & Context Switcher */}
       <div
         style={{
-          background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(7, 11, 22, 0.98) 100%)',
-          border: '1px solid rgba(56, 189, 248, 0.25)',
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border-color)',
           borderRadius: '16px',
           padding: '1.15rem 1.35rem',
           display: 'flex',
           flexDirection: 'column',
           gap: '1rem',
-          boxShadow: '0 8px 30px rgba(0, 0, 0, 0.4)',
+          boxShadow: 'var(--card-shadow, 0 8px 30px rgba(0, 0, 0, 0.08))',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
@@ -258,8 +262,9 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
                   style={{
                     fontSize: '0.72rem',
                     fontWeight: 700,
-                    color: '#94a3b8',
-                    background: 'rgba(255, 255, 255, 0.05)',
+                    color: 'var(--text-secondary)',
+                    background: 'var(--bg-surface)',
+                    border: '1px solid var(--border-color)',
                     padding: '0.2rem 0.55rem',
                     borderRadius: '6px',
                   }}
@@ -272,7 +277,7 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
                   margin: '0.35rem 0 0.15rem 0',
                   fontSize: '1.25rem',
                   fontWeight: 900,
-                  color: '#f8fafc',
+                  color: 'var(--text-primary)',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.65rem',
@@ -294,7 +299,7 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
                   $ {activeConcept.command}
                 </span>
               </h2>
-              <div style={{ fontSize: '0.82rem', color: '#94a3b8' }}>
+              <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
                 {activeConcept.subtitle}
               </div>
             </div>
@@ -305,10 +310,10 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
             <div
               style={{
                 display: 'flex',
-                background: 'rgba(15, 23, 42, 0.8)',
+                background: 'var(--bg-surface)',
                 padding: '0.25rem',
                 borderRadius: '8px',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
+                border: '1px solid var(--border-color)',
               }}
             >
               <button
@@ -321,7 +326,7 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
                   fontWeight: 700,
                   cursor: 'pointer',
                   background: conceptBrowserMode === 'current' ? '#38bdf8' : 'transparent',
-                  color: conceptBrowserMode === 'current' ? '#070b14' : '#94a3b8',
+                  color: conceptBrowserMode === 'current' ? '#ffffff' : 'var(--text-secondary)',
                   transition: 'all 0.15s ease',
                 }}
               >
@@ -337,7 +342,7 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
                   fontWeight: 700,
                   cursor: 'pointer',
                   background: conceptBrowserMode === 'all' ? '#38bdf8' : 'transparent',
-                  color: conceptBrowserMode === 'all' ? '#070b14' : '#94a3b8',
+                  color: conceptBrowserMode === 'all' ? '#ffffff' : 'var(--text-secondary)',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.35rem',
@@ -503,8 +508,8 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
       {conceptBrowserMode === 'all' && (
         <div
           style={{
-            background: '#090e1a',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border-color)',
             borderRadius: '14px',
             padding: '1.25rem',
             display: 'flex',
@@ -515,11 +520,11 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <Compass size={18} color="#38bdf8" />
-              <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: '#f8fafc' }}>
+              <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-primary)' }}>
                 All Topics Visualization Gallery (71 Concepts)
               </h3>
             </div>
-            <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
               Select any concept to launch its 3-stage animated transition and DAG
             </div>
           </div>
@@ -531,8 +536,8 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.6rem',
-                background: 'rgba(15, 23, 42, 0.75)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border-color)',
                 borderRadius: '8px',
                 padding: '0.45rem 0.85rem',
               }}
@@ -547,7 +552,7 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
                   background: 'transparent',
                   border: 'none',
                   outline: 'none',
-                  color: '#f8fafc',
+                  color: 'var(--text-primary)',
                   fontSize: '0.82rem',
                   flex: 1,
                 }}
@@ -558,7 +563,7 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
                   style={{
                     background: 'none',
                     border: 'none',
-                    color: '#64748b',
+                    color: 'var(--text-muted)',
                     cursor: 'pointer',
                     fontSize: '0.75rem',
                   }}
@@ -590,9 +595,9 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
                     fontWeight: 600,
                     whiteSpace: 'nowrap',
                     cursor: 'pointer',
-                    border: topicFilter === chip.id ? '1px solid #38bdf8' : '1px solid rgba(255, 255, 255, 0.08)',
-                    background: topicFilter === chip.id ? 'rgba(56, 189, 248, 0.15)' : 'rgba(255, 255, 255, 0.02)',
-                    color: topicFilter === chip.id ? '#38bdf8' : '#94a3b8',
+                    border: topicFilter === chip.id ? '1px solid #38bdf8' : '1px solid var(--border-color)',
+                    background: topicFilter === chip.id ? 'rgba(56, 189, 248, 0.15)' : 'var(--bg-surface)',
+                    color: topicFilter === chip.id ? 'var(--accent-primary)' : 'var(--text-secondary)',
                     transition: 'all 0.15s ease',
                   }}
                 >
@@ -620,8 +625,8 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
                   key={item.id}
                   onClick={() => handleSelectTargetConcept(item.id)}
                   style={{
-                    background: isCurrent ? 'rgba(56, 189, 248, 0.08)' : 'rgba(15, 23, 42, 0.65)',
-                    border: isCurrent ? '1px solid #38bdf8' : '1px solid rgba(255, 255, 255, 0.07)',
+                    background: isCurrent ? 'rgba(56, 189, 248, 0.12)' : 'var(--bg-surface)',
+                    border: isCurrent ? '1px solid #38bdf8' : '1px solid var(--border-color)',
                     borderRadius: '10px',
                     padding: '0.85rem',
                     cursor: 'pointer',
@@ -725,11 +730,11 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
       {viewMode === 'simulation' && (
         <div
           style={{
-            background: '#090e1a',
+            background: 'var(--bg-card)',
             borderRadius: '14px',
-            border: '1px solid rgba(255, 255, 255, 0.08)',
+            border: '1px solid var(--border-color)',
             overflow: 'hidden',
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
+            boxShadow: 'var(--card-shadow, 0 8px 32px rgba(0, 0, 0, 0.08))',
             display: 'flex',
             flexDirection: 'column',
           }}
@@ -738,8 +743,8 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
           <div
             style={{
               padding: '0.85rem 1.25rem',
-              background: 'rgba(255, 255, 255, 0.03)',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.07)',
+              background: 'var(--bg-surface)',
+              borderBottom: '1px solid var(--border-color)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
@@ -760,9 +765,9 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
                   fontSize: '0.8rem',
                   fontWeight: 700,
                   cursor: 'pointer',
-                  border: simulationStep === 'before' ? '1px solid #38bdf8' : '1px solid rgba(255, 255, 255, 0.1)',
-                  background: simulationStep === 'before' ? 'rgba(56, 189, 248, 0.2)' : 'rgba(255, 255, 255, 0.02)',
-                  color: simulationStep === 'before' ? '#38bdf8' : '#94a3b8',
+                  border: simulationStep === 'before' ? '1px solid #38bdf8' : '1px solid var(--border-color)',
+                  background: simulationStep === 'before' ? 'rgba(56, 189, 248, 0.2)' : 'var(--bg-card)',
+                  color: simulationStep === 'before' ? '#38bdf8' : 'var(--text-secondary)',
                   transition: 'all 0.15s ease',
                 }}
               >
@@ -779,9 +784,9 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
                   fontSize: '0.8rem',
                   fontWeight: 700,
                   cursor: 'pointer',
-                  border: simulationStep === 'running' ? '1px solid #f59e0b' : '1px solid rgba(255, 255, 255, 0.1)',
-                  background: simulationStep === 'running' ? 'rgba(245, 158, 11, 0.2)' : 'rgba(255, 255, 255, 0.02)',
-                  color: simulationStep === 'running' ? '#f59e0b' : '#94a3b8',
+                  border: simulationStep === 'running' ? '1px solid #f59e0b' : '1px solid var(--border-color)',
+                  background: simulationStep === 'running' ? 'rgba(245, 158, 11, 0.2)' : 'var(--bg-card)',
+                  color: simulationStep === 'running' ? '#f59e0b' : 'var(--text-secondary)',
                   transition: 'all 0.15s ease',
                 }}
               >
@@ -798,9 +803,9 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
                   fontSize: '0.8rem',
                   fontWeight: 700,
                   cursor: 'pointer',
-                  border: simulationStep === 'after' ? '1px solid #22c55e' : '1px solid rgba(255, 255, 255, 0.1)',
-                  background: simulationStep === 'after' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(255, 255, 255, 0.02)',
-                  color: simulationStep === 'after' ? '#22c55e' : '#94a3b8',
+                  border: simulationStep === 'after' ? '1px solid #22c55e' : '1px solid var(--border-color)',
+                  background: simulationStep === 'after' ? 'rgba(34, 197, 94, 0.2)' : 'var(--bg-card)',
+                  color: simulationStep === 'after' ? '#22c55e' : 'var(--text-secondary)',
                   transition: 'all 0.15s ease',
                 }}
               >
@@ -814,9 +819,9 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
                 onClick={handleStepPrev}
                 disabled={simulationStep === 'before'}
                 style={{
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  color: simulationStep === 'before' ? '#475569' : '#e2e8f0',
+                  background: 'var(--bg-card)',
+                  border: '1px solid var(--border-color)',
+                  color: simulationStep === 'before' ? 'var(--text-muted)' : 'var(--text-primary)',
                   padding: '0.35rem 0.55rem',
                   borderRadius: '6px',
                   cursor: simulationStep === 'before' ? 'not-allowed' : 'pointer',
@@ -851,12 +856,12 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
                 </button>
               ) : (
                 <button
-                  onClick={handleStartPlay}
+                  onClick={handlePlay}
                   style={{
-                    background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
-                    border: '1px solid #22c55e',
-                    color: '#ffffff',
-                    padding: '0.35rem 0.85rem',
+                    background: 'rgba(34, 197, 94, 0.2)',
+                    border: '1px solid rgba(34, 197, 94, 0.4)',
+                    color: '#22c55e',
+                    padding: '0.35rem 0.75rem',
                     borderRadius: '6px',
                     cursor: 'pointer',
                     fontSize: '0.78rem',
@@ -864,11 +869,10 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
                     display: 'flex',
                     alignItems: 'center',
                     gap: '0.35rem',
-                    boxShadow: '0 2px 8px rgba(34, 197, 94, 0.35)',
                   }}
                 >
                   <Play size={14} />
-                  <span>Play Simulation</span>
+                  <span>Play</span>
                 </button>
               )}
 
@@ -876,9 +880,9 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
                 onClick={handleStepNext}
                 disabled={simulationStep === 'after'}
                 style={{
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  color: simulationStep === 'after' ? '#475569' : '#e2e8f0',
+                  background: 'var(--bg-card)',
+                  border: '1px solid var(--border-color)',
+                  color: simulationStep === 'after' ? 'var(--text-muted)' : 'var(--text-primary)',
                   padding: '0.35rem 0.55rem',
                   borderRadius: '6px',
                   cursor: simulationStep === 'after' ? 'not-allowed' : 'pointer',
@@ -892,44 +896,50 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
               </button>
 
               <button
-                onClick={handleResetSimulation}
+                onClick={handleResetSim}
                 style={{
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  color: '#94a3b8',
-                  padding: '0.35rem 0.55rem',
+                  background: 'transparent',
+                  border: '1px solid var(--border-color)',
+                  color: 'var(--text-muted)',
+                  padding: '0.35rem 0.6rem',
                   borderRadius: '6px',
                   cursor: 'pointer',
                   fontSize: '0.75rem',
                   display: 'flex',
                   alignItems: 'center',
+                  gap: '0.25rem',
                 }}
-                title="Reset simulation to initial state"
+                title="Reset to step 1"
               >
-                <RotateCcw size={13} />
+                <RotateCcw size={12} />
+                <span>Reset</span>
               </button>
 
               <button
-                onClick={() => setPlaybackSpeed((s) => (s === 1 ? 2 : 1))}
+                onClick={handleToggleSpeed}
                 style={{
-                  background: 'rgba(255, 255, 255, 0.05)',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  color: playbackSpeed === 2 ? '#38bdf8' : '#94a3b8',
-                  padding: '0.35rem 0.55rem',
+                  background: 'var(--bg-card)',
+                  border: '1px solid var(--border-color)',
+                  color: playbackSpeed === 2 ? '#38bdf8' : 'var(--text-secondary)',
+                  padding: '0.35rem 0.6rem',
                   borderRadius: '6px',
                   cursor: 'pointer',
-                  fontSize: '0.72rem',
+                  fontSize: '0.74rem',
                   fontWeight: 700,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.2rem',
                 }}
-                title="Toggle playback speed"
+                title="Toggle playback speed (1x / 2x)"
               >
-                {playbackSpeed}x
+                <FastForward size={12} />
+                <span>{playbackSpeed}x</span>
               </button>
             </div>
           </div>
 
-          {/* Simulation Progress Timeline Bar */}
-          <div style={{ height: '3px', width: '100%', background: 'rgba(255, 255, 255, 0.05)', position: 'relative' }}>
+          {/* Progress Timeline Indicator */}
+          <div style={{ height: '3px', background: 'var(--border-color)', width: '100%', position: 'relative' }}>
             <div
               style={{
                 height: '100%',
@@ -939,13 +949,8 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
                     : simulationStep === 'running'
                     ? '#f59e0b'
                     : '#22c55e',
-                width:
-                  simulationStep === 'before'
-                    ? '33.3%'
-                    : simulationStep === 'running'
-                    ? '66.6%'
-                    : '100%',
-                transition: 'all 0.4s ease',
+                width: simulationStep === 'before' ? '33.3%' : simulationStep === 'running' ? '66.6%' : '100%',
+                transition: 'all 0.3s ease',
               }}
             />
           </div>
@@ -954,7 +959,7 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
           <div
             style={{
               padding: '1.25rem',
-              background: '#070b14',
+              background: 'var(--bg-app)',
               display: 'flex',
               alignItems: 'stretch',
               justifyContent: 'space-between',
@@ -967,8 +972,8 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
               style={{
                 flex: '1 1 0',
                 minWidth: '150px',
-                background: 'rgba(15, 23, 42, 0.85)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border-color)',
                 borderRadius: '10px',
                 padding: '0.95rem',
                 display: 'flex',
@@ -983,7 +988,7 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
                   gap: '0.4rem',
                   fontSize: '0.78rem',
                   fontWeight: 700,
-                  color: '#94a3b8',
+                  color: 'var(--text-secondary)',
                   whiteSpace: 'nowrap',
                 }}
               >
@@ -992,7 +997,7 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
                 {stage.workingDirectory.length === 0 ? (
-                  <div style={{ fontSize: '0.74rem', color: '#64748b', fontStyle: 'italic', padding: '0.5rem 0' }}>
+                  <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', fontStyle: 'italic', padding: '0.5rem 0' }}>
                     Clean working directory
                   </div>
                 ) : (
@@ -1005,10 +1010,10 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
                         gap: '0.4rem',
                         fontSize: '0.74rem',
                         fontFamily: 'ui-monospace, monospace',
-                        background: 'rgba(255, 255, 255, 0.03)',
+                        background: 'var(--bg-card)',
                         padding: '0.35rem 0.55rem',
                         borderRadius: '6px',
-                        border: '1px solid rgba(255, 255, 255, 0.06)',
+                        border: '1px solid var(--border-color)',
                         minWidth: 0,
                       }}
                     >
@@ -1017,7 +1022,7 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
                         color={file.status === 'modified' ? '#f59e0b' : file.status === 'staged' ? '#38bdf8' : '#22c55e'}
                         style={{ flexShrink: 0 }}
                       />
-                      <span style={{ color: '#f8fafc', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <span style={{ color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {file.name}
                       </span>
                       <span
@@ -1038,7 +1043,7 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
             </div>
 
             {/* Transition Arrow 1 */}
-            <div style={{ color: '#475569', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+            <div style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
               <ArrowRight size={18} />
             </div>
 
@@ -1047,10 +1052,10 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
               style={{
                 flex: '1 1 0',
                 minWidth: '150px',
-                background: 'rgba(15, 23, 42, 0.85)',
+                background: 'var(--bg-surface)',
                 border:
                   simulationStep === 'after' && stage.stagingArea.length === 0
-                    ? '1px dashed rgba(255, 255, 255, 0.15)'
+                    ? '1px dashed var(--border-color)'
                     : '1px solid rgba(56, 189, 248, 0.25)',
                 borderRadius: '10px',
                 padding: '0.95rem',
@@ -1169,7 +1174,7 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
             </div>
 
             {/* Transition Arrow 3 */}
-            <div style={{ color: '#475569', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+            <div style={{ color: 'var(--text-muted)', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
               <ArrowRight size={18} />
             </div>
 
@@ -1178,8 +1183,8 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
               style={{
                 flex: '1.2 1 0',
                 minWidth: '175px',
-                background: 'rgba(15, 23, 42, 0.85)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border-color)',
                 borderRadius: '10px',
                 padding: '0.95rem',
                 display: 'flex',
@@ -1194,7 +1199,7 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
                   gap: '0.4rem',
                   fontSize: '0.78rem',
                   fontWeight: 700,
-                  color: '#94a3b8',
+                  color: 'var(--text-secondary)',
                   whiteSpace: 'nowrap',
                 }}
               >
@@ -1210,8 +1215,8 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
                       alignItems: 'center',
                       gap: '0.45rem',
                       fontSize: '0.74rem',
-                      background: cmt.isNew ? 'rgba(34, 197, 94, 0.12)' : 'rgba(255, 255, 255, 0.03)',
-                      border: cmt.isNew ? '1px solid rgba(34, 197, 94, 0.35)' : '1px solid rgba(255, 255, 255, 0.05)',
+                      background: cmt.isNew ? 'rgba(34, 197, 94, 0.12)' : 'var(--bg-card)',
+                      border: cmt.isNew ? '1px solid rgba(34, 197, 94, 0.35)' : '1px solid var(--border-color)',
                       padding: '0.35rem 0.55rem',
                       borderRadius: '6px',
                       minWidth: 0,
@@ -1231,7 +1236,7 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
                       style={{
                         fontFamily: 'ui-monospace, monospace',
                         fontWeight: 700,
-                        color: cmt.isNew ? '#22c55e' : '#cbd5e1',
+                        color: cmt.isNew ? '#22c55e' : 'var(--text-primary)',
                         flexShrink: 0,
                       }}
                     >
@@ -1239,7 +1244,7 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
                     </span>
                     <span
                       style={{
-                        color: '#94a3b8',
+                        color: 'var(--text-secondary)',
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
                         whiteSpace: 'nowrap',
@@ -1258,14 +1263,14 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
           <div
             style={{
               padding: '0.85rem 1.25rem',
-              background: 'rgba(255, 255, 255, 0.02)',
-              borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+              background: 'var(--bg-surface)',
+              borderTop: '1px solid var(--border-color)',
               fontSize: '0.84rem',
-              color: '#cbd5e1',
+              color: 'var(--text-primary)',
               lineHeight: 1.5,
             }}
           >
-            <span style={{ fontWeight: 700, color: '#f8fafc', marginRight: '0.4rem' }}>
+            <span style={{ fontWeight: 700, color: 'var(--text-primary)', marginRight: '0.4rem' }}>
               Phase {simulationStep === 'before' ? '1' : simulationStep === 'running' ? '2' : '3'} Note:
             </span>
             {stage.description}
@@ -1278,15 +1283,15 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
               gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
               gap: '0.85rem',
               padding: '1rem 1.25rem',
-              background: '#070b14',
-              borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+              background: 'var(--bg-app)',
+              borderTop: '1px solid var(--border-color)',
             }}
           >
             {/* Green Card: What Changed? */}
             <div
               style={{
-                background: 'rgba(34, 197, 94, 0.06)',
-                border: '1px solid rgba(34, 197, 94, 0.22)',
+                background: 'rgba(34, 197, 94, 0.08)',
+                border: '1px solid rgba(34, 197, 94, 0.25)',
                 borderRadius: '10px',
                 padding: '0.95rem',
                 display: 'flex',
@@ -1312,7 +1317,7 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
                   margin: 0,
                   paddingLeft: '1.15rem',
                   fontSize: '0.78rem',
-                  color: '#e2e8f0',
+                  color: 'var(--text-primary)',
                   lineHeight: 1.55,
                 }}
               >
@@ -1426,8 +1431,8 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
       {viewMode === 'internals' && (
         <div
           style={{
-            background: '#090e1a',
-            border: '1px solid rgba(192, 132, 252, 0.25)',
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border-color)',
             borderRadius: '14px',
             padding: '1.25rem',
             display: 'flex',
@@ -1436,12 +1441,12 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-            <Database size={20} color="#c084fc" />
+            <Database size={20} color="#a855f7" />
             <div>
-              <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: '#f8fafc' }}>
+              <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-primary)' }}>
                 Object Database & Pointer Mechanics: {activeConcept.command}
               </h3>
-              <div style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                 How Git manipulates blobs, trees, commit objects, and ref pointers behind the scenes.
               </div>
             </div>
@@ -1457,8 +1462,8 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
             {/* Box 1: Storage Location */}
             <div
               style={{
-                background: 'rgba(15, 23, 42, 0.75)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border-color)',
                 borderRadius: '10px',
                 padding: '1rem',
                 display: 'flex',
@@ -1469,10 +1474,10 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
               <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#38bdf8' }}>
                 OBJECT TYPE / STORAGE TARGET
               </div>
-              <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: '0.92rem', color: '#f8fafc', fontWeight: 700 }}>
+              <div style={{ fontFamily: 'ui-monospace, monospace', fontSize: '0.92rem', color: 'var(--text-primary)', fontWeight: 700 }}>
                 {activeConcept.reference?.gitInternals?.storageLocation || '.git/objects (40-char SHA-1 database)'}
               </div>
-              <div style={{ fontSize: '0.8rem', color: '#94a3b8', lineHeight: 1.45 }}>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.45 }}>
                 {activeConcept.reference?.gitInternals?.objectType || 'Direct DAG Node Pointer'}
               </div>
             </div>
@@ -1480,8 +1485,8 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
             {/* Box 2: Mechanics Explanation */}
             <div
               style={{
-                background: 'rgba(15, 23, 42, 0.75)',
-                border: '1px solid rgba(255, 255, 255, 0.08)',
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border-color)',
                 borderRadius: '10px',
                 padding: '1rem',
                 display: 'flex',
@@ -1489,10 +1494,10 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
                 gap: '0.5rem',
               }}
             >
-              <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#c084fc' }}>
+              <div style={{ fontSize: '0.78rem', fontWeight: 700, color: '#a855f7' }}>
                 INTERNAL ENGINE BEHAVIOR
               </div>
-              <div style={{ fontSize: '0.82rem', color: '#cbd5e1', lineHeight: 1.5 }}>
+              <div style={{ fontSize: '0.82rem', color: 'var(--text-primary)', lineHeight: 1.5 }}>
                 {activeConcept.reference?.gitInternals?.explanation ||
                   `When you execute ${activeConcept.command}, Git calculates the cryptographic SHA hash of the tree, records changes immutably in .git/objects, and atomically advances the active branch pointer.`}
               </div>
@@ -1502,8 +1507,8 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
           {/* Real World Analogy Callout */}
           <div
             style={{
-              background: 'rgba(245, 158, 11, 0.06)',
-              border: '1px solid rgba(245, 158, 11, 0.2)',
+              background: 'rgba(245, 158, 11, 0.08)',
+              border: '1px solid rgba(245, 158, 11, 0.25)',
               borderRadius: '10px',
               padding: '0.95rem 1.15rem',
               display: 'flex',
@@ -1512,7 +1517,7 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
             }}
           >
             <Sparkles size={20} color="#f59e0b" style={{ flexShrink: 0 }} />
-            <div style={{ fontSize: '0.82rem', color: '#e2e8f0', lineHeight: 1.45 }}>
+            <div style={{ fontSize: '0.82rem', color: 'var(--text-primary)', lineHeight: 1.45 }}>
               <span style={{ fontWeight: 800, color: '#f59e0b', marginRight: '0.4rem' }}>
                 Mental Model:
               </span>

@@ -120,7 +120,7 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
       <div
         style={{
           padding: '1.25rem 1.25rem 1rem 1.25rem',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+          borderBottom: '1px solid var(--border-color)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -144,10 +144,10 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
             <GraduationCap size={18} />
           </div>
           <div>
-            <div style={{ fontSize: '0.96rem', fontWeight: 800, color: '#f8fafc', lineHeight: 1.15 }}>
+            <div style={{ fontSize: '0.96rem', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.15 }}>
               Git Academy
             </div>
-            <div style={{ fontSize: '0.72rem', color: '#64748b', fontWeight: 500 }}>
+            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 500 }}>
               18 Topics • Your Git Journey
             </div>
           </div>
@@ -157,10 +157,10 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
           <button
             onClick={() => setShowMobileTopicsDrawer(false)}
             style={{
-              background: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border-color)',
               borderRadius: '6px',
-              color: '#94a3b8',
+              color: 'var(--text-secondary)',
               padding: '0.3rem',
               cursor: 'pointer',
               display: 'flex',
@@ -203,9 +203,9 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
                   borderRadius: '8px',
                   cursor: 'pointer',
                   background: hasActiveChild && !isExpanded
-                    ? 'rgba(56, 189, 248, 0.08)'
+                    ? 'rgba(56, 189, 248, 0.12)'
                     : 'transparent',
-                  color: hasActiveChild ? '#38bdf8' : '#94a3b8',
+                  color: hasActiveChild ? 'var(--accent-primary)' : 'var(--text-secondary)',
                   transition: 'all 0.15s ease',
                 }}
                 className="sidebar-topic-row"
@@ -216,27 +216,27 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
                       fontFamily: 'ui-monospace, monospace',
                       fontSize: '0.75rem',
                       fontWeight: 700,
-                      color: '#64748b',
+                      color: 'var(--text-muted)',
                       width: '18px',
                     }}
                   >
                     {topic.number}
                   </span>
-                  <span style={{ color: hasActiveChild ? '#38bdf8' : '#64748b' }}>
+                  <span style={{ color: hasActiveChild ? 'var(--accent-primary)' : 'var(--text-muted)' }}>
                     {renderTopicIcon(topic.iconName)}
                   </span>
                   <span
                     style={{
                       fontSize: '0.84rem',
                       fontWeight: hasActiveChild ? 700 : 600,
-                      color: hasActiveChild ? '#f8fafc' : '#cbd5e1',
+                      color: hasActiveChild ? 'var(--accent-primary)' : 'var(--text-primary)',
                     }}
                   >
                     {topic.title}
                   </span>
                 </div>
 
-                <span style={{ color: '#64748b' }}>
+                <span style={{ color: 'var(--text-muted)' }}>
                   {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                 </span>
               </div>
@@ -270,16 +270,16 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
                           alignItems: 'center',
                           gap: '0.55rem',
                           background: isActive
-                            ? 'linear-gradient(135deg, rgba(56, 189, 248, 0.25) 0%, rgba(37, 99, 235, 0.25) 100%)'
+                            ? 'rgba(56, 189, 248, 0.16)'
                             : 'transparent',
                           border: isActive ? '1px solid rgba(56, 189, 248, 0.4)' : '1px solid transparent',
-                          color: isActive ? '#38bdf8' : isDone ? '#22c55e' : '#94a3b8',
+                          color: isActive ? 'var(--accent-primary)' : isDone ? '#22c55e' : 'var(--text-primary)',
                           transition: 'all 0.15s ease',
                         }}
                       >
                         <span
                           style={{
-                            color: isActive ? '#38bdf8' : isDone ? '#22c55e' : '#64748b',
+                            color: isActive ? 'var(--accent-primary)' : isDone ? '#22c55e' : 'var(--text-muted)',
                             display: 'flex',
                             alignItems: 'center',
                           }}
@@ -292,7 +292,7 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
                               fontFamily: 'ui-monospace, monospace',
                               fontSize: '0.8rem',
                               fontWeight: isActive ? 800 : 600,
-                              color: isActive ? '#f8fafc' : '#e2e8f0',
+                              color: isActive ? 'var(--accent-primary)' : 'var(--text-primary)',
                               overflow: 'hidden',
                               textOverflow: 'ellipsis',
                               whiteSpace: 'nowrap',
@@ -303,7 +303,7 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
                           <span
                             style={{
                               fontSize: '0.68rem',
-                              color: isActive ? '#38bdf8' : '#64748b',
+                              color: isActive ? 'var(--accent-primary)' : 'var(--text-secondary)',
                               overflow: 'hidden',
                               textOverflow: 'ellipsis',
                               whiteSpace: 'nowrap',
@@ -335,7 +335,7 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#94a3b8' }}>
+          <span style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-secondary)' }}>
             Your Progress
           </span>
           <span style={{ fontSize: '0.78rem', fontWeight: 800, color: '#38bdf8' }}>
@@ -348,7 +348,7 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
             width: '100%',
             height: '6px',
             borderRadius: '999px',
-            background: 'rgba(255, 255, 255, 0.08)',
+            background: 'var(--border-color)',
             overflow: 'hidden',
           }}
         >
@@ -363,7 +363,7 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
           />
         </div>
 
-        <div style={{ fontSize: '0.7rem', color: '#64748b' }}>
+        <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
           {completedCount} of {totalConcepts} concepts completed
         </div>
       </div>
@@ -491,10 +491,10 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
                 justifyContent: 'center',
                 width: '30px',
                 height: '30px',
-                background: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border-color)',
                 borderRadius: '8px',
-                color: '#cbd5e1',
+                color: 'var(--text-secondary)',
                 cursor: 'pointer',
               }}
               title="Search problems & commands"
@@ -544,9 +544,9 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
             onClick={() => prevConcept && handleNavigateConcept(prevConcept.id)}
             title={prevConcept ? `Go to ${prevConcept.command}` : 'No previous concept'}
             style={{
-              background: prevConcept ? 'rgba(255, 255, 255, 0.04)' : 'transparent',
-              border: prevConcept ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid transparent',
-              color: prevConcept ? '#cbd5e1' : '#475569',
+              background: prevConcept ? 'var(--bg-card)' : 'transparent',
+              border: prevConcept ? '1px solid var(--border-color)' : '1px solid transparent',
+              color: prevConcept ? 'var(--text-primary)' : 'var(--text-muted)',
               padding: '0.45rem 0.85rem',
               borderRadius: '8px',
               fontSize: '0.78rem',
@@ -599,12 +599,12 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
             title={nextConcept ? `Go to ${nextConcept.command}` : 'All concepts completed'}
             style={{
               background: nextConcept
-                ? 'linear-gradient(135deg, rgba(56, 189, 248, 0.25) 0%, rgba(37, 99, 235, 0.25) 100%)'
+                ? 'linear-gradient(135deg, rgba(56, 189, 248, 0.35) 0%, rgba(37, 99, 235, 0.35) 100%)'
                 : 'transparent',
               border: nextConcept
                 ? '1px solid rgba(56, 189, 248, 0.4)'
                 : '1px solid transparent',
-              color: nextConcept ? '#f8fafc' : '#475569',
+              color: nextConcept ? '#ffffff' : 'var(--text-muted)',
               padding: '0.45rem 0.95rem',
               borderRadius: '8px',
               fontSize: '0.78rem',

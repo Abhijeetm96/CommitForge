@@ -33,13 +33,14 @@ export const DeveloperIdeView: React.FC = () => {
 
   return (
     <div
+      className="ide-container"
       style={{
         flex: 1,
         display: 'flex',
         flexDirection: 'column',
         height: 'calc(100vh - 60px)',
-        background: '#0b111e',
-        color: '#f8fafc',
+        background: 'var(--bg-app)',
+        color: 'var(--text-primary)',
         overflow: 'hidden',
       }}
     >
@@ -49,7 +50,7 @@ export const DeveloperIdeView: React.FC = () => {
           flex: 1,
           display: 'grid',
           gridTemplateColumns: '220px 1fr 240px',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          borderBottom: '1px solid var(--border-color)',
           overflow: 'hidden',
         }}
         className="ide-3panel-grid"
@@ -58,8 +59,8 @@ export const DeveloperIdeView: React.FC = () => {
         <div
           className="ide-files-panel"
           style={{
-            background: '#0e172a',
-            borderRight: '1px solid rgba(255, 255, 255, 0.08)',
+            background: 'var(--bg-surface)',
+            borderRight: '1px solid var(--border-color)',
             display: 'flex',
             flexDirection: 'column',
             overflowY: 'auto',
@@ -70,10 +71,10 @@ export const DeveloperIdeView: React.FC = () => {
               padding: '0.65rem 1rem',
               fontSize: '0.75rem',
               fontWeight: 800,
-              color: '#94a3b8',
+              color: 'var(--text-muted)',
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+              borderBottom: '1px solid var(--border-color)',
             }}
           >
             Project Files
@@ -88,7 +89,7 @@ export const DeveloperIdeView: React.FC = () => {
                 gap: '0.4rem',
                 fontSize: '0.85rem',
                 fontWeight: 700,
-                color: '#e2e8f0',
+                color: 'var(--text-primary)',
                 marginBottom: '0.4rem',
               }}
             >
@@ -111,7 +112,7 @@ export const DeveloperIdeView: React.FC = () => {
                       padding: '0.35rem 0.6rem',
                       borderRadius: '4px',
                       background: isActive ? 'rgba(56, 189, 248, 0.12)' : 'transparent',
-                      color: isActive ? '#38bdf8' : '#94a3b8',
+                      color: isActive ? '#38bdf8' : 'var(--text-secondary)',
                       fontSize: '0.82rem',
                       fontWeight: isActive ? 700 : 500,
                       cursor: 'pointer',
@@ -135,8 +136,8 @@ export const DeveloperIdeView: React.FC = () => {
         <div
           className="ide-git-panel"
           style={{
-            background: '#0e172a',
-            borderLeft: '1px solid rgba(255, 255, 255, 0.08)',
+            background: 'var(--bg-surface)',
+            borderLeft: '1px solid var(--border-color)',
             display: 'flex',
             flexDirection: 'column',
             overflowY: 'auto',
@@ -147,18 +148,18 @@ export const DeveloperIdeView: React.FC = () => {
               padding: '0.65rem 1rem',
               fontSize: '0.75rem',
               fontWeight: 800,
-              color: '#94a3b8',
+              color: 'var(--text-muted)',
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+              borderBottom: '1px solid var(--border-color)',
             }}
           >
             Git
           </div>
 
           {/* Branches Section */}
-          <div style={{ padding: '0.75rem 1rem', borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
-            <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+          <div style={{ padding: '0.75rem 1rem', borderBottom: '1px solid var(--border-color)' }}>
+            <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
               Branches
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
@@ -223,12 +224,12 @@ export const DeveloperIdeView: React.FC = () => {
                         alignItems: 'center',
                         justifyContent: 'space-between',
                         fontSize: '0.82rem',
-                        color: '#f8fafc',
+                        color: 'var(--text-primary)',
                         cursor: 'pointer',
                       }}
                     >
                       <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                        <FileText size={13} color="#94a3b8" />
+                        <FileText size={13} color="var(--text-muted)" />
                         <span>{f}</span>
                       </span>
                       <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#f59e0b' }}>M</span>
@@ -243,12 +244,12 @@ export const DeveloperIdeView: React.FC = () => {
                         alignItems: 'center',
                         justifyContent: 'space-between',
                         fontSize: '0.82rem',
-                        color: '#f8fafc',
+                        color: 'var(--text-primary)',
                         cursor: 'pointer',
                       }}
                     >
                       <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                        <FileText size={13} color="#94a3b8" />
+                        <FileText size={13} color="var(--text-muted)" />
                         <span>{f}</span>
                       </span>
                       <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#38bdf8' }}>U</span>
@@ -262,12 +263,12 @@ export const DeveloperIdeView: React.FC = () => {
       </div>
 
       {/* Bottom Panel: Terminal & Output Tabs */}
-      <div style={{ height: '240px', display: 'flex', flexDirection: 'column', background: '#090e1a' }}>
+      <div style={{ height: '240px', display: 'flex', flexDirection: 'column', background: 'var(--bg-app)' }}>
         <div
           style={{
             height: '34px',
-            background: '#0e172a',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+            background: 'var(--bg-surface)',
+            borderBottom: '1px solid var(--border-color)',
             display: 'flex',
             alignItems: 'center',
             padding: '0 1rem',
@@ -279,7 +280,7 @@ export const DeveloperIdeView: React.FC = () => {
             style={{
               background: 'none',
               border: 'none',
-              color: activeBottomTab === 'terminal' ? '#38bdf8' : '#64748b',
+              color: activeBottomTab === 'terminal' ? '#38bdf8' : 'var(--text-muted)',
               fontSize: '0.82rem',
               fontWeight: 700,
               cursor: 'pointer',
@@ -296,7 +297,7 @@ export const DeveloperIdeView: React.FC = () => {
             style={{
               background: 'none',
               border: 'none',
-              color: activeBottomTab === 'output' ? '#38bdf8' : '#64748b',
+              color: activeBottomTab === 'output' ? '#38bdf8' : 'var(--text-muted)',
               fontSize: '0.82rem',
               fontWeight: 700,
               cursor: 'pointer',
