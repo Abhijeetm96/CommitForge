@@ -170,19 +170,34 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [instructionMode, setInstructionModeState] = useState<InstructionMode>(() => {
     return (localStorage.getItem('commitforge_instruction_mode') as InstructionMode) || 'beginner';
   });
+  // Light mode feature toggle (currently disabled; all code preserved)
+  const LIGHT_MODE_ENABLED = false;
+
   const [theme, setThemeState] = useState<'dark' | 'light'>(() => {
+    if (!LIGHT_MODE_ENABLED) return 'dark';
     return (localStorage.getItem('commitforge_theme') as 'dark' | 'light') || 'dark';
   });
 
   const setTheme = (t: 'dark' | 'light') => {
+    if (!LIGHT_MODE_ENABLED) {
+      setThemeState('dark');
+      localStorage.setItem('commitforge_theme', 'dark');
+      document.documentElement.setAttribute('data-theme', 'dark');
+      return;
+    }
     setThemeState(t);
     localStorage.setItem('commitforge_theme', t);
     document.documentElement.setAttribute('data-theme', t);
   };
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-    if (theme === 'light') {
+    if (!LIGHT_MODE_ENABLED && theme !== 'dark') {
+      setThemeState('dark');
+      localStorage.setItem('commitforge_theme', 'dark');
+    }
+    const activeTheme = LIGHT_MODE_ENABLED ? theme : 'dark';
+    document.documentElement.setAttribute('data-theme', activeTheme);
+    if (activeTheme === 'light') {
       document.documentElement.classList.add('light');
       document.documentElement.classList.remove('dark');
       document.body.classList.add('light');

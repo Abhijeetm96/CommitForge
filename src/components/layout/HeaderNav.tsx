@@ -40,6 +40,9 @@ export const HeaderNav: React.FC = () => {
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
   const [showMobileNav, setShowMobileNav] = useState(false);
 
+  // Light mode feature toggle (currently disabled; code preserved)
+  const LIGHT_MODE_ENABLED = false;
+
   const isIDE = mode === 'ide';
   const isClean = Object.keys(repo.workingDirectory).length === 0 || Object.keys(repo.index).length === 0;
 
@@ -362,27 +365,29 @@ export const HeaderNav: React.FC = () => {
           {showMobileNav ? <X size={18} /> : <Menu size={18} />}
         </button>
 
-        {/* Quick Theme Toggle (Sun/Moon) */}
-        <button
-          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          className="header-theme-toggle-btn"
-          style={{
-            background: 'transparent',
-            border: 'none',
-            color: theme === 'dark' ? '#f59e0b' : '#0284c7',
-            padding: '0.35rem',
-            borderRadius: '6px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'all 0.15s ease',
-          }}
-          title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-          aria-label="Toggle dark/light theme"
-        >
-          {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
-        </button>
+        {/* Quick Theme Toggle (Sun/Moon) - currently disabled; code preserved */}
+        {LIGHT_MODE_ENABLED && (
+          <button
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            className="header-theme-toggle-btn"
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: theme === 'dark' ? '#f59e0b' : '#0284c7',
+              padding: '0.35rem',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.15s ease',
+            }}
+            title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            aria-label="Toggle dark/light theme"
+          >
+            {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+          </button>
+        )}
 
         {/* I'm Lost quick helper trigger (Section 16) */}
         <button
@@ -534,30 +539,32 @@ export const HeaderNav: React.FC = () => {
               </select>
             </div>
 
-            {/* Theme Toggle & Reset Exercise */}
+            {/* Theme Toggle & Reset Exercise - light mode disabled; code preserved */}
             <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.2rem' }}>
-              <button
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                style={{
-                  flex: 1,
-                  background: 'var(--bg-app)',
-                  border: '1px solid var(--border-color)',
-                  color: 'var(--text-secondary)',
-                  padding: '0.45rem',
-                  borderRadius: '6px',
-                  fontSize: '0.75rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '0.35rem',
-                }}
-                title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-              >
-                {theme === 'dark' ? <Sun size={13} color="#f59e0b" /> : <Moon size={13} color="#0284c7" />}
-                {theme === 'dark' ? 'Light' : 'Dark'}
-              </button>
+              {LIGHT_MODE_ENABLED && (
+                <button
+                  onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                  style={{
+                    flex: 1,
+                    background: 'var(--bg-app)',
+                    border: '1px solid var(--border-color)',
+                    color: 'var(--text-secondary)',
+                    padding: '0.45rem',
+                    borderRadius: '6px',
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.35rem',
+                  }}
+                  title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                >
+                  {theme === 'dark' ? <Sun size={13} color="#f59e0b" /> : <Moon size={13} color="#0284c7" />}
+                  {theme === 'dark' ? 'Light' : 'Dark'}
+                </button>
+              )}
 
               <button
                 onClick={() => {
