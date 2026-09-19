@@ -109,12 +109,12 @@ export const UniversalConceptView: React.FC<Props> = ({
               {/* Left Card: Core definition */}
               <div
                 style={{
-                  background: '#090e1a',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  background: 'var(--bg-card)',
+                  border: '1px solid var(--border-color)',
                   borderRadius: '12px',
                   padding: '1rem 1.15rem',
                   fontSize: '0.86rem',
-                  color: '#e2e8f0',
+                  color: 'var(--text-primary)',
                   lineHeight: 1.55,
                 }}
               >
@@ -167,12 +167,12 @@ export const UniversalConceptView: React.FC<Props> = ({
               {/* Left Card: Rationale */}
               <div
                 style={{
-                  background: '#090e1a',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                  background: 'var(--bg-card)',
+                  border: '1px solid var(--border-color)',
                   borderRadius: '12px',
                   padding: '1rem 1.15rem',
                   fontSize: '0.86rem',
-                  color: '#e2e8f0',
+                  color: 'var(--text-primary)',
                   lineHeight: 1.55,
                 }}
               >
@@ -304,8 +304,8 @@ export const UniversalConceptView: React.FC<Props> = ({
                   <div
                     key={idx}
                     style={{
-                      background: '#090e1a',
-                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                      background: 'var(--bg-card)',
+                      border: '1px solid var(--border-color)',
                       borderRadius: '12px',
                       padding: '1rem 1.15rem',
                       display: 'flex',
@@ -470,8 +470,8 @@ export const UniversalConceptView: React.FC<Props> = ({
                     <div
                       key={scenarioKey}
                       style={{
-                        background: '#090e1a',
-                        border: '1px solid rgba(255, 255, 255, 0.08)',
+                        background: 'var(--bg-card)',
+                        border: '1px solid var(--border-color)',
                         borderRadius: '12px',
                         padding: '1.15rem 1.25rem',
                         display: 'flex',

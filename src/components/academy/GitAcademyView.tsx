@@ -327,8 +327,8 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
         style={{
           flexShrink: 0,
           padding: '0.85rem 1.15rem',
-          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-          background: 'rgba(12, 19, 34, 0.95)',
+          borderTop: '1px solid var(--border-color)',
+          background: 'var(--bg-surface)',
           display: 'flex',
           flexDirection: 'column',
           gap: '0.45rem',
@@ -378,8 +378,8 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
         height: '100%',
         maxHeight: '100%',
         minHeight: 0,
-        background: '#070b14',
-        color: '#f8fafc',
+        background: 'var(--bg-app)',
+        color: 'var(--text-primary)',
         overflow: 'hidden',
       }}
     >
@@ -392,8 +392,8 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
           width: '240px',
           minWidth: '240px',
           maxWidth: '240px',
-          background: '#080d19',
-          borderRight: '1px solid rgba(255, 255, 255, 0.08)',
+          background: 'var(--bg-surface)',
+          borderRight: '1px solid var(--border-color)',
           display: 'flex',
           flexDirection: 'column',
           height: '100%',
@@ -420,7 +420,7 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
           height: '100%',
           maxHeight: '100%',
           overflow: 'hidden',
-          background: '#070b14',
+          background: 'var(--bg-app)',
         }}
       >
         {/* Mobile & Tablet Top Bar (<1200px) */}
@@ -429,8 +429,8 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
           style={{
             flexShrink: 0,
             padding: '0.5rem 0.85rem',
-            background: '#090e1a',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+            background: 'var(--bg-surface)',
+            borderBottom: '1px solid var(--border-color)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -529,8 +529,8 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
           style={{
             flexShrink: 0,
             padding: '0.65rem 1.25rem',
-            borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-            background: 'rgba(12, 19, 34, 0.95)',
+            borderTop: '1px solid var(--border-color)',
+            background: 'var(--bg-surface)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',

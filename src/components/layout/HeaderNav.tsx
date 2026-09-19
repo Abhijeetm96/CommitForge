@@ -4,6 +4,8 @@ import { PROJECTS } from '../../data/projects';
 import {
   Flame,
   Settings,
+  Sun,
+  Moon,
   RotateCcw,
   LifeBuoy,
   GitBranch,
@@ -21,6 +23,8 @@ export const HeaderNav: React.FC = () => {
     setMode,
     instructionMode,
     setInstructionMode,
+    theme,
+    setTheme,
     currentProject,
     setProjectKey,
     resetCurrentExercise,
@@ -46,8 +50,8 @@ export const HeaderNav: React.FC = () => {
         style={{
           height: '60px',
           flexShrink: 0,
-          background: '#0c1322',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          background: 'var(--bg-surface)',
+          borderBottom: '1px solid var(--border-color)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -357,6 +361,29 @@ export const HeaderNav: React.FC = () => {
         >
           {showMobileNav ? <X size={18} /> : <Menu size={18} />}
         </button>
+
+        {/* Quick Theme Toggle (Sun/Moon) */}
+        <button
+          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          className="header-theme-toggle-btn"
+          style={{
+            background: 'transparent',
+            border: 'none',
+            color: theme === 'dark' ? '#f59e0b' : '#0284c7',
+            padding: '0.35rem',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'all 0.15s ease',
+          }}
+          title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+          aria-label="Toggle dark/light theme"
+        >
+          {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+        </button>
+
         {/* I'm Lost quick helper trigger (Section 16) */}
         <button
           onClick={() => setShowLostDrawer(true)}
@@ -429,11 +456,11 @@ export const HeaderNav: React.FC = () => {
               top: '48px',
               right: 0,
               width: '260px',
-              background: '#131d33',
-              border: '1px solid rgba(255, 255, 255, 0.12)',
+              background: 'var(--bg-surface-elevated)',
+              border: '1px solid var(--border-color)',
               borderRadius: '12px',
               padding: '1rem',
-              boxShadow: '0 12px 30px rgba(0, 0, 0, 0.6)',
+              boxShadow: '0 12px 30px rgba(0, 0, 0, 0.25)',
               display: 'flex',
               flexDirection: 'column',
               gap: '0.8rem',
@@ -441,12 +468,12 @@ export const HeaderNav: React.FC = () => {
             }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#f8fafc', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              <span style={{ fontSize: '0.8rem', fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                 Settings & Tools
               </span>
               <button
                 onClick={() => setShowSettingsMenu(false)}
-                style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer' }}
+                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
               >
                 <X size={14} />
               </button>
@@ -454,7 +481,7 @@ export const HeaderNav: React.FC = () => {
 
             {/* Instruction Mode */}
             <div>
-              <label style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 700, display: 'block', marginBottom: '0.3rem' }}>
+              <label style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', fontWeight: 700, display: 'block', marginBottom: '0.3rem' }}>
                 EXPERIENCE LEVEL
               </label>
               <select
@@ -462,9 +489,9 @@ export const HeaderNav: React.FC = () => {
                 onChange={(e) => setInstructionMode(e.target.value as InstructionMode)}
                 style={{
                   width: '100%',
-                  background: '#0b111e',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  color: '#f8fafc',
+                  background: 'var(--bg-app)',
+                  border: '1px solid var(--border-color)',
+                  color: 'var(--text-primary)',
                   padding: '0.4rem 0.6rem',
                   borderRadius: '6px',
                   fontSize: '0.78rem',
@@ -481,7 +508,7 @@ export const HeaderNav: React.FC = () => {
 
             {/* Project Switcher */}
             <div>
-              <label style={{ fontSize: '0.72rem', color: '#94a3b8', fontWeight: 700, display: 'block', marginBottom: '0.3rem' }}>
+              <label style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', fontWeight: 700, display: 'block', marginBottom: '0.3rem' }}>
                 ACTIVE PROJECT
               </label>
               <select
@@ -489,9 +516,9 @@ export const HeaderNav: React.FC = () => {
                 onChange={(e) => setProjectKey(e.target.value)}
                 style={{
                   width: '100%',
-                  background: '#0b111e',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
-                  color: '#f8fafc',
+                  background: 'var(--bg-app)',
+                  border: '1px solid var(--border-color)',
+                  color: 'var(--text-primary)',
                   padding: '0.4rem 0.6rem',
                   borderRadius: '6px',
                   fontSize: '0.78rem',
@@ -507,8 +534,30 @@ export const HeaderNav: React.FC = () => {
               </select>
             </div>
 
-            {/* Reset Exercise */}
-            <div style={{ marginTop: '0.2rem' }}>
+            {/* Theme Toggle & Reset Exercise */}
+            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.2rem' }}>
+              <button
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                style={{
+                  flex: 1,
+                  background: 'var(--bg-app)',
+                  border: '1px solid var(--border-color)',
+                  color: 'var(--text-secondary)',
+                  padding: '0.45rem',
+                  borderRadius: '6px',
+                  fontSize: '0.75rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.35rem',
+                }}
+                title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              >
+                {theme === 'dark' ? <Sun size={13} color="#f59e0b" /> : <Moon size={13} color="#0284c7" />}
+                {theme === 'dark' ? 'Light' : 'Dark'}
+              </button>
 
               <button
                 onClick={() => {
@@ -517,10 +566,10 @@ export const HeaderNav: React.FC = () => {
                 }}
                 style={{
                   flex: 1,
-                  background: '#0b111e',
-                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  background: 'var(--bg-app)',
+                  border: '1px solid var(--border-color)',
                   color: '#f05033',
-                  padding: '0.4rem',
+                  padding: '0.45rem',
                   borderRadius: '6px',
                   fontSize: '0.75rem',
                   fontWeight: 700,
@@ -528,7 +577,7 @@ export const HeaderNav: React.FC = () => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '0.3rem',
+                  gap: '0.35rem',
                 }}
               >
                 <RotateCcw size={13} /> Reset

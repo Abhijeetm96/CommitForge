@@ -39,22 +39,131 @@
   --shadow-glow: 0 0 20px rgba(240, 80, 51, 0.15);
 }
 
-.app-root.light {
+.app-root.light,
+[data-theme="light"],
+body.light {
   --bg-app: #f8fafc;
   --bg-surface: #ffffff;
   --bg-surface-elevated: #f1f5f9;
   --bg-card: #ffffff;
-  --bg-card-hover: #f8fafc;
+  --bg-card-hover: #f1f5f9;
   --border-color: #e2e8f0;
   --border-highlight: #cbd5e1;
 
   --text-primary: #0f172a;
   --text-secondary: #475569;
-  --text-muted: #94a3b8;
+  --text-muted: #64748b;
 
   --terminal-bg: #0f172a;
   --terminal-border: #1e293b;
   --terminal-text: #f8fafc;
+}
+
+/* Light Theme Component Overrides */
+.app-root.light header.header-nav,
+[data-theme="light"] header.header-nav {
+  background: #ffffff !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.app-root.light .header-nav-tabs button,
+[data-theme="light"] .header-nav-tabs button {
+  color: #475569;
+}
+
+.app-root.light .header-nav-tabs button:hover,
+[data-theme="light"] .header-nav-tabs button:hover {
+  color: #0284c7;
+}
+
+.app-root.light .academy-sidebar-desktop,
+.app-root.light .academy-mobile-topbar,
+[data-theme="light"] .academy-sidebar-desktop,
+[data-theme="light"] .academy-mobile-topbar {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+.app-root.light .academy-center-main,
+.app-root.light .concept-view-container,
+.app-root.light .academy-concept-container,
+[data-theme="light"] .academy-center-main,
+[data-theme="light"] .concept-view-container,
+[data-theme="light"] .academy-concept-container {
+  background: #f8fafc !important;
+}
+
+.app-root.light .academy-hero-card,
+[data-theme="light"] .academy-hero-card {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
+}
+
+.app-root.light .academy-hero-card h1,
+[data-theme="light"] .academy-hero-card h1 {
+  color: #0f172a !important;
+}
+
+.app-root.light .academy-subtabs-bar,
+[data-theme="light"] .academy-subtabs-bar {
+  background: #f8fafc !important;
+  border-bottom-color: #e2e8f0 !important;
+}
+
+.app-root.light .academy-bottom-bar,
+[data-theme="light"] .academy-bottom-bar {
+  background: #ffffff !important;
+  border-top-color: #e2e8f0 !important;
+}
+
+.app-root.light h1,
+.app-root.light h2,
+.app-root.light h3,
+.app-root.light h4,
+[data-theme="light"] h1,
+[data-theme="light"] h2,
+[data-theme="light"] h3,
+[data-theme="light"] h4 {
+  color: #0f172a;
+}
+
+/* Hardcoded inline style fallbacks for legacy components */
+.app-root.light [style*="background: #070b14"],
+.app-root.light [style*="background: rgb(7, 11, 20)"],
+.app-root.light [style*="background: #080d19"],
+.app-root.light [style*="background: #0c1322"],
+.app-root.light [style*="background: #090e1a"] {
+  background: #ffffff !important;
+}
+
+.app-root.light [style*="background: rgba(15, 23, 42, 0.95)"],
+.app-root.light [style*="background: #0f172a"],
+.app-root.light [style*="background: #131d33"],
+.app-root.light [style*="background: #111827"] {
+  background: #ffffff !important;
+}
+
+.app-root.light [style*="color: #f8fafc"],
+.app-root.light [style*="color: rgb(248, 250, 252)"] {
+  color: #0f172a !important;
+}
+
+.app-root.light [style*="color: #cbd5e1"],
+.app-root.light [style*="color: rgb(203, 213, 225)"] {
+  color: #334155 !important;
+}
+
+.app-root.light [style*="color: #94a3b8"],
+.app-root.light [style*="color: rgb(148, 163, 184)"] {
+  color: #475569 !important;
+}
+
+.app-root.light [style*="border: 1px solid rgba(255, 255, 255"],
+.app-root.light [style*="border-bottom: 1px solid rgba(255, 255, 255"],
+.app-root.light [style*="border-top: 1px solid rgba(255, 255, 255"],
+.app-root.light [style*="border-right: 1px solid rgba(255, 255, 255"] {
+  border-color: #e2e8f0 !important;
 }
 
 * {

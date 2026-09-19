@@ -235,12 +235,12 @@ export const UniversalConceptHero: React.FC<Props> = ({
           display: 'flex',
           alignItems: 'center',
           gap: '0.4rem',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          borderBottom: '1px solid var(--border-color)',
           paddingBottom: '0.2rem',
           position: 'sticky',
           top: 0,
           zIndex: 20,
-          background: '#070b14',
+          background: 'var(--bg-app)',
           paddingTop: '0.4rem',
         }}
       >
