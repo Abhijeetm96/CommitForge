@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { GitEngine } from '../git-engine/engine';
-import { calculateCommandCoverage, GIT_COMMAND_COVERAGE } from '../data/gitCommandCoverage';
+import { GitEngine } from '../commitforge/git-engine/engine';
+import { calculateCommandCoverage, GIT_COMMAND_COVERAGE } from '../commitforge/data/gitCommandCoverage';
 import { EvidenceMastery, CompetencyLevel } from '../context/AppContext';
 
 describe('CommitForge Learning UX & Pedagogical System', () => {
