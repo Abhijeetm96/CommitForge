@@ -1,0 +1,14 @@
+/* =========================================================================
+   CommitForge — Academy-Specific Custom Styles
+   -------------------------------------------------------------------------
+   Add any custom styling, animations, or overrides specific to CommitForge here.
+   Global tokens (--git-orange, --bg-app, fonts, etc.) are inherited from src/styles/index.css.
+   ========================================================================= */
+
+/* Scoped selector or custom styles for CommitForge */
+.commitforge-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
