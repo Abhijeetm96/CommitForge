@@ -2,23 +2,23 @@ import { describe, it, expect } from 'vitest';
 import { KUBE_CHAPTERS, TOTAL_CHAPTERS, TOTAL_CONCEPTS, getAllConcepts } from '../data/topics';
 
 describe('PodForge Master Curriculum Completeness & Quality Audit', () => {
-  it('contains exactly 16 comprehensive chapters spanning beginner to expert', () => {
-    expect(TOTAL_CHAPTERS).toBe(16);
-    expect(KUBE_CHAPTERS.length).toBe(16);
+  it('contains exactly 15 curated chapters spanning beginner to expert', () => {
+    expect(TOTAL_CHAPTERS).toBe(15);
+    expect(KUBE_CHAPTERS.length).toBe(15);
 
     KUBE_CHAPTERS.forEach((ch, idx) => {
       expect(ch.number).toBe(idx + 1);
       expect(ch.id).toBeTruthy();
       expect(ch.title).toBeTruthy();
       expect(ch.category).toBeTruthy();
-      expect(ch.concepts.length).toBeGreaterThanOrEqual(2);
+      expect(ch.concepts.length).toBeGreaterThanOrEqual(3);
     });
   });
 
-  it('covers over 50 comprehensive concepts across all 16 chapters', () => {
-    expect(TOTAL_CONCEPTS).toBeGreaterThanOrEqual(50);
+  it('covers exactly 71 curated concepts across all 15 chapters', () => {
+    expect(TOTAL_CONCEPTS).toBe(71);
     const allConcepts = getAllConcepts();
-    expect(allConcepts.length).toBe(TOTAL_CONCEPTS);
+    expect(allConcepts.length).toBe(71);
   });
 
   it('verifies 100% of concepts have complete, high-quality pedagogical data', () => {
@@ -39,14 +39,52 @@ describe('PodForge Master Curriculum Completeness & Quality Audit', () => {
     expect(missingFields).toEqual([]);
   });
 
+  it('verifies 100% of concepts (71/71) have rich Concept Overview & Subtopics data', () => {
+    const allConcepts = getAllConcepts();
+    const missingOverviewFields: string[] = [];
+
+    allConcepts.forEach((c) => {
+      if (!c.subtopics || c.subtopics.length < 2) {
+        missingOverviewFields.push(`${c.number} (${c.id}): subtopics must have >= 2 items`);
+      }
+      if (!c.whatIsIt || c.whatIsIt.length < 20) {
+        missingOverviewFields.push(`${c.number} (${c.id}): missing or short whatIsIt`);
+      }
+      if (!c.inSimpleWords || c.inSimpleWords.length < 20) {
+        missingOverviewFields.push(`${c.number} (${c.id}): missing or short inSimpleWords`);
+      }
+      if (!c.realWorldAnalogy || !c.realWorldAnalogy.metaphor || !c.realWorldAnalogy.explanation) {
+        missingOverviewFields.push(`${c.number} (${c.id}): missing realWorldAnalogy`);
+      }
+      if (!c.whenToUse || c.whenToUse.length < 2) {
+        missingOverviewFields.push(`${c.number} (${c.id}): whenToUse must have >= 2 points`);
+      }
+      if (!c.whenNotToUse || c.whenNotToUse.length < 1) {
+        missingOverviewFields.push(`${c.number} (${c.id}): whenNotToUse must have >= 1 points`);
+      }
+      if (!c.lifecycleSteps || c.lifecycleSteps.length < 3) {
+        missingOverviewFields.push(`${c.number} (${c.id}): lifecycleSteps must have >= 3 steps`);
+      }
+      if (!c.keyMechanisms || c.keyMechanisms.length < 2) {
+        missingOverviewFields.push(`${c.number} (${c.id}): keyMechanisms must have >= 2 mechanisms`);
+      }
+      if (!c.productionTips || c.productionTips.length < 2) {
+        missingOverviewFields.push(`${c.number} (${c.id}): productionTips must have >= 2 tips`);
+      }
+    });
+
+    expect(missingOverviewFields).toEqual([]);
+    expect(allConcepts.length).toBe(71);
+  });
+
   it('prints a complete curriculum coverage report', () => {
     console.log('\n================ PODFORGE MASTER CURRICULUM AUDIT REPORT ================');
     console.log(`Total Chapters: ${TOTAL_CHAPTERS} | Total Concepts: ${TOTAL_CONCEPTS}\n`);
 
     KUBE_CHAPTERS.forEach((ch) => {
-      console.log(`✓ Chapter ${String(ch.number).padStart(2, '0')}: ${ch.title.padEnd(48, ' ')} | ${ch.concepts.length} concepts [${ch.category}]`);
+      console.log(`✓ Chapter ${String(ch.number).padStart(2, '0')}: ${ch.title.padEnd(42, ' ')} | ${ch.concepts.length} concepts [${ch.category}]`);
       ch.concepts.forEach((c) => {
-        console.log(`    ↳ Concept ${c.number.padEnd(5, ' ')}: ${c.title.padEnd(45, ' ')} [${c.difficulty}] (${c.commandPill})`);
+        console.log(`    ↳ Concept ${c.number.padEnd(5, ' ')}: ${c.title.padEnd(42, ' ')} [${c.difficulty}] (${c.commandPill})`);
       });
     });
 

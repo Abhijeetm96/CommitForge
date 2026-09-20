@@ -60,189 +60,218 @@ import {
   UploadCloud,
   Stethoscope,
   ScrollText,
+  CheckCircle2,
+  HelpCircle,
+  BookOpen,
   LucideIcon,
 } from 'lucide-react';
 
 /**
- * Returns a unique, topic-specific Lucide icon for every one of the 56 Kubernetes concepts.
+ * Returns a unique, topic-specific Lucide icon for every one of the 71 curated Kubernetes concepts.
  */
 export function getConceptIcon(conceptId: string): LucideIcon {
   switch (conceptId) {
     // -------------------------------------------------------------------------
-    // Chapter 01: Container Fundamentals & OCI Runtimes
+    // Chapter 01: Introduction to Kubernetes
     // -------------------------------------------------------------------------
-    case 'c-containers-vs-vms':
-      return Container;
-    case 'c-oci-image-layers':
-      return Layers;
-    case 'c-container-runtimes-cri':
-      return Cpu;
-    case 'c-why-orchestration':
-      return Server;
-
-    // -------------------------------------------------------------------------
-    // Chapter 02: Kubernetes Control Plane & Node Architecture
-    // -------------------------------------------------------------------------
-    case 'c-control-plane-anatomy':
-      return ServerCog;
-    case 'c-worker-node-anatomy':
-      return HardDrive;
-    case 'c-reconciliation-loops':
-      return RefreshCw;
-    case 'c-mastering-kubectl':
-      return Terminal;
-
-    // -------------------------------------------------------------------------
-    // Chapter 03: Pods — The Atomic Unit of Kubernetes
-    // -------------------------------------------------------------------------
-    case 'c-pod-anatomy-lifecycle':
-      return Box;
-    case 'c-multi-container-patterns':
-      return Boxes;
-    case 'c-ephemeral-containers-debug':
-      return Bug;
-    case 'c-pdb-graceful-shutdown':
-      return ShieldAlert;
-
-    // -------------------------------------------------------------------------
-    // Chapter 04: Workloads & Stateless Controllers
-    // -------------------------------------------------------------------------
-    case 'c-replicasets-selectors':
-      return Copy;
-    case 'c-deployments-rolling-updates':
-      return Repeat;
-    case 'c-daemonsets-node-agents':
-      return Radio;
-    case 'c-jobs-and-cronjobs':
-      return Clock;
-
-    // -------------------------------------------------------------------------
-    // Chapter 05: Stateful Workloads & Persistent Storage
-    // -------------------------------------------------------------------------
-    case 'c-volumes-emptydir-hostpath':
-      return Folder;
-    case 'c-pv-pvc-lifecycle':
-      return HardDrive;
-    case 'c-storageclasses-csi':
-      return Database;
-    case 'c-statefulsets-ordered-scaling':
-      return ListOrdered;
-
-    // -------------------------------------------------------------------------
-    // Chapter 06: Configuration, Secrets & 12-Factor Apps
-    // -------------------------------------------------------------------------
-    case 'c-configmaps-env-files':
-      return FileText;
-    case 'c-secrets-security-vault':
-      return Key;
-    case 'c-downward-api':
-      return Code2;
-
-    // -------------------------------------------------------------------------
-    // Chapter 07: Services, Networking & Ingress Routing
-    // -------------------------------------------------------------------------
-    case 'c-k8s-networking-model':
-      return Network;
-    case 'c-service-types-deepdive':
-      return Share2;
-    case 'c-coredns-discovery':
+    case 'c-k8s-overview':
       return Globe;
-    case 'c-ingress-controllers-tls':
-      return DoorOpen;
-    case 'c-gateway-api-modern':
+    case 'c-k8s-why-use':
+      return Zap;
+    case 'c-k8s-key-concepts':
+      return BookOpen;
+    case 'c-k8s-alternatives':
       return GitFork;
 
     // -------------------------------------------------------------------------
-    // Chapter 08: Scheduling, Placement & Resource Management
+    // Chapter 02: Containers
     // -------------------------------------------------------------------------
-    case 'c-requests-limits-qos':
-      return SlidersHorizontal;
-    case 'c-node-affinity-anti-affinity':
-      return Magnet;
-    case 'c-taints-and-tolerations':
-      return ShieldX;
-    case 'c-pod-anti-affinity-topology':
+    case 'c-containers-what-are':
+      return Container;
+    case 'c-containers-vs-vms':
+      return Layers;
+    case 'c-container-images':
+      return FileCode;
+    case 'c-container-registries':
+      return UploadCloud;
+    case 'c-why-k8s-uses-containers':
+      return Cpu;
+
+    // -------------------------------------------------------------------------
+    // Chapter 03: Setting Up Kubernetes
+    // -------------------------------------------------------------------------
+    case 'c-choosing-k8s-environment':
       return Compass;
-    case 'c-priorityclasses-preemption':
+    case 'c-managed-k8s-providers':
+      return Server;
+    case 'c-installing-local-cluster':
+      return Terminal;
+    case 'c-your-first-cluster':
+      return Boxes;
+
+    // -------------------------------------------------------------------------
+    // Chapter 04: Running Applications
+    // -------------------------------------------------------------------------
+    case 'c-pods-running-apps':
+      return Box;
+    case 'c-replicasets-desired-state':
+      return Copy;
+    case 'c-deployments-workloads':
+      return Layers;
+    case 'c-statefulsets-persistent-apps':
+      return Database;
+    case 'c-jobs-batch-processing':
+      return CheckCircle2;
+
+    // -------------------------------------------------------------------------
+    // Chapter 05: Services & Networking
+    // -------------------------------------------------------------------------
+    case 'c-why-networking-needed':
+      return Network;
+    case 'c-k8s-services-clusterip':
+      return Share2;
+    case 'c-external-access-ingress':
+      return Globe;
+    case 'c-load-balancing-endpoints':
+      return Route;
+    case 'c-pod-to-pod-networking':
+      return Radio;
+
+    // -------------------------------------------------------------------------
+    // Chapter 06: Configuration Management
+    // -------------------------------------------------------------------------
+    case 'c-configuration-in-k8s':
+      return Sliders;
+    case 'c-configmaps-configuration':
+      return FileText;
+    case 'c-secrets-configuration':
+      return Key;
+
+    // -------------------------------------------------------------------------
+    // Chapter 07: Resource Management
+    // -------------------------------------------------------------------------
+    case 'c-cpu-and-memory':
+      return Cpu;
+    case 'c-resource-requests':
       return ArrowUpCircle;
-
-    // -------------------------------------------------------------------------
-    // Chapter 09: Autoscaling & Cluster Elasticity
-    // -------------------------------------------------------------------------
-    case 'c-hpa-v2-metrics':
-      return TrendingUp;
-    case 'c-vpa-right-sizing':
-      return Maximize2;
-    case 'c-karpenter-cluster-autoscaler':
-      return Zap;
-
-    // -------------------------------------------------------------------------
-    // Chapter 10: Security, Authentication & RBAC
-    // -------------------------------------------------------------------------
-    case 'c-auth-serviceaccounts':
-      return UserCheck;
-    case 'c-rbac-roles-bindings':
-      return KeyRound;
-    case 'c-security-contexts-hardening':
-      return Lock;
-    case 'c-pod-security-standards-pss':
-      return FileCheck;
-
-    // -------------------------------------------------------------------------
-    // Chapter 11: Network Security & Microsegmentation
-    // -------------------------------------------------------------------------
-    case 'c-network-policies-microsegmentation':
-      return Shield;
-    case 'c-service-mesh-istio-cilium':
-      return Workflow;
-
-    // -------------------------------------------------------------------------
-    // Chapter 12: Observability, Health Checks & Monitoring
-    // -------------------------------------------------------------------------
-    case 'c-health-probes-readiness-liveness':
-      return HeartPulse;
-    case 'c-cluster-logging-fluentd':
-      return ScrollText;
-    case 'c-prometheus-metrics-server':
+    case 'c-resource-limits':
+      return ShieldAlert;
+    case 'c-namespace-quotas':
+      return SlidersHorizontal;
+    case 'c-monitoring-resource-usage':
       return BarChart3;
 
     // -------------------------------------------------------------------------
-    // Chapter 13: Helm & Kubernetes Package Management
+    // Chapter 08: Security
     // -------------------------------------------------------------------------
-    case 'c-helm-charts-anatomy':
+    case 'c-k8s-security-fundamentals':
+      return Shield;
+    case 'c-rbac-authorization':
+      return UserCheck;
+    case 'c-network-security-policies':
+      return ShieldCheck;
+    case 'c-container-security-hardening':
+      return Lock;
+    case 'c-pod-security-standards':
+      return FileCheck;
+
+    // -------------------------------------------------------------------------
+    // Chapter 09: Monitoring & Logging
+    // -------------------------------------------------------------------------
+    case 'c-monitoring-logs':
+      return ScrollText;
+    case 'c-monitoring-metrics':
+      return BarChart3;
+    case 'c-monitoring-traces':
+      return Workflow;
+    case 'c-monitoring-resource-health':
+      return HeartPulse;
+    case 'c-observability-engines':
+      return Activity;
+
+    // -------------------------------------------------------------------------
+    // Chapter 10: Autoscaling
+    // -------------------------------------------------------------------------
+    case 'c-why-autoscaling':
+      return Zap;
+    case 'c-horizontal-pod-autoscaler':
+      return TrendingUp;
+    case 'c-vertical-pod-autoscaler':
+      return Maximize2;
+    case 'c-cluster-autoscaling':
+      return Server;
+
+    // -------------------------------------------------------------------------
+    // Chapter 11: Scheduling
+    // -------------------------------------------------------------------------
+    case 'c-k8s-scheduler-basics':
+      return Clock;
+    case 'c-taints-and-tolerations':
+      return Magnet;
+    case 'c-topology-spread-constraints':
+      return Shuffle;
+    case 'c-pod-priorities-preemption':
+      return AlertTriangle;
+    case 'c-pod-evictions-graceful':
+      return DoorOpen;
+
+    // -------------------------------------------------------------------------
+    // Chapter 12: Storage & Volumes
+    // -------------------------------------------------------------------------
+    case 'c-k8s-storage-fundamentals':
+      return HardDrive;
+    case 'c-k8s-volumes-emptydir-hostpath':
+      return Folder;
+    case 'c-persistent-storage-pv-pvc':
+      return Database;
+    case 'c-csi-drivers-storage':
+      return Cpu;
+    case 'c-stateful-applications-storage':
+      return Database;
+
+    // -------------------------------------------------------------------------
+    // Chapter 13: Deployment Patterns
+    // -------------------------------------------------------------------------
+    case 'c-cicd-integration':
+      return Workflow;
+    case 'c-gitops-workflow':
+      return GitPullRequest;
+    case 'c-helm-charts-packaging':
       return Anchor;
-    case 'c-helm-templating-pipelines':
-      return FileCode;
-    case 'c-helm-lifecycle-releases':
+    case 'c-canary-deployments':
+      return Activity;
+    case 'c-blue-green-deployments':
+      return Shuffle;
+    case 'c-rolling-updates-strategy':
+      return Repeat;
+    case 'c-rollbacks-recovery':
       return RotateCcw;
 
     // -------------------------------------------------------------------------
-    // Chapter 14: GitOps & Progressive Delivery
+    // Chapter 14: Advanced Kubernetes
     // -------------------------------------------------------------------------
-    case 'c-gitops-principles-argocd':
-      return GitPullRequest;
-    case 'c-progressive-delivery-canary':
-      return Shuffle;
-
-    // -------------------------------------------------------------------------
-    // Chapter 15: Custom Resources & The Operator Pattern
-    // -------------------------------------------------------------------------
-    case 'c-crd-custom-resources':
+    case 'c-k8s-controllers-custom':
+      return RefreshCw;
+    case 'c-custom-scheduling':
+      return Clock;
+    case 'c-custom-resources-crds':
       return FileJson;
-    case 'c-operator-pattern-controllers':
-      return Bot;
+    case 'c-k8s-extensions-apis':
+      return Code2;
 
     // -------------------------------------------------------------------------
-    // Chapter 16: Cluster Administration, Upgrades & Disaster Recovery
+    // Chapter 15: Cluster Operations
     // -------------------------------------------------------------------------
-    case 'c-node-maintenance-cordon-drain':
+    case 'c-should-you-manage-cluster':
+      return HelpCircle;
+    case 'c-control-plane-management':
+      return ServerCog;
+    case 'c-worker-nodes-lifecycle':
+      return HardDrive;
+    case 'c-multicluster-management':
+      return Globe;
+    case 'c-cluster-operations-admin':
       return Wrench;
-    case 'c-etcd-backup-restore':
-      return Database;
-    case 'c-kubeadm-cluster-upgrades':
-      return UploadCloud;
-    case 'c-cluster-troubleshooting-triage':
-      return Stethoscope;
 
     default:
       return Box;
@@ -255,37 +284,35 @@ export function getConceptIcon(conceptId: string): LucideIcon {
 export function getChapterIcon(chapterNumber: number): LucideIcon {
   switch (chapterNumber) {
     case 1:
-      return Container;
+      return Compass;
     case 2:
-      return ServerCog;
+      return Container;
     case 3:
-      return Box;
+      return Terminal;
     case 4:
-      return Layers;
+      return Boxes;
     case 5:
-      return HardDrive;
-    case 6:
-      return Key;
-    case 7:
       return Network;
-    case 8:
+    case 6:
       return Sliders;
-    case 9:
-      return TrendingUp;
-    case 10:
+    case 7:
+      return Cpu;
+    case 8:
       return ShieldCheck;
-    case 11:
-      return Shield;
-    case 12:
+    case 9:
       return Activity;
+    case 10:
+      return TrendingUp;
+    case 11:
+      return Clock;
+    case 12:
+      return HardDrive;
     case 13:
-      return Anchor;
-    case 14:
       return GitPullRequest;
-    case 15:
+    case 14:
       return Bot;
-    case 16:
-      return Wrench;
+    case 15:
+      return ServerCog;
     default:
       return Box;
   }

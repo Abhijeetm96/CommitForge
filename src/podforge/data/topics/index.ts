@@ -1,20 +1,18 @@
 import type { KubeChapter, KubeConcept } from './types';
-import { PHASE_1_CHAPTERS } from './phase1';
-import { PHASE_2_CHAPTERS } from './phase2';
-import { PHASE_3_CHAPTERS } from './phase3';
-import { PHASE_4_CHAPTERS } from './phase4';
-import { PHASE_5_CHAPTERS } from './phase5';
-import { PHASE_6_CHAPTERS } from './phase6';
+import { PART_1_CHAPTERS } from './curriculum_part1';
+import { PART_2_CHAPTERS } from './curriculum_part2';
+import { PART_3_CHAPTERS } from './curriculum_part3';
+import { PART_4_CHAPTERS } from './curriculum_part4';
+import { PART_5_CHAPTERS } from './curriculum_part5';
 
 export type { KubeChapter, KubeConcept };
 
 export const KUBE_CHAPTERS: KubeChapter[] = [
-  ...PHASE_1_CHAPTERS,
-  ...PHASE_2_CHAPTERS,
-  ...PHASE_3_CHAPTERS,
-  ...PHASE_4_CHAPTERS,
-  ...PHASE_5_CHAPTERS,
-  ...PHASE_6_CHAPTERS,
+  ...PART_1_CHAPTERS,
+  ...PART_2_CHAPTERS,
+  ...PART_3_CHAPTERS,
+  ...PART_4_CHAPTERS,
+  ...PART_5_CHAPTERS,
 ];
 
 export const TOTAL_CHAPTERS = KUBE_CHAPTERS.length;

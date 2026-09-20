@@ -36,7 +36,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const engine = useMemo(() => new KubeEngine(), []);
   const [clusterState, setClusterState] = useState<ClusterState>(() => engine.getState());
   const [mode, setMode] = useState<AppMode>('academy');
-  const [activeConceptId, setActiveConceptId] = useState<string>('c-pod-basics');
+  const [activeConceptId, setActiveConceptId] = useState<string>('c-k8s-overview');
   const [completedConcepts, setCompletedConcepts] = useState<string[]>(() => {
     try {
       const saved = localStorage.getItem('podforge_completed');

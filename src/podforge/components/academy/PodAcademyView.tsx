@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { KUBE_CHAPTERS } from '../../data/topics';
 import { ClusterCanvas } from '../visualizer/ClusterCanvas';
 import { getConceptIcon, getChapterIcon } from './podIcons';
+import { PodConceptOverviewTab } from './PodConceptOverviewTab';
 import {
   Layers,
   BookOpen,
@@ -471,29 +472,9 @@ export const PodAcademyView: React.FC<PodAcademyViewProps> = ({ onSwitchToSuite 
             </div>
           </div>
 
-          {/* TAB 1: LEARN */}
+          {/* TAB 1: LEARN (CONCEPT OVERVIEW) */}
           {activeTab === 'learn' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '12px', padding: '1.25rem', lineHeight: 1.7, fontSize: '0.92rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--k8s-cyan)', fontWeight: 800, fontSize: '0.78rem', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
-                  <Sparkles size={16} /> Architectural Explanation
-                </div>
-                {activeConcept.explanation}
-              </div>
-
-              <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '12px', padding: '1.25rem' }}>
-                <div style={{ fontSize: '0.82rem', fontWeight: 800, color: 'var(--text-secondary)', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
-                  Frequently Used kubectl Commands for this Resource
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  {activeConcept.kubectlCommands.map((c, i) => (
-                    <div key={i} style={{ background: 'var(--bg-surface)', padding: '0.6rem 0.85rem', borderRadius: '6px', fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: 'var(--k8s-cyan)', border: '1px solid var(--border-color)' }}>
-                      $ {c}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+            <PodConceptOverviewTab concept={activeConcept} />
           )}
 
           {/* TAB 2: LIVE CLUSTER VISUALIZER */}
