@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { GitEngine } from '../git-engine/engine';
-import { extractObjectDatabase } from '../git-engine/internals';
-import { evaluateDanger } from '../git-engine/danger';
+import { GitEngine } from '../commitforge/git-engine/engine';
+import { extractObjectDatabase } from '../commitforge/git-engine/internals';
+import { evaluateDanger } from '../commitforge/git-engine/danger';
 
 describe('CommitForge Git Engine', () => {
   let engine: GitEngine;
