@@ -1,9 +1,11 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
-import { GitEngine } from '../git-engine/engine';
-import { GitRepo, CommandResult, StateInspectorData, WhyExplanation, CommandComparison } from '../git-engine/types';
-import { PROJECTS, ProjectDefinition } from '../data/projects';
+import { GitEngine } from '../commitforge/git-engine/engine';
+import { GitRepo, CommandResult, StateInspectorData, WhyExplanation, CommandComparison } from '../commitforge/git-engine/types';
+import { PROJECTS, ProjectDefinition } from '../commitforge/data/projects';
 
 export type ViewMode =
+  | 'home'
+  | 'podforge'
   | 'dashboard'
   | 'roadmap'
   | 'first10'
@@ -165,7 +167,7 @@ export interface AppContextType {
 const AppContext = createContext<AppContextType | null>(null);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [mode, setModeState] = useState<ViewMode>('learn');
+  const [mode, setModeState] = useState<ViewMode>('home');
   const [activeLessonConcept, setActiveLessonConcept] = useState<string | null>(null);
   const [instructionMode, setInstructionModeState] = useState<InstructionMode>(() => {
     return (localStorage.getItem('commitforge_instruction_mode') as InstructionMode) || 'beginner';
