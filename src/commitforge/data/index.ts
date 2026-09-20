@@ -1,0 +1,11 @@
+export * from './unifiedAcademyData';
+export * from './commandsRef';
+export * from './gitCommandCoverage';
+export * from './gitForHumans';
+export * from './hospitalCases';
+export * from './projects';
+export * from './undoScenarios';
+export * from './capstone';
+export { ALL_PRACTICE_CHALLENGES } from './academyChallenges';
+export { ALL_CONCEPT_REFERENCES } from './academyReferences';
+export type { ConceptReferenceSupplement } from './academyReferences';
