@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ACADEMY_18_TOPICS, ALL_ACADEMY_CONCEPTS } from '../data/unifiedAcademyData';
+import { ACADEMY_18_TOPICS, ALL_ACADEMY_CONCEPTS } from '../commitforge/data/unifiedAcademyData';
 
 describe('References Section All Topics Quality & Completeness Audit', () => {
   const allConceptIds = ACADEMY_18_TOPICS.flatMap((topic) =>
@@ -11,8 +11,8 @@ describe('References Section All Topics Quality & Completeness Audit', () => {
     }))
   );
 
-  it('audits references across all 71 concepts', () => {
-    expect(allConceptIds.length).toBe(71);
+  it('audits references across all 75 concepts', () => {
+    expect(allConceptIds.length).toBe(75);
 
     const missingReference: string[] = [];
     const missingSynopsis: string[] = [];
@@ -55,7 +55,7 @@ describe('References Section All Topics Quality & Completeness Audit', () => {
   });
 
   it('audits each of the 18 topics individually and logs complete references stats', () => {
-    console.log('\n=== REFERENCES COVERAGE AUDIT REPORT: 18 TOPICS / 71 CONCEPTS ===');
+    console.log('\n=== REFERENCES COVERAGE AUDIT REPORT: 18 TOPICS / 75 CONCEPTS ===');
     let totalConcepts = 0;
     let totalValid = 0;
 
@@ -87,7 +87,7 @@ describe('References Section All Topics Quality & Completeness Audit', () => {
     });
 
     console.log(`TOTAL: 18 Topics, ${totalConcepts} Concepts — ${totalValid}/${totalConcepts} Fully Referenced (100%)\n`);
-    expect(totalValid).toBe(71);
-    expect(totalConcepts).toBe(71);
+    expect(totalValid).toBe(75);
+    expect(totalConcepts).toBe(75);
   });
 });
