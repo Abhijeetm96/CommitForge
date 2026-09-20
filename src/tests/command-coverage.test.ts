@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { GitEngine } from '../git-engine/engine';
-import { GIT_COMMAND_COVERAGE, calculateCommandCoverage } from '../data/gitCommandCoverage';
+import { GitEngine } from '../commitforge/git-engine/engine';
+import { GIT_COMMAND_COVERAGE, calculateCommandCoverage } from '../commitforge/data/gitCommandCoverage';
 
 describe('CommitForge Complete Git Command Coverage', () => {
   let engine: GitEngine;
