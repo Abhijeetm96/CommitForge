@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { GitEngine } from '../git-engine/engine';
-import { calculateGitStateDiff } from '../components/animation/stateDiff';
-import { deriveVisualSnapshot } from '../components/animation/gitPhysics';
-import { getCausalStory } from '../components/animation/causalStories';
+import { GitEngine } from '../commitforge/git-engine/engine';
+import { calculateGitStateDiff } from '../commitforge/components/animation/stateDiff';
+import { deriveVisualSnapshot } from '../commitforge/components/animation/gitPhysics';
+import { getCausalStory } from '../commitforge/components/animation/causalStories';
 
 describe('CommitForge Animation-First Git Physics & Causal Engine', () => {
   let engine: GitEngine;
