@@ -3,7 +3,7 @@ import {
   ACADEMY_18_TOPICS,
   ALL_ACADEMY_CONCEPTS,
   getUniversalConcept,
-} from '../data/unifiedAcademyData';
+} from '../commitforge/data/unifiedAcademyData';
 
 describe('All 18 Topics Complete Curriculum Verification & Quality Audit', () => {
   it('verifies all 18 topics exist with metadata, icon, and valid concept counts', () => {
@@ -28,11 +28,11 @@ describe('All 18 Topics Complete Curriculum Verification & Quality Audit', () =>
     }))
   );
 
-  it('contains exactly 71 total concepts across all 18 topics', () => {
-    expect(allConceptIds).toHaveLength(71);
+  it('contains exactly 75 total concepts across all 18 topics', () => {
+    expect(allConceptIds).toHaveLength(75);
   });
 
-  it('audits all 71 concepts: depth, accuracy, structure, and zero generic fallbacks', () => {
+  it('audits all 75 concepts: depth, accuracy, structure, and zero generic fallbacks', () => {
     const fallbackSignature = 'is a core Git mechanism used in';
 
     allConceptIds.forEach(({ conceptId, title, topicNumber, topicTitle }) => {
@@ -116,7 +116,7 @@ describe('All 18 Topics Complete Curriculum Verification & Quality Audit', () =>
     });
   });
 
-  it('audits Variations & Scenarios tab sections across all 71 concepts', () => {
+  it('audits Variations & Scenarios tab sections across all 75 concepts', () => {
     const missingComparisons: string[] = [];
     const missingMistakes: string[] = [];
     const missingVariationsRich: string[] = [];
