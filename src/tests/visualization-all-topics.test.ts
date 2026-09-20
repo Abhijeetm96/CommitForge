@@ -1,11 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { ALL_ACADEMY_CONCEPTS, ACADEMY_18_TOPICS } from '../data/unifiedAcademyData';
+import { ALL_ACADEMY_CONCEPTS, ACADEMY_18_TOPICS } from '../commitforge/data/unifiedAcademyData';
 
 describe('Visualization Section All Topics Quality & Completeness Audit', () => {
   const concepts = Object.values(ALL_ACADEMY_CONCEPTS);
 
-  it('verifies all 71 concepts have rich, non-generic 3-stage visual action data', () => {
-    expect(concepts.length).toBe(71);
+  it('verifies all 75 concepts have rich, non-generic 3-stage visual action data', () => {
+    expect(concepts.length).toBe(75);
 
     for (const c of concepts) {
       expect(c.actionStage, `Concept ${c.id} (${c.command}) must have actionStage`).toBeDefined();
@@ -74,14 +74,14 @@ describe('Visualization Section All Topics Quality & Completeness Audit', () => 
 
     // Verify 18 topics
     expect(report.length).toBe(18);
-    // Verify sum of concepts across 18 topics is 71
+    // Verify sum of concepts across 18 topics is 75
     const totalConcepts = report.reduce((sum, r) => sum + r.conceptCount, 0);
-    expect(totalConcepts).toBe(71);
+    expect(totalConcepts).toBe(75);
 
-    console.log('=== VISUALIZATION COVERAGE AUDIT REPORT: 18 TOPICS / 71 CONCEPTS ===');
+    console.log('=== VISUALIZATION COVERAGE AUDIT REPORT: 18 TOPICS / 75 CONCEPTS ===');
     report.forEach((r) => {
       console.log(`✓ Topic ${r.topicNum}: ${r.topicTitle.padEnd(45)} | ${r.conceptCount} concepts visualized [100%]`);
     });
-    console.log(`TOTAL: 18 Topics, 71 Concepts — 100% Populated and Verified`);
+    console.log(`TOTAL: 18 Topics, 75 Concepts — 100% Populated and Verified`);
   });
 });
