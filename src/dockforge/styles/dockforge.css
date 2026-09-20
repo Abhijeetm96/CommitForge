@@ -1,0 +1,117 @@
+/* DockForge — Docker & Container Academy Styles */
+:root {
+  --docker-blue: #0ea5e9;
+  --docker-blue-hover: #0284c7;
+  --docker-blue-light: rgba(14, 165, 233, 0.15);
+  --docker-blue-glow: rgba(14, 165, 233, 0.35);
+  --docker-dark-bg: #030712;
+  --docker-surface: #0f172a;
+  --docker-surface-elevated: #1e293b;
+  --docker-border: rgba(148, 163, 184, 0.15);
+  --docker-border-active: rgba(14, 165, 233, 0.4);
+  --docker-text-primary: #f8fafc;
+  --docker-text-secondary: #94a3b8;
+  --docker-text-muted: #64748b;
+  --docker-success: #22c55e;
+  --docker-warning: #eab308;
+  --docker-danger: #ef4444;
+}
+
+/* Scrollbars */
+.dockforge-container ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.dockforge-container ::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+.dockforge-container ::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.25);
+  border-radius: 999px;
+}
+.dockforge-container ::-webkit-scrollbar-thumb:hover {
+  background: rgba(14, 165, 233, 0.5);
+}
+
+/* Glassmorphism Card Utility */
+.docker-card {
+  background: linear-gradient(145deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%);
+  border: 1px solid var(--docker-border);
+  border-radius: 16px;
+  backdrop-filter: blur(12px);
+  transition: all 0.2s ease;
+}
+
+.docker-card:hover {
+  border-color: var(--docker-border-active);
+  box-shadow: 0 10px 30px -10px var(--docker-blue-light);
+}
+
+/* Level Tabs Navigation */
+.dock-level-tab {
+  padding: 0.55rem 1rem;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--docker-text-secondary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  alignItems: center;
+  gap: 0.45rem;
+  transition: all 0.15s ease;
+}
+
+.dock-level-tab:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.dock-level-tab.active {
+  background: var(--docker-blue-light);
+  border-color: var(--docker-border-active);
+  color: var(--docker-blue);
+  font-weight: 700;
+  box-shadow: 0 0 12px var(--docker-blue-light);
+}
+
+/* Sidebar Topic Item */
+.dock-topic-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 0.85rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+  margin-bottom: 0.25rem;
+}
+
+.dock-topic-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.dock-topic-item.active {
+  background: rgba(14, 165, 233, 0.12);
+  border-color: rgba(14, 165, 233, 0.3);
+  color: #fff;
+}
+
+/* Terminal Console Styling */
+.docker-terminal {
+  background: #090d16;
+  border: 1px solid var(--docker-border);
+  border-radius: 12px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: #e2e8f0;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6);
+}
+
+.docker-prompt {
+  color: var(--docker-blue);
+  font-weight: 700;
+}

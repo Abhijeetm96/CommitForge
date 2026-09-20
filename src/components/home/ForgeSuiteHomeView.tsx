@@ -709,6 +709,132 @@ export const ForgeSuiteHomeView: React.FC = () => {
               </div>
             </div>
           </div>
+
+          {/* CARD 3: DOCKFORGE */}
+          <div
+            style={{
+              background: 'linear-gradient(145deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.8) 100%)',
+              border: '1px solid rgba(14, 165, 233, 0.3)',
+              borderRadius: '24px',
+              padding: '2.25rem',
+              display: 'flex',
+              flexDirection: 'column',
+              position: 'relative',
+              boxShadow: '0 20px 40px -15px rgba(14, 165, 233, 0.12)',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            {/* Corner Glow Accent */}
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                width: '180px',
+                height: '180px',
+                background: 'radial-gradient(circle, rgba(14, 165, 233, 0.2) 0%, transparent 70%)',
+                pointerEvents: 'none',
+              }}
+            />
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <div
+                  style={{
+                    width: '44px',
+                    height: '44px',
+                    borderRadius: '12px',
+                    background: 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#fff',
+                    boxShadow: '0 4px 14px rgba(14, 165, 233, 0.45)',
+                  }}
+                >
+                  <Container size={24} />
+                </div>
+                <div>
+                  <h2 style={{ fontSize: '1.5rem', fontWeight: 800, margin: 0, color: '#fff', letterSpacing: '-0.02em' }}>
+                    DockForge
+                  </h2>
+                  <div style={{ fontSize: '0.78rem', color: '#38bdf8', fontWeight: 600, letterSpacing: '0.02em' }}>
+                    Docker &amp; Container Engine Academy
+                  </div>
+                </div>
+              </div>
+
+              {/* Status Badge */}
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  padding: '0.25rem 0.65rem',
+                  borderRadius: '999px',
+                  background: 'rgba(34, 197, 94, 0.12)',
+                  border: '1px solid rgba(34, 197, 94, 0.3)',
+                  fontSize: '0.72rem',
+                  fontWeight: 700,
+                  color: '#4ade80',
+                }}
+              >
+                <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#22c55e' }} />
+                Active In-App
+              </div>
+            </div>
+
+            <p style={{ fontSize: '0.95rem', color: '#94a3b8', lineHeight: 1.6, margin: '0 0 1.5rem', minHeight: '46px' }}>
+              Master containerization from the ground up. 14 topics covering Linux namespaces, cgroups, OverlayFS, volume mounts, multi-stage builds, and Docker Compose orchestration.
+            </p>
+
+            {/* Feature Checklist */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', marginBottom: '2rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.84rem', color: '#cbd5e1' }}>
+                <Layers size={16} color="#0ea5e9" />
+                <span><strong>14 Topics</strong> &bull; Roadmap Syllabus</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.84rem', color: '#cbd5e1' }}>
+                <Terminal size={16} color="#0ea5e9" />
+                <span>Virtual Docker Engine CLI</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.84rem', color: '#cbd5e1' }}>
+                <ShieldAlert size={16} color="#0ea5e9" />
+                <span>SRE Incident Triage Labs</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.84rem', color: '#cbd5e1' }}>
+                <Code2 size={16} color="#0ea5e9" />
+                <span>Dockerfile &amp; Compose IDE</span>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+              <button
+                onClick={() => setMode('dockforge')}
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.65rem',
+                  padding: '0.9rem 1.5rem',
+                  borderRadius: '12px',
+                  background: 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)',
+                  color: '#fff',
+                  border: 'none',
+                  fontSize: '0.95rem',
+                  fontWeight: 800,
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 16px rgba(14, 165, 233, 0.4)',
+                  transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+                }}
+              >
+                <span>Enter Docker Academy</span>
+                <ArrowRight size={18} />
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* SECTION 2: THE DEVOPS & CLOUD COMPUTING ECOSYSTEM ROADMAP (COMING SOON) */}

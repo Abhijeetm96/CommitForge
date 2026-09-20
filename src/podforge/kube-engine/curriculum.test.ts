@@ -77,6 +77,46 @@ describe('PodForge Master Curriculum Completeness & Quality Audit', () => {
     expect(allConcepts.length).toBe(71);
   });
 
+  it('verifies 100% of concepts (71/71) have all advanced sections: Pitfalls, Quizzes, YAML Breakdown & Reference', () => {
+    const allConcepts = getAllConcepts();
+    const missingAdvancedFields: string[] = [];
+
+    allConcepts.forEach((c) => {
+      if (!c.commonPitfalls || c.commonPitfalls.length < 2) {
+        missingAdvancedFields.push(`${c.number} (${c.id}): commonPitfalls must have >= 2 items`);
+      } else {
+        c.commonPitfalls.forEach((p, idx) => {
+          if (!p.mistake || !p.whyItHappens || !p.fix) {
+            missingAdvancedFields.push(`${c.number} (${c.id}) pitfall #${idx}: incomplete mistake/whyItHappens/fix`);
+          }
+        });
+      }
+
+      if (!c.quizQuestion || !c.quizQuestion.question) {
+        missingAdvancedFields.push(`${c.number} (${c.id}): missing quizQuestion`);
+      } else {
+        if (!c.quizQuestion.options || c.quizQuestion.options.length < 3) {
+          missingAdvancedFields.push(`${c.number} (${c.id}): quizQuestion must have >= 3 options`);
+        }
+        const hasCorrect = c.quizQuestion.options?.some((o) => o.isCorrect);
+        if (!hasCorrect) {
+          missingAdvancedFields.push(`${c.number} (${c.id}): quizQuestion has no correct option marked`);
+        }
+      }
+
+      if (!c.yamlExplanation || c.yamlExplanation.length < 1) {
+        missingAdvancedFields.push(`${c.number} (${c.id}): missing yamlExplanation`);
+      }
+
+      if (!c.referenceCheatSheet || c.referenceCheatSheet.length < 2) {
+        missingAdvancedFields.push(`${c.number} (${c.id}): referenceCheatSheet must have >= 2 items`);
+      }
+    });
+
+    expect(missingAdvancedFields).toEqual([]);
+  });
+
+
   it('prints a complete curriculum coverage report', () => {
     console.log('\n================ PODFORGE MASTER CURRICULUM AUDIT REPORT ================');
     console.log(`Total Chapters: ${TOTAL_CHAPTERS} | Total Concepts: ${TOTAL_CONCEPTS}\n`);

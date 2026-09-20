@@ -5,6 +5,7 @@ import { ForgeSuiteHomeView } from './components/home/ForgeSuiteHomeView';
 import { DevOpsRoadmapView } from './components/roadmap/DevOpsRoadmapView';
 import { CommitForgeApp } from './commitforge/CommitForgeApp';
 import { PodForgeApp } from './podforge/PodForgeApp';
+import { DockForgeApp } from './dockforge/DockForgeApp';
 import { Agentation } from 'agentation';
 
 const AppContent: React.FC = () => {
@@ -73,6 +74,15 @@ const AppContent: React.FC = () => {
     return (
       <>
         <PodForgeApp onSwitchToSuite={(newMode) => setMode(newMode)} />
+        <Agentation />
+      </>
+    );
+  }
+
+  if (mode === 'dockforge') {
+    return (
+      <>
+        <DockForgeApp onSwitchToSuite={(newMode) => setMode(newMode)} />
         <Agentation />
       </>
     );

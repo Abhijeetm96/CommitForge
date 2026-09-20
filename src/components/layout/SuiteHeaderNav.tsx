@@ -1,6 +1,6 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { Flame, Boxes, Sparkles, Search, GitBranch } from 'lucide-react';
+import { Flame, Boxes, Sparkles, Search, GitBranch, Container } from 'lucide-react';
 
 export const SuiteHeaderNav: React.FC = () => {
   const { mode, setMode, setShowProblemSearch } = useApp();
@@ -97,6 +97,28 @@ export const SuiteHeaderNav: React.FC = () => {
         </button>
 
         <button
+          onClick={() => setMode('dockforge')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.45rem',
+            padding: '0.45rem 0.9rem',
+            borderRadius: '8px',
+            background: 'rgba(14, 165, 233, 0.12)',
+            border: '1px solid rgba(14, 165, 233, 0.35)',
+            color: '#38bdf8',
+            fontSize: '0.82rem',
+            fontWeight: 700,
+            cursor: 'pointer',
+            transition: 'all 0.15s ease',
+          }}
+          title="Open DockForge Docker & Container Academy"
+        >
+          <Container size={15} />
+          DockForge
+        </button>
+
+        <button
           onClick={() => setMode('podforge')}
           style={{
             display: 'flex',
@@ -106,7 +128,7 @@ export const SuiteHeaderNav: React.FC = () => {
             borderRadius: '8px',
             background: 'rgba(50, 108, 229, 0.1)',
             border: '1px solid rgba(50, 108, 229, 0.3)',
-            color: '#38bdf8',
+            color: '#60a5fa',
             fontSize: '0.82rem',
             fontWeight: 700,
             cursor: 'pointer',

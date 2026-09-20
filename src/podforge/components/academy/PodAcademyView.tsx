@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { KUBE_CHAPTERS } from '../../data/topics';
-import { ClusterCanvas } from '../visualizer/ClusterCanvas';
 import { getConceptIcon, getChapterIcon } from './podIcons';
 import { PodConceptOverviewTab } from './PodConceptOverviewTab';
+import { PodYamlSpecTab } from './PodYamlSpecTab';
+import { PodPracticeTab } from './PodPracticeTab';
+import { PodVisualizerTab } from './PodVisualizerTab';
+import { PodPitfallsTab } from './PodPitfallsTab';
+import { PodQuizTab } from './PodQuizTab';
 import {
   Layers,
   BookOpen,
@@ -19,9 +23,11 @@ import {
   ChevronRight,
   Boxes,
   Flame,
+  AlertTriangle,
+  Award,
 } from 'lucide-react';
 
-type AcademyTab = 'learn' | 'visualize' | 'practice' | 'spec';
+type AcademyTab = 'learn' | 'spec' | 'practice' | 'visualize' | 'pitfalls' | 'quiz';
 
 interface PodAcademyViewProps {
   onSwitchToSuite?: (mode: 'home' | 'learn' | 'roadmap') => void;
@@ -437,12 +443,14 @@ export const PodAcademyView: React.FC<PodAcademyViewProps> = ({ onSwitchToSuite 
             </div>
 
             {/* Sub-Tabs Navigation */}
-            <div style={{ display: 'flex', gap: '0.4rem', borderTop: '1px solid var(--border-color)', paddingTop: '0.85rem' }}>
+            <div style={{ display: 'flex', gap: '0.4rem', borderTop: '1px solid var(--border-color)', paddingTop: '0.85rem', flexWrap: 'wrap' }}>
               {[
                 { id: 'learn' as AcademyTab, label: 'Concept Overview', icon: BookOpen },
-                { id: 'visualize' as AcademyTab, label: 'Live Cluster Visualizer', icon: Activity },
-                { id: 'practice' as AcademyTab, label: 'Hands-On Terminal Practice', icon: Code2 },
-                { id: 'spec' as AcademyTab, label: 'YAML Manifest Spec', icon: FileCode },
+                { id: 'spec' as AcademyTab, label: 'Declarative YAML', icon: FileCode },
+                { id: 'practice' as AcademyTab, label: 'Terminal Sandbox', icon: Code2 },
+                { id: 'visualize' as AcademyTab, label: 'Live Visualizer', icon: Activity },
+                { id: 'pitfalls' as AcademyTab, label: 'Pitfalls & SRE', icon: AlertTriangle },
+                { id: 'quiz' as AcademyTab, label: 'Scenario Quiz', icon: Award },
               ].map((tab) => {
                 const isActive = activeTab === tab.id;
                 const Icon = tab.icon;
@@ -462,6 +470,7 @@ export const PodAcademyView: React.FC<PodAcademyViewProps> = ({ onSwitchToSuite 
                       background: isActive ? 'rgba(56, 189, 248, 0.12)' : 'transparent',
                       border: isActive ? '1px solid rgba(56, 189, 248, 0.3)' : '1px solid transparent',
                       cursor: 'pointer',
+                      transition: 'all 0.15s ease',
                     }}
                   >
                     <Icon size={14} />
@@ -477,73 +486,29 @@ export const PodAcademyView: React.FC<PodAcademyViewProps> = ({ onSwitchToSuite 
             <PodConceptOverviewTab concept={activeConcept} />
           )}
 
-          {/* TAB 2: LIVE CLUSTER VISUALIZER */}
-          {activeTab === 'visualize' && (
-            <div style={{ height: '600px', background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '14px', overflow: 'hidden' }}>
-              <ClusterCanvas />
-            </div>
-          )}
-
-          {/* TAB 3: HANDS-ON PRACTICE */}
-          {activeTab === 'practice' && (
-            <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '14px', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--k8s-green)', fontWeight: 800, fontSize: '0.82rem', textTransform: 'uppercase' }}>
-                <Lightbulb size={16} /> Hands-On Challenge
-              </div>
-              <div style={{ fontSize: '0.95rem', color: '#fff', fontWeight: 700 }}>
-                {activeConcept.practiceChallenge.instructions}
-              </div>
-
-              <div style={{ display: 'flex', gap: '0.65rem' }}>
-                <div style={{ flex: 1, display: 'flex', alignItems: 'center', background: '#050811', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '0.5rem 0.85rem', fontFamily: 'var(--font-mono)' }}>
-                  <span style={{ color: 'var(--k8s-cyan)', marginRight: '0.5rem' }}>$</span>
-                  <input
-                    type="text"
-                    value={practiceInput}
-                    onChange={(e) => setPracticeInput(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && handleRunPractice()}
-                    placeholder={`Type: ${activeConcept.practiceChallenge.goalCommand}`}
-                    style={{ background: 'transparent', border: 'none', outline: 'none', color: '#fff', width: '100%', fontSize: '0.84rem' }}
-                  />
-                </div>
-                <button
-                  onClick={handleRunPractice}
-                  style={{
-                    background: 'var(--k8s-blue)',
-                    color: '#fff',
-                    border: 'none',
-                    padding: '0 1.25rem',
-                    borderRadius: '8px',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.4rem',
-                  }}
-                >
-                  <Play size={14} /> Run
-                </button>
-              </div>
-
-              {practiceSuccess && (
-                <div style={{ background: 'rgba(16, 185, 129, 0.15)', border: '1px solid #10b981', borderRadius: '8px', padding: '0.85rem', color: '#10b981', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <CheckCircle2 size={18} />
-                  <span>Challenge passed! Great job executing the correct command. Concept marked as complete!</span>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* TAB 4: SPEC & YAML */}
+          {/* TAB 2: DECLARATIVE YAML & SYNTAX */}
           {activeTab === 'spec' && (
-            <div style={{ background: '#050811', border: '1px solid var(--border-color)', borderRadius: '12px', padding: '1.25rem' }}>
-              <div style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--text-muted)', marginBottom: '0.65rem' }}>
-                DECLARATIVE KUBERNETES YAML MANIFEST
-              </div>
-              <pre style={{ margin: 0, fontFamily: 'var(--font-mono)', fontSize: '0.82rem', color: '#38bdf8', lineHeight: 1.5, overflowX: 'auto' }}>
-                {activeConcept.yamlSnippet}
-              </pre>
-            </div>
+            <PodYamlSpecTab concept={activeConcept} />
+          )}
+
+          {/* TAB 3: HANDS-ON PRACTICE SANDBOX */}
+          {activeTab === 'practice' && (
+            <PodPracticeTab concept={activeConcept} />
+          )}
+
+          {/* TAB 4: LIVE CLUSTER VISUALIZER */}
+          {activeTab === 'visualize' && (
+            <PodVisualizerTab concept={activeConcept} />
+          )}
+
+          {/* TAB 5: PITFALLS & SRE RECOVERY */}
+          {activeTab === 'pitfalls' && (
+            <PodPitfallsTab concept={activeConcept} />
+          )}
+
+          {/* TAB 6: SCENARIO KNOWLEDGE CHECK QUIZ */}
+          {activeTab === 'quiz' && (
+            <PodQuizTab concept={activeConcept} />
           )}
         </div>
 

@@ -6,6 +6,7 @@ import { PROJECTS, ProjectDefinition } from '../commitforge/data/projects';
 export type ViewMode =
   | 'home'
   | 'podforge'
+  | 'dockforge'
   | 'dashboard'
   | 'roadmap'
   | 'first10'

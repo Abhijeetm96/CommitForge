@@ -1,3 +1,26 @@
+export interface KubePitfall {
+  mistake: string;
+  whyItHappens: string;
+  fix: string;
+}
+
+export interface KubeQuizOption {
+  label: string;
+  text: string;
+  isCorrect: boolean;
+  explanation: string;
+}
+
+export interface KubeQuizQuestion {
+  question: string;
+  options: KubeQuizOption[];
+}
+
+export interface KubeYamlFieldExplanation {
+  field: string;
+  explanation: string;
+}
+
 export interface KubeConcept {
   id: string;
   number: string;
@@ -14,6 +37,8 @@ export interface KubeConcept {
     instructions: string;
     goalCommand: string;
     hints: string[];
+    expectedOutput?: string;
+    solutionExplanation?: string;
   };
 
   // Structured Concept Overview & Deep Pedagogical Fields
@@ -36,6 +61,12 @@ export interface KubeConcept {
     detail: string;
   }>;
   productionTips?: string[];
+
+  // Advanced Sections: Pitfalls, Quiz, YAML Syntax & Reference
+  commonPitfalls?: KubePitfall[];
+  quizQuestion?: KubeQuizQuestion;
+  yamlExplanation?: KubeYamlFieldExplanation[];
+  referenceCheatSheet?: string[];
 }
 
 export interface KubeChapter {
@@ -45,3 +76,4 @@ export interface KubeChapter {
   category: string;
   concepts: KubeConcept[];
 }
+
