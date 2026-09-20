@@ -4,7 +4,7 @@ import {
   BESPOKE_CONCEPTS,
   getUniversalConcept,
   GLOBAL_PROBLEM_SOLUTIONS,
-} from '../data/unifiedAcademyData';
+} from '../commitforge/data/unifiedAcademyData';
 
 describe('Unified Academy Syllabus (18 Topics Model)', () => {
   it('contains exactly 18 numbered topics from 01 to 18 in order', () => {
