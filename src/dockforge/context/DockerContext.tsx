@@ -50,9 +50,31 @@ const DockerContext = createContext<DockerContextType | null>(null);
 
 export const DockerProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [mode, setMode] = useState<DockMode>('academy');
-  const [activeTopicId, setActiveTopicId] = useState<string>('topic-01');
-  const [activeConceptId, setActiveConceptId] = useState<string>('c-what-are-containers');
+  const [activeTopicIdState, setActiveTopicIdState] = useState<string>('topic-01');
+  const [activeConceptIdState, setActiveConceptIdState] = useState<string>('c-what-are-containers');
   const [completedConceptIds, setCompletedConceptIds] = useState<string[]>(['c-what-are-containers']);
+
+  const setActiveTopicId = useCallback((topicId: string) => {
+    setActiveTopicIdState(topicId);
+    const topic = DOCKER_14_TOPICS.find((t) => t.id === topicId);
+    if (topic && topic.concepts.length > 0) {
+      setActiveConceptIdState((currConceptId) => {
+        const belongs = topic.concepts.some((c) => c.id === currConceptId);
+        return belongs ? currConceptId : topic.concepts[0].id;
+      });
+    }
+  }, []);
+
+  const setActiveConceptId = useCallback((conceptId: string) => {
+    setActiveConceptIdState(conceptId);
+    const parentTopic = DOCKER_14_TOPICS.find((t) => t.concepts.some((c) => c.id === conceptId));
+    if (parentTopic) {
+      setActiveTopicIdState(parentTopic.id);
+    }
+  }, []);
+
+  const activeTopicId = activeTopicIdState;
+  const activeConceptId = activeConceptIdState;
 
   // Engine instance
   const engine = useMemo(() => new DockerEngine(), []);
