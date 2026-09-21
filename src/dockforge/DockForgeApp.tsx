@@ -5,10 +5,11 @@ import { DockerAcademyView } from './components/academy/DockerAcademyView';
 import { ContainerMeshVisualizer } from './components/visualizer/ContainerMeshVisualizer';
 import { DockerLabsHubView } from './components/labs/DockerLabsHubView';
 import { DockerIdeView } from './components/ide/DockerIdeView';
+import { ViewMode } from '../context/AppContext';
 import './styles/dockforge.css';
 
 interface DockForgeAppProps {
-  onSwitchToSuite?: (mode: 'home' | 'learn' | 'podforge') => void;
+  onSwitchToSuite?: (mode: ViewMode) => void;
 }
 
 const DockForgeContent: React.FC<DockForgeAppProps> = ({ onSwitchToSuite }) => {
