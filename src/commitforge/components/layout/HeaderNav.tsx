@@ -17,6 +17,7 @@ import {
   Menu,
   ChevronDown,
   Boxes,
+  Container,
   ExternalLink,
   Sparkles,
 } from 'lucide-react';
@@ -293,6 +294,36 @@ export const HeaderNav: React.FC = () => {
                 {mode === 'podforge' && <div style={{ fontSize: '0.65rem', color: '#4ade80', fontWeight: 700 }}>Active</div>}
               </button>
 
+              {/* Item 3: DockForge */}
+              <button
+                onClick={() => {
+                  setShowSuiteMenu(false);
+                  setActiveLessonConcept(null);
+                  setMode('dockforge');
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.65rem',
+                  padding: '0.5rem 0.65rem',
+                  borderRadius: '8px',
+                  background: mode === 'dockforge' ? 'rgba(14, 165, 233, 0.15)' : 'rgba(255, 255, 255, 0.03)',
+                  border: mode === 'dockforge' ? '1px solid rgba(14, 165, 233, 0.35)' : '1px solid transparent',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  width: '100%',
+                }}
+              >
+                <div style={{ width: '26px', height: '26px', borderRadius: '6px', background: 'linear-gradient(135deg, #0ea5e9, #0284c7)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', flexShrink: 0 }}>
+                  <Container size={14} />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#fff' }}>DockForge</div>
+                  <div style={{ fontSize: '0.68rem', color: '#38bdf8' }}>Docker &amp; Containers</div>
+                </div>
+                {mode === 'dockforge' && <div style={{ fontSize: '0.65rem', color: '#38bdf8', fontWeight: 700 }}>Active</div>}
+              </button>
+
               <div style={{ height: '1px', background: 'rgba(148, 163, 184, 0.15)', margin: '0.15rem 0' }} />
 
               {/* Item 3: Forge Suite Home Portal */}
@@ -361,7 +392,7 @@ export const HeaderNav: React.FC = () => {
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.35rem' }}>
                 {[
-                  { name: 'Dockernaut', tag: 'Docker & OCI', color: '#0ea5e9' },
+                  { name: 'HelmCraft', tag: 'Helm & Charts', color: '#0ea5e9' },
                   { name: 'PipelinePilot', tag: 'CI/CD & Actions', color: '#f59e0b' },
                   { name: 'TerraStack', tag: 'Terraform & IaC', color: '#a855f7' },
                   { name: 'ObserveIQ', tag: 'Prometheus & SRE', color: '#10b981' },
