@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { KubeConcept } from '../../data/topics/types';
+import { getDockerBridgeForConcept } from '../../data/topics/dockerBridgeData';
 import { KubeFlowDiagram } from '../diagrams/KubeFlowDiagram';
 import {
   BookOpen,
@@ -16,6 +17,12 @@ import {
   Sparkles,
   Zap,
   ListChecks,
+  Play,
+  Pause,
+  RotateCcw,
+  ChevronRight,
+  ChevronLeft,
+  Anchor,
 } from 'lucide-react';
 
 interface Props {
@@ -24,6 +31,30 @@ interface Props {
 
 export const PodConceptOverviewTab: React.FC<Props> = ({ concept }) => {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [activeStepIdx, setActiveStepIdx] = useState<number>(0);
+  const [isPlayingLifecycle, setIsPlayingLifecycle] = useState<boolean>(false);
+  const [copiedDockerCmd, setCopiedDockerCmd] = useState<boolean>(false);
+
+  const dockerBridge = getDockerBridgeForConcept(concept);
+
+  // Auto-play lifecycle stepper
+  useEffect(() => {
+    let timer: ReturnType<typeof setInterval> | null = null;
+    if (isPlayingLifecycle && concept.lifecycleSteps && concept.lifecycleSteps.length > 0) {
+      timer = setInterval(() => {
+        setActiveStepIdx((prev) => (prev + 1) % (concept.lifecycleSteps?.length || 1));
+      }, 2800);
+    }
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [isPlayingLifecycle, concept.lifecycleSteps]);
+
+  // Reset active step when concept changes
+  useEffect(() => {
+    setActiveStepIdx(0);
+    setIsPlayingLifecycle(false);
+  }, [concept.id]);
 
   const handleCopy = (text: string, index: number) => {
     navigator.clipboard.writeText(text);
@@ -146,6 +177,92 @@ export const PodConceptOverviewTab: React.FC<Props> = ({ concept }) => {
           </div>
         </div>
       </section>
+
+      {/* DOCKER TO KUBERNETES CONCEPT BRIDGE */}
+      {dockerBridge && (
+        <section
+          style={{
+            background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(50, 108, 229, 0.06) 100%)',
+            border: '1px solid rgba(56, 189, 248, 0.3)',
+            borderRadius: '14px',
+            padding: '1.25rem',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1rem',
+            boxShadow: '0 6px 20px rgba(0, 0, 0, 0.15)',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
+              <div style={{ width: '28px', height: '28px', borderRadius: '7px', background: 'rgba(56, 189, 248, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#38bdf8' }}>
+                <Anchor size={16} />
+              </div>
+              <div>
+                <span style={{ fontSize: '0.96rem', fontWeight: 800, color: '#fff' }}>
+                  Docker &rarr; Kubernetes Mental Model Bridge
+                </span>
+                <div style={{ fontSize: '0.74rem', color: '#94a3b8' }}>
+                  Beginner Transition: Translating standalone container habits into clustered orchestrator primitives
+                </div>
+              </div>
+            </div>
+            <span style={{ fontSize: '0.72rem', color: '#38bdf8', background: 'rgba(56, 189, 248, 0.15)', border: '1px solid rgba(56, 189, 248, 0.3)', padding: '0.2rem 0.6rem', borderRadius: '999px', fontWeight: 700 }}>
+              Zero-Friction Guide
+            </span>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))', gap: '0.85rem' }}>
+            {/* Docker Side */}
+            <div style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid rgba(14, 165, 233, 0.25)', borderRadius: '10px', padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.75rem', fontWeight: 800, color: '#38bdf8', textTransform: 'uppercase' }}>
+                <span>🐳 In Standalone Docker (Single Host)</span>
+              </div>
+              <div style={{ fontSize: '0.84rem', color: '#cbd5e1', lineHeight: 1.55 }}>
+                {dockerBridge.dockerEquivalent}
+              </div>
+              {dockerBridge.dockerCommand && (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(0, 0, 0, 0.4)', border: '1px solid rgba(56, 189, 248, 0.2)', padding: '0.35rem 0.65rem', borderRadius: '6px', marginTop: '0.25rem' }}>
+                  <code style={{ fontFamily: 'var(--font-mono)', fontSize: '0.76rem', color: '#7dd3fc', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    $ {dockerBridge.dockerCommand}
+                  </code>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(dockerBridge.dockerCommand || '');
+                      setCopiedDockerCmd(true);
+                      setTimeout(() => setCopiedDockerCmd(false), 2000);
+                    }}
+                    style={{ background: 'transparent', border: 'none', color: copiedDockerCmd ? '#10b981' : '#94a3b8', cursor: 'pointer', padding: '0.2rem', marginLeft: '0.5rem' }}
+                    title="Copy Docker command"
+                  >
+                    {copiedDockerCmd ? <Check size={13} /> : <Copy size={13} />}
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Kubernetes Side */}
+            <div style={{ background: 'rgba(50, 108, 229, 0.1)', border: '1px solid rgba(50, 108, 229, 0.35)', borderRadius: '10px', padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.75rem', fontWeight: 800, color: '#60a5fa', textTransform: 'uppercase' }}>
+                <span>☸️ In Clustered Kubernetes (Multi-Node)</span>
+              </div>
+              <div style={{ fontSize: '0.84rem', color: '#e2e8f0', lineHeight: 1.55 }}>
+                {dockerBridge.k8sEquivalent}
+              </div>
+              <div style={{ fontSize: '0.78rem', color: '#94a3b8', fontStyle: 'italic', borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '0.45rem', marginTop: '0.15rem' }}>
+                <strong>Key Architectural Shift:</strong> {dockerBridge.keyDifference}
+              </div>
+            </div>
+          </div>
+
+          {/* Why K8s Approach */}
+          <div style={{ background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(56, 189, 248, 0.2)', borderRadius: '8px', padding: '0.65rem 0.85rem', display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
+            <Sparkles size={16} color="#38bdf8" style={{ flexShrink: 0 }} />
+            <span style={{ fontSize: '0.8rem', color: '#cbd5e1', lineHeight: 1.5 }}>
+              <strong style={{ color: '#fff' }}>Why Kubernetes Takes This Approach:</strong> {dockerBridge.whyK8sApproach}
+            </span>
+          </div>
+        </section>
+      )}
 
       {/* 2. REAL-WORLD ANALOGY */}
       {concept.realWorldAnalogy && (
@@ -274,69 +391,137 @@ export const PodConceptOverviewTab: React.FC<Props> = ({ concept }) => {
         </section>
       )}
 
-      {/* 5. VISUAL ARCHITECTURAL BLOCK DIAGRAM & CONTROL PLANE EXECUTION PIPELINE */}
+      {/* 5. INTERACTIVE ARCHITECTURAL LIFECYCLE STEPPER */}
       <section style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Clock size={18} color="#38bdf8" />
-          <h2 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: '#f8fafc' }}>
-            5. Architectural Flow &amp; Control Plane Execution Pipeline
-          </h2>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Clock size={18} color="#38bdf8" />
+            <h2 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: '#f8fafc' }}>
+              5. Interactive Control Plane & Kernel Lifecycle Player
+            </h2>
+          </div>
+
+          {/* Playback Controls */}
+          {concept.lifecycleSteps && concept.lifecycleSteps.length > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', background: 'rgba(0, 0, 0, 0.4)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '0.25rem 0.6rem' }}>
+              <button
+                onClick={() => {
+                  setIsPlayingLifecycle(false);
+                  setActiveStepIdx((prev) => (prev > 0 ? prev - 1 : (concept.lifecycleSteps?.length || 1) - 1));
+                }}
+                title="Previous Step"
+                style={{ background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '0.2rem' }}
+              >
+                <ChevronLeft size={16} />
+              </button>
+
+              <button
+                onClick={() => setIsPlayingLifecycle(!isPlayingLifecycle)}
+                title={isPlayingLifecycle ? 'Pause' : 'Auto-Play Stepper'}
+                style={{ background: isPlayingLifecycle ? 'rgba(239, 68, 68, 0.2)' : 'rgba(56, 189, 248, 0.2)', border: isPlayingLifecycle ? '1px solid rgba(239, 68, 68, 0.4)' : '1px solid rgba(56, 189, 248, 0.4)', color: isPlayingLifecycle ? '#ef4444' : '#38bdf8', cursor: 'pointer', padding: '0.25rem 0.65rem', borderRadius: '5px', fontSize: '0.74rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+              >
+                {isPlayingLifecycle ? <Pause size={13} /> : <Play size={13} />}
+                <span>{isPlayingLifecycle ? 'Pause' : 'Auto Play'}</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setIsPlayingLifecycle(false);
+                  setActiveStepIdx((prev) => (prev + 1) % (concept.lifecycleSteps?.length || 1));
+                }}
+                title="Next Step"
+                style={{ background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '0.2rem' }}
+              >
+                <ChevronRight size={16} />
+              </button>
+
+              <button
+                onClick={() => {
+                  setIsPlayingLifecycle(false);
+                  setActiveStepIdx(0);
+                }}
+                title="Reset to Step 1"
+                style={{ background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer', display: 'flex', alignItems: 'center', marginLeft: '0.25rem', padding: '0.2rem' }}
+              >
+                <RotateCcw size={13} />
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Visual Interactive Block Diagram Engine */}
         <KubeFlowDiagram concept={concept} compact={true} />
 
+        {/* Interactive Step Scrubber and Cards */}
         {concept.lifecycleSteps && concept.lifecycleSteps.length > 0 && (
-          <div
-            style={{
-              background: 'var(--bg-card)',
-              border: '1px solid var(--border-color)',
-              borderRadius: '12px',
-              padding: '1.25rem',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '1rem',
-            }}
-          >
-            {concept.lifecycleSteps.map((step) => (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+            {/* Scrubber pills */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', overflowX: 'auto', padding: '0.2rem 0' }}>
+              {concept.lifecycleSteps.map((step, idx) => {
+                const isActive = activeStepIdx === idx;
+                return (
+                  <button
+                    key={step.step}
+                    onClick={() => {
+                      setIsPlayingLifecycle(false);
+                      setActiveStepIdx(idx);
+                    }}
+                    style={{
+                      background: isActive ? 'var(--k8s-blue)' : 'rgba(255, 255, 255, 0.05)',
+                      border: isActive ? '1px solid #38bdf8' : '1px solid rgba(255, 255, 255, 0.1)',
+                      color: isActive ? '#fff' : 'var(--text-muted)',
+                      borderRadius: '8px',
+                      padding: '0.35rem 0.75rem',
+                      fontSize: '0.76rem',
+                      fontWeight: isActive ? 800 : 600,
+                      cursor: 'pointer',
+                      whiteSpace: 'nowrap',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.35rem',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    <span>Step {step.step}: {step.title.split(':')[0] || step.title}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Active Step Feature Hero Card */}
+            {concept.lifecycleSteps[activeStepIdx] && (
               <div
-                key={step.step}
                 style={{
+                  background: 'linear-gradient(135deg, rgba(50, 108, 229, 0.15) 0%, rgba(56, 189, 248, 0.08) 100%)',
+                  border: '1px solid rgba(56, 189, 248, 0.35)',
+                  borderRadius: '12px',
+                  padding: '1.25rem',
                   display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: '0.85rem',
-                  borderBottom: step.step < (concept.lifecycleSteps?.length || 0) ? '1px solid rgba(255, 255, 255, 0.06)' : 'none',
-                  paddingBottom: step.step < (concept.lifecycleSteps?.length || 0) ? '0.85rem' : '0',
+                  flexDirection: 'column',
+                  gap: '0.75rem',
+                  boxShadow: '0 8px 24px rgba(50, 108, 229, 0.12)',
+                  animation: 'fadeIn 0.2s ease-out',
                 }}
               >
-                <div
-                  style={{
-                    width: '28px',
-                    height: '28px',
-                    borderRadius: '8px',
-                    background: 'rgba(56, 189, 248, 0.15)',
-                    border: '1px solid rgba(56, 189, 248, 0.3)',
-                    color: '#38bdf8',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontWeight: 800,
-                    fontSize: '0.8rem',
-                    flexShrink: 0,
-                  }}
-                >
-                  {step.step}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                    <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'var(--k8s-blue)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: '0.85rem' }}>
+                      {concept.lifecycleSteps[activeStepIdx].step}
+                    </div>
+                    <div style={{ fontSize: '1rem', fontWeight: 800, color: '#fff' }}>
+                      {concept.lifecycleSteps[activeStepIdx].title}
+                    </div>
+                  </div>
+                  <span style={{ fontSize: '0.74rem', color: '#38bdf8', fontWeight: 700, background: 'rgba(56, 189, 248, 0.15)', border: '1px solid rgba(56, 189, 248, 0.3)', padding: '0.2rem 0.65rem', borderRadius: '999px' }}>
+                    Active Step {activeStepIdx + 1} of {concept.lifecycleSteps.length}
+                  </span>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', flex: 1 }}>
-                  <div style={{ fontSize: '0.86rem', fontWeight: 800, color: '#fff' }}>
-                    {step.title}
-                  </div>
-                  <div style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', lineHeight: 1.55 }}>
-                    {step.description}
-                  </div>
+
+                <div style={{ fontSize: '0.88rem', color: '#e2e8f0', lineHeight: 1.65 }}>
+                  {concept.lifecycleSteps[activeStepIdx].description}
                 </div>
               </div>
-            ))}
+            )}
           </div>
         )}
       </section>

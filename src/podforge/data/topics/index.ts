@@ -11,6 +11,8 @@ import { PART_3_ENRICHMENT } from './enrichment_part3';
 import { PART_4_ENRICHMENT } from './enrichment_part4';
 import { PART_5_ENRICHMENT } from './enrichment_part5';
 
+import { getDockerBridgeForConcept } from './dockerBridgeData';
+
 export type { KubeChapter, KubeConcept };
 
 const ALL_ENRICHMENT = {
@@ -22,11 +24,14 @@ const ALL_ENRICHMENT = {
 };
 
 function enrichConcept(c: KubeConcept): KubeConcept {
-  const enrichment = ALL_ENRICHMENT[c.id];
-  if (!enrichment) return c;
+  const enrichment = (ALL_ENRICHMENT as Record<string, any>)[c.id];
+  const dockerBridge = enrichment?.dockerBridge || c.dockerBridge || getDockerBridgeForConcept(c);
+
+  if (!enrichment) return { ...c, dockerBridge };
 
   return {
     ...c,
+    dockerBridge,
     commonPitfalls: enrichment.commonPitfalls,
     quizQuestion: enrichment.quizQuestion,
     yamlExplanation: enrichment.yamlExplanation,

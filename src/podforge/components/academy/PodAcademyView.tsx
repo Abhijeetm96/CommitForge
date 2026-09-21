@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { KUBE_CHAPTERS } from '../../data/topics';
 import { getConceptIcon, getChapterIcon } from './podIcons';
@@ -25,11 +25,15 @@ import {
   Flame,
   AlertTriangle,
   Award,
+  Search,
+  Filter,
+  X,
 } from 'lucide-react';
 
 import { ViewMode } from '../../../context/AppContext';
 
 type AcademyTab = 'learn' | 'spec' | 'practice' | 'visualize' | 'pitfalls' | 'quiz';
+type DifficultyTier = 'All' | 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert';
 
 interface PodAcademyViewProps {
   onSwitchToSuite?: (mode: ViewMode) => void;
@@ -40,16 +44,54 @@ export const PodAcademyView: React.FC<PodAcademyViewProps> = ({ onSwitchToSuite 
   const [activeTab, setActiveTab] = useState<AcademyTab>('learn');
   const [practiceInput, setPracticeInput] = useState('');
   const [practiceSuccess, setPracticeSuccess] = useState(false);
+  const [difficultyFilter, setDifficultyFilter] = useState<DifficultyTier>('All');
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   const currentChapter = KUBE_CHAPTERS.find((ch) => ch.concepts.some((c) => c.id === activeConcept.id));
 
   // Flatten all concepts for linear previous / next navigation
-  const allConcepts = KUBE_CHAPTERS.flatMap((ch) => ch.concepts);
+  const allConcepts = useMemo(() => KUBE_CHAPTERS.flatMap((ch) => ch.concepts), []);
   const currentIndex = allConcepts.findIndex((c) => c.id === activeConcept.id);
   const prevConcept = currentIndex > 0 ? allConcepts[currentIndex - 1] : null;
   const nextConcept = currentIndex < allConcepts.length - 1 ? allConcepts[currentIndex + 1] : null;
 
   const isCompleted = completedConcepts.includes(activeConcept.id);
+
+  // Filtered chapters & concepts based on tier + search query
+  const filteredChapters = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    return KUBE_CHAPTERS.map((ch) => {
+      const matchingConcepts = ch.concepts.filter((c) => {
+        const matchesDiff = difficultyFilter === 'All' || c.difficulty === difficultyFilter;
+        const matchesQuery =
+          !q ||
+          c.title.toLowerCase().includes(q) ||
+          c.number.toLowerCase().includes(q) ||
+          c.description.toLowerCase().includes(q) ||
+          c.commandPill.toLowerCase().includes(q) ||
+          (c.dockerBridge?.dockerEquivalent.toLowerCase().includes(q) ?? false) ||
+          (c.subtopics?.some((s) => s.toLowerCase().includes(q)) ?? false);
+
+        return matchesDiff && matchesQuery;
+      });
+
+      return {
+        ...ch,
+        concepts: matchingConcepts,
+      };
+    }).filter((ch) => ch.concepts.length > 0);
+  }, [difficultyFilter, searchQuery]);
+
+  const totalMatchingConcepts = useMemo(
+    () => filteredChapters.reduce((acc, ch) => acc + ch.concepts.length, 0),
+    [filteredChapters]
+  );
+
+  const beginnerTotal = useMemo(() => allConcepts.filter((c) => c.difficulty === 'Beginner').length, [allConcepts]);
+  const beginnerDone = useMemo(
+    () => allConcepts.filter((c) => c.difficulty === 'Beginner' && completedConcepts.includes(c.id)).length,
+    [allConcepts, completedConcepts]
+  );
 
   const handleRunPractice = () => {
     const trimmed = practiceInput.trim();
@@ -75,12 +117,12 @@ export const PodAcademyView: React.FC<PodAcademyViewProps> = ({ onSwitchToSuite 
         overflow: 'hidden',
       }}
     >
-      {/* COLUMN 1: LEFT SIDEBAR (Curriculum Navigator) */}
+      {/* COLUMN 1: LEFT SIDEBAR (Curriculum Navigator with Filters & Search) */}
       <aside
         style={{
-          width: '280px',
-          minWidth: '280px',
-          maxWidth: '280px',
+          width: '300px',
+          minWidth: '300px',
+          maxWidth: '300px',
           background: 'var(--bg-surface)',
           borderRight: '1px solid var(--border-color)',
           display: 'flex',
@@ -90,100 +132,191 @@ export const PodAcademyView: React.FC<PodAcademyViewProps> = ({ onSwitchToSuite 
         }}
       >
         {/* Sidebar Header */}
-        <div style={{ padding: '1rem', borderBottom: '1px solid var(--border-color)' }}>
-          <div style={{ fontSize: '0.92rem', fontWeight: 800, color: '#fff', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-            <Layers size={16} color="var(--k8s-blue)" />
-            <span>Kubernetes Curriculum</span>
+        <div style={{ padding: '0.85rem 1rem 0.65rem 1rem', borderBottom: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ fontSize: '0.9rem', fontWeight: 800, color: '#fff', display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
+              <Layers size={16} color="var(--k8s-blue)" />
+              <span>Kubernetes Curriculum</span>
+            </div>
+            <span style={{ fontSize: '0.68rem', color: 'var(--k8s-cyan)', background: 'rgba(56, 189, 248, 0.12)', padding: '0.15rem 0.45rem', borderRadius: '4px', fontWeight: 700 }}>
+              {totalMatchingConcepts}/{allConcepts.length}
+            </span>
           </div>
-          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
-            {KUBE_CHAPTERS.length} Chapters • {allConcepts.length} Core Concepts
+
+          {/* Quick Search Input */}
+          <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+            <Search size={13} color="#94a3b8" style={{ position: 'absolute', left: '0.6rem', pointerEvents: 'none' }} />
+            <input
+              type="text"
+              placeholder="Search concepts, docker, rbac..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{
+                width: '100%',
+                background: 'rgba(0, 0, 0, 0.35)',
+                border: '1px solid var(--border-color)',
+                borderRadius: '6px',
+                padding: '0.35rem 1.8rem 0.35rem 1.9rem',
+                color: '#fff',
+                fontSize: '0.74rem',
+                outline: 'none',
+              }}
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                style={{ position: 'absolute', right: '0.45rem', background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '0.1rem' }}
+              >
+                <X size={12} />
+              </button>
+            )}
+          </div>
+
+          {/* Difficulty Tier Tabs */}
+          <div style={{ display: 'flex', gap: '0.25rem', overflowX: 'auto', paddingBottom: '0.1rem' }}>
+            {(['All', 'Beginner', 'Intermediate', 'Advanced', 'Expert'] as DifficultyTier[]).map((tier) => {
+              const isSelected = difficultyFilter === tier;
+              return (
+                <button
+                  key={tier}
+                  onClick={() => setDifficultyFilter(tier)}
+                  style={{
+                    background: isSelected ? 'var(--k8s-blue)' : 'rgba(255, 255, 255, 0.04)',
+                    border: isSelected ? '1px solid #38bdf8' : '1px solid transparent',
+                    color: isSelected ? '#fff' : 'var(--text-muted)',
+                    borderRadius: '5px',
+                    padding: '0.2rem 0.45rem',
+                    fontSize: '0.68rem',
+                    fontWeight: isSelected ? 800 : 600,
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  {tier}
+                </button>
+              );
+            })}
           </div>
         </div>
 
         {/* Chapters & Concepts List */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '0.65rem 0.5rem' }}>
-          {KUBE_CHAPTERS.map((ch) => {
-            const ChapterIcon = getChapterIcon(ch.number);
-            return (
-              <div key={ch.id} style={{ marginBottom: '0.85rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.68rem', fontWeight: 800, color: 'var(--k8s-cyan)', textTransform: 'uppercase', padding: '0.25rem 0.6rem', letterSpacing: '0.04em' }}>
-                  <ChapterIcon size={14} color="var(--k8s-cyan)" />
-                  <span>{ch.title}</span>
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', marginTop: '0.2rem' }}>
-                  {ch.concepts.map((c) => {
-                    const isActive = c.id === activeConcept.id;
-                    const isDone = completedConcepts.includes(c.id);
-                    const ConceptIcon = getConceptIcon(c.id);
-
-                    return (
-                      <div
-                        key={c.id}
-                        onClick={() => {
-                          setActiveConceptId(c.id);
-                          setPracticeSuccess(false);
-                          setPracticeInput('');
-                        }}
-                        style={{
-                          padding: '0.5rem 0.65rem',
-                          borderRadius: '6px',
-                          cursor: 'pointer',
-                          background: isActive ? 'rgba(50, 108, 229, 0.18)' : 'transparent',
-                          borderLeft: isActive ? '3px solid var(--k8s-blue)' : '3px solid transparent',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          gap: '0.55rem',
-                          transition: 'all 0.15s ease',
-                        }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', minWidth: 0, flex: 1 }}>
-                          <div
-                            style={{
-                              width: '24px',
-                              height: '24px',
-                              borderRadius: '6px',
-                              background: isActive ? 'rgba(56, 189, 248, 0.2)' : 'rgba(148, 163, 184, 0.08)',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              flexShrink: 0,
-                              color: isActive ? 'var(--k8s-cyan)' : 'var(--text-muted)',
-                            }}
-                          >
-                            <ConceptIcon size={13} />
-                          </div>
-                          <div style={{ minWidth: 0, flex: 1 }}>
-                            <div style={{ fontSize: '0.78rem', fontWeight: isActive ? 800 : 600, color: isActive ? '#fff' : 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                              {c.number} {c.title}
-                            </div>
-                            <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>
-                              {c.badge}
-                            </div>
-                          </div>
-                        </div>
-
-                        {isDone && <CheckCircle2 size={14} color="#10b981" />}
-                      </div>
-                    );
-                  })}
-                </div>
+          {filteredChapters.length === 0 ? (
+            <div style={{ padding: '2rem 1rem', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '0.65rem', alignItems: 'center' }}>
+              <Filter size={24} color="#64748b" />
+              <div style={{ fontSize: '0.82rem', color: '#94a3b8', fontWeight: 600 }}>
+                No concepts match the current filter.
               </div>
-            );
-          })}
+              <button
+                onClick={() => {
+                  setDifficultyFilter('All');
+                  setSearchQuery('');
+                }}
+                style={{
+                  background: 'rgba(56, 189, 248, 0.15)',
+                  border: '1px solid rgba(56, 189, 248, 0.3)',
+                  color: '#38bdf8',
+                  padding: '0.35rem 0.75rem',
+                  borderRadius: '6px',
+                  fontSize: '0.74rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                }}
+              >
+                Reset All Filters
+              </button>
+            </div>
+          ) : (
+            filteredChapters.map((ch) => {
+              const ChapterIcon = getChapterIcon(ch.number);
+              return (
+                <div key={ch.id} style={{ marginBottom: '0.85rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.68rem', fontWeight: 800, color: 'var(--k8s-cyan)', textTransform: 'uppercase', padding: '0.25rem 0.6rem', letterSpacing: '0.04em' }}>
+                    <ChapterIcon size={14} color="var(--k8s-cyan)" />
+                    <span>{ch.title}</span>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', marginTop: '0.2rem' }}>
+                    {ch.concepts.map((c) => {
+                      const isActive = c.id === activeConcept.id;
+                      const isDone = completedConcepts.includes(c.id);
+                      const ConceptIcon = getConceptIcon(c.id);
+
+                      return (
+                        <div
+                          key={c.id}
+                          onClick={() => {
+                            setActiveConceptId(c.id);
+                            setPracticeSuccess(false);
+                            setPracticeInput('');
+                          }}
+                          style={{
+                            padding: '0.5rem 0.65rem',
+                            borderRadius: '6px',
+                            cursor: 'pointer',
+                            background: isActive ? 'rgba(50, 108, 229, 0.18)' : 'transparent',
+                            borderLeft: isActive ? '3px solid var(--k8s-blue)' : '3px solid transparent',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            gap: '0.55rem',
+                            transition: 'all 0.15s ease',
+                          }}
+                        >
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', minWidth: 0, flex: 1 }}>
+                            <div
+                              style={{
+                                width: '24px',
+                                height: '24px',
+                                borderRadius: '6px',
+                                background: isActive ? 'rgba(56, 189, 248, 0.2)' : 'rgba(148, 163, 184, 0.08)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                flexShrink: 0,
+                                color: isActive ? 'var(--k8s-cyan)' : 'var(--text-muted)',
+                              }}
+                            >
+                              <ConceptIcon size={13} />
+                            </div>
+                            <div style={{ minWidth: 0, flex: 1 }}>
+                              <div style={{ fontSize: '0.78rem', fontWeight: isActive ? 800 : 600, color: isActive ? '#fff' : 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                {c.number} {c.title}
+                              </div>
+                              <div style={{ fontSize: '0.66rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                                <span>{c.difficulty}</span>
+                                <span>•</span>
+                                <span>{c.badge}</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {isDone && <CheckCircle2 size={14} color="#10b981" />}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
 
         {/* Progress Footer */}
-        <div style={{ padding: '0.85rem', borderTop: '1px solid var(--border-color)', background: 'var(--bg-surface)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', marginBottom: '0.35rem' }}>
-            <span style={{ color: 'var(--text-secondary)' }}>Mastery Progress</span>
+        <div style={{ padding: '0.85rem', borderTop: '1px solid var(--border-color)', background: 'var(--bg-surface)', display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem' }}>
+            <span style={{ color: 'var(--text-secondary)' }}>Mastery Journey</span>
             <span style={{ fontWeight: 800, color: 'var(--k8s-cyan)' }}>
-              {Math.round((completedConcepts.length / allConcepts.length) * 100)}%
+              {Math.round((completedConcepts.length / allConcepts.length) * 100)}% ({completedConcepts.length}/{allConcepts.length})
             </span>
           </div>
           <div style={{ height: '5px', background: 'var(--border-color)', borderRadius: '999px', overflow: 'hidden' }}>
             <div style={{ width: `${(completedConcepts.length / allConcepts.length) * 100}%`, height: '100%', background: 'linear-gradient(90deg, #326ce5 0%, #10b981 100%)' }} />
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.68rem', color: 'var(--text-muted)' }}>
+            <span>Beginner: {beginnerDone}/{beginnerTotal}</span>
+            <span>All 4 Tracks Active</span>
           </div>
         </div>
       </aside>

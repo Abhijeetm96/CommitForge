@@ -21,6 +21,14 @@ export interface KubeYamlFieldExplanation {
   explanation: string;
 }
 
+export interface KubeDockerBridge {
+  dockerEquivalent: string;
+  dockerCommand?: string;
+  k8sEquivalent: string;
+  keyDifference: string;
+  whyK8sApproach: string;
+}
+
 export interface KubeConcept {
   id: string;
   number: string;
@@ -67,6 +75,7 @@ export interface KubeConcept {
   quizQuestion?: KubeQuizQuestion;
   yamlExplanation?: KubeYamlFieldExplanation[];
   referenceCheatSheet?: string[];
+  dockerBridge?: KubeDockerBridge;
 }
 
 export interface KubeChapter {
