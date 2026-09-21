@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { KubeConcept } from '../../data/topics/types';
+import { KubeFlowDiagram } from '../diagrams/KubeFlowDiagram';
 import {
   BookOpen,
   Lightbulb,
@@ -273,16 +274,19 @@ export const PodConceptOverviewTab: React.FC<Props> = ({ concept }) => {
         </section>
       )}
 
-      {/* 5. LIFECYCLE & EXECUTION TIMELINE */}
-      {concept.lifecycleSteps && concept.lifecycleSteps.length > 0 && (
-        <section style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Clock size={18} color="#38bdf8" />
-            <h2 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: '#f8fafc' }}>
-              5. Control Plane & Runtime Execution Pipeline
-            </h2>
-          </div>
+      {/* 5. VISUAL ARCHITECTURAL BLOCK DIAGRAM & CONTROL PLANE EXECUTION PIPELINE */}
+      <section style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <Clock size={18} color="#38bdf8" />
+          <h2 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: '#f8fafc' }}>
+            5. Architectural Flow &amp; Control Plane Execution Pipeline
+          </h2>
+        </div>
 
+        {/* Visual Interactive Block Diagram Engine */}
+        <KubeFlowDiagram concept={concept} compact={true} />
+
+        {concept.lifecycleSteps && concept.lifecycleSteps.length > 0 && (
           <div
             style={{
               background: 'var(--bg-card)',
@@ -334,8 +338,8 @@ export const PodConceptOverviewTab: React.FC<Props> = ({ concept }) => {
               </div>
             ))}
           </div>
-        </section>
-      )}
+        )}
+      </section>
 
       {/* 6. KEY MECHANISMS DECK */}
       {concept.keyMechanisms && concept.keyMechanisms.length > 0 && (
