@@ -7,13 +7,9 @@ import {
   Check,
   Play,
   Layers,
-  Sparkles,
   Sliders,
   ShieldCheck,
   CheckCircle2,
-  Terminal,
-  RefreshCw,
-  Info,
 } from 'lucide-react';
 
 interface Props {
@@ -27,30 +23,40 @@ export const PodYamlSpecTab: React.FC<Props> = ({ concept }) => {
   const [dryRunRan, setDryRunRan] = useState(false);
   const [selectedFieldIdx, setSelectedFieldIdx] = useState<number | null>(null);
 
+  // Check which parameters actually exist in this specific manifest
+  const hasReplicas = useMemo(() => /replicas:\s*\d+/.test(concept.yamlSnippet), [concept.yamlSnippet]);
+  const hasCpu = useMemo(() => /cpu:\s*["']?[0-9]+m?["']?/.test(concept.yamlSnippet), [concept.yamlSnippet]);
+  const hasMemory = useMemo(() => /memory:\s*["']?[0-9]+[A-Za-z]+["']?/.test(concept.yamlSnippet), [concept.yamlSnippet]);
+  const hasImage = useMemo(() => /image:\s*[\w\-\.\/]+/.test(concept.yamlSnippet), [concept.yamlSnippet]);
+
+  // Tweak controls are ONLY rendered where fields exist in the manifest
+  const hasAnyTweakControls = hasReplicas || hasCpu || hasMemory || hasImage;
+
   // Live tweak controls state
   const [replicas, setReplicas] = useState<number>(3);
   const [cpuLimit, setCpuLimit] = useState<string>('500m');
   const [memLimit, setMemLimit] = useState<string>('256Mi');
   const [imageTag, setImageTag] = useState<string>('1.25-alpine');
 
-  // Compute live updated YAML if matching parameters exist
+  // Compute live updated YAML only for fields that exist
   const liveYaml = useMemo(() => {
     let text = concept.yamlSnippet;
 
-    // Replace replicas
-    text = text.replace(/replicas:\s*\d+/g, `replicas: ${replicas}`);
-
-    // Replace cpu limit
-    text = text.replace(/cpu:\s*["']?[0-9]+m?["']?/g, `cpu: "${cpuLimit}"`);
-
-    // Replace memory limit
-    text = text.replace(/memory:\s*["']?[0-9]+[A-Za-z]+["']?/g, `memory: "${memLimit}"`);
-
-    // Replace image tag
-    text = text.replace(/(image:\s*[\w\-\.\/]+)(:\S+)?/g, (_match, p1) => `${p1}:${imageTag}`);
+    if (hasReplicas) {
+      text = text.replace(/replicas:\s*\d+/g, `replicas: ${replicas}`);
+    }
+    if (hasCpu) {
+      text = text.replace(/cpu:\s*["']?[0-9]+m?["']?/g, `cpu: "${cpuLimit}"`);
+    }
+    if (hasMemory) {
+      text = text.replace(/memory:\s*["']?[0-9]+[A-Za-z]+["']?/g, `memory: "${memLimit}"`);
+    }
+    if (hasImage) {
+      text = text.replace(/(image:\s*[\w\-\.\/]+)(:\S+)?/g, (_match, p1) => `${p1}:${imageTag}`);
+    }
 
     return text;
-  }, [concept.yamlSnippet, replicas, cpuLimit, memLimit, imageTag]);
+  }, [concept.yamlSnippet, hasReplicas, hasCpu, hasMemory, hasImage, replicas, cpuLimit, memLimit, imageTag]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(liveYaml);
@@ -102,10 +108,10 @@ export const PodYamlSpecTab: React.FC<Props> = ({ concept }) => {
           </div>
           <div>
             <div style={{ fontSize: '0.98rem', fontWeight: 800, color: '#fff' }}>
-              Interactive Declarative YAML Studio
+              Declarative Kubernetes YAML Studio
             </div>
             <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
-              Production schema blueprint with live parameter tweaking &amp; admission validation
+              Production schema blueprint for {concept.number} {concept.title}
             </div>
           </div>
         </div>
@@ -172,135 +178,145 @@ export const PodYamlSpecTab: React.FC<Props> = ({ concept }) => {
             }}
           >
             {applied ? <Check size={14} /> : <Play size={14} />}
-            <span>{applied ? 'Applied to Cluster!' : 'Deploy to Simulator'}</span>
+            <span>{applied ? 'Applied to Cluster!' : 'Apply to Cluster'}</span>
           </button>
         </div>
       </div>
 
-      {/* LIVE PARAMETER TWEAK CONTROLS */}
-      <div
-        style={{
-          background: 'rgba(50, 108, 229, 0.08)',
-          border: '1px solid rgba(56, 189, 248, 0.25)',
-          borderRadius: '12px',
-          padding: '1rem 1.25rem',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '0.85rem',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.76rem', fontWeight: 800, color: 'var(--k8s-cyan)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-          <Sliders size={15} color="var(--k8s-cyan)" />
-          <span>Interactive Manifest Tweak Controls (Live Spec Mutation)</span>
+      {/* PARAMETER CONTROLS: ONLY RENDERED WHERE RELEVANT TO MANIFEST SCHEMA */}
+      {hasAnyTweakControls && (
+        <div
+          style={{
+            background: 'rgba(50, 108, 229, 0.08)',
+            border: '1px solid rgba(56, 189, 248, 0.25)',
+            borderRadius: '12px',
+            padding: '1rem 1.25rem',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.85rem',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.76rem', fontWeight: 800, color: 'var(--k8s-cyan)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+            <Sliders size={15} color="var(--k8s-cyan)" />
+            <span>Interactive Spec Parameters (Manifest Customizer)</span>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.85rem' }}>
+            {/* Replicas Control - only if manifest has replicas */}
+            {hasReplicas && (
+              <div style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '0.65rem 0.85rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', color: 'var(--text-secondary)' }}>
+                  <span>Desired Replicas:</span>
+                  <strong style={{ color: '#38bdf8' }}>{replicas} Pods</strong>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <input
+                    type="range"
+                    min={1}
+                    max={8}
+                    value={replicas}
+                    onChange={(e) => setReplicas(Number(e.target.value))}
+                    style={{ flex: 1, accentColor: 'var(--k8s-cyan)', cursor: 'pointer' }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* CPU Limit Control - only if manifest has cpu */}
+            {hasCpu && (
+              <div style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '0.65rem 0.85rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', color: 'var(--text-secondary)' }}>
+                  <span>CPU Limit:</span>
+                  <strong style={{ color: '#10b981' }}>{cpuLimit}</strong>
+                </div>
+                <div style={{ display: 'flex', gap: '0.35rem' }}>
+                  {['250m', '500m', '1000m', '2000m'].map((cpu) => (
+                    <button
+                      key={cpu}
+                      onClick={() => setCpuLimit(cpu)}
+                      style={{
+                        flex: 1,
+                        background: cpuLimit === cpu ? 'rgba(16, 185, 129, 0.25)' : 'rgba(255, 255, 255, 0.05)',
+                        border: cpuLimit === cpu ? '1px solid #10b981' : '1px solid transparent',
+                        color: cpuLimit === cpu ? '#fff' : 'var(--text-muted)',
+                        borderRadius: '4px',
+                        padding: '0.2rem 0',
+                        fontSize: '0.7rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {cpu}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Memory Limit Control - only if manifest has memory */}
+            {hasMemory && (
+              <div style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '0.65rem 0.85rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', color: 'var(--text-secondary)' }}>
+                  <span>Memory Limit:</span>
+                  <strong style={{ color: '#c084fc' }}>{memLimit}</strong>
+                </div>
+                <div style={{ display: 'flex', gap: '0.35rem' }}>
+                  {['128Mi', '256Mi', '512Mi', '1Gi'].map((mem) => (
+                    <button
+                      key={mem}
+                      onClick={() => setMemLimit(mem)}
+                      style={{
+                        flex: 1,
+                        background: memLimit === mem ? 'rgba(192, 132, 252, 0.25)' : 'rgba(255, 255, 255, 0.05)',
+                        border: memLimit === mem ? '1px solid #c084fc' : '1px solid transparent',
+                        color: memLimit === mem ? '#fff' : 'var(--text-muted)',
+                        borderRadius: '4px',
+                        padding: '0.2rem 0',
+                        fontSize: '0.7rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {mem}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Image Tag Control - only if manifest has image */}
+            {hasImage && (
+              <div style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '0.65rem 0.85rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', color: 'var(--text-secondary)' }}>
+                  <span>Container Image Tag:</span>
+                  <strong style={{ color: '#f59e0b' }}>{imageTag}</strong>
+                </div>
+                <div style={{ display: 'flex', gap: '0.35rem' }}>
+                  {['1.25-alpine', 'latest', 'v2.1.0'].map((tag) => (
+                    <button
+                      key={tag}
+                      onClick={() => setImageTag(tag)}
+                      style={{
+                        flex: 1,
+                        background: imageTag === tag ? 'rgba(245, 158, 11, 0.25)' : 'rgba(255, 255, 255, 0.05)',
+                        border: imageTag === tag ? '1px solid #f59e0b' : '1px solid transparent',
+                        color: imageTag === tag ? '#fff' : 'var(--text-muted)',
+                        borderRadius: '4px',
+                        padding: '0.2rem 0',
+                        fontSize: '0.7rem',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.85rem' }}>
-          {/* Replicas Control */}
-          <div style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '0.65rem 0.85rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', color: 'var(--text-secondary)' }}>
-              <span>Desired Replicas:</span>
-              <strong style={{ color: '#38bdf8' }}>{replicas} Pods</strong>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <input
-                type="range"
-                min={1}
-                max={8}
-                value={replicas}
-                onChange={(e) => setReplicas(Number(e.target.value))}
-                style={{ flex: 1, accentColor: 'var(--k8s-cyan)', cursor: 'pointer' }}
-              />
-            </div>
-          </div>
-
-          {/* CPU Limit Control */}
-          <div style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '0.65rem 0.85rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', color: 'var(--text-secondary)' }}>
-              <span>CPU Limit:</span>
-              <strong style={{ color: '#10b981' }}>{cpuLimit}</strong>
-            </div>
-            <div style={{ display: 'flex', gap: '0.35rem' }}>
-              {['250m', '500m', '1000m', '2000m'].map((cpu) => (
-                <button
-                  key={cpu}
-                  onClick={() => setCpuLimit(cpu)}
-                  style={{
-                    flex: 1,
-                    background: cpuLimit === cpu ? 'rgba(16, 185, 129, 0.25)' : 'rgba(255, 255, 255, 0.05)',
-                    border: cpuLimit === cpu ? '1px solid #10b981' : '1px solid transparent',
-                    color: cpuLimit === cpu ? '#fff' : 'var(--text-muted)',
-                    borderRadius: '4px',
-                    padding: '0.2rem 0',
-                    fontSize: '0.7rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                  }}
-                >
-                  {cpu}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Memory Limit Control */}
-          <div style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '0.65rem 0.85rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', color: 'var(--text-secondary)' }}>
-              <span>Memory Limit:</span>
-              <strong style={{ color: '#c084fc' }}>{memLimit}</strong>
-            </div>
-            <div style={{ display: 'flex', gap: '0.35rem' }}>
-              {['128Mi', '256Mi', '512Mi', '1Gi'].map((mem) => (
-                <button
-                  key={mem}
-                  onClick={() => setMemLimit(mem)}
-                  style={{
-                    flex: 1,
-                    background: memLimit === mem ? 'rgba(192, 132, 252, 0.25)' : 'rgba(255, 255, 255, 0.05)',
-                    border: memLimit === mem ? '1px solid #c084fc' : '1px solid transparent',
-                    color: memLimit === mem ? '#fff' : 'var(--text-muted)',
-                    borderRadius: '4px',
-                    padding: '0.2rem 0',
-                    fontSize: '0.7rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                  }}
-                >
-                  {mem}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Image Tag Control */}
-          <div style={{ background: 'rgba(0, 0, 0, 0.35)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '0.65rem 0.85rem', display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.74rem', color: 'var(--text-secondary)' }}>
-              <span>Container Image Tag:</span>
-              <strong style={{ color: '#f59e0b' }}>{imageTag}</strong>
-            </div>
-            <div style={{ display: 'flex', gap: '0.35rem' }}>
-              {['1.25-alpine', 'latest', 'v2.1.0'].map((tag) => (
-                <button
-                  key={tag}
-                  onClick={() => setImageTag(tag)}
-                  style={{
-                    flex: 1,
-                    background: imageTag === tag ? 'rgba(245, 158, 11, 0.25)' : 'rgba(255, 255, 255, 0.05)',
-                    border: imageTag === tag ? '1px solid #f59e0b' : '1px solid transparent',
-                    color: imageTag === tag ? '#fff' : 'var(--text-muted)',
-                    borderRadius: '4px',
-                    padding: '0.2rem 0',
-                    fontSize: '0.7rem',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                  }}
-                >
-                  {tag}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
+      )}
 
       {/* Dry-Run Feedback Box */}
       {dryRunRan && (

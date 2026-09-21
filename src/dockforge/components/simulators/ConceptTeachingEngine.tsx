@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { UniversalDockerConcept, ConceptTerm, BlockDiagramNode } from '../../data/unifiedDockerData';
 import {
   BookOpen,
@@ -45,6 +45,28 @@ export const ConceptTeachingEngine: React.FC<ConceptTeachingEngineProps> = ({
   onSelectConcept,
 }) => {
   const concept = ensureFullConceptData(rawConcept);
+
+  // Runtime simulator is ONLY required for dynamic container execution & resource topics
+  const isRuntimeSimulationRequired = useMemo(() => {
+    const cid = concept.id.toLowerCase();
+    const ctitle = concept.title.toLowerCase();
+    return (
+      cid.includes('run') ||
+      cid.includes('volume') ||
+      cid.includes('mount') ||
+      cid.includes('compose') ||
+      cid.includes('stats') ||
+      cid.includes('stop') ||
+      cid.includes('exec') ||
+      cid.includes('database') ||
+      ctitle.includes('running containers') ||
+      ctitle.includes('stopping') ||
+      ctitle.includes('volume') ||
+      ctitle.includes('compose') ||
+      ctitle.includes('interactive shells')
+    );
+  }, [concept.id, concept.title]);
+
   // 5 Learning Stage Anchors
   const [stage, setStage] = useState<1 | 2 | 3 | 4 | 5>(1);
 
@@ -199,7 +221,7 @@ export const ConceptTeachingEngine: React.FC<ConceptTeachingEngineProps> = ({
             { id: 2, label: '2. Visual & Terms', icon: Box },
             { id: 3, label: '3. Syntax & Tokens', icon: Zap },
             { id: 4, label: '4. Internal Mechanics', icon: Layers },
-            { id: 5, label: '5. Simulator & Practice', icon: TerminalIcon },
+            { id: 5, label: isRuntimeSimulationRequired ? '5. Simulator & Practice' : '5. Practice & Quiz', icon: TerminalIcon },
           ].map((stg) => {
             const IconComp = stg.icon;
             const isActive = stage === stg.id;
@@ -860,21 +882,23 @@ export const ConceptTeachingEngine: React.FC<ConceptTeachingEngineProps> = ({
         {/* ==================================================================== */}
         {stage === 5 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
-            {/* Interactive Reusable Simulator Engine */}
-            <div>
-              <div style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--docker-blue)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.4rem' }}>
-                Interactive Cause & Effect Simulator
-              </div>
-              <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#fff', margin: '0 0 1rem 0' }}>
-                Let's See It Happen Live
-              </h3>
+            {/* Interactive Reusable Simulator Engine - ONLY rendered when runtime simulation is required */}
+            {isRuntimeSimulationRequired && (
+              <div>
+                <div style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--docker-blue)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '0.4rem' }}>
+                  Interactive Cause &amp; Effect Simulator
+                </div>
+                <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#fff', margin: '0 0 1rem 0' }}>
+                  Let's See It Happen Live
+                </h3>
 
-              <DockerSimulatorEngine
-                concept={concept}
-                onComplete={() => markConceptComplete(concept.id)}
-                showToast={showToast}
-              />
-            </div>
+                <DockerSimulatorEngine
+                  concept={concept}
+                  onComplete={() => markConceptComplete(concept.id)}
+                  showToast={showToast}
+                />
+              </div>
+            )}
 
             {/* Try It Yourself Terminal Sandbox */}
             <div className="docker-card" style={{ padding: '1.75rem' }}>

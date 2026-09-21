@@ -12,10 +12,8 @@ import {
   AlertOctagon,
   TrendingUp,
   RefreshCcw,
-  CheckCircle2,
-  Terminal,
-  Activity,
   Boxes,
+  Activity,
 } from 'lucide-react';
 
 interface Props {
@@ -32,14 +30,61 @@ interface ChaosEventLog {
 export const PodVisualizerTab: React.FC<Props> = ({ concept }) => {
   const { executeCommand } = useApp();
   const [visualizerMode, setVisualizerMode] = useState<'diagram' | 'topology'>('diagram');
-  const [chaosLogs, setChaosLogs] = useState<ChaosEventLog[]>([
-    {
-      id: 'init-1',
-      time: new Date().toLocaleTimeString(),
-      type: 'scale',
-      message: `Cluster state healthy. Active concept: ${concept.number} ${concept.title}`,
-    },
-  ]);
+  const [chaosLogs, setChaosLogs] = useState<ChaosEventLog[]>([]);
+
+  const cid = concept.id.toLowerCase();
+  const ctitle = concept.title.toLowerCase();
+
+  // 1. Pod Crash & Self-Healing: strictly for Pods, ReplicaSets, Deployments, Probes
+  const allowsPodCrash =
+    cid.includes('c-pod-intro') ||
+    cid.includes('c-pod-lifecycle') ||
+    cid.includes('c-pod-health') ||
+    cid.includes('c-replicasets') ||
+    cid.includes('c-probes') ||
+    ctitle.includes('pod lifecycle') ||
+    ctitle.includes('self-healing') ||
+    ctitle.includes('replicasets');
+
+  // 2. HPA Traffic Spike: strictly for Autoscaling concepts
+  const allowsHpaSpike =
+    cid.includes('c-hpa') ||
+    cid.includes('c-autoscale') ||
+    ctitle.includes('horizontal pod autoscaler') ||
+    ctitle.includes('why autoscaling') ||
+    ctitle.includes('autoscaling');
+
+  // 3. Node Drain & Eviction: strictly for Worker Nodes, Scheduling, Evictions
+  const allowsNodeDrain =
+    cid.includes('c-worker-nodes') ||
+    cid.includes('c-node-drain') ||
+    cid.includes('c-pod-evictions') ||
+    cid.includes('c-taints') ||
+    ctitle.includes('worker nodes') ||
+    ctitle.includes('pod evictions') ||
+    ctitle.includes('taints');
+
+  // 4. Rolling Update: strictly for Deployments and Deployment Patterns
+  const allowsRollingUpdate =
+    cid.includes('c-deployments') ||
+    cid.includes('c-rolling-updates') ||
+    cid.includes('c-rollbacks') ||
+    cid.includes('c-blue-green') ||
+    cid.includes('c-canary') ||
+    ctitle.includes('rolling update') ||
+    ctitle.includes('deployment patterns') ||
+    ctitle.includes('rollout');
+
+  // Simulator toolbar is ONLY rendered where required by the concept
+  const hasAnySimulatorAction =
+    allowsPodCrash || allowsHpaSpike || allowsNodeDrain || allowsRollingUpdate;
+
+  // Scale trigger is only shown if the resource is scalable
+  const allowsScale =
+    /replicas:\s*\d+/.test(concept.yamlSnippet) ||
+    ctitle.includes('deployment') ||
+    ctitle.includes('replicaset') ||
+    ctitle.includes('statefulset');
 
   const addChaosLog = (type: 'kill' | 'scale' | 'drain' | 'rollout', msg: string) => {
     const newLog: ChaosEventLog = {
@@ -48,7 +93,7 @@ export const PodVisualizerTab: React.FC<Props> = ({ concept }) => {
       type,
       message: msg,
     };
-    setChaosLogs((prev) => [newLog, ...prev.slice(0, 4)]);
+    setChaosLogs((prev) => [newLog, ...prev.slice(0, 3)]);
   };
 
   const handleSimulateApply = () => {
@@ -210,152 +255,164 @@ export const PodVisualizerTab: React.FC<Props> = ({ concept }) => {
               <Play size={12} /> Apply Manifest
             </button>
 
-            <button
-              onClick={handleSimulateScale}
-              style={{
-                background: 'var(--bg-surface)',
-                border: '1px solid var(--border-color)',
-                borderRadius: '7px',
-                padding: '0.35rem 0.65rem',
-                color: '#10b981',
-                fontSize: '0.74rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.35rem',
-              }}
-            >
-              <Zap size={12} /> Scale
-            </button>
+            {allowsScale && (
+              <button
+                onClick={handleSimulateScale}
+                style={{
+                  background: 'var(--bg-surface)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: '7px',
+                  padding: '0.35rem 0.65rem',
+                  color: '#10b981',
+                  fontSize: '0.74rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                }}
+              >
+                <Zap size={12} /> Scale
+              </button>
+            )}
           </div>
         </div>
       </div>
 
-      {/* CLUSTER CHAOS & RECOVERY EXPERIMENT TOOLBAR */}
-      <div
-        style={{
-          background: 'rgba(0, 0, 0, 0.4)',
-          border: '1px solid rgba(239, 68, 68, 0.3)',
-          borderRadius: '12px',
-          padding: '0.85rem 1.15rem',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '0.75rem',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.76rem', fontWeight: 800, color: '#f87171', textTransform: 'uppercase' }}>
-            <Flame size={15} color="#ef4444" />
-            <span>Interactive Cluster Chaos &amp; Self-Healing Simulator (Beginner Lab)</span>
-          </div>
-          <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-            Trigger real-time cluster events to observe Kubernetes controller reconciliations
-          </span>
-        </div>
-
-        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-          <button
-            onClick={handleKillPod}
-            style={{
-              background: 'rgba(239, 68, 68, 0.15)',
-              border: '1px solid rgba(239, 68, 68, 0.4)',
-              borderRadius: '8px',
-              padding: '0.45rem 0.85rem',
-              color: '#f87171',
-              fontSize: '0.76rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              transition: 'all 0.15s ease',
-            }}
-          >
-            <AlertOctagon size={14} />
-            <span>Simulate Pod Crash (Self-Healing)</span>
-          </button>
-
-          <button
-            onClick={handleTrafficSpike}
-            style={{
-              background: 'rgba(245, 158, 11, 0.15)',
-              border: '1px solid rgba(245, 158, 11, 0.4)',
-              borderRadius: '8px',
-              padding: '0.45rem 0.85rem',
-              color: '#fbbf24',
-              fontSize: '0.76rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              transition: 'all 0.15s ease',
-            }}
-          >
-            <TrendingUp size={14} />
-            <span>Simulate Traffic Spike (HPA)</span>
-          </button>
-
-          <button
-            onClick={handleDrainNode}
-            style={{
-              background: 'rgba(168, 85, 247, 0.15)',
-              border: '1px solid rgba(168, 85, 247, 0.4)',
-              borderRadius: '8px',
-              padding: '0.45rem 0.85rem',
-              color: '#c084fc',
-              fontSize: '0.76rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              transition: 'all 0.15s ease',
-            }}
-          >
-            <Boxes size={14} />
-            <span>Simulate Node Drain (Eviction)</span>
-          </button>
-
-          <button
-            onClick={handleRollingUpdate}
-            style={{
-              background: 'rgba(16, 185, 129, 0.15)',
-              border: '1px solid rgba(16, 185, 129, 0.4)',
-              borderRadius: '8px',
-              padding: '0.45rem 0.85rem',
-              color: '#34d399',
-              fontSize: '0.76rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-              transition: 'all 0.15s ease',
-            }}
-          >
-            <RefreshCcw size={14} />
-            <span>Simulate Rolling Update (Zero Downtime)</span>
-          </button>
-        </div>
-
-        {/* Chaos Event Feed */}
-        {chaosLogs.length > 0 && (
-          <div style={{ background: 'rgba(0, 0, 0, 0.6)', borderRadius: '8px', padding: '0.65rem 0.85rem', border: '1px solid rgba(255, 255, 255, 0.08)', display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-              <Activity size={12} color="#38bdf8" />
-              <span>Live Cluster Reconciler Event Feed:</span>
+      {/* TARGETED SIMULATOR TOOLBAR: ONLY SHOWN WHERE DIRECTLY REQUIRED */}
+      {hasAnySimulatorAction && (
+        <div
+          style={{
+            background: 'rgba(0, 0, 0, 0.4)',
+            border: '1px solid rgba(239, 68, 68, 0.3)',
+            borderRadius: '12px',
+            padding: '0.85rem 1.15rem',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.75rem',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.76rem', fontWeight: 800, color: '#f87171', textTransform: 'uppercase' }}>
+              <Flame size={15} color="#ef4444" />
+              <span>Targeted Behavioral Simulator</span>
             </div>
-            {chaosLogs.slice(0, 2).map((log) => (
-              <div key={log.id} style={{ fontSize: '0.76rem', color: '#e2e8f0', lineHeight: 1.45, display: 'flex', alignItems: 'flex-start', gap: '0.45rem' }}>
-                <span style={{ color: '#38bdf8', fontFamily: 'var(--font-mono)', fontSize: '0.7rem', flexShrink: 0 }}>[{log.time}]</span>
-                <span>{log.message}</span>
-              </div>
-            ))}
+            <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+              Interactive simulation relevant to {concept.title}
+            </span>
           </div>
-        )}
-      </div>
+
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+            {allowsPodCrash && (
+              <button
+                onClick={handleKillPod}
+                style={{
+                  background: 'rgba(239, 68, 68, 0.15)',
+                  border: '1px solid rgba(239, 68, 68, 0.4)',
+                  borderRadius: '8px',
+                  padding: '0.45rem 0.85rem',
+                  color: '#f87171',
+                  fontSize: '0.76rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <AlertOctagon size={14} />
+                <span>Simulate Pod Crash (Self-Healing)</span>
+              </button>
+            )}
+
+            {allowsHpaSpike && (
+              <button
+                onClick={handleTrafficSpike}
+                style={{
+                  background: 'rgba(245, 158, 11, 0.15)',
+                  border: '1px solid rgba(245, 158, 11, 0.4)',
+                  borderRadius: '8px',
+                  padding: '0.45rem 0.85rem',
+                  color: '#fbbf24',
+                  fontSize: '0.76rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <TrendingUp size={14} />
+                <span>Simulate Traffic Spike (HPA)</span>
+              </button>
+            )}
+
+            {allowsNodeDrain && (
+              <button
+                onClick={handleDrainNode}
+                style={{
+                  background: 'rgba(168, 85, 247, 0.15)',
+                  border: '1px solid rgba(168, 85, 247, 0.4)',
+                  borderRadius: '8px',
+                  padding: '0.45rem 0.85rem',
+                  color: '#c084fc',
+                  fontSize: '0.76rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <Boxes size={14} />
+                <span>Simulate Node Drain (Eviction)</span>
+              </button>
+            )}
+
+            {allowsRollingUpdate && (
+              <button
+                onClick={handleRollingUpdate}
+                style={{
+                  background: 'rgba(16, 185, 129, 0.15)',
+                  border: '1px solid rgba(16, 185, 129, 0.4)',
+                  borderRadius: '8px',
+                  padding: '0.45rem 0.85rem',
+                  color: '#34d399',
+                  fontSize: '0.76rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <RefreshCcw size={14} />
+                <span>Simulate Rolling Update (Zero Downtime)</span>
+              </button>
+            )}
+          </div>
+
+          {/* Chaos Event Feed */}
+          {chaosLogs.length > 0 && (
+            <div style={{ background: 'rgba(0, 0, 0, 0.6)', borderRadius: '8px', padding: '0.65rem 0.85rem', border: '1px solid rgba(255, 255, 255, 0.08)', display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <Activity size={12} color="#38bdf8" />
+                <span>Cluster Event Reconciler Output:</span>
+              </div>
+              {chaosLogs.slice(0, 2).map((log) => (
+                <div key={log.id} style={{ fontSize: '0.76rem', color: '#e2e8f0', lineHeight: 1.45, display: 'flex', alignItems: 'flex-start', gap: '0.45rem' }}>
+                  <span style={{ color: '#38bdf8', fontFamily: 'var(--font-mono)', fontSize: '0.7rem', flexShrink: 0 }}>[{log.time}]</span>
+                  <span>{log.message}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Main Visualizer Content */}
       {visualizerMode === 'diagram' ? (
