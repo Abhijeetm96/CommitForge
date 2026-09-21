@@ -66,14 +66,101 @@ export const TOPIC_09_10_CONCEPTS: Record<string, UniversalDockerConcept> = {
       },
     ],
 
+    withoutVsWith: {
+      without: {
+        title: "Default Defaults",
+        items: [
+          "Containers crash and never come back up",
+          "Hardcoded variables inside images mean rebuilding for every environment",
+          "Root user runs the process (security risk)",
+          "Container consumes 100% of host CPU if a memory leak occurs"
+        ],
+        outcome: "Fragile, insecure applications that need manual baby-sitting."
+      },
+      with: {
+        title: "Runtime Configurations",
+        items: [
+          "Auto-restarts when crashes occur (--restart=unless-stopped)",
+          "Injects variables per environment (-e DB_PASS=secret)",
+          "Runs as a non-privileged user (--user 1000:1000)",
+          "Caps resource usage (--memory=512m --cpus=1.5)"
+        ],
+        outcome: "Self-healing, secure, and resource-capped microservices."
+      }
+    },
+
+    blockDiagram: {
+      title: "Docker Run Flags Execution",
+      subtitle: "How CLI arguments translate to cgroup and namespace configuration",
+      nodes: [
+        { id: "docker-cli", label: "Docker CLI", simpleDef: "Sends config flags", techDef: "docker run -d --memory=512m", color: "#38bdf8" },
+        { id: "docker-api", label: "Docker API", simpleDef: "Receives JSON spec", techDef: "POST /v1.43/containers/create", badge: "Daemon", color: "#4ade80" },
+        { id: "cgroups", label: "cgroups (Resources)", simpleDef: "Limits RAM/CPU", techDef: "/sys/fs/cgroup/memory.max = 512m", color: "#facc15" },
+        { id: "namespaces", label: "Namespaces", simpleDef: "Applies user isolation", techDef: "CLONE_NEWUSER syscall", color: "#f87171" }
+      ]
+    },
+
+    terms: [
+      { term: "Restart Policy", simple: "Rules for when a container should automatically turn back on", technical: "Daemon-level supervisory loop checking container exit codes.", analogy: "A thermostat automatically turning the heat back on when temperature drops." },
+      { term: "cgroups", simple: "Limits how much CPU and RAM a container can use", technical: "Linux Control Groups controlling and accounting for process resource isolation.", analogy: "A budget limit on a corporate credit card." },
+      { term: "Read-only Root Filesystem", simple: "Makes the container's hard drive un-editable", technical: "--read-only flag mounts the container's overlayfs upperdir as ro.", analogy: "Flipping the write-protect switch on an SD card." }
+    ],
+
+    whenToUse: [
+      "✓ Use `--restart=unless-stopped` for web servers so they survive server reboots.",
+      "✓ Use `--memory` and `--cpus` to prevent a single container from crashing the entire host.",
+      "✓ Use `--user` in production to prevent privilege escalation if the app is compromised.",
+      "✓ Use `--env-file` to pass multiple database credentials securely."
+    ],
+
+    whenNotToUse: [
+      "✕ Don't use `--restart=always` on one-off maintenance scripts (they'll run in an infinite loop).",
+      "✕ Avoid passing highly sensitive production passwords directly via `-e PASSWORD=...` in CLI history."
+    ],
+
+    developerScenario: {
+      title: "The Out-of-Memory Outage",
+      setup: "A Node.js backend occasionally suffers from a memory leak, consuming 100% of the host RAM and crashing other apps.",
+      problem: "Running simply `docker run -d node-api` gives the container unlimited access to the host's RAM.",
+      solution: "Running `docker run -d --memory=512m --restart=on-failure:3 node-api` restricts the app to 512MB. If it leaks and gets OOM-killed, Docker automatically restarts it up to 3 times while developers patch the leak."
+    },
+
+    internalFlow: [
+      { step: 1, title: "CLI Parsing", desc: "User types docker run with flags.", why: "Client translates flags into a HostConfig JSON object.", techDetail: "Parsed arguments map to HostConfig fields like RestartPolicy, Resources." },
+      { step: 2, title: "API Request", desc: "Sends request to Daemon.", why: "Docker daemon needs the full specification.", techDetail: "POST /containers/create with JSON payload containing both Config and HostConfig." },
+      { step: 3, title: "Resource Setup", desc: "Daemon creates cgroups.", why: "Enforces memory/CPU limits.", techDetail: "Containerd creates cgroup limits via runc (e.g., setting memory.max in cgroups v2)." },
+      { step: 4, title: "Network Setup", desc: "Daemon attaches network.", why: "Connects container to virtual bridge.", techDetail: "Creates veth pairs and applies iptables rules for published ports." },
+      { step: 5, title: "Process Launch", desc: "runc starts process with given user.", why: "Executes the main PID 1.", techDetail: "setuid/setgid to the user specified by --user flag inside the isolated namespaces." }
+    ],
+
+    commonMistakes: [
+      { mistake: "Putting flags AFTER the image name", whyWrong: "Anything after the image name is treated as the command to run inside the container.", correctWay: "docker run -p 80:80 nginx (Correct) vs docker run nginx -p 80:80 (Incorrect)" },
+      { mistake: "Typing --restart always", whyWrong: "It requires an equals sign or space, but equals is standard syntax, and missing the -- prefix causes errors.", correctWay: "Use --restart=always" }
+    ],
+
+    recapChecklist: [
+      "Flags go BEFORE the image name: docker run [FLAGS] [IMAGE] [COMMAND].",
+      "--restart=unless-stopped is the safest default for continuous services.",
+      "Always set memory limits (--memory) to prevent host-wide outages.",
+      "Use environment variables (-e or --env-file) to make containers portable."
+    ],
+
+    challenge: {
+      question: "You want a background worker to automatically restart if it crashes with an error, but completely give up after 5 failed attempts. Which restart policy should you use?",
+      options: [
+        { label: "--restart=on-failure:5", isCorrect: true, explanation: "on-failure accepts an optional maximum retry count. If it fails 5 times, Docker stops trying." },
+        { label: "--restart=always:5", isCorrect: false, explanation: "The 'always' policy does not accept a retry count and will loop infinitely." },
+        { label: "--restart=unless-stopped", isCorrect: false, explanation: "unless-stopped will restart indefinitely on crashes." }
+      ]
+    },
+
     sandbox: {
-      initialCommands: ['docker ps'],
+      initialCommands: [],
       guidedSteps: [
-        { instruction: 'Run a self-healing Nginx container with --restart=always flag', command: 'docker run -d --name self-healing-web --restart=always -p 8081:80 nginx:alpine', hint: 'Run docker run -d --name self-healing-web --restart=always -p 8081:80 nginx:alpine' },
-        { instruction: 'Inspect container inspect JSON to confirm restart policy', command: 'docker inspect self-healing-web', hint: 'Run docker inspect self-healing-web' },
+        { instruction: 'Launch an application container with specific restart policies, memory/CPU limits, environment variables, and port mappings.', command: 'docker run -d --restart=unless-stopped --memory=512m --cpus=1.5 -e NODE_ENV=production -p 3000:3000 myapp', hint: 'Follow the exact flag specification provided in the prompt' }
       ],
-      targetTask: 'Configure container restart policies.',
-      solutionCommands: ['docker run -d --name self-healing-web --restart=always -p 8081:80 nginx:alpine', 'docker inspect self-healing-web'],
+      targetTask: 'Launch a container with robust resource limits and configurations.',
+      solutionCommands: ['docker run -d --restart=unless-stopped --memory=512m --cpus=1.5 -e NODE_ENV=production -p 3000:3000 myapp'],
     },
 
     reference: {
@@ -151,15 +238,100 @@ export const TOPIC_09_10_CONCEPTS: Record<string, UniversalDockerConcept> = {
       },
     ],
 
+    withoutVsWith: {
+      without: {
+        title: "Manual CLI Hell",
+        items: [
+          "Running 5 separate `docker run` commands with complex flags",
+          "Manually creating bridge networks so containers can talk",
+          "Guessing which container to start first (DB before API)",
+          "Writing 10-line bash scripts just to boot the dev environment"
+        ],
+        outcome: "New developer onboarding takes 3 days of configuring local environments."
+      },
+      with: {
+        title: "Docker Compose",
+        items: [
+          "One `docker-compose.yml` file defines the entire architecture",
+          "Automatic internal DNS and isolated networking",
+          "`depends_on` ensures proper startup order",
+          "One command (`docker compose up -d`) boots everything"
+        ],
+        outcome: "New developer onboarding takes 5 minutes and 1 command."
+      }
+    },
+
+    blockDiagram: {
+      title: "Docker Compose Architecture",
+      subtitle: "How Compose translates YAML to a running stack",
+      nodes: [
+        { id: "yaml", label: "docker-compose.yml", simpleDef: "Declarative config", techDef: "Parses YAML via compose-go", color: "#38bdf8" },
+        { id: "network", label: "Stack Network", simpleDef: "Isolated bridge", techDef: "docker network create myapp_default", badge: "Auto-created", color: "#4ade80" },
+        { id: "db", label: "DB Service", simpleDef: "Starts first", techDef: "PostgreSQL container attached to network", color: "#facc15" },
+        { id: "web", label: "Web Service", simpleDef: "Starts after DB", techDef: "Node.js container with DNS resolution to 'db'", color: "#f87171" }
+      ]
+    },
+
+    terms: [
+      { term: "Service", simple: "A logical component of your app, like a database or backend", technical: "A definition in YAML that maps to one or more container replicas from the same image.", analogy: "A specific department in a company (e.g., Accounting)." },
+      { term: "depends_on", simple: "Tells Docker 'start this before that'", technical: "Explicitly declares startup dependency ordering between services.", analogy: "Putting on your socks before your shoes." },
+      { term: "Compose Project", simple: "The entire application stack", technical: "Group of associated containers, volumes, and networks, usually isolated by the directory name.", analogy: "The whole company building housing all departments." }
+    ],
+
+    whenToUse: [
+      "✓ Use Compose for local development to spin up your DB, cache, and API easily.",
+      "✓ Use Compose for single-server production deployments.",
+      "✓ Use Compose to run CI/CD integration tests requiring a database."
+    ],
+
+    whenNotToUse: [
+      "✕ Don't use Compose for massive multi-server clustering (use Kubernetes or Swarm).",
+      "✕ Don't use Compose to just run a single isolated container if `docker run` is simpler."
+    ],
+
+    developerScenario: {
+      title: "The Full-Stack Boot",
+      setup: "A developer clones a React/Node/PostgreSQL repository. They need to run it locally.",
+      problem: "They must install Node, PostgreSQL, configure DB users, run migrations, and start both dev servers on different ports.",
+      solution: "By writing a docker-compose.yml, the developer just runs `docker compose up -d`. Compose pulls the Postgres image, builds the Node API, links them on a private network, and exposes the React frontend on localhost:3000."
+    },
+
+    internalFlow: [
+      { step: 1, title: "YAML Parsing", desc: "Compose CLI reads docker-compose.yml.", why: "To validate syntax and merge overrides.", techDetail: "Validates against Compose Specification schema, interpolates .env variables." },
+      { step: 2, title: "Network Creation", desc: "Creates a default bridge network.", why: "So containers can communicate securely.", techDetail: "Executes equivalent of 'docker network create <project>_default'." },
+      { step: 3, title: "Volume Provisioning", desc: "Creates named volumes.", why: "To persist database data.", techDetail: "Checks if volumes exist, creates 'docker volume create <project>_dbdata' if not." },
+      { step: 4, title: "Dependency Resolution", desc: "Calculates startup order.", why: "Ensures DB is up before API connects.", techDetail: "Builds a Directed Acyclic Graph (DAG) based on depends_on directives." },
+      { step: 5, title: "Service Launch", desc: "Starts containers via Docker API.", why: "Executes the actual runtime.", techDetail: "POST /v1.43/containers/create for each service with labels (com.docker.compose.project)." }
+    ],
+
+    commonMistakes: [
+      { mistake: "Assuming depends_on waits for the DB to be 'ready'", whyWrong: "depends_on only waits for the container to START, not for the database inside to actually accept connections.", correctWay: "Use depends_on with a 'condition: service_healthy' and define a healthcheck in the DB service." },
+      { mistake: "Losing database data when running docker compose down", whyWrong: "Using 'docker compose down -v' deletes the named volumes along with containers.", correctWay: "Just use 'docker compose down' to keep volumes, or 'docker compose stop' to just halt containers." }
+    ],
+
+    recapChecklist: [
+      "A docker-compose.yml defines services, networks, and volumes in one file.",
+      "Service names automatically become DNS hostnames (e.g., 'db' translates to the DB container's IP).",
+      "Use 'docker compose up -d' to start everything in the background.",
+      "Use 'docker compose down' to stop and clean up the entire stack."
+    ],
+
+    challenge: {
+      question: "In a docker-compose.yml file, you have a service named 'redis-cache'. How should your 'api' service connect to it?",
+      options: [
+        { label: "Connect to the hostname 'redis-cache'", isCorrect: true, explanation: "Docker Compose automatically sets up DNS resolution so service names resolve to their respective container IPs." },
+        { label: "Connect to localhost:6379", isCorrect: false, explanation: "localhost inside the 'api' container points to itself, not the redis container." },
+        { label: "Hardcode the IP address (e.g., 172.18.0.5)", isCorrect: false, explanation: "Container IPs change dynamically upon recreation, so hardcoding them will break." }
+      ]
+    },
+
     sandbox: {
-      initialCommands: ['docker compose ps'],
+      initialCommands: [],
       guidedSteps: [
-        { instruction: 'Launch application stack using Docker Compose in detached mode', command: 'docker compose up -d', hint: 'Run docker compose up -d' },
-        { instruction: 'Inspect running compose stack services', command: 'docker compose ps', hint: 'Run docker compose ps' },
-        { instruction: 'Tear down stack', command: 'docker compose down', hint: 'Run docker compose down' },
+        { instruction: 'Start the entire application stack in the background using Docker Compose.', command: 'docker compose up -d', hint: 'Use the up command with the detached flag.' }
       ],
-      targetTask: 'Orchestrate multi-container application stacks.',
-      solutionCommands: ['docker compose up -d', 'docker compose ps', 'docker compose down'],
+      targetTask: 'Deploy a multi-service application stack using Compose.',
+      solutionCommands: ['docker compose up -d'],
     },
 
     reference: {
@@ -239,13 +411,100 @@ export const TOPIC_09_10_CONCEPTS: Record<string, UniversalDockerConcept> = {
       },
     ],
 
+    withoutVsWith: {
+      without: {
+        title: "Blind Operations",
+        items: [
+          "SSHing into a container just to read a text file log",
+          "Losing all error logs when a container crashes and gets deleted",
+          "Trying to correlate timestamps manually across 5 different terminal windows",
+          "Running out of disk space because log files grow infinitely inside the container"
+        ],
+        outcome: "Troubleshooting errors takes hours of blind guessing."
+      },
+      with: {
+        title: "Docker Logging Drivers",
+        items: [
+          "All logs stream instantly via `docker logs`",
+          "Logs are stored externally on the host, surviving container deletion",
+          "Built-in log rotation (max-size) prevents disk full errors",
+          "Centralized timestamping with the `-t` flag"
+        ],
+        outcome: "Instant observability and root-cause analysis."
+      }
+    },
+
+    blockDiagram: {
+      title: "Docker Logging Architecture",
+      subtitle: "How stdout/stderr reaches your terminal",
+      nodes: [
+        { id: "app", label: "App (PID 1)", simpleDef: "Prints to console", techDef: "console.log() writes to FD 1 (stdout)", color: "#facc15" },
+        { id: "daemon", label: "Docker Daemon", simpleDef: "Captures output", techDef: "dockerd reads pipes from containerd", badge: "Engine", color: "#38bdf8" },
+        { id: "driver", label: "Log Driver", simpleDef: "Stores the logs", techDef: "json-file (default), syslog, or fluentd", color: "#4ade80" },
+        { id: "cli", label: "docker logs", simpleDef: "Reads from driver", techDef: "API GET /containers/{id}/logs", color: "#f87171" }
+      ]
+    },
+
+    terms: [
+      { term: "stdout / stderr", simple: "Standard output and standard error streams", technical: "File descriptors 1 and 2 where processes send normal text and error text.", analogy: "A regular loudspeaker (stdout) and an emergency alarm siren (stderr)." },
+      { term: "Logging Driver", simple: "The plugin Docker uses to save logs", technical: "Daemon-level mechanism that handles log persistence (json-file, local, syslog, journald).", analogy: "Choosing whether to write meeting minutes in a notebook, Google Doc, or an email." },
+      { term: "Log Rotation", simple: "Automatically deleting old logs so the disk doesn't fill up", technical: "Configuring max-size and max-file daemon options for the json-file driver.", analogy: "A security camera that records over the oldest footage when the tape is full." }
+    ],
+
+    whenToUse: [
+      "✓ Use `docker logs -f` to watch a web server's incoming traffic in real-time.",
+      "✓ Use `docker logs --tail 50` to quickly check the most recent error before a crash.",
+      "✓ Use `docker logs --since 10m` to view logs from the last 10 minutes when an alert fired."
+    ],
+
+    whenNotToUse: [
+      "✕ Don't run `docker logs` without `--tail` on a container that has been running for months (it will print millions of lines and freeze your terminal).",
+      "✕ Don't write log files to the local container filesystem (e.g., `/app/logs/app.log`); always log to stdout."
+    ],
+
+    developerScenario: {
+      title: "The Silent Crash",
+      setup: "A background worker container keeps restarting every 5 minutes. The developer has no idea why.",
+      problem: "The container exits too fast to `docker exec` into it and check.",
+      solution: "The developer runs `docker logs --tail 100 worker`. They immediately see a Python stack trace indicating a 'Database Connection Timeout' just before the crash."
+    },
+
+    internalFlow: [
+      { step: 1, title: "Process Output", desc: "Application writes to stdout.", why: "Standard 12-factor app behavior.", techDetail: "Process PID 1 writes to standard file descriptor 1." },
+      { step: 2, title: "Daemon Capture", desc: "Docker engine intercepts the stream.", why: "To manage the logs externally.", techDetail: "containerd relays the IO streams via FIFOs to dockerd." },
+      { step: 3, title: "Driver Processing", desc: "Log driver formats the data.", why: "To structure the log for later querying.", techDetail: "json-file driver wraps the text in a JSON object with a timestamp." },
+      { step: 4, title: "Disk Persistence", desc: "Logs are saved to the host disk.", why: "So they survive container restarts.", techDetail: "Written to /var/lib/docker/containers/<id>/<id>-json.log." },
+      { step: 5, title: "CLI Retrieval", desc: "User runs docker logs.", why: "To view the history.", techDetail: "Docker CLI requests logs via Docker API, applying --tail and --since filters." }
+    ],
+
+    commonMistakes: [
+      { mistake: "Freezing the terminal with infinite logs", whyWrong: "Running docker logs without --tail on a long-running app prints gigabytes of text.", correctWay: "Always use --tail 100 or --tail 500." },
+      { mistake: "App writes to a local file instead of stdout", whyWrong: "If your app logs to /var/log/app.log, docker logs will show nothing.", correctWay: "Configure your app framework to log to console/stdout instead of a file." }
+    ],
+
+    recapChecklist: [
+      "Docker automatically captures stdout and stderr from the main container process.",
+      "Use `docker logs -f` to follow logs live.",
+      "Use `--tail 100` to limit output and avoid terminal flooding.",
+      "Log files are stored on the Docker host disk, usually as JSON."
+    ],
+
+    challenge: {
+      question: "Your container crashed 5 minutes ago. When you run `docker logs myapp`, the output is blank. What is the most likely reason?",
+      options: [
+        { label: "The application is writing logs to a file inside the container instead of stdout.", isCorrect: true, explanation: "Docker logs only captures stdout and stderr. If the app writes to a custom file (e.g., app.log), docker logs won't see it." },
+        { label: "Docker automatically deletes logs when a container crashes.", isCorrect: false, explanation: "Logs persist on the host even if the container stops or crashes." },
+        { label: "You need to add the -f flag to see past logs.", isCorrect: false, explanation: "-f is for following future live logs; past logs print automatically without it." }
+      ]
+    },
+
     sandbox: {
-      initialCommands: ['docker logs web-frontend'],
+      initialCommands: [],
       guidedSteps: [
-        { instruction: 'Inspect container logs for web-frontend', command: 'docker logs web-frontend', hint: 'Run docker logs web-frontend' },
+        { instruction: 'Stream the last 100 lines of logs for the webserver container.', command: 'docker logs -f --tail 100 webserver', hint: 'Use the logs command with -f and --tail flags.' }
       ],
-      targetTask: 'Inspect container stdout logs.',
-      solutionCommands: ['docker logs web-frontend'],
+      targetTask: 'Stream live logs from a running container.',
+      solutionCommands: ['docker logs -f --tail 100 webserver'],
     },
 
     reference: {
@@ -322,14 +581,101 @@ export const TOPIC_09_10_CONCEPTS: Record<string, UniversalDockerConcept> = {
       },
     ],
 
+    withoutVsWith: {
+      without: {
+        title: "Guessing Container State",
+        items: [
+          "Guessing what IP address was assigned to the container",
+          "Wondering if the environment variables actually injected properly",
+          "Not knowing if a container is consuming 100% CPU",
+          "Executing `ps aux` inside the container to see running apps"
+        ],
+        outcome: "Blind operations leading to misconfigured networks and crashed hosts."
+      },
+      with: {
+        title: "Docker Inspection Tools",
+        items: [
+          "`docker inspect` reveals the exact JSON state of the container",
+          "`docker top` shows container processes from the host's perspective",
+          "`docker stats` acts like `htop` for all running containers",
+          "Go templates extract exactly the data you need"
+        ],
+        outcome: "Total visibility into container internals, resources, and metadata."
+      }
+    },
+
+    blockDiagram: {
+      title: "Docker Inspection Mechanisms",
+      subtitle: "How Docker provides visibility into container internals",
+      nodes: [
+        { id: "inspect", label: "docker inspect", simpleDef: "Metadata JSON", techDef: "Reads daemon state store (sqlite/boltdb)", color: "#38bdf8" },
+        { id: "top", label: "docker top", simpleDef: "Process list", techDef: "Scans host /proc for namespace PIDs", color: "#4ade80" },
+        { id: "stats", label: "docker stats", simpleDef: "Resource metrics", techDef: "Reads /sys/fs/cgroup/ metrics", color: "#facc15" },
+        { id: "health", label: "Health Checks", simpleDef: "Liveness probes", techDef: "Daemon periodically execs CMD inside namespace", color: "#f87171" }
+      ]
+    },
+
+    terms: [
+      { term: "JSON Metadata", simple: "A structured text file containing every detail about a container", technical: "The internal state representation maintained by the Docker Daemon.", analogy: "A car's complete manufacturing spec sheet and registration document." },
+      { term: "Go Templates", simple: "A way to format the messy JSON output into a clean string", technical: "Using the `--format` flag with Go text/template syntax to query specific JSON paths.", analogy: "Using a magnifying glass to look at exactly one line on a document." },
+      { term: "docker stats", simple: "A live dashboard of CPU and RAM usage", technical: "Aggregates real-time metrics exposed by the Linux cgroups filesystem.", analogy: "The task manager or activity monitor on your laptop." }
+    ],
+
+    whenToUse: [
+      "✓ Use `docker inspect` to verify that a volume mount path is exactly what you expect.",
+      "✓ Use `docker inspect` to troubleshoot why a container is unhealthy (check the Health status).",
+      "✓ Use `docker top` to see if a background worker process actually spawned child processes.",
+      "✓ Use `docker stats` when your server is running slow to find the container hogging the RAM."
+    ],
+
+    whenNotToUse: [
+      "✕ Don't use `docker inspect` to read application logs (use `docker logs`).",
+      "✕ Don't manually parse the massive JSON output if you only need one value—use `--format` instead."
+    ],
+
+    developerScenario: {
+      title: "The Missing Environment Variable",
+      setup: "A Python app keeps connecting to the 'dev' database instead of the 'prod' database.",
+      problem: "The developer claims they passed `-e DB_ENV=prod`, but the app behaves differently.",
+      solution: "By running `docker inspect python-app`, the developer checks the 'Config.Env' array and realizes they actually typed `DB_EN=prod` (a typo). They destroy and recreate the container with the correct variable."
+    },
+
+    internalFlow: [
+      { step: 1, title: "Command Execution", desc: "User runs docker inspect <id>.", why: "To fetch configuration.", techDetail: "CLI sends GET /containers/{id}/json." },
+      { step: 2, title: "Daemon Lookup", desc: "Daemon queries internal memory.", why: "Retrieves the active state object.", techDetail: "Reads container metadata from daemon's active memory and disk state." },
+      { step: 3, title: "Network Resolution", desc: "Resolves active IP addresses.", why: "Network details are dynamic.", techDetail: "Queries the network sandbox for current IP and MAC addresses." },
+      { step: 4, title: "Template Processing", desc: "Filters via --format if provided.", why: "To narrow down output.", techDetail: "Executes Go text/template engine against the JSON payload." },
+      { step: 5, title: "Output Rendering", desc: "Prints JSON or formatted string.", why: "Returns results to terminal.", techDetail: "Renders pretty-printed JSON to stdout." }
+    ],
+
+    commonMistakes: [
+      { mistake: "Trying to find application logs in inspect", whyWrong: "docker inspect only shows metadata and configuration, not stdout.", correctWay: "Use docker logs." },
+      { mistake: "Struggling to read the massive JSON output", whyWrong: "Scrolling through 200 lines of JSON to find the IP address is inefficient.", correctWay: "Use `docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' my-container` or pipe to `grep`." }
+    ],
+
+    recapChecklist: [
+      "`docker inspect` returns the ultimate source of truth for container configuration.",
+      "Use `docker stats` for a live, real-time dashboard of CPU and Memory usage.",
+      "`docker top` shows the host-level PIDs of processes running inside the container.",
+      "The `--format` flag uses Go templates to extract specific JSON fields cleanly."
+    ],
+
+    challenge: {
+      question: "Which command would you use to see a live, continuously updating stream of CPU and Memory usage for all running containers?",
+      options: [
+        { label: "docker stats", isCorrect: true, explanation: "docker stats provides a live, interactive resource usage stream similar to 'top' in Linux." },
+        { label: "docker inspect --metrics", isCorrect: false, explanation: "docker inspect provides static metadata configuration, not live resource metrics." },
+        { label: "docker top", isCorrect: false, explanation: "docker top lists the running processes and their PIDs, but not continuous CPU/RAM percentages." }
+      ]
+    },
+
     sandbox: {
-      initialCommands: ['docker inspect web-frontend'],
+      initialCommands: [],
       guidedSteps: [
-        { instruction: 'Inspect full JSON metadata for container web-frontend', command: 'docker inspect web-frontend', hint: 'Run docker inspect web-frontend' },
-        { instruction: 'View process table inside web-frontend container', command: 'docker top web-frontend', hint: 'Run docker top web-frontend' },
+        { instruction: 'Inspect the metadata for the webserver container to gather diagnostic information.', command: 'docker inspect webserver', hint: 'Use the inspect command.' }
       ],
-      targetTask: 'Inspect container internals with docker inspect.',
-      solutionCommands: ['docker inspect web-frontend', 'docker top web-frontend'],
+      targetTask: 'Inspect detailed container metadata.',
+      solutionCommands: ['docker inspect webserver'],
     },
 
     reference: {

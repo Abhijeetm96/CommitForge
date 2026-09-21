@@ -290,6 +290,140 @@ export const TOPIC_01_02_CONCEPTS: Record<string, UniversalDockerConcept> = {
     realWorldAnalogy:
       'A pre-packaged meal kit. Instead of buying individual raw ingredients and hoping your stove matches the chef\'s oven, you get an exact pre-measured meal box that cooks perfectly anywhere.',
 
+    
+    withoutVsWith: {
+      without: {
+        title: 'WITHOUT CONTAINERS',
+        items: [
+          'Code fails on production due to missing libssl library',
+          'Team onboarding takes 3 days to install matching dependencies',
+          'Database version mismatch between devs causes subtle bugs',
+          'Requires manual environment configuration scripts',
+        ],
+        outcome: '💥 Frustrating "works on my machine" errors and slow deployments',
+      },
+      with: {
+        title: 'WITH CONTAINERS',
+        items: [
+          'App bundles precise runtime (e.g., Node.js 20.9.0) and all libraries',
+          'New developers type "docker compose up" and start coding in 2 minutes',
+          'Identical environment on Mac laptop, CI server, and AWS production',
+          'Eliminates need for local databases or runtime installations',
+        ],
+        outcome: '🚀 Predictable, frictionless deployments anywhere',
+      },
+    },
+
+    blockDiagram: {
+      title: 'Container Portability',
+      subtitle: 'Click blocks to see how containers solve dependency hell:',
+      nodes: [
+        {
+          id: 'dev-laptop',
+          label: 'Developer Laptop',
+          simpleDef: 'Your local machine where code is written.',
+          techDef: 'Docker engine provides the build context and runtime.',
+          badge: 'Source',
+          color: '#38bdf8',
+        },
+        {
+          id: 'container-image',
+          label: 'Immutable Image',
+          simpleDef: 'The packaged code and everything needed to run it.',
+          techDef: 'OCI-compliant archive of filesystem layers.',
+          badge: 'Artifact',
+          color: '#facc15',
+        },
+        {
+          id: 'prod-server',
+          label: 'Production Server',
+          simpleDef: 'The live server running the application.',
+          techDef: 'Docker engine pulls the image and runs the isolated process.',
+          badge: 'Destination',
+          color: '#4ade80',
+        },
+      ],
+    },
+
+    terms: [
+      {
+        term: 'Environment Parity',
+        simple: 'Keeping your dev, testing, and live servers exactly the same.',
+        technical: 'Guaranteeing identical OS libraries and language runtimes.',
+        analogy: 'Using exact same soil and water to grow a plant in different places.',
+        related: ['Immutable Infrastructure'],
+      },
+      {
+        term: 'Dependency Hell',
+        simple: 'When installing one software breaks another because they need different versions.',
+        technical: 'Transitive dependency conflicts in shared system library paths.',
+        analogy: 'Building two LEGO sets requiring the same unique piece.',
+        related: ['Containerization'],
+      },
+      {
+        term: 'Portability',
+        simple: 'The ability to run the exact same app anywhere without changes.',
+        technical: 'Acoupling the application from host OS by bundling rootfs.',
+        analogy: 'Universal power adapter.',
+        related: ['OCI', 'Docker Image'],
+      }
+    ],
+
+    whenToUse: [
+      '✓ When deploying microservices to the cloud',
+      '✓ When onboarding new developers to a complex project stack',
+      '✓ When you need to run multiple versions of the same language locally',
+      '✓ In Continuous Integration (CI) systems to ensure isolated test runs',
+    ],
+
+    whenNotToUse: [
+      '✕ When developing low-level drivers that must interact deeply with host OS',
+      '✕ When maximum raw performance is required with zero overhead',
+    ],
+
+    developerScenario: {
+      title: 'Real Developer Scenario: The Onboarding Nightmare',
+      setup: 'New dev joins team using Node 18, Python 3.9, and Postgres 14.',
+      problem: 'Dev spends 2 days setting up local env, but apps crash due to wrong versions.',
+      solution: 'Team switches to Docker. New dev runs "docker-compose up" and everything boots perfectly in minutes.',
+    },
+
+    internalFlow: [
+      { step: 1, title: 'Write Dockerfile', desc: 'Dev defines base OS, deps, and code.', why: 'Codifies the environment.', techDetail: 'FROM node:20-alpine' },
+      { step: 2, title: 'Build Image', desc: 'Docker builds immutable layers.', why: 'Creates the portable artifact.', techDetail: 'docker build -t app:v1 .' },
+      { step: 3, title: 'Push to Registry', desc: 'Image is uploaded to central hub.', why: 'Accessible to other machines.', techDetail: 'POST /v2/app/blobs/' },
+      { step: 4, title: 'Pull on Prod', desc: 'Prod server downloads exact image.', why: 'Ensures identical environment.', techDetail: 'GET /v2/app/manifests/v1' },
+      { step: 5, title: 'Run Container', desc: 'Docker starts isolated process.', why: 'App goes live without host config.', techDetail: 'docker run -d app:v1' },
+    ],
+
+    commonMistakes: [
+      {
+        mistake: 'Installing dependencies manually inside a running container',
+        whyWrong: 'Containers are ephemeral. Manual changes vanish on restart.',
+        correctWay: 'Always define dependencies in the Dockerfile.',
+      },
+      {
+        mistake: 'Hardcoding environment-specific configs',
+        whyWrong: 'Images should be portable. Hardcoding breaks this.',
+        correctWay: 'Pass configs at runtime using environment variables.',
+      },
+    ],
+
+    recapChecklist: [
+      'Containers eliminate "works on my machine" bugs.',
+      'Images provide an immutable snapshot of an app environment.',
+      'Containers drastically speed up developer onboarding.',
+    ],
+
+    challenge: {
+      question: 'How do containers solve the "works on my machine" problem?',
+      options: [
+        { label: 'By installing a full Guest OS to guarantee compatibility.', isCorrect: false, explanation: 'That is what a VM does.' },
+        { label: 'By packaging the application code along with its required libraries into an immutable image.', isCorrect: true, explanation: 'Containers bundle everything needed to run the app.' },
+        { label: 'By upgrading the host machine software automatically.', isCorrect: false, explanation: 'Containers do not alter the host machine.' },
+      ],
+    },
+
     syntaxCode: 'docker run -d -p 3000:3000 my-company-app:v1.0',
     syntaxTokens: [
       { token: 'docker run', role: 'Command', explanation: 'Executes container' },
@@ -335,11 +469,12 @@ export const TOPIC_01_02_CONCEPTS: Record<string, UniversalDockerConcept> = {
     sandbox: {
       initialCommands: ['docker images'],
       guidedSteps: [
-        { instruction: 'Check available local images', command: 'docker images', hint: 'Type docker images' },
+        { instruction: 'Run an application container in detached mode with port mapping', command: 'docker run -d -p 3000:3000 my-company-app:v1.0', hint: 'Type docker run -d -p 3000:3000 my-company-app:v1.0' },
       ],
-      targetTask: 'Understand container deployment stability.',
-      solutionCommands: ['docker images'],
+      targetTask: 'Deploy a containerized application ensuring environment consistency.',
+      solutionCommands: ['docker run -d -p 3000:3000 my-company-app:v1.0'],
     },
+
 
     reference: {
       syntaxCheatSheet: ['docker run -d -p [HOST_PORT]:[CONTAINER_PORT] [IMAGE]'],
@@ -367,6 +502,538 @@ export const TOPIC_01_02_CONCEPTS: Record<string, UniversalDockerConcept> = {
       'VMs take minutes to boot and consume gigabytes of memory per guest OS. Containers boot in milliseconds, use megabytes of memory, and allow 10x higher density on servers.',
     realWorldAnalogy:
       'Shipping whole houses across the ocean (VMs) versus shipping standardized wooden boxes on a cargo container ship (Containers).',
+
+    
+    withoutVsWith: {
+      without: {
+        title: 'VIRTUAL MACHINES',
+        items: [
+          'Requires gigabytes of RAM just for the Guest OS',
+          'Boot times measured in minutes',
+          'Hypervisor tax limits server density',
+          'Requires managing multiple separate OS updates',
+        ],
+        outcome: '🐢 Heavy resource overhead and slow scaling',
+      },
+      with: {
+        title: 'CONTAINERS',
+        items: [
+          'Megabytes of RAM footprint per application',
+          'Boot times measured in milliseconds',
+          'High density (hundreds of containers on one host)',
+          'Shared kernel means no Guest OS maintenance',
+        ],
+        outcome: '⚡ Lightning fast scaling and high resource utilization',
+      },
+    },
+
+    blockDiagram: {
+      title: 'VMs vs Containers Architecture',
+      subtitle: 'Click blocks to compare architectures:',
+      nodes: [
+        {
+          id: 'hypervisor',
+          label: 'Hypervisor',
+          simpleDef: 'Software that emulates physical hardware.',
+          techDef: 'Type-1 or Type-2 virtualization layer managing CPU ring-privileges.',
+          badge: 'Heavy',
+          color: '#f87171',
+        },
+        {
+          id: 'guest-os',
+          label: 'Guest OS',
+          simpleDef: 'Full heavy operating system inside a VM.',
+          techDef: 'Complete kernel and init system duplicating host OS functions.',
+          badge: 'Heavy',
+          color: '#facc15',
+        },
+        {
+          id: 'docker-engine',
+          label: 'Container Runtime',
+          simpleDef: 'Lightweight software that isolates apps natively.',
+          techDef: 'Manages namespaces and cgroups to sandbox processes natively in the kernel.',
+          badge: 'Lightweight',
+          color: '#4ade80',
+        },
+      ],
+    },
+
+    terms: [
+      {
+        term: 'Hypervisor',
+        simple: 'Software that creates and runs Virtual Machines.',
+        technical: 'VMM that traps and emulates privileged CPU instructions.',
+        analogy: 'Real estate developer dividing land into separate houses.',
+        related: ['Virtual Machine'],
+      },
+      {
+        term: 'Guest OS',
+        simple: 'Full operating system installed inside a VM.',
+        technical: 'Dedicated kernel stack in a virtualized hardware environment.',
+        analogy: 'Hiring a full-time chef for every room.',
+        related: ['Hypervisor'],
+      },
+      {
+        term: 'Kernel Sharing',
+        simple: 'Containers using the same OS brain.',
+        technical: 'Processes making direct syscalls to host Linux kernel.',
+        analogy: 'Apps sharing the same electricity grid.',
+        related: ['Namespaces'],
+      }
+    ],
+
+    whenToUse: [
+      '✓ Use Containers for microservices and stateless workloads',
+      '✓ Use Containers to maximize server density and reduce costs',
+      '✓ Use VMs when you need to run a different OS entirely (Windows on Linux)',
+      '✓ Use VMs when you require absolute hardware-level security isolation',
+    ],
+
+    whenNotToUse: [
+      '✕ Do not use Containers if you need a custom kernel version',
+      '✕ Do not use VMs for simple background workers where low RAM is critical',
+    ],
+
+    developerScenario: {
+      title: 'Real Developer Scenario: Cloud Cost Optimization',
+      setup: 'Company runs 20 web apps on 20 separate VMs in AWS.',
+      problem: 'Each VM uses 2GB of RAM for Guest OS, wasting money on idle OS overhead.',
+      solution: 'Migrate to Docker. All 20 apps run on one large EC2 instance, dropping RAM usage by 80%.',
+    },
+
+    internalFlow: [
+      { step: 1, title: 'VM Boot (Heavy)', desc: 'Hypervisor allocates virtual hardware and boots Guest OS.', why: 'Simulates physical hardware.', techDetail: 'Hardware trap and emulate' },
+      { step: 2, title: 'VM Kernel Init', desc: 'Guest OS initializes drivers, starts init system.', why: 'Takes 1-3 minutes.', techDetail: 'dmesg inside guest' },
+      { step: 3, title: 'Container Boot (Fast)', desc: 'Docker creates namespace boundaries.', why: 'No hardware emulation required.', techDetail: 'clone() syscall with CLONE_NEWPID' },
+      { step: 4, title: 'Container Execution', desc: 'App process starts instantly.', why: 'Boot time is in milliseconds.', techDetail: 'execve("/app/server")' },
+    ],
+
+    commonMistakes: [
+      {
+        mistake: 'Treating a container exactly like a VM',
+        whyWrong: 'Running SSHd, cron, and syslog inside one container violates the pattern.',
+        correctWay: 'Use "docker exec" for shell access and separate services into multiple containers.',
+      },
+      {
+        mistake: 'Assuming containers are as secure as VMs',
+        whyWrong: 'Containers share the host kernel. Severe kernel exploits could allow breakouts.',
+        correctWay: 'Use VMs for untrusted multi-tenant workloads.',
+      },
+    ],
+
+    recapChecklist: [
+      'VMs virtualize hardware; Containers virtualize the OS.',
+      'VMs require a full Guest OS; Containers share Host Kernel.',
+      'Containers offer millisecond startup and high server density.',
+    ],
+
+    challenge: {
+      question: 'Why do Docker containers start in milliseconds while VMs take minutes?',
+      options: [
+        { label: 'Containers skip BIOS but boot a lightweight Guest OS.', isCorrect: false, explanation: 'Containers do not boot a Guest OS.' },
+        { label: 'Containers do not boot an OS; they start an isolated process.', isCorrect: true, explanation: 'Because there is no OS boot sequence, it starts instantly.' },
+        { label: 'Containers pre-allocate RAM at build time.', isCorrect: false, explanation: 'Resource allocation happens at runtime.' },
+      ],
+    },
+
+    
+    withoutVsWith: {
+      without: {
+        title: 'VIRTUAL MACHINES',
+        items: [
+          'Requires gigabytes of RAM just for the Guest OS',
+          'Boot times measured in minutes',
+          'Hypervisor tax limits server density',
+          'Requires managing multiple separate OS updates',
+        ],
+        outcome: '🐢 Heavy resource overhead and slow scaling',
+      },
+      with: {
+        title: 'CONTAINERS',
+        items: [
+          'Megabytes of RAM footprint per application',
+          'Boot times measured in milliseconds',
+          'High density (hundreds of containers on one host)',
+          'Shared kernel means no Guest OS maintenance',
+        ],
+        outcome: '⚡ Lightning fast scaling and high resource utilization',
+      },
+    },
+
+    blockDiagram: {
+      title: 'VMs vs Containers Architecture',
+      subtitle: 'Click blocks to compare architectures:',
+      nodes: [
+        {
+          id: 'hypervisor',
+          label: 'Hypervisor',
+          simpleDef: 'Software that emulates physical hardware.',
+          techDef: 'Type-1 or Type-2 virtualization layer managing CPU ring-privileges.',
+          badge: 'Heavy',
+          color: '#f87171',
+        },
+        {
+          id: 'guest-os',
+          label: 'Guest OS',
+          simpleDef: 'Full heavy operating system inside a VM.',
+          techDef: 'Complete kernel and init system duplicating host OS functions.',
+          badge: 'Heavy',
+          color: '#facc15',
+        },
+        {
+          id: 'docker-engine',
+          label: 'Container Runtime',
+          simpleDef: 'Lightweight software that isolates apps natively.',
+          techDef: 'Manages namespaces and cgroups to sandbox processes natively in the kernel.',
+          badge: 'Lightweight',
+          color: '#4ade80',
+        },
+      ],
+    },
+
+    terms: [
+      {
+        term: 'Hypervisor',
+        simple: 'Software that creates and runs Virtual Machines.',
+        technical: 'VMM that traps and emulates privileged CPU instructions.',
+        analogy: 'Real estate developer dividing land into separate houses.',
+        related: ['Virtual Machine'],
+      },
+      {
+        term: 'Guest OS',
+        simple: 'Full operating system installed inside a VM.',
+        technical: 'Dedicated kernel stack in a virtualized hardware environment.',
+        analogy: 'Hiring a full-time chef for every room.',
+        related: ['Hypervisor'],
+      },
+      {
+        term: 'Kernel Sharing',
+        simple: 'Containers using the same OS brain.',
+        technical: 'Processes making direct syscalls to host Linux kernel.',
+        analogy: 'Apps sharing the same electricity grid.',
+        related: ['Namespaces'],
+      }
+    ],
+
+    whenToUse: [
+      '✓ Use Containers for microservices and stateless workloads',
+      '✓ Use Containers to maximize server density and reduce costs',
+      '✓ Use VMs when you need to run a different OS entirely (Windows on Linux)',
+      '✓ Use VMs when you require absolute hardware-level security isolation',
+    ],
+
+    whenNotToUse: [
+      '✕ Do not use Containers if you need a custom kernel version',
+      '✕ Do not use VMs for simple background workers where low RAM is critical',
+    ],
+
+    developerScenario: {
+      title: 'Real Developer Scenario: Cloud Cost Optimization',
+      setup: 'Company runs 20 web apps on 20 separate VMs in AWS.',
+      problem: 'Each VM uses 2GB of RAM for Guest OS, wasting money on idle OS overhead.',
+      solution: 'Migrate to Docker. All 20 apps run on one large EC2 instance, dropping RAM usage by 80%.',
+    },
+
+    internalFlow: [
+      { step: 1, title: 'VM Boot (Heavy)', desc: 'Hypervisor allocates virtual hardware and boots Guest OS.', why: 'Simulates physical hardware.', techDetail: 'Hardware trap and emulate' },
+      { step: 2, title: 'VM Kernel Init', desc: 'Guest OS initializes drivers, starts init system.', why: 'Takes 1-3 minutes.', techDetail: 'dmesg inside guest' },
+      { step: 3, title: 'Container Boot (Fast)', desc: 'Docker creates namespace boundaries.', why: 'No hardware emulation required.', techDetail: 'clone() syscall with CLONE_NEWPID' },
+      { step: 4, title: 'Container Execution', desc: 'App process starts instantly.', why: 'Boot time is in milliseconds.', techDetail: 'execve("/app/server")' },
+    ],
+
+    commonMistakes: [
+      {
+        mistake: 'Treating a container exactly like a VM',
+        whyWrong: 'Running SSHd, cron, and syslog inside one container violates the pattern.',
+        correctWay: 'Use "docker exec" for shell access and separate services into multiple containers.',
+      },
+      {
+        mistake: 'Assuming containers are as secure as VMs',
+        whyWrong: 'Containers share the host kernel. Severe kernel exploits could allow breakouts.',
+        correctWay: 'Use VMs for untrusted multi-tenant workloads.',
+      },
+    ],
+
+    recapChecklist: [
+      'VMs virtualize hardware; Containers virtualize the OS.',
+      'VMs require a full Guest OS; Containers share Host Kernel.',
+      'Containers offer millisecond startup and high server density.',
+    ],
+
+    challenge: {
+      question: 'Why do Docker containers start in milliseconds while VMs take minutes?',
+      options: [
+        { label: 'Containers skip BIOS but boot a lightweight Guest OS.', isCorrect: false, explanation: 'Containers do not boot a Guest OS.' },
+        { label: 'Containers do not boot an OS; they start an isolated process.', isCorrect: true, explanation: 'Because there is no OS boot sequence, it starts instantly.' },
+        { label: 'Containers pre-allocate RAM at build time.', isCorrect: false, explanation: 'Resource allocation happens at runtime.' },
+      ],
+    },
+
+    
+    withoutVsWith: {
+      without: {
+        title: 'VIRTUAL MACHINES',
+        items: [
+          'Requires gigabytes of RAM just for the Guest OS',
+          'Boot times measured in minutes',
+          'Hypervisor tax limits server density',
+          'Requires managing multiple separate OS updates',
+        ],
+        outcome: '🐢 Heavy resource overhead and slow scaling',
+      },
+      with: {
+        title: 'CONTAINERS',
+        items: [
+          'Megabytes of RAM footprint per application',
+          'Boot times measured in milliseconds',
+          'High density (hundreds of containers on one host)',
+          'Shared kernel means no Guest OS maintenance',
+        ],
+        outcome: '⚡ Lightning fast scaling and high resource utilization',
+      },
+    },
+
+    blockDiagram: {
+      title: 'VMs vs Containers Architecture',
+      subtitle: 'Click blocks to compare architectures:',
+      nodes: [
+        {
+          id: 'hypervisor',
+          label: 'Hypervisor',
+          simpleDef: 'Software that emulates physical hardware.',
+          techDef: 'Type-1 or Type-2 virtualization layer managing CPU ring-privileges.',
+          badge: 'Heavy',
+          color: '#f87171',
+        },
+        {
+          id: 'guest-os',
+          label: 'Guest OS',
+          simpleDef: 'Full heavy operating system inside a VM.',
+          techDef: 'Complete kernel and init system duplicating host OS functions.',
+          badge: 'Heavy',
+          color: '#facc15',
+        },
+        {
+          id: 'docker-engine',
+          label: 'Container Runtime',
+          simpleDef: 'Lightweight software that isolates apps natively.',
+          techDef: 'Manages namespaces and cgroups to sandbox processes natively in the kernel.',
+          badge: 'Lightweight',
+          color: '#4ade80',
+        },
+      ],
+    },
+
+    terms: [
+      {
+        term: 'Hypervisor',
+        simple: 'Software that creates and runs Virtual Machines.',
+        technical: 'VMM that traps and emulates privileged CPU instructions.',
+        analogy: 'Real estate developer dividing land into separate houses.',
+        related: ['Virtual Machine'],
+      },
+      {
+        term: 'Guest OS',
+        simple: 'Full operating system installed inside a VM.',
+        technical: 'Dedicated kernel stack in a virtualized hardware environment.',
+        analogy: 'Hiring a full-time chef for every room.',
+        related: ['Hypervisor'],
+      },
+      {
+        term: 'Kernel Sharing',
+        simple: 'Containers using the same OS brain.',
+        technical: 'Processes making direct syscalls to host Linux kernel.',
+        analogy: 'Apps sharing the same electricity grid.',
+        related: ['Namespaces'],
+      }
+    ],
+
+    whenToUse: [
+      '✓ Use Containers for microservices and stateless workloads',
+      '✓ Use Containers to maximize server density and reduce costs',
+      '✓ Use VMs when you need to run a different OS entirely (Windows on Linux)',
+      '✓ Use VMs when you require absolute hardware-level security isolation',
+    ],
+
+    whenNotToUse: [
+      '✕ Do not use Containers if you need a custom kernel version',
+      '✕ Do not use VMs for simple background workers where low RAM is critical',
+    ],
+
+    developerScenario: {
+      title: 'Real Developer Scenario: Cloud Cost Optimization',
+      setup: 'Company runs 20 web apps on 20 separate VMs in AWS.',
+      problem: 'Each VM uses 2GB of RAM for Guest OS, wasting money on idle OS overhead.',
+      solution: 'Migrate to Docker. All 20 apps run on one large EC2 instance, dropping RAM usage by 80%.',
+    },
+
+    internalFlow: [
+      { step: 1, title: 'VM Boot (Heavy)', desc: 'Hypervisor allocates virtual hardware and boots Guest OS.', why: 'Simulates physical hardware.', techDetail: 'Hardware trap and emulate' },
+      { step: 2, title: 'VM Kernel Init', desc: 'Guest OS initializes drivers, starts init system.', why: 'Takes 1-3 minutes.', techDetail: 'dmesg inside guest' },
+      { step: 3, title: 'Container Boot (Fast)', desc: 'Docker creates namespace boundaries.', why: 'No hardware emulation required.', techDetail: 'clone() syscall with CLONE_NEWPID' },
+      { step: 4, title: 'Container Execution', desc: 'App process starts instantly.', why: 'Boot time is in milliseconds.', techDetail: 'execve("/app/server")' },
+    ],
+
+    commonMistakes: [
+      {
+        mistake: 'Treating a container exactly like a VM',
+        whyWrong: 'Running SSHd, cron, and syslog inside one container violates the pattern.',
+        correctWay: 'Use "docker exec" for shell access and separate services into multiple containers.',
+      },
+      {
+        mistake: 'Assuming containers are as secure as VMs',
+        whyWrong: 'Containers share the host kernel. Severe kernel exploits could allow breakouts.',
+        correctWay: 'Use VMs for untrusted multi-tenant workloads.',
+      },
+    ],
+
+    recapChecklist: [
+      'VMs virtualize hardware; Containers virtualize the OS.',
+      'VMs require a full Guest OS; Containers share Host Kernel.',
+      'Containers offer millisecond startup and high server density.',
+    ],
+
+    challenge: {
+      question: 'Why do Docker containers start in milliseconds while VMs take minutes?',
+      options: [
+        { label: 'Containers skip BIOS but boot a lightweight Guest OS.', isCorrect: false, explanation: 'Containers do not boot a Guest OS.' },
+        { label: 'Containers do not boot an OS; they start an isolated process.', isCorrect: true, explanation: 'Because there is no OS boot sequence, it starts instantly.' },
+        { label: 'Containers pre-allocate RAM at build time.', isCorrect: false, explanation: 'Resource allocation happens at runtime.' },
+      ],
+    },
+
+    
+    withoutVsWith: {
+      without: {
+        title: 'VIRTUAL MACHINES',
+        items: [
+          'Requires gigabytes of RAM just for the Guest OS',
+          'Boot times measured in minutes',
+          'Hypervisor tax limits server density',
+          'Requires managing multiple separate OS updates',
+        ],
+        outcome: '🐢 Heavy resource overhead and slow scaling',
+      },
+      with: {
+        title: 'CONTAINERS',
+        items: [
+          'Megabytes of RAM footprint per application',
+          'Boot times measured in milliseconds',
+          'High density (hundreds of containers on one host)',
+          'Shared kernel means no Guest OS maintenance',
+        ],
+        outcome: '⚡ Lightning fast scaling and high resource utilization',
+      },
+    },
+
+    blockDiagram: {
+      title: 'VMs vs Containers Architecture',
+      subtitle: 'Click blocks to compare architectures:',
+      nodes: [
+        {
+          id: 'hypervisor',
+          label: 'Hypervisor',
+          simpleDef: 'Software that emulates physical hardware.',
+          techDef: 'Type-1 or Type-2 virtualization layer managing CPU ring-privileges.',
+          badge: 'Heavy',
+          color: '#f87171',
+        },
+        {
+          id: 'guest-os',
+          label: 'Guest OS',
+          simpleDef: 'Full heavy operating system inside a VM.',
+          techDef: 'Complete kernel and init system duplicating host OS functions.',
+          badge: 'Heavy',
+          color: '#facc15',
+        },
+        {
+          id: 'docker-engine',
+          label: 'Container Runtime',
+          simpleDef: 'Lightweight software that isolates apps natively.',
+          techDef: 'Manages namespaces and cgroups to sandbox processes natively in the kernel.',
+          badge: 'Lightweight',
+          color: '#4ade80',
+        },
+      ],
+    },
+
+    terms: [
+      {
+        term: 'Hypervisor',
+        simple: 'Software that creates and runs Virtual Machines.',
+        technical: 'VMM that traps and emulates privileged CPU instructions.',
+        analogy: 'Real estate developer dividing land into separate houses.',
+        related: ['Virtual Machine'],
+      },
+      {
+        term: 'Guest OS',
+        simple: 'Full operating system installed inside a VM.',
+        technical: 'Dedicated kernel stack in a virtualized hardware environment.',
+        analogy: 'Hiring a full-time chef for every room.',
+        related: ['Hypervisor'],
+      },
+      {
+        term: 'Kernel Sharing',
+        simple: 'Containers using the same OS brain.',
+        technical: 'Processes making direct syscalls to host Linux kernel.',
+        analogy: 'Apps sharing the same electricity grid.',
+        related: ['Namespaces'],
+      }
+    ],
+
+    whenToUse: [
+      '✓ Use Containers for microservices and stateless workloads',
+      '✓ Use Containers to maximize server density and reduce costs',
+      '✓ Use VMs when you need to run a different OS entirely (Windows on Linux)',
+      '✓ Use VMs when you require absolute hardware-level security isolation',
+    ],
+
+    whenNotToUse: [
+      '✕ Do not use Containers if you need a custom kernel version',
+      '✕ Do not use VMs for simple background workers where low RAM is critical',
+    ],
+
+    developerScenario: {
+      title: 'Real Developer Scenario: Cloud Cost Optimization',
+      setup: 'Company runs 20 web apps on 20 separate VMs in AWS.',
+      problem: 'Each VM uses 2GB of RAM for Guest OS, wasting money on idle OS overhead.',
+      solution: 'Migrate to Docker. All 20 apps run on one large EC2 instance, dropping RAM usage by 80%.',
+    },
+
+    internalFlow: [
+      { step: 1, title: 'VM Boot (Heavy)', desc: 'Hypervisor allocates virtual hardware and boots Guest OS.', why: 'Simulates physical hardware.', techDetail: 'Hardware trap and emulate' },
+      { step: 2, title: 'VM Kernel Init', desc: 'Guest OS initializes drivers, starts init system.', why: 'Takes 1-3 minutes.', techDetail: 'dmesg inside guest' },
+      { step: 3, title: 'Container Boot (Fast)', desc: 'Docker creates namespace boundaries.', why: 'No hardware emulation required.', techDetail: 'clone() syscall with CLONE_NEWPID' },
+      { step: 4, title: 'Container Execution', desc: 'App process starts instantly.', why: 'Boot time is in milliseconds.', techDetail: 'execve("/app/server")' },
+    ],
+
+    commonMistakes: [
+      {
+        mistake: 'Treating a container exactly like a VM',
+        whyWrong: 'Running SSHd, cron, and syslog inside one container violates the pattern.',
+        correctWay: 'Use "docker exec" for shell access and separate services into multiple containers.',
+      },
+      {
+        mistake: 'Assuming containers are as secure as VMs',
+        whyWrong: 'Containers share the host kernel. Severe kernel exploits could allow breakouts.',
+        correctWay: 'Use VMs for untrusted multi-tenant workloads.',
+      },
+    ],
+
+    recapChecklist: [
+      'VMs virtualize hardware; Containers virtualize the OS.',
+      'VMs require a full Guest OS; Containers share Host Kernel.',
+      'Containers offer millisecond startup and high server density.',
+    ],
+
+    challenge: {
+      question: 'Why do Docker containers start in milliseconds while VMs take minutes?',
+      options: [
+        { label: 'Containers skip BIOS but boot a lightweight Guest OS.', isCorrect: false, explanation: 'Containers do not boot a Guest OS.' },
+        { label: 'Containers do not boot an OS; they start an isolated process.', isCorrect: true, explanation: 'Because there is no OS boot sequence, it starts instantly.' },
+        { label: 'Containers pre-allocate RAM at build time.', isCorrect: false, explanation: 'Resource allocation happens at runtime.' },
+      ],
+    },
 
     syntaxCode: 'docker stats',
     syntaxTokens: [
@@ -410,11 +1077,11 @@ export const TOPIC_01_02_CONCEPTS: Record<string, UniversalDockerConcept> = {
     ],
 
     sandbox: {
-      initialCommands: ['docker stats'],
+      initialCommands: ['docker run -d --name test-nginx nginx'],
       guidedSteps: [
-        { instruction: 'Inspect real-time CPU and memory stats of running containers', command: 'docker stats', hint: 'Type docker stats' },
+        { instruction: 'Compare resource usage using docker stats', command: 'docker stats', hint: 'Type docker stats' },
       ],
-      targetTask: 'Observe container resource efficiency.',
+      targetTask: 'Observe the low footprint of a container compared to a VM.',
       solutionCommands: ['docker stats'],
     },
 
@@ -444,6 +1111,526 @@ export const TOPIC_01_02_CONCEPTS: Record<string, UniversalDockerConcept> = {
       'It prevents vendor lock-in. Docker CLI communicates with containerd, which uses runc to interact with Linux kernel namespaces.',
     realWorldAnalogy:
       'Standardized 3-prong electrical wall sockets. Any device manufacturer (Docker, Podman, K8s) can plug into the standard socket.',
+
+    
+    withoutVsWith: {
+      without: {
+        title: 'WITHOUT OCI STANDARDS',
+        items: [
+          'Vendor lock-in to a single container runtime (e.g., just Docker)',
+          'Images built by Tool A cannot run on Kubernetes',
+          'Fragmented ecosystem with incompatible toolchains',
+        ],
+        outcome: '🔒 Proprietary technology silos',
+      },
+      with: {
+        title: 'WITH OCI STANDARDS',
+        items: [
+          'Build once, run anywhere (Docker, Podman, Kubernetes)',
+          'Modular ecosystem (swap containerd for CRI-O)',
+          'Guaranteed forward-compatibility for container images',
+        ],
+        outcome: '🔓 Open ecosystem and vendor neutrality',
+      },
+    },
+
+    blockDiagram: {
+      title: 'Docker to Kernel Architecture',
+      subtitle: 'Click blocks to trace a command from CLI to Kernel:',
+      nodes: [
+        {
+          id: 'docker-cli',
+          label: 'Docker CLI / API',
+          simpleDef: 'The terminal tool you interact with.',
+          techDef: 'Sends REST API payloads to the dockerd socket.',
+          badge: 'Client',
+          color: '#38bdf8',
+        },
+        {
+          id: 'containerd',
+          label: 'containerd',
+          simpleDef: 'High-level container manager.',
+          techDef: 'Manages image pulling, storage, and passes execution to runc via gRPC.',
+          badge: 'Manager',
+          color: '#facc15',
+        },
+        {
+          id: 'runc',
+          label: 'runc',
+          simpleDef: 'Low-level OCI runtime that actually creates the container.',
+          techDef: 'Interacts with Linux kernel namespaces/cgroups to spawn the isolated process.',
+          badge: 'OCI Runtime',
+          color: '#4ade80',
+        },
+      ],
+    },
+
+    terms: [
+      {
+        term: 'OCI (Open Container Initiative)',
+        simple: 'The organization that defines how containers should be built and run.',
+        technical: 'Governance structure defining the Image Spec and Runtime Spec.',
+        analogy: 'The USB standard that ensures any flash drive works on any computer.',
+        related: ['runc', 'containerd'],
+      },
+      {
+        term: 'runc',
+        simple: 'The low-level tool that actually creates your container.',
+        technical: 'The reference implementation of the OCI Runtime Spec.',
+        analogy: 'The construction worker actually laying the bricks.',
+        related: ['containerd'],
+      },
+      {
+        term: 'containerd',
+        simple: 'The middle-manager that downloads images and supervises containers.',
+        technical: 'Industry-standard container runtime managing lifecycle and image distribution.',
+        analogy: 'The site foreman who organizes materials and tells workers what to do.',
+        related: ['Docker Daemon'],
+      }
+    ],
+
+    whenToUse: [
+      '✓ When debugging low-level container startup failures',
+      '✓ When choosing runtimes for a Kubernetes cluster (e.g., containerd vs CRI-O)',
+      '✓ When evaluating alternative container tools like Podman or Buildah',
+    ],
+
+    whenNotToUse: [
+      '✕ As a beginner, you rarely need to interact with runc or containerd directly',
+    ],
+
+    developerScenario: {
+      title: 'Real Developer Scenario: Migrating from Docker to Kubernetes',
+      setup: 'A team built hundreds of container images using Docker over the past 3 years.',
+      problem: 'They are migrating to a Kubernetes cluster that uses containerd instead of Docker Engine. Management worries about rewriting apps.',
+      solution: 'Because Docker builds OCI-compliant images, they deploy perfectly on Kubernetes without modifying a single line of code.',
+    },
+
+    internalFlow: [
+      { step: 1, title: 'CLI to Daemon', desc: 'Docker CLI sends command to dockerd.', why: 'Translates user intent.', techDetail: 'POST /containers/create' },
+      { step: 2, title: 'Daemon to containerd', desc: 'dockerd asks containerd to prepare the container.', why: 'Delegates lifecycle management.', techDetail: 'gRPC call to containerd socket' },
+      { step: 3, title: 'containerd to runc', desc: 'containerd launches runc with OCI config.', why: 'Invokes the low-level runtime.', techDetail: 'runc create / runc start' },
+      { step: 4, title: 'runc to Kernel', desc: 'runc calls Linux syscalls to create namespaces.', why: 'Actually isolates the process.', techDetail: 'clone() syscall' },
+      { step: 5, title: 'runc Exits', desc: 'runc exits while containerd-shim monitors the app.', why: 'Keeps memory overhead low.', techDetail: 'containerd-shim keeps stdin/out open' },
+    ],
+
+    commonMistakes: [
+      {
+        mistake: 'Thinking Docker is the only way to run containers',
+        whyWrong: 'Docker is just one toolchain that implements OCI standards.',
+        correctWay: 'Understand that Kubernetes, Podman, and containerd are all valid OCI runtimes.',
+      },
+      {
+        mistake: 'Confusing Docker Image with OCI Image',
+        whyWrong: 'Modern "Docker Images" are actually OCI Images under the hood.',
+        correctWay: 'Use the terms interchangeably in modern contexts, but know OCI is the standard.',
+      },
+    ],
+
+    recapChecklist: [
+      'OCI ensures containers are an open standard, not locked to Docker.',
+      'Docker CLI uses dockerd, which uses containerd, which uses runc.',
+      'runc is the low-level runtime that actually talks to the Linux kernel.',
+    ],
+
+    challenge: {
+      question: 'What is the primary role of runc in the container architecture?',
+      options: [
+        { label: 'It downloads images from Docker Hub.', isCorrect: false, explanation: 'containerd handles image pulling.' },
+        { label: 'It is the low-level OCI runtime that interacts with the Linux kernel to create isolated processes.', isCorrect: true, explanation: 'runc performs the actual namespace/cgroup syscalls.' },
+        { label: 'It provides a graphical user interface for Docker.', isCorrect: false, explanation: 'Docker Desktop provides the GUI.' },
+      ],
+    },
+
+    
+    withoutVsWith: {
+      without: {
+        title: 'WITHOUT OCI STANDARDS',
+        items: [
+          'Vendor lock-in to a single container runtime (e.g., just Docker)',
+          'Images built by Tool A cannot run on Kubernetes',
+          'Fragmented ecosystem with incompatible toolchains',
+        ],
+        outcome: '🔒 Proprietary technology silos',
+      },
+      with: {
+        title: 'WITH OCI STANDARDS',
+        items: [
+          'Build once, run anywhere (Docker, Podman, Kubernetes)',
+          'Modular ecosystem (swap containerd for CRI-O)',
+          'Guaranteed forward-compatibility for container images',
+        ],
+        outcome: '🔓 Open ecosystem and vendor neutrality',
+      },
+    },
+
+    blockDiagram: {
+      title: 'Docker to Kernel Architecture',
+      subtitle: 'Click blocks to trace a command from CLI to Kernel:',
+      nodes: [
+        {
+          id: 'docker-cli',
+          label: 'Docker CLI / API',
+          simpleDef: 'The terminal tool you interact with.',
+          techDef: 'Sends REST API payloads to the dockerd socket.',
+          badge: 'Client',
+          color: '#38bdf8',
+        },
+        {
+          id: 'containerd',
+          label: 'containerd',
+          simpleDef: 'High-level container manager.',
+          techDef: 'Manages image pulling, storage, and passes execution to runc via gRPC.',
+          badge: 'Manager',
+          color: '#facc15',
+        },
+        {
+          id: 'runc',
+          label: 'runc',
+          simpleDef: 'Low-level OCI runtime that actually creates the container.',
+          techDef: 'Interacts with Linux kernel namespaces/cgroups to spawn the isolated process.',
+          badge: 'OCI Runtime',
+          color: '#4ade80',
+        },
+      ],
+    },
+
+    terms: [
+      {
+        term: 'OCI (Open Container Initiative)',
+        simple: 'The organization that defines how containers should be built and run.',
+        technical: 'Governance structure defining the Image Spec and Runtime Spec.',
+        analogy: 'The USB standard that ensures any flash drive works on any computer.',
+        related: ['runc', 'containerd'],
+      },
+      {
+        term: 'runc',
+        simple: 'The low-level tool that actually creates your container.',
+        technical: 'The reference implementation of the OCI Runtime Spec.',
+        analogy: 'The construction worker actually laying the bricks.',
+        related: ['containerd'],
+      },
+      {
+        term: 'containerd',
+        simple: 'The middle-manager that downloads images and supervises containers.',
+        technical: 'Industry-standard container runtime managing lifecycle and image distribution.',
+        analogy: 'The site foreman who organizes materials and tells workers what to do.',
+        related: ['Docker Daemon'],
+      }
+    ],
+
+    whenToUse: [
+      '✓ When debugging low-level container startup failures',
+      '✓ When choosing runtimes for a Kubernetes cluster (e.g., containerd vs CRI-O)',
+      '✓ When evaluating alternative container tools like Podman or Buildah',
+    ],
+
+    whenNotToUse: [
+      '✕ As a beginner, you rarely need to interact with runc or containerd directly',
+    ],
+
+    developerScenario: {
+      title: 'Real Developer Scenario: Migrating from Docker to Kubernetes',
+      setup: 'A team built hundreds of container images using Docker over the past 3 years.',
+      problem: 'They are migrating to a Kubernetes cluster that uses containerd instead of Docker Engine. Management worries about rewriting apps.',
+      solution: 'Because Docker builds OCI-compliant images, they deploy perfectly on Kubernetes without modifying a single line of code.',
+    },
+
+    internalFlow: [
+      { step: 1, title: 'CLI to Daemon', desc: 'Docker CLI sends command to dockerd.', why: 'Translates user intent.', techDetail: 'POST /containers/create' },
+      { step: 2, title: 'Daemon to containerd', desc: 'dockerd asks containerd to prepare the container.', why: 'Delegates lifecycle management.', techDetail: 'gRPC call to containerd socket' },
+      { step: 3, title: 'containerd to runc', desc: 'containerd launches runc with OCI config.', why: 'Invokes the low-level runtime.', techDetail: 'runc create / runc start' },
+      { step: 4, title: 'runc to Kernel', desc: 'runc calls Linux syscalls to create namespaces.', why: 'Actually isolates the process.', techDetail: 'clone() syscall' },
+      { step: 5, title: 'runc Exits', desc: 'runc exits while containerd-shim monitors the app.', why: 'Keeps memory overhead low.', techDetail: 'containerd-shim keeps stdin/out open' },
+    ],
+
+    commonMistakes: [
+      {
+        mistake: 'Thinking Docker is the only way to run containers',
+        whyWrong: 'Docker is just one toolchain that implements OCI standards.',
+        correctWay: 'Understand that Kubernetes, Podman, and containerd are all valid OCI runtimes.',
+      },
+      {
+        mistake: 'Confusing Docker Image with OCI Image',
+        whyWrong: 'Modern "Docker Images" are actually OCI Images under the hood.',
+        correctWay: 'Use the terms interchangeably in modern contexts, but know OCI is the standard.',
+      },
+    ],
+
+    recapChecklist: [
+      'OCI ensures containers are an open standard, not locked to Docker.',
+      'Docker CLI uses dockerd, which uses containerd, which uses runc.',
+      'runc is the low-level runtime that actually talks to the Linux kernel.',
+    ],
+
+    challenge: {
+      question: 'What is the primary role of runc in the container architecture?',
+      options: [
+        { label: 'It downloads images from Docker Hub.', isCorrect: false, explanation: 'containerd handles image pulling.' },
+        { label: 'It is the low-level OCI runtime that interacts with the Linux kernel to create isolated processes.', isCorrect: true, explanation: 'runc performs the actual namespace/cgroup syscalls.' },
+        { label: 'It provides a graphical user interface for Docker.', isCorrect: false, explanation: 'Docker Desktop provides the GUI.' },
+      ],
+    },
+
+    
+    withoutVsWith: {
+      without: {
+        title: 'WITHOUT OCI STANDARDS',
+        items: [
+          'Vendor lock-in to a single container runtime (e.g., just Docker)',
+          'Images built by Tool A cannot run on Kubernetes',
+          'Fragmented ecosystem with incompatible toolchains',
+        ],
+        outcome: '🔒 Proprietary technology silos',
+      },
+      with: {
+        title: 'WITH OCI STANDARDS',
+        items: [
+          'Build once, run anywhere (Docker, Podman, Kubernetes)',
+          'Modular ecosystem (swap containerd for CRI-O)',
+          'Guaranteed forward-compatibility for container images',
+        ],
+        outcome: '🔓 Open ecosystem and vendor neutrality',
+      },
+    },
+
+    blockDiagram: {
+      title: 'Docker to Kernel Architecture',
+      subtitle: 'Click blocks to trace a command from CLI to Kernel:',
+      nodes: [
+        {
+          id: 'docker-cli',
+          label: 'Docker CLI / API',
+          simpleDef: 'The terminal tool you interact with.',
+          techDef: 'Sends REST API payloads to the dockerd socket.',
+          badge: 'Client',
+          color: '#38bdf8',
+        },
+        {
+          id: 'containerd',
+          label: 'containerd',
+          simpleDef: 'High-level container manager.',
+          techDef: 'Manages image pulling, storage, and passes execution to runc via gRPC.',
+          badge: 'Manager',
+          color: '#facc15',
+        },
+        {
+          id: 'runc',
+          label: 'runc',
+          simpleDef: 'Low-level OCI runtime that actually creates the container.',
+          techDef: 'Interacts with Linux kernel namespaces/cgroups to spawn the isolated process.',
+          badge: 'OCI Runtime',
+          color: '#4ade80',
+        },
+      ],
+    },
+
+    terms: [
+      {
+        term: 'OCI (Open Container Initiative)',
+        simple: 'The organization that defines how containers should be built and run.',
+        technical: 'Governance structure defining the Image Spec and Runtime Spec.',
+        analogy: 'The USB standard that ensures any flash drive works on any computer.',
+        related: ['runc', 'containerd'],
+      },
+      {
+        term: 'runc',
+        simple: 'The low-level tool that actually creates your container.',
+        technical: 'The reference implementation of the OCI Runtime Spec.',
+        analogy: 'The construction worker actually laying the bricks.',
+        related: ['containerd'],
+      },
+      {
+        term: 'containerd',
+        simple: 'The middle-manager that downloads images and supervises containers.',
+        technical: 'Industry-standard container runtime managing lifecycle and image distribution.',
+        analogy: 'The site foreman who organizes materials and tells workers what to do.',
+        related: ['Docker Daemon'],
+      }
+    ],
+
+    whenToUse: [
+      '✓ When debugging low-level container startup failures',
+      '✓ When choosing runtimes for a Kubernetes cluster (e.g., containerd vs CRI-O)',
+      '✓ When evaluating alternative container tools like Podman or Buildah',
+    ],
+
+    whenNotToUse: [
+      '✕ As a beginner, you rarely need to interact with runc or containerd directly',
+    ],
+
+    developerScenario: {
+      title: 'Real Developer Scenario: Migrating from Docker to Kubernetes',
+      setup: 'A team built hundreds of container images using Docker over the past 3 years.',
+      problem: 'They are migrating to a Kubernetes cluster that uses containerd instead of Docker Engine. Management worries about rewriting apps.',
+      solution: 'Because Docker builds OCI-compliant images, they deploy perfectly on Kubernetes without modifying a single line of code.',
+    },
+
+    internalFlow: [
+      { step: 1, title: 'CLI to Daemon', desc: 'Docker CLI sends command to dockerd.', why: 'Translates user intent.', techDetail: 'POST /containers/create' },
+      { step: 2, title: 'Daemon to containerd', desc: 'dockerd asks containerd to prepare the container.', why: 'Delegates lifecycle management.', techDetail: 'gRPC call to containerd socket' },
+      { step: 3, title: 'containerd to runc', desc: 'containerd launches runc with OCI config.', why: 'Invokes the low-level runtime.', techDetail: 'runc create / runc start' },
+      { step: 4, title: 'runc to Kernel', desc: 'runc calls Linux syscalls to create namespaces.', why: 'Actually isolates the process.', techDetail: 'clone() syscall' },
+      { step: 5, title: 'runc Exits', desc: 'runc exits while containerd-shim monitors the app.', why: 'Keeps memory overhead low.', techDetail: 'containerd-shim keeps stdin/out open' },
+    ],
+
+    commonMistakes: [
+      {
+        mistake: 'Thinking Docker is the only way to run containers',
+        whyWrong: 'Docker is just one toolchain that implements OCI standards.',
+        correctWay: 'Understand that Kubernetes, Podman, and containerd are all valid OCI runtimes.',
+      },
+      {
+        mistake: 'Confusing Docker Image with OCI Image',
+        whyWrong: 'Modern "Docker Images" are actually OCI Images under the hood.',
+        correctWay: 'Use the terms interchangeably in modern contexts, but know OCI is the standard.',
+      },
+    ],
+
+    recapChecklist: [
+      'OCI ensures containers are an open standard, not locked to Docker.',
+      'Docker CLI uses dockerd, which uses containerd, which uses runc.',
+      'runc is the low-level runtime that actually talks to the Linux kernel.',
+    ],
+
+    challenge: {
+      question: 'What is the primary role of runc in the container architecture?',
+      options: [
+        { label: 'It downloads images from Docker Hub.', isCorrect: false, explanation: 'containerd handles image pulling.' },
+        { label: 'It is the low-level OCI runtime that interacts with the Linux kernel to create isolated processes.', isCorrect: true, explanation: 'runc performs the actual namespace/cgroup syscalls.' },
+        { label: 'It provides a graphical user interface for Docker.', isCorrect: false, explanation: 'Docker Desktop provides the GUI.' },
+      ],
+    },
+
+    
+    withoutVsWith: {
+      without: {
+        title: 'WITHOUT OCI STANDARDS',
+        items: [
+          'Vendor lock-in to a single container runtime (e.g., just Docker)',
+          'Images built by Tool A cannot run on Kubernetes',
+          'Fragmented ecosystem with incompatible toolchains',
+        ],
+        outcome: '🔒 Proprietary technology silos',
+      },
+      with: {
+        title: 'WITH OCI STANDARDS',
+        items: [
+          'Build once, run anywhere (Docker, Podman, Kubernetes)',
+          'Modular ecosystem (swap containerd for CRI-O)',
+          'Guaranteed forward-compatibility for container images',
+        ],
+        outcome: '🔓 Open ecosystem and vendor neutrality',
+      },
+    },
+
+    blockDiagram: {
+      title: 'Docker to Kernel Architecture',
+      subtitle: 'Click blocks to trace a command from CLI to Kernel:',
+      nodes: [
+        {
+          id: 'docker-cli',
+          label: 'Docker CLI / API',
+          simpleDef: 'The terminal tool you interact with.',
+          techDef: 'Sends REST API payloads to the dockerd socket.',
+          badge: 'Client',
+          color: '#38bdf8',
+        },
+        {
+          id: 'containerd',
+          label: 'containerd',
+          simpleDef: 'High-level container manager.',
+          techDef: 'Manages image pulling, storage, and passes execution to runc via gRPC.',
+          badge: 'Manager',
+          color: '#facc15',
+        },
+        {
+          id: 'runc',
+          label: 'runc',
+          simpleDef: 'Low-level OCI runtime that actually creates the container.',
+          techDef: 'Interacts with Linux kernel namespaces/cgroups to spawn the isolated process.',
+          badge: 'OCI Runtime',
+          color: '#4ade80',
+        },
+      ],
+    },
+
+    terms: [
+      {
+        term: 'OCI (Open Container Initiative)',
+        simple: 'The organization that defines how containers should be built and run.',
+        technical: 'Governance structure defining the Image Spec and Runtime Spec.',
+        analogy: 'The USB standard that ensures any flash drive works on any computer.',
+        related: ['runc', 'containerd'],
+      },
+      {
+        term: 'runc',
+        simple: 'The low-level tool that actually creates your container.',
+        technical: 'The reference implementation of the OCI Runtime Spec.',
+        analogy: 'The construction worker actually laying the bricks.',
+        related: ['containerd'],
+      },
+      {
+        term: 'containerd',
+        simple: 'The middle-manager that downloads images and supervises containers.',
+        technical: 'Industry-standard container runtime managing lifecycle and image distribution.',
+        analogy: 'The site foreman who organizes materials and tells workers what to do.',
+        related: ['Docker Daemon'],
+      }
+    ],
+
+    whenToUse: [
+      '✓ When debugging low-level container startup failures',
+      '✓ When choosing runtimes for a Kubernetes cluster (e.g., containerd vs CRI-O)',
+      '✓ When evaluating alternative container tools like Podman or Buildah',
+    ],
+
+    whenNotToUse: [
+      '✕ As a beginner, you rarely need to interact with runc or containerd directly',
+    ],
+
+    developerScenario: {
+      title: 'Real Developer Scenario: Migrating from Docker to Kubernetes',
+      setup: 'A team built hundreds of container images using Docker over the past 3 years.',
+      problem: 'They are migrating to a Kubernetes cluster that uses containerd instead of Docker Engine. Management worries about rewriting apps.',
+      solution: 'Because Docker builds OCI-compliant images, they deploy perfectly on Kubernetes without modifying a single line of code.',
+    },
+
+    internalFlow: [
+      { step: 1, title: 'CLI to Daemon', desc: 'Docker CLI sends command to dockerd.', why: 'Translates user intent.', techDetail: 'POST /containers/create' },
+      { step: 2, title: 'Daemon to containerd', desc: 'dockerd asks containerd to prepare the container.', why: 'Delegates lifecycle management.', techDetail: 'gRPC call to containerd socket' },
+      { step: 3, title: 'containerd to runc', desc: 'containerd launches runc with OCI config.', why: 'Invokes the low-level runtime.', techDetail: 'runc create / runc start' },
+      { step: 4, title: 'runc to Kernel', desc: 'runc calls Linux syscalls to create namespaces.', why: 'Actually isolates the process.', techDetail: 'clone() syscall' },
+      { step: 5, title: 'runc Exits', desc: 'runc exits while containerd-shim monitors the app.', why: 'Keeps memory overhead low.', techDetail: 'containerd-shim keeps stdin/out open' },
+    ],
+
+    commonMistakes: [
+      {
+        mistake: 'Thinking Docker is the only way to run containers',
+        whyWrong: 'Docker is just one toolchain that implements OCI standards.',
+        correctWay: 'Understand that Kubernetes, Podman, and containerd are all valid OCI runtimes.',
+      },
+      {
+        mistake: 'Confusing Docker Image with OCI Image',
+        whyWrong: 'Modern "Docker Images" are actually OCI Images under the hood.',
+        correctWay: 'Use the terms interchangeably in modern contexts, but know OCI is the standard.',
+      },
+    ],
+
+    recapChecklist: [
+      'OCI ensures containers are an open standard, not locked to Docker.',
+      'Docker CLI uses dockerd, which uses containerd, which uses runc.',
+      'runc is the low-level runtime that actually talks to the Linux kernel.',
+    ],
+
+    challenge: {
+      question: 'What is the primary role of runc in the container architecture?',
+      options: [
+        { label: 'It downloads images from Docker Hub.', isCorrect: false, explanation: 'containerd handles image pulling.' },
+        { label: 'It is the low-level OCI runtime that interacts with the Linux kernel to create isolated processes.', isCorrect: true, explanation: 'runc performs the actual namespace/cgroup syscalls.' },
+        { label: 'It provides a graphical user interface for Docker.', isCorrect: false, explanation: 'Docker Desktop provides the GUI.' },
+      ],
+    },
 
     syntaxCode: 'docker version',
     syntaxTokens: [
@@ -489,9 +1676,9 @@ export const TOPIC_01_02_CONCEPTS: Record<string, UniversalDockerConcept> = {
     sandbox: {
       initialCommands: ['docker version'],
       guidedSteps: [
-        { instruction: 'Inspect Docker engine, containerd, and runc versions', command: 'docker version', hint: 'Type docker version' },
+        { instruction: 'Inspect OCI runtime components (containerd, runc)', command: 'docker version', hint: 'Type docker version' },
       ],
-      targetTask: 'Inspect container engine architecture.',
+      targetTask: 'Understand the underlying container runtime components.',
       solutionCommands: ['docker version'],
     },
 
@@ -521,6 +1708,506 @@ export const TOPIC_01_02_CONCEPTS: Record<string, UniversalDockerConcept> = {
       'Without namespaces, a process inside one container could inspect or kill processes running in another container or on the host machine.',
     realWorldAnalogy:
       'Soundproof booths in a call center. Operators inside their booth can speak freely without seeing or hearing operators in adjacent booths.',
+
+    
+    withoutVsWith: {
+      without: {
+        title: 'WITHOUT NAMESPACES',
+        items: [
+          'All processes share the same process ID tree',
+          'Any root process can inspect or kill any other process',
+          'Ports clash (only one app can listen on port 80)',
+        ],
+        outcome: '🚨 Zero process isolation or security',
+      },
+      with: {
+        title: 'WITH NAMESPACES',
+        items: [
+          'App thinks it is PID 1 on a dedicated machine',
+          'Cannot see or interact with host processes',
+          'Has its own isolated network stack and IP address',
+        ],
+        outcome: '🛡️ Perfect illusion of a dedicated operating system',
+      },
+    },
+
+    blockDiagram: {
+      title: 'Linux Namespace Isolation',
+      subtitle: 'Click blocks to see how namespaces create the container illusion:',
+      nodes: [
+        {
+          id: 'pid-ns',
+          label: 'PID Namespace',
+          simpleDef: 'Isolates process IDs.',
+          techDef: 'Maps host PID (e.g. 15400) to container PID 1.',
+          badge: 'Process',
+          color: '#38bdf8',
+        },
+        {
+          id: 'net-ns',
+          label: 'NET Namespace',
+          simpleDef: 'Isolates networking interfaces.',
+          techDef: 'Provides independent IPv4 stack, routes, and iptables rules.',
+          badge: 'Network',
+          color: '#4ade80',
+        },
+        {
+          id: 'mnt-ns',
+          label: 'MNT Namespace',
+          simpleDef: 'Isolates filesystem mounts.',
+          techDef: 'Allows the container to have a unique root filesystem (/) distinct from the host.',
+          badge: 'Storage',
+          color: '#facc15',
+        },
+      ],
+    },
+
+    terms: [
+      {
+        term: 'PID Namespace',
+        simple: 'Hides host processes from the container.',
+        technical: 'Provides an isolated process ID number space where the container init is PID 1.',
+        analogy: 'A student who thinks they are the only person in the entire school.',
+        related: ['Process Isolation'],
+      },
+      {
+        term: 'NET Namespace',
+        simple: 'Gives the container its own network card and IP.',
+        technical: 'Isolates system network stacks, routing tables, and firewall rules.',
+        analogy: 'A private telephone line that doesn\'t connect to the main switchboard.',
+        related: ['veth pairs'],
+      },
+      {
+        term: 'MNT Namespace',
+        simple: 'Gives the container its own hard drive structure.',
+        technical: 'Isolates mount points so the container perceives a unique root filesystem hierarchy.',
+        analogy: 'A virtual file cabinet separate from the main office cabinet.',
+        related: ['chroot'],
+      }
+    ],
+
+    whenToUse: [
+      '✓ When you need to isolate untrusted code execution',
+      '✓ When you want to run multiple copies of a web server on the same physical host without port conflicts',
+      '✓ When debugging container boundaries (e.g., joining a namespace manually via nsenter)',
+    ],
+
+    whenNotToUse: [
+      '✕ Avoid sharing the host PID or NET namespaces (--net=host) unless absolutely necessary, as it breaks isolation',
+    ],
+
+    developerScenario: {
+      title: 'Real Developer Scenario: Port Conflict Resolution',
+      setup: 'A developer needs to run three different PHP projects locally, all of which hardcode port 80 for their web servers.',
+      problem: 'Running them directly on the host fails because only one process can bind to port 80 at a time.',
+      solution: 'By using Docker, each app runs in its own NET namespace. They all bind to port 80 internally, and Docker maps them to 8081, 8082, and 8083 on the host.',
+    },
+
+    internalFlow: [
+      { step: 1, title: 'Syscall clone()', desc: 'Docker uses clone() with CLONE_NEW* flags.', why: 'Instructs kernel to create namespaces.', techDetail: 'CLONE_NEWPID | CLONE_NEWNET' },
+      { step: 2, title: 'PID Mapping', desc: 'Kernel maps host PID to container PID 1.', why: 'Creates the PID illusion.', techDetail: '/proc/<pid>/ns/' },
+      { step: 3, title: 'Network Veth Pair', desc: 'Kernel connects host bridge to container NET namespace.', why: 'Allows outbound internet access.', techDetail: 'veth interface creation' },
+      { step: 4, title: 'Pivot Root', desc: 'Container MNT namespace root is switched to the image rootfs.', why: 'Hides the host filesystem.', techDetail: 'pivot_root() syscall' },
+    ],
+
+    commonMistakes: [
+      {
+        mistake: 'Assuming container root user is safe',
+        whyWrong: 'By default, root inside the container is root on the host. If a container breaks out, it has full privileges.',
+        correctWay: 'Use USER namespaces to map container root to an unprivileged host user, or run apps as non-root.',
+      },
+    ],
+
+    recapChecklist: [
+      'Namespaces provide isolation (the "blinders" for a container).',
+      'PID namespace ensures the container only sees its own processes.',
+      'NET namespace provides isolated IP addresses and ports.',
+      'MNT namespace provides an isolated filesystem view.',
+    ],
+
+    challenge: {
+      question: 'Which namespace is responsible for ensuring a container cannot see or kill processes running on the host machine?',
+      options: [
+        { label: 'NET Namespace', isCorrect: false, explanation: 'NET handles networking, not processes.' },
+        { label: 'PID Namespace', isCorrect: true, explanation: 'The Process ID namespace isolates the process tree.' },
+        { label: 'MNT Namespace', isCorrect: false, explanation: 'MNT handles the filesystem view.' },
+      ],
+    },
+
+    
+    withoutVsWith: {
+      without: {
+        title: 'WITHOUT NAMESPACES',
+        items: [
+          'All processes share the same process ID tree',
+          'Any root process can inspect or kill any other process',
+          'Ports clash (only one app can listen on port 80)',
+        ],
+        outcome: '🚨 Zero process isolation or security',
+      },
+      with: {
+        title: 'WITH NAMESPACES',
+        items: [
+          'App thinks it is PID 1 on a dedicated machine',
+          'Cannot see or interact with host processes',
+          'Has its own isolated network stack and IP address',
+        ],
+        outcome: '🛡️ Perfect illusion of a dedicated operating system',
+      },
+    },
+
+    blockDiagram: {
+      title: 'Linux Namespace Isolation',
+      subtitle: 'Click blocks to see how namespaces create the container illusion:',
+      nodes: [
+        {
+          id: 'pid-ns',
+          label: 'PID Namespace',
+          simpleDef: 'Isolates process IDs.',
+          techDef: 'Maps host PID (e.g. 15400) to container PID 1.',
+          badge: 'Process',
+          color: '#38bdf8',
+        },
+        {
+          id: 'net-ns',
+          label: 'NET Namespace',
+          simpleDef: 'Isolates networking interfaces.',
+          techDef: 'Provides independent IPv4 stack, routes, and iptables rules.',
+          badge: 'Network',
+          color: '#4ade80',
+        },
+        {
+          id: 'mnt-ns',
+          label: 'MNT Namespace',
+          simpleDef: 'Isolates filesystem mounts.',
+          techDef: 'Allows the container to have a unique root filesystem (/) distinct from the host.',
+          badge: 'Storage',
+          color: '#facc15',
+        },
+      ],
+    },
+
+    terms: [
+      {
+        term: 'PID Namespace',
+        simple: 'Hides host processes from the container.',
+        technical: 'Provides an isolated process ID number space where the container init is PID 1.',
+        analogy: 'A student who thinks they are the only person in the entire school.',
+        related: ['Process Isolation'],
+      },
+      {
+        term: 'NET Namespace',
+        simple: 'Gives the container its own network card and IP.',
+        technical: 'Isolates system network stacks, routing tables, and firewall rules.',
+        analogy: 'A private telephone line that doesn\'t connect to the main switchboard.',
+        related: ['veth pairs'],
+      },
+      {
+        term: 'MNT Namespace',
+        simple: 'Gives the container its own hard drive structure.',
+        technical: 'Isolates mount points so the container perceives a unique root filesystem hierarchy.',
+        analogy: 'A virtual file cabinet separate from the main office cabinet.',
+        related: ['chroot'],
+      }
+    ],
+
+    whenToUse: [
+      '✓ When you need to isolate untrusted code execution',
+      '✓ When you want to run multiple copies of a web server on the same physical host without port conflicts',
+      '✓ When debugging container boundaries (e.g., joining a namespace manually via nsenter)',
+    ],
+
+    whenNotToUse: [
+      '✕ Avoid sharing the host PID or NET namespaces (--net=host) unless absolutely necessary, as it breaks isolation',
+    ],
+
+    developerScenario: {
+      title: 'Real Developer Scenario: Port Conflict Resolution',
+      setup: 'A developer needs to run three different PHP projects locally, all of which hardcode port 80 for their web servers.',
+      problem: 'Running them directly on the host fails because only one process can bind to port 80 at a time.',
+      solution: 'By using Docker, each app runs in its own NET namespace. They all bind to port 80 internally, and Docker maps them to 8081, 8082, and 8083 on the host.',
+    },
+
+    internalFlow: [
+      { step: 1, title: 'Syscall clone()', desc: 'Docker uses clone() with CLONE_NEW* flags.', why: 'Instructs kernel to create namespaces.', techDetail: 'CLONE_NEWPID | CLONE_NEWNET' },
+      { step: 2, title: 'PID Mapping', desc: 'Kernel maps host PID to container PID 1.', why: 'Creates the PID illusion.', techDetail: '/proc/<pid>/ns/' },
+      { step: 3, title: 'Network Veth Pair', desc: 'Kernel connects host bridge to container NET namespace.', why: 'Allows outbound internet access.', techDetail: 'veth interface creation' },
+      { step: 4, title: 'Pivot Root', desc: 'Container MNT namespace root is switched to the image rootfs.', why: 'Hides the host filesystem.', techDetail: 'pivot_root() syscall' },
+    ],
+
+    commonMistakes: [
+      {
+        mistake: 'Assuming container root user is safe',
+        whyWrong: 'By default, root inside the container is root on the host. If a container breaks out, it has full privileges.',
+        correctWay: 'Use USER namespaces to map container root to an unprivileged host user, or run apps as non-root.',
+      },
+    ],
+
+    recapChecklist: [
+      'Namespaces provide isolation (the "blinders" for a container).',
+      'PID namespace ensures the container only sees its own processes.',
+      'NET namespace provides isolated IP addresses and ports.',
+      'MNT namespace provides an isolated filesystem view.',
+    ],
+
+    challenge: {
+      question: 'Which namespace is responsible for ensuring a container cannot see or kill processes running on the host machine?',
+      options: [
+        { label: 'NET Namespace', isCorrect: false, explanation: 'NET handles networking, not processes.' },
+        { label: 'PID Namespace', isCorrect: true, explanation: 'The Process ID namespace isolates the process tree.' },
+        { label: 'MNT Namespace', isCorrect: false, explanation: 'MNT handles the filesystem view.' },
+      ],
+    },
+
+    
+    withoutVsWith: {
+      without: {
+        title: 'WITHOUT NAMESPACES',
+        items: [
+          'All processes share the same process ID tree',
+          'Any root process can inspect or kill any other process',
+          'Ports clash (only one app can listen on port 80)',
+        ],
+        outcome: '🚨 Zero process isolation or security',
+      },
+      with: {
+        title: 'WITH NAMESPACES',
+        items: [
+          'App thinks it is PID 1 on a dedicated machine',
+          'Cannot see or interact with host processes',
+          'Has its own isolated network stack and IP address',
+        ],
+        outcome: '🛡️ Perfect illusion of a dedicated operating system',
+      },
+    },
+
+    blockDiagram: {
+      title: 'Linux Namespace Isolation',
+      subtitle: 'Click blocks to see how namespaces create the container illusion:',
+      nodes: [
+        {
+          id: 'pid-ns',
+          label: 'PID Namespace',
+          simpleDef: 'Isolates process IDs.',
+          techDef: 'Maps host PID (e.g. 15400) to container PID 1.',
+          badge: 'Process',
+          color: '#38bdf8',
+        },
+        {
+          id: 'net-ns',
+          label: 'NET Namespace',
+          simpleDef: 'Isolates networking interfaces.',
+          techDef: 'Provides independent IPv4 stack, routes, and iptables rules.',
+          badge: 'Network',
+          color: '#4ade80',
+        },
+        {
+          id: 'mnt-ns',
+          label: 'MNT Namespace',
+          simpleDef: 'Isolates filesystem mounts.',
+          techDef: 'Allows the container to have a unique root filesystem (/) distinct from the host.',
+          badge: 'Storage',
+          color: '#facc15',
+        },
+      ],
+    },
+
+    terms: [
+      {
+        term: 'PID Namespace',
+        simple: 'Hides host processes from the container.',
+        technical: 'Provides an isolated process ID number space where the container init is PID 1.',
+        analogy: 'A student who thinks they are the only person in the entire school.',
+        related: ['Process Isolation'],
+      },
+      {
+        term: 'NET Namespace',
+        simple: 'Gives the container its own network card and IP.',
+        technical: 'Isolates system network stacks, routing tables, and firewall rules.',
+        analogy: 'A private telephone line that doesn\'t connect to the main switchboard.',
+        related: ['veth pairs'],
+      },
+      {
+        term: 'MNT Namespace',
+        simple: 'Gives the container its own hard drive structure.',
+        technical: 'Isolates mount points so the container perceives a unique root filesystem hierarchy.',
+        analogy: 'A virtual file cabinet separate from the main office cabinet.',
+        related: ['chroot'],
+      }
+    ],
+
+    whenToUse: [
+      '✓ When you need to isolate untrusted code execution',
+      '✓ When you want to run multiple copies of a web server on the same physical host without port conflicts',
+      '✓ When debugging container boundaries (e.g., joining a namespace manually via nsenter)',
+    ],
+
+    whenNotToUse: [
+      '✕ Avoid sharing the host PID or NET namespaces (--net=host) unless absolutely necessary, as it breaks isolation',
+    ],
+
+    developerScenario: {
+      title: 'Real Developer Scenario: Port Conflict Resolution',
+      setup: 'A developer needs to run three different PHP projects locally, all of which hardcode port 80 for their web servers.',
+      problem: 'Running them directly on the host fails because only one process can bind to port 80 at a time.',
+      solution: 'By using Docker, each app runs in its own NET namespace. They all bind to port 80 internally, and Docker maps them to 8081, 8082, and 8083 on the host.',
+    },
+
+    internalFlow: [
+      { step: 1, title: 'Syscall clone()', desc: 'Docker uses clone() with CLONE_NEW* flags.', why: 'Instructs kernel to create namespaces.', techDetail: 'CLONE_NEWPID | CLONE_NEWNET' },
+      { step: 2, title: 'PID Mapping', desc: 'Kernel maps host PID to container PID 1.', why: 'Creates the PID illusion.', techDetail: '/proc/<pid>/ns/' },
+      { step: 3, title: 'Network Veth Pair', desc: 'Kernel connects host bridge to container NET namespace.', why: 'Allows outbound internet access.', techDetail: 'veth interface creation' },
+      { step: 4, title: 'Pivot Root', desc: 'Container MNT namespace root is switched to the image rootfs.', why: 'Hides the host filesystem.', techDetail: 'pivot_root() syscall' },
+    ],
+
+    commonMistakes: [
+      {
+        mistake: 'Assuming container root user is safe',
+        whyWrong: 'By default, root inside the container is root on the host. If a container breaks out, it has full privileges.',
+        correctWay: 'Use USER namespaces to map container root to an unprivileged host user, or run apps as non-root.',
+      },
+    ],
+
+    recapChecklist: [
+      'Namespaces provide isolation (the "blinders" for a container).',
+      'PID namespace ensures the container only sees its own processes.',
+      'NET namespace provides isolated IP addresses and ports.',
+      'MNT namespace provides an isolated filesystem view.',
+    ],
+
+    challenge: {
+      question: 'Which namespace is responsible for ensuring a container cannot see or kill processes running on the host machine?',
+      options: [
+        { label: 'NET Namespace', isCorrect: false, explanation: 'NET handles networking, not processes.' },
+        { label: 'PID Namespace', isCorrect: true, explanation: 'The Process ID namespace isolates the process tree.' },
+        { label: 'MNT Namespace', isCorrect: false, explanation: 'MNT handles the filesystem view.' },
+      ],
+    },
+
+    
+    withoutVsWith: {
+      without: {
+        title: 'WITHOUT NAMESPACES',
+        items: [
+          'All processes share the same process ID tree',
+          'Any root process can inspect or kill any other process',
+          'Ports clash (only one app can listen on port 80)',
+        ],
+        outcome: '🚨 Zero process isolation or security',
+      },
+      with: {
+        title: 'WITH NAMESPACES',
+        items: [
+          'App thinks it is PID 1 on a dedicated machine',
+          'Cannot see or interact with host processes',
+          'Has its own isolated network stack and IP address',
+        ],
+        outcome: '🛡️ Perfect illusion of a dedicated operating system',
+      },
+    },
+
+    blockDiagram: {
+      title: 'Linux Namespace Isolation',
+      subtitle: 'Click blocks to see how namespaces create the container illusion:',
+      nodes: [
+        {
+          id: 'pid-ns',
+          label: 'PID Namespace',
+          simpleDef: 'Isolates process IDs.',
+          techDef: 'Maps host PID (e.g. 15400) to container PID 1.',
+          badge: 'Process',
+          color: '#38bdf8',
+        },
+        {
+          id: 'net-ns',
+          label: 'NET Namespace',
+          simpleDef: 'Isolates networking interfaces.',
+          techDef: 'Provides independent IPv4 stack, routes, and iptables rules.',
+          badge: 'Network',
+          color: '#4ade80',
+        },
+        {
+          id: 'mnt-ns',
+          label: 'MNT Namespace',
+          simpleDef: 'Isolates filesystem mounts.',
+          techDef: 'Allows the container to have a unique root filesystem (/) distinct from the host.',
+          badge: 'Storage',
+          color: '#facc15',
+        },
+      ],
+    },
+
+    terms: [
+      {
+        term: 'PID Namespace',
+        simple: 'Hides host processes from the container.',
+        technical: 'Provides an isolated process ID number space where the container init is PID 1.',
+        analogy: 'A student who thinks they are the only person in the entire school.',
+        related: ['Process Isolation'],
+      },
+      {
+        term: 'NET Namespace',
+        simple: 'Gives the container its own network card and IP.',
+        technical: 'Isolates system network stacks, routing tables, and firewall rules.',
+        analogy: 'A private telephone line that doesn\'t connect to the main switchboard.',
+        related: ['veth pairs'],
+      },
+      {
+        term: 'MNT Namespace',
+        simple: 'Gives the container its own hard drive structure.',
+        technical: 'Isolates mount points so the container perceives a unique root filesystem hierarchy.',
+        analogy: 'A virtual file cabinet separate from the main office cabinet.',
+        related: ['chroot'],
+      }
+    ],
+
+    whenToUse: [
+      '✓ When you need to isolate untrusted code execution',
+      '✓ When you want to run multiple copies of a web server on the same physical host without port conflicts',
+      '✓ When debugging container boundaries (e.g., joining a namespace manually via nsenter)',
+    ],
+
+    whenNotToUse: [
+      '✕ Avoid sharing the host PID or NET namespaces (--net=host) unless absolutely necessary, as it breaks isolation',
+    ],
+
+    developerScenario: {
+      title: 'Real Developer Scenario: Port Conflict Resolution',
+      setup: 'A developer needs to run three different PHP projects locally, all of which hardcode port 80 for their web servers.',
+      problem: 'Running them directly on the host fails because only one process can bind to port 80 at a time.',
+      solution: 'By using Docker, each app runs in its own NET namespace. They all bind to port 80 internally, and Docker maps them to 8081, 8082, and 8083 on the host.',
+    },
+
+    internalFlow: [
+      { step: 1, title: 'Syscall clone()', desc: 'Docker uses clone() with CLONE_NEW* flags.', why: 'Instructs kernel to create namespaces.', techDetail: 'CLONE_NEWPID | CLONE_NEWNET' },
+      { step: 2, title: 'PID Mapping', desc: 'Kernel maps host PID to container PID 1.', why: 'Creates the PID illusion.', techDetail: '/proc/<pid>/ns/' },
+      { step: 3, title: 'Network Veth Pair', desc: 'Kernel connects host bridge to container NET namespace.', why: 'Allows outbound internet access.', techDetail: 'veth interface creation' },
+      { step: 4, title: 'Pivot Root', desc: 'Container MNT namespace root is switched to the image rootfs.', why: 'Hides the host filesystem.', techDetail: 'pivot_root() syscall' },
+    ],
+
+    commonMistakes: [
+      {
+        mistake: 'Assuming container root user is safe',
+        whyWrong: 'By default, root inside the container is root on the host. If a container breaks out, it has full privileges.',
+        correctWay: 'Use USER namespaces to map container root to an unprivileged host user, or run apps as non-root.',
+      },
+    ],
+
+    recapChecklist: [
+      'Namespaces provide isolation (the "blinders" for a container).',
+      'PID namespace ensures the container only sees its own processes.',
+      'NET namespace provides isolated IP addresses and ports.',
+      'MNT namespace provides an isolated filesystem view.',
+    ],
+
+    challenge: {
+      question: 'Which namespace is responsible for ensuring a container cannot see or kill processes running on the host machine?',
+      options: [
+        { label: 'NET Namespace', isCorrect: false, explanation: 'NET handles networking, not processes.' },
+        { label: 'PID Namespace', isCorrect: true, explanation: 'The Process ID namespace isolates the process tree.' },
+        { label: 'MNT Namespace', isCorrect: false, explanation: 'MNT handles the filesystem view.' },
+      ],
+    },
 
     syntaxCode: 'docker run --net=bridge --pid=host alpine ps aux',
     syntaxTokens: [
@@ -566,12 +2253,12 @@ export const TOPIC_01_02_CONCEPTS: Record<string, UniversalDockerConcept> = {
     ],
 
     sandbox: {
-      initialCommands: ['docker exec web-frontend ps aux'],
+      initialCommands: ['unshare --pid --fork --mount-proc /bin/sh -c "ps aux"'],
       guidedSteps: [
-        { instruction: 'Inspect isolated process tree inside web-frontend container', command: 'docker exec web-frontend ps aux', hint: 'Type docker exec web-frontend ps aux' },
+        { instruction: 'Use unshare to simulate a PID namespace and view isolated processes', command: 'unshare --pid --fork --mount-proc /bin/sh -c "ps aux"', hint: 'Type unshare --pid --fork --mount-proc /bin/sh -c "ps aux"' },
       ],
-      targetTask: 'Inspect container PID 1 isolation.',
-      solutionCommands: ['docker exec web-frontend ps aux'],
+      targetTask: 'Understand how namespaces isolate process visibility.',
+      solutionCommands: ['unshare --pid --fork --mount-proc /bin/sh -c "ps aux"'],
     },
 
     reference: {
@@ -604,6 +2291,530 @@ export const TOPIC_01_02_CONCEPTS: Record<string, UniversalDockerConcept> = {
       'Without cgroups, a buggy container with a memory leak would consume 100% of host RAM, triggering Linux OOM (Out Of Memory) killer and crashing all host applications.',
     realWorldAnalogy:
       'Parental control limits on a smartphone. You cap screen time to 1 hour per day and data usage to 5GB.',
+
+    
+    withoutVsWith: {
+      without: {
+        title: 'WITHOUT CGROUPS',
+        items: [
+          'A buggy app with a memory leak crashes the entire server',
+          'One CPU-heavy app starves all other applications',
+          'Unpredictable performance for co-located services',
+        ],
+        outcome: '🔥 "Noisy neighbor" problems and host instability',
+      },
+      with: {
+        title: 'WITH CGROUPS',
+        items: [
+          'App is killed before it can exhaust server memory',
+          'CPU usage is hard-capped to specific core quotas',
+          'Stable, predictable performance for all containers',
+        ],
+        outcome: '⚖️ Fair resource distribution and rock-solid stability',
+      },
+    },
+
+    blockDiagram: {
+      title: 'cgroups Resource Limits',
+      subtitle: 'Click blocks to see how cgroups throttle resources:',
+      nodes: [
+        {
+          id: 'mem-limit',
+          label: 'Memory Controller',
+          simpleDef: 'Caps the maximum RAM a container can use.',
+          techDef: 'memory.max limit; triggers OOM-killer if exceeded.',
+          badge: 'Memory',
+          color: '#38bdf8',
+        },
+        {
+          id: 'cpu-limit',
+          label: 'CPU Controller',
+          simpleDef: 'Limits how much processor time the container gets.',
+          techDef: 'cpu.max quota and period scheduling limits.',
+          badge: 'CPU',
+          color: '#4ade80',
+        },
+        {
+          id: 'io-limit',
+          label: 'Block I/O Controller',
+          simpleDef: 'Throttles hard drive read/write speeds.',
+          techDef: 'blkio throttling limits on specific block devices.',
+          badge: 'Disk',
+          color: '#facc15',
+        },
+      ],
+    },
+
+    terms: [
+      {
+        term: 'cgroups (Control Groups)',
+        simple: 'Linux feature that limits how much RAM or CPU a process can use.',
+        technical: 'Kernel mechanism for hierarchical resource accounting and limiting.',
+        analogy: 'A strict budget plan that cuts up your credit card if you overspend.',
+        related: ['Namespaces', 'OOM Killer'],
+      },
+      {
+        term: 'OOM Killer',
+        simple: 'Kernel assassin that kills apps trying to use too much memory.',
+        technical: 'Out Of Memory killer; sends SIGKILL (exit code 137) when memory.max is breached.',
+        analogy: 'A bouncer kicking out a guest who ate all the buffet food.',
+        related: ['Memory Limit'],
+      },
+      {
+        term: 'CPU Quota',
+        simple: 'Limiting a container to a fraction of processing power.',
+        technical: 'CFS (Completely Fair Scheduler) quota limiting execution microseconds per period.',
+        analogy: 'Allowing a child to only watch 1 hour of TV per day.',
+        related: ['CPU Shares'],
+      }
+    ],
+
+    whenToUse: [
+      '✓ ALWAYS set memory limits on containers in production',
+      '✓ When hosting multiple tenant applications on a single server',
+      '✓ When simulating low-resource environments for performance testing',
+    ],
+
+    whenNotToUse: [
+      '✕ Avoid aggressive CPU limits on latency-sensitive apps, as CFS throttling can cause micro-stutters',
+    ],
+
+    developerScenario: {
+      title: 'Real Developer Scenario: The Memory Leak Disaster',
+      setup: 'A Node.js backend has a hidden memory leak. It is deployed to a production VM alongside a critical database.',
+      problem: 'Over 3 days, the Node app consumes 100% of the VM\'s 16GB RAM. The Linux kernel panics and kills the database process to save itself, causing massive downtime.',
+      solution: 'The team containerizes the Node app and sets "--memory=512m". Now, when the app leaks, only the container crashes (and restarts automatically), keeping the database perfectly safe.',
+    },
+
+    internalFlow: [
+      { step: 1, title: 'Docker Run Parameter', desc: 'User passes --memory=256m flag.', why: 'Defines intended limit.', techDetail: 'CLI parses 256MB to bytes' },
+      { step: 2, title: 'cgroup Creation', desc: 'Daemon creates a directory in /sys/fs/cgroup.', why: 'Initializes kernel tracking.', techDetail: 'mkdir /sys/fs/cgroup/memory/docker/<id>' },
+      { step: 3, title: 'Write Limits', desc: 'Daemon writes 268435456 to memory.max file.', why: 'Instructs kernel of the hard limit.', techDetail: 'echo 268435456 > memory.max' },
+      { step: 4, title: 'Attach Process', desc: 'Container PID is written to cgroup.procs.', why: 'Enforces the limit on the app.', techDetail: 'echo <pid> > cgroup.procs' },
+      { step: 5, title: 'OOM Enforcement', desc: 'If app exceeds limit, kernel sends SIGKILL.', why: 'Protects host stability.', techDetail: 'Exit code 137 (OOMKilled)' },
+    ],
+
+    commonMistakes: [
+      {
+        mistake: 'Not setting memory limits in production',
+        whyWrong: 'A single rogue container can bring down the entire host machine.',
+        correctWay: 'Always specify memory limits (e.g., in docker-compose.yml deploy resources).',
+      },
+      {
+        mistake: 'Confusing JVM/V8 memory limits with cgroup limits',
+        whyWrong: 'If Java/Node doesn\'t know about cgroup limits, they will try to allocate host RAM and get instantly OOM-killed.',
+        correctWay: 'Use modern runtimes that are cgroup-aware (e.g., Node 12+, Java 10+).',
+      },
+    ],
+
+    recapChecklist: [
+      'cgroups enforce resource limits (the "handcuffs" for a container).',
+      'They prevent "noisy neighbors" from starving other apps of CPU/RAM.',
+      'Exceeding memory limits results in the container being OOM-killed.',
+      'Limits are enforced natively by the Linux kernel via /sys/fs/cgroup.',
+    ],
+
+    challenge: {
+      question: 'What happens to a Docker container if it tries to use more RAM than its defined cgroup memory limit?',
+      options: [
+        { label: 'It slows down but continues running.', isCorrect: false, explanation: 'Memory limits are hard ceilings, not throttles.' },
+        { label: 'The Linux kernel instantly terminates it via the OOM Killer.', isCorrect: true, explanation: 'The kernel protects the host by sending a SIGKILL (Exit code 137).' },
+        { label: 'It dynamically steals memory from other containers.', isCorrect: false, explanation: 'cgroups explicitly prevent this behavior.' },
+      ],
+    },
+
+    
+    withoutVsWith: {
+      without: {
+        title: 'WITHOUT CGROUPS',
+        items: [
+          'A buggy app with a memory leak crashes the entire server',
+          'One CPU-heavy app starves all other applications',
+          'Unpredictable performance for co-located services',
+        ],
+        outcome: '🔥 "Noisy neighbor" problems and host instability',
+      },
+      with: {
+        title: 'WITH CGROUPS',
+        items: [
+          'App is killed before it can exhaust server memory',
+          'CPU usage is hard-capped to specific core quotas',
+          'Stable, predictable performance for all containers',
+        ],
+        outcome: '⚖️ Fair resource distribution and rock-solid stability',
+      },
+    },
+
+    blockDiagram: {
+      title: 'cgroups Resource Limits',
+      subtitle: 'Click blocks to see how cgroups throttle resources:',
+      nodes: [
+        {
+          id: 'mem-limit',
+          label: 'Memory Controller',
+          simpleDef: 'Caps the maximum RAM a container can use.',
+          techDef: 'memory.max limit; triggers OOM-killer if exceeded.',
+          badge: 'Memory',
+          color: '#38bdf8',
+        },
+        {
+          id: 'cpu-limit',
+          label: 'CPU Controller',
+          simpleDef: 'Limits how much processor time the container gets.',
+          techDef: 'cpu.max quota and period scheduling limits.',
+          badge: 'CPU',
+          color: '#4ade80',
+        },
+        {
+          id: 'io-limit',
+          label: 'Block I/O Controller',
+          simpleDef: 'Throttles hard drive read/write speeds.',
+          techDef: 'blkio throttling limits on specific block devices.',
+          badge: 'Disk',
+          color: '#facc15',
+        },
+      ],
+    },
+
+    terms: [
+      {
+        term: 'cgroups (Control Groups)',
+        simple: 'Linux feature that limits how much RAM or CPU a process can use.',
+        technical: 'Kernel mechanism for hierarchical resource accounting and limiting.',
+        analogy: 'A strict budget plan that cuts up your credit card if you overspend.',
+        related: ['Namespaces', 'OOM Killer'],
+      },
+      {
+        term: 'OOM Killer',
+        simple: 'Kernel assassin that kills apps trying to use too much memory.',
+        technical: 'Out Of Memory killer; sends SIGKILL (exit code 137) when memory.max is breached.',
+        analogy: 'A bouncer kicking out a guest who ate all the buffet food.',
+        related: ['Memory Limit'],
+      },
+      {
+        term: 'CPU Quota',
+        simple: 'Limiting a container to a fraction of processing power.',
+        technical: 'CFS (Completely Fair Scheduler) quota limiting execution microseconds per period.',
+        analogy: 'Allowing a child to only watch 1 hour of TV per day.',
+        related: ['CPU Shares'],
+      }
+    ],
+
+    whenToUse: [
+      '✓ ALWAYS set memory limits on containers in production',
+      '✓ When hosting multiple tenant applications on a single server',
+      '✓ When simulating low-resource environments for performance testing',
+    ],
+
+    whenNotToUse: [
+      '✕ Avoid aggressive CPU limits on latency-sensitive apps, as CFS throttling can cause micro-stutters',
+    ],
+
+    developerScenario: {
+      title: 'Real Developer Scenario: The Memory Leak Disaster',
+      setup: 'A Node.js backend has a hidden memory leak. It is deployed to a production VM alongside a critical database.',
+      problem: 'Over 3 days, the Node app consumes 100% of the VM\'s 16GB RAM. The Linux kernel panics and kills the database process to save itself, causing massive downtime.',
+      solution: 'The team containerizes the Node app and sets "--memory=512m". Now, when the app leaks, only the container crashes (and restarts automatically), keeping the database perfectly safe.',
+    },
+
+    internalFlow: [
+      { step: 1, title: 'Docker Run Parameter', desc: 'User passes --memory=256m flag.', why: 'Defines intended limit.', techDetail: 'CLI parses 256MB to bytes' },
+      { step: 2, title: 'cgroup Creation', desc: 'Daemon creates a directory in /sys/fs/cgroup.', why: 'Initializes kernel tracking.', techDetail: 'mkdir /sys/fs/cgroup/memory/docker/<id>' },
+      { step: 3, title: 'Write Limits', desc: 'Daemon writes 268435456 to memory.max file.', why: 'Instructs kernel of the hard limit.', techDetail: 'echo 268435456 > memory.max' },
+      { step: 4, title: 'Attach Process', desc: 'Container PID is written to cgroup.procs.', why: 'Enforces the limit on the app.', techDetail: 'echo <pid> > cgroup.procs' },
+      { step: 5, title: 'OOM Enforcement', desc: 'If app exceeds limit, kernel sends SIGKILL.', why: 'Protects host stability.', techDetail: 'Exit code 137 (OOMKilled)' },
+    ],
+
+    commonMistakes: [
+      {
+        mistake: 'Not setting memory limits in production',
+        whyWrong: 'A single rogue container can bring down the entire host machine.',
+        correctWay: 'Always specify memory limits (e.g., in docker-compose.yml deploy resources).',
+      },
+      {
+        mistake: 'Confusing JVM/V8 memory limits with cgroup limits',
+        whyWrong: 'If Java/Node doesn\'t know about cgroup limits, they will try to allocate host RAM and get instantly OOM-killed.',
+        correctWay: 'Use modern runtimes that are cgroup-aware (e.g., Node 12+, Java 10+).',
+      },
+    ],
+
+    recapChecklist: [
+      'cgroups enforce resource limits (the "handcuffs" for a container).',
+      'They prevent "noisy neighbors" from starving other apps of CPU/RAM.',
+      'Exceeding memory limits results in the container being OOM-killed.',
+      'Limits are enforced natively by the Linux kernel via /sys/fs/cgroup.',
+    ],
+
+    challenge: {
+      question: 'What happens to a Docker container if it tries to use more RAM than its defined cgroup memory limit?',
+      options: [
+        { label: 'It slows down but continues running.', isCorrect: false, explanation: 'Memory limits are hard ceilings, not throttles.' },
+        { label: 'The Linux kernel instantly terminates it via the OOM Killer.', isCorrect: true, explanation: 'The kernel protects the host by sending a SIGKILL (Exit code 137).' },
+        { label: 'It dynamically steals memory from other containers.', isCorrect: false, explanation: 'cgroups explicitly prevent this behavior.' },
+      ],
+    },
+
+    
+    withoutVsWith: {
+      without: {
+        title: 'WITHOUT CGROUPS',
+        items: [
+          'A buggy app with a memory leak crashes the entire server',
+          'One CPU-heavy app starves all other applications',
+          'Unpredictable performance for co-located services',
+        ],
+        outcome: '🔥 "Noisy neighbor" problems and host instability',
+      },
+      with: {
+        title: 'WITH CGROUPS',
+        items: [
+          'App is killed before it can exhaust server memory',
+          'CPU usage is hard-capped to specific core quotas',
+          'Stable, predictable performance for all containers',
+        ],
+        outcome: '⚖️ Fair resource distribution and rock-solid stability',
+      },
+    },
+
+    blockDiagram: {
+      title: 'cgroups Resource Limits',
+      subtitle: 'Click blocks to see how cgroups throttle resources:',
+      nodes: [
+        {
+          id: 'mem-limit',
+          label: 'Memory Controller',
+          simpleDef: 'Caps the maximum RAM a container can use.',
+          techDef: 'memory.max limit; triggers OOM-killer if exceeded.',
+          badge: 'Memory',
+          color: '#38bdf8',
+        },
+        {
+          id: 'cpu-limit',
+          label: 'CPU Controller',
+          simpleDef: 'Limits how much processor time the container gets.',
+          techDef: 'cpu.max quota and period scheduling limits.',
+          badge: 'CPU',
+          color: '#4ade80',
+        },
+        {
+          id: 'io-limit',
+          label: 'Block I/O Controller',
+          simpleDef: 'Throttles hard drive read/write speeds.',
+          techDef: 'blkio throttling limits on specific block devices.',
+          badge: 'Disk',
+          color: '#facc15',
+        },
+      ],
+    },
+
+    terms: [
+      {
+        term: 'cgroups (Control Groups)',
+        simple: 'Linux feature that limits how much RAM or CPU a process can use.',
+        technical: 'Kernel mechanism for hierarchical resource accounting and limiting.',
+        analogy: 'A strict budget plan that cuts up your credit card if you overspend.',
+        related: ['Namespaces', 'OOM Killer'],
+      },
+      {
+        term: 'OOM Killer',
+        simple: 'Kernel assassin that kills apps trying to use too much memory.',
+        technical: 'Out Of Memory killer; sends SIGKILL (exit code 137) when memory.max is breached.',
+        analogy: 'A bouncer kicking out a guest who ate all the buffet food.',
+        related: ['Memory Limit'],
+      },
+      {
+        term: 'CPU Quota',
+        simple: 'Limiting a container to a fraction of processing power.',
+        technical: 'CFS (Completely Fair Scheduler) quota limiting execution microseconds per period.',
+        analogy: 'Allowing a child to only watch 1 hour of TV per day.',
+        related: ['CPU Shares'],
+      }
+    ],
+
+    whenToUse: [
+      '✓ ALWAYS set memory limits on containers in production',
+      '✓ When hosting multiple tenant applications on a single server',
+      '✓ When simulating low-resource environments for performance testing',
+    ],
+
+    whenNotToUse: [
+      '✕ Avoid aggressive CPU limits on latency-sensitive apps, as CFS throttling can cause micro-stutters',
+    ],
+
+    developerScenario: {
+      title: 'Real Developer Scenario: The Memory Leak Disaster',
+      setup: 'A Node.js backend has a hidden memory leak. It is deployed to a production VM alongside a critical database.',
+      problem: 'Over 3 days, the Node app consumes 100% of the VM\'s 16GB RAM. The Linux kernel panics and kills the database process to save itself, causing massive downtime.',
+      solution: 'The team containerizes the Node app and sets "--memory=512m". Now, when the app leaks, only the container crashes (and restarts automatically), keeping the database perfectly safe.',
+    },
+
+    internalFlow: [
+      { step: 1, title: 'Docker Run Parameter', desc: 'User passes --memory=256m flag.', why: 'Defines intended limit.', techDetail: 'CLI parses 256MB to bytes' },
+      { step: 2, title: 'cgroup Creation', desc: 'Daemon creates a directory in /sys/fs/cgroup.', why: 'Initializes kernel tracking.', techDetail: 'mkdir /sys/fs/cgroup/memory/docker/<id>' },
+      { step: 3, title: 'Write Limits', desc: 'Daemon writes 268435456 to memory.max file.', why: 'Instructs kernel of the hard limit.', techDetail: 'echo 268435456 > memory.max' },
+      { step: 4, title: 'Attach Process', desc: 'Container PID is written to cgroup.procs.', why: 'Enforces the limit on the app.', techDetail: 'echo <pid> > cgroup.procs' },
+      { step: 5, title: 'OOM Enforcement', desc: 'If app exceeds limit, kernel sends SIGKILL.', why: 'Protects host stability.', techDetail: 'Exit code 137 (OOMKilled)' },
+    ],
+
+    commonMistakes: [
+      {
+        mistake: 'Not setting memory limits in production',
+        whyWrong: 'A single rogue container can bring down the entire host machine.',
+        correctWay: 'Always specify memory limits (e.g., in docker-compose.yml deploy resources).',
+      },
+      {
+        mistake: 'Confusing JVM/V8 memory limits with cgroup limits',
+        whyWrong: 'If Java/Node doesn\'t know about cgroup limits, they will try to allocate host RAM and get instantly OOM-killed.',
+        correctWay: 'Use modern runtimes that are cgroup-aware (e.g., Node 12+, Java 10+).',
+      },
+    ],
+
+    recapChecklist: [
+      'cgroups enforce resource limits (the "handcuffs" for a container).',
+      'They prevent "noisy neighbors" from starving other apps of CPU/RAM.',
+      'Exceeding memory limits results in the container being OOM-killed.',
+      'Limits are enforced natively by the Linux kernel via /sys/fs/cgroup.',
+    ],
+
+    challenge: {
+      question: 'What happens to a Docker container if it tries to use more RAM than its defined cgroup memory limit?',
+      options: [
+        { label: 'It slows down but continues running.', isCorrect: false, explanation: 'Memory limits are hard ceilings, not throttles.' },
+        { label: 'The Linux kernel instantly terminates it via the OOM Killer.', isCorrect: true, explanation: 'The kernel protects the host by sending a SIGKILL (Exit code 137).' },
+        { label: 'It dynamically steals memory from other containers.', isCorrect: false, explanation: 'cgroups explicitly prevent this behavior.' },
+      ],
+    },
+
+    
+    withoutVsWith: {
+      without: {
+        title: 'WITHOUT CGROUPS',
+        items: [
+          'A buggy app with a memory leak crashes the entire server',
+          'One CPU-heavy app starves all other applications',
+          'Unpredictable performance for co-located services',
+        ],
+        outcome: '🔥 "Noisy neighbor" problems and host instability',
+      },
+      with: {
+        title: 'WITH CGROUPS',
+        items: [
+          'App is killed before it can exhaust server memory',
+          'CPU usage is hard-capped to specific core quotas',
+          'Stable, predictable performance for all containers',
+        ],
+        outcome: '⚖️ Fair resource distribution and rock-solid stability',
+      },
+    },
+
+    blockDiagram: {
+      title: 'cgroups Resource Limits',
+      subtitle: 'Click blocks to see how cgroups throttle resources:',
+      nodes: [
+        {
+          id: 'mem-limit',
+          label: 'Memory Controller',
+          simpleDef: 'Caps the maximum RAM a container can use.',
+          techDef: 'memory.max limit; triggers OOM-killer if exceeded.',
+          badge: 'Memory',
+          color: '#38bdf8',
+        },
+        {
+          id: 'cpu-limit',
+          label: 'CPU Controller',
+          simpleDef: 'Limits how much processor time the container gets.',
+          techDef: 'cpu.max quota and period scheduling limits.',
+          badge: 'CPU',
+          color: '#4ade80',
+        },
+        {
+          id: 'io-limit',
+          label: 'Block I/O Controller',
+          simpleDef: 'Throttles hard drive read/write speeds.',
+          techDef: 'blkio throttling limits on specific block devices.',
+          badge: 'Disk',
+          color: '#facc15',
+        },
+      ],
+    },
+
+    terms: [
+      {
+        term: 'cgroups (Control Groups)',
+        simple: 'Linux feature that limits how much RAM or CPU a process can use.',
+        technical: 'Kernel mechanism for hierarchical resource accounting and limiting.',
+        analogy: 'A strict budget plan that cuts up your credit card if you overspend.',
+        related: ['Namespaces', 'OOM Killer'],
+      },
+      {
+        term: 'OOM Killer',
+        simple: 'Kernel assassin that kills apps trying to use too much memory.',
+        technical: 'Out Of Memory killer; sends SIGKILL (exit code 137) when memory.max is breached.',
+        analogy: 'A bouncer kicking out a guest who ate all the buffet food.',
+        related: ['Memory Limit'],
+      },
+      {
+        term: 'CPU Quota',
+        simple: 'Limiting a container to a fraction of processing power.',
+        technical: 'CFS (Completely Fair Scheduler) quota limiting execution microseconds per period.',
+        analogy: 'Allowing a child to only watch 1 hour of TV per day.',
+        related: ['CPU Shares'],
+      }
+    ],
+
+    whenToUse: [
+      '✓ ALWAYS set memory limits on containers in production',
+      '✓ When hosting multiple tenant applications on a single server',
+      '✓ When simulating low-resource environments for performance testing',
+    ],
+
+    whenNotToUse: [
+      '✕ Avoid aggressive CPU limits on latency-sensitive apps, as CFS throttling can cause micro-stutters',
+    ],
+
+    developerScenario: {
+      title: 'Real Developer Scenario: The Memory Leak Disaster',
+      setup: 'A Node.js backend has a hidden memory leak. It is deployed to a production VM alongside a critical database.',
+      problem: 'Over 3 days, the Node app consumes 100% of the VM\'s 16GB RAM. The Linux kernel panics and kills the database process to save itself, causing massive downtime.',
+      solution: 'The team containerizes the Node app and sets "--memory=512m". Now, when the app leaks, only the container crashes (and restarts automatically), keeping the database perfectly safe.',
+    },
+
+    internalFlow: [
+      { step: 1, title: 'Docker Run Parameter', desc: 'User passes --memory=256m flag.', why: 'Defines intended limit.', techDetail: 'CLI parses 256MB to bytes' },
+      { step: 2, title: 'cgroup Creation', desc: 'Daemon creates a directory in /sys/fs/cgroup.', why: 'Initializes kernel tracking.', techDetail: 'mkdir /sys/fs/cgroup/memory/docker/<id>' },
+      { step: 3, title: 'Write Limits', desc: 'Daemon writes 268435456 to memory.max file.', why: 'Instructs kernel of the hard limit.', techDetail: 'echo 268435456 > memory.max' },
+      { step: 4, title: 'Attach Process', desc: 'Container PID is written to cgroup.procs.', why: 'Enforces the limit on the app.', techDetail: 'echo <pid> > cgroup.procs' },
+      { step: 5, title: 'OOM Enforcement', desc: 'If app exceeds limit, kernel sends SIGKILL.', why: 'Protects host stability.', techDetail: 'Exit code 137 (OOMKilled)' },
+    ],
+
+    commonMistakes: [
+      {
+        mistake: 'Not setting memory limits in production',
+        whyWrong: 'A single rogue container can bring down the entire host machine.',
+        correctWay: 'Always specify memory limits (e.g., in docker-compose.yml deploy resources).',
+      },
+      {
+        mistake: 'Confusing JVM/V8 memory limits with cgroup limits',
+        whyWrong: 'If Java/Node doesn\'t know about cgroup limits, they will try to allocate host RAM and get instantly OOM-killed.',
+        correctWay: 'Use modern runtimes that are cgroup-aware (e.g., Node 12+, Java 10+).',
+      },
+    ],
+
+    recapChecklist: [
+      'cgroups enforce resource limits (the "handcuffs" for a container).',
+      'They prevent "noisy neighbors" from starving other apps of CPU/RAM.',
+      'Exceeding memory limits results in the container being OOM-killed.',
+      'Limits are enforced natively by the Linux kernel via /sys/fs/cgroup.',
+    ],
+
+    challenge: {
+      question: 'What happens to a Docker container if it tries to use more RAM than its defined cgroup memory limit?',
+      options: [
+        { label: 'It slows down but continues running.', isCorrect: false, explanation: 'Memory limits are hard ceilings, not throttles.' },
+        { label: 'The Linux kernel instantly terminates it via the OOM Killer.', isCorrect: true, explanation: 'The kernel protects the host by sending a SIGKILL (Exit code 137).' },
+        { label: 'It dynamically steals memory from other containers.', isCorrect: false, explanation: 'cgroups explicitly prevent this behavior.' },
+      ],
+    },
 
     syntaxCode: 'docker run -d --memory="512m" --cpus="1.5" nginx:alpine',
     syntaxTokens: [
@@ -649,13 +2860,12 @@ export const TOPIC_01_02_CONCEPTS: Record<string, UniversalDockerConcept> = {
     ],
 
     sandbox: {
-      initialCommands: ['docker run -d --name capped-app --memory="256m" nginx:alpine', 'docker stats --no-stream'],
+      initialCommands: ['docker run -d --name capped-app --memory="256m" nginx:alpine'],
       guidedSteps: [
-        { instruction: 'Launch an Nginx container capped at 256MB memory', command: 'docker run -d --name capped-app --memory="256m" nginx:alpine', hint: 'Run docker run -d --name capped-app --memory="256m" nginx:alpine' },
-        { instruction: 'Inspect live container cgroups stats', command: 'docker stats --no-stream', hint: 'Run docker stats --no-stream' },
+        { instruction: 'Launch an Nginx container capped at 256MB memory', command: 'docker run -d --name capped-app --memory="256m" nginx:alpine', hint: 'Type docker run -d --name capped-app --memory="256m" nginx:alpine' },
       ],
-      targetTask: 'Enforce cgroups memory limits on a container.',
-      solutionCommands: ['docker run -d --name capped-app --memory="256m" nginx:alpine', 'docker stats --no-stream'],
+      targetTask: 'Enforce memory limits via cgroups.',
+      solutionCommands: ['docker run -d --name capped-app --memory="256m" nginx:alpine'],
     },
 
     reference: {
@@ -687,6 +2897,526 @@ export const TOPIC_01_02_CONCEPTS: Record<string, UniversalDockerConcept> = {
       'It makes container startup instant and saves disk space. 100 containers sharing the same 200MB base image use 200MB total instead of 20GB.',
     realWorldAnalogy:
       'Tracing paper placed over a printed map. You draw custom routes on the tracing paper without altering the original map underneath.',
+
+    
+    withoutVsWith: {
+      without: {
+        title: 'WITHOUT UNIONFS (VMs)',
+        items: [
+          'Every VM needs a full 10GB copy of the operating system',
+          'Creating 10 identical VMs consumes 100GB of disk space',
+          'Duplicated effort for disk I/O and caching',
+        ],
+        outcome: '💾 Massive storage waste and slow provisioning',
+      },
+      with: {
+        title: 'WITH UNIONFS (Overlay2)',
+        items: [
+          '100 containers share the exact same 50MB base image on disk',
+          'Only modified files consume extra disk space',
+          'Instant provisioning since no heavy files are copied',
+        ],
+        outcome: '🪶 Incredible disk efficiency and instant startup',
+      },
+    },
+
+    blockDiagram: {
+      title: 'OverlayFS Layering',
+      subtitle: 'Click blocks to understand Copy-on-Write:',
+      nodes: [
+        {
+          id: 'upper-layer',
+          label: 'Container Layer (UpperDir)',
+          simpleDef: 'The thin read/write layer created when a container starts.',
+          techDef: 'Ephemeral OverlayFS upperdir where modified files are copied and saved.',
+          badge: 'Read/Write',
+          color: '#38bdf8',
+        },
+        {
+          id: 'lower-layer-2',
+          label: 'Image Layer 2',
+          simpleDef: 'App code and dependencies.',
+          techDef: 'Read-only lowerdir containing application artifacts.',
+          badge: 'Read-Only',
+          color: '#4ade80',
+        },
+        {
+          id: 'lower-layer-1',
+          label: 'Image Layer 1',
+          simpleDef: 'Base Operating System (e.g., Alpine).',
+          techDef: 'Read-only lowerdir containing rootfs base files.',
+          badge: 'Read-Only',
+          color: '#facc15',
+        },
+      ],
+    },
+
+    terms: [
+      {
+        term: 'Union Filesystem',
+        simple: 'A file system that stacks multiple folders on top of each other seamlessly.',
+        technical: 'Mount mechanism that merges multiple directories into a single unified rootfs view.',
+        analogy: 'Stacking transparent plastic sheets to form a complete picture.',
+        related: ['Overlay2', 'Copy-on-Write'],
+      },
+      {
+        term: 'Copy-on-Write (CoW)',
+        simple: 'Only copying a file if you try to change it.',
+        technical: 'Strategy where a read-only file is copied to the upperdir only upon the first write operation.',
+        analogy: 'Placing tracing paper over a book so you can make notes without ruining the book.',
+        related: ['UpperDir'],
+      },
+      {
+        term: 'Overlay2',
+        simple: 'The specific, most popular union filesystem used by Docker.',
+        technical: 'The default Docker storage driver for Linux merging lowerdir and upperdir.',
+        analogy: 'The brand name of the tracing paper.',
+        related: ['Union Filesystem'],
+      }
+    ],
+
+    whenToUse: [
+      '✓ Automatically used by Docker to manage image layers efficiently',
+      '✓ Explains why you should chain RUN commands in Dockerfiles to minimize layer sizes',
+    ],
+
+    whenNotToUse: [
+      '✕ NEVER use the container write layer for high-performance database storage (I/O is slow). Use Docker Volumes instead.',
+    ],
+
+    developerScenario: {
+      title: 'Real Developer Scenario: Disk Space Exhaustion',
+      setup: 'A developer runs an active PostgreSQL database inside a container. It writes gigabytes of data directly to /var/lib/postgresql/data inside the container layer.',
+      problem: 'OverlayFS Copy-on-Write is heavily optimized for reads, but slow for heavy writes. The database is sluggish, and when the container is deleted, all customer data is permanently lost.',
+      solution: 'The developer mounts a Docker Volume. Volumes bypass the Union Filesystem, offering native disk I/O performance and persistent storage even if the container is destroyed.',
+    },
+
+    internalFlow: [
+      { step: 1, title: 'Mount LowerDirs', desc: 'Docker identifies the read-only image layers.', why: 'Prepares the immutable base.', techDetail: 'lowerdir=/var/lib/docker/overlay2/<layer1>:<layer2>' },
+      { step: 2, title: 'Create UpperDir', desc: 'Docker creates an empty directory for container writes.', why: 'Isolates container changes.', techDetail: 'upperdir=/var/lib/docker/overlay2/<container_id>/diff' },
+      { step: 3, title: 'Mount OverlayFS', desc: 'Kernel merges them into a single mount point.', why: 'Provides unified view to the app.', techDetail: 'mount -t overlay overlay -o lowerdir=...,upperdir=...' },
+      { step: 4, title: 'Read Request', desc: 'App reads a file. Kernel fetches it from the lowest layer.', why: 'Zero overhead for reading.', techDetail: 'VFS traverses lowerdir' },
+      { step: 5, title: 'Write Request', desc: 'App edits a file. Kernel copies it to UpperDir first.', why: 'Prevents modifying the base image.', techDetail: 'Copy-up operation triggered' },
+    ],
+
+    commonMistakes: [
+      {
+        mistake: 'Storing permanent data in the container layer',
+        whyWrong: 'The writeable layer is tightly coupled to the container lifecycle. Deleting the container deletes the data.',
+        correctWay: 'Always use Docker Volumes or Bind Mounts for persistent data.',
+      },
+      {
+        mistake: 'Downloading large temp files in one Dockerfile step and deleting them in another',
+        whyWrong: 'Each RUN command creates a layer. Deleting a file in a later layer just hides it using a "whiteout" file; the data is still in the image history.',
+        correctWay: 'Download, extract, and delete temp files in a single chained RUN command.',
+      },
+    ],
+
+    recapChecklist: [
+      'OverlayFS stacks read-only image layers under a thin writeable container layer.',
+      'Copy-on-Write (CoW) ensures base images are never modified and disk space is saved.',
+      'Editing a base file forces it to be copied to the top layer first.',
+      'Never use the UnionFS for heavy database writes; use Volumes instead.',
+    ],
+
+    challenge: {
+      question: 'What happens when an application inside a container modifies a configuration file that originated from the base image?',
+      options: [
+        { label: 'The file is modified directly in the base image.', isCorrect: false, explanation: 'Base images are immutable (read-only).' },
+        { label: 'The file is copied into the container\'s unique writeable layer, and the modification happens there.', isCorrect: true, explanation: 'This is the Copy-on-Write mechanism protecting the base image.' },
+        { label: 'The container crashes because files cannot be modified.', isCorrect: false, explanation: 'OverlayFS seamlessly handles the modification via Copy-on-Write.' },
+      ],
+    },
+
+    
+    withoutVsWith: {
+      without: {
+        title: 'WITHOUT UNIONFS (VMs)',
+        items: [
+          'Every VM needs a full 10GB copy of the operating system',
+          'Creating 10 identical VMs consumes 100GB of disk space',
+          'Duplicated effort for disk I/O and caching',
+        ],
+        outcome: '💾 Massive storage waste and slow provisioning',
+      },
+      with: {
+        title: 'WITH UNIONFS (Overlay2)',
+        items: [
+          '100 containers share the exact same 50MB base image on disk',
+          'Only modified files consume extra disk space',
+          'Instant provisioning since no heavy files are copied',
+        ],
+        outcome: '🪶 Incredible disk efficiency and instant startup',
+      },
+    },
+
+    blockDiagram: {
+      title: 'OverlayFS Layering',
+      subtitle: 'Click blocks to understand Copy-on-Write:',
+      nodes: [
+        {
+          id: 'upper-layer',
+          label: 'Container Layer (UpperDir)',
+          simpleDef: 'The thin read/write layer created when a container starts.',
+          techDef: 'Ephemeral OverlayFS upperdir where modified files are copied and saved.',
+          badge: 'Read/Write',
+          color: '#38bdf8',
+        },
+        {
+          id: 'lower-layer-2',
+          label: 'Image Layer 2',
+          simpleDef: 'App code and dependencies.',
+          techDef: 'Read-only lowerdir containing application artifacts.',
+          badge: 'Read-Only',
+          color: '#4ade80',
+        },
+        {
+          id: 'lower-layer-1',
+          label: 'Image Layer 1',
+          simpleDef: 'Base Operating System (e.g., Alpine).',
+          techDef: 'Read-only lowerdir containing rootfs base files.',
+          badge: 'Read-Only',
+          color: '#facc15',
+        },
+      ],
+    },
+
+    terms: [
+      {
+        term: 'Union Filesystem',
+        simple: 'A file system that stacks multiple folders on top of each other seamlessly.',
+        technical: 'Mount mechanism that merges multiple directories into a single unified rootfs view.',
+        analogy: 'Stacking transparent plastic sheets to form a complete picture.',
+        related: ['Overlay2', 'Copy-on-Write'],
+      },
+      {
+        term: 'Copy-on-Write (CoW)',
+        simple: 'Only copying a file if you try to change it.',
+        technical: 'Strategy where a read-only file is copied to the upperdir only upon the first write operation.',
+        analogy: 'Placing tracing paper over a book so you can make notes without ruining the book.',
+        related: ['UpperDir'],
+      },
+      {
+        term: 'Overlay2',
+        simple: 'The specific, most popular union filesystem used by Docker.',
+        technical: 'The default Docker storage driver for Linux merging lowerdir and upperdir.',
+        analogy: 'The brand name of the tracing paper.',
+        related: ['Union Filesystem'],
+      }
+    ],
+
+    whenToUse: [
+      '✓ Automatically used by Docker to manage image layers efficiently',
+      '✓ Explains why you should chain RUN commands in Dockerfiles to minimize layer sizes',
+    ],
+
+    whenNotToUse: [
+      '✕ NEVER use the container write layer for high-performance database storage (I/O is slow). Use Docker Volumes instead.',
+    ],
+
+    developerScenario: {
+      title: 'Real Developer Scenario: Disk Space Exhaustion',
+      setup: 'A developer runs an active PostgreSQL database inside a container. It writes gigabytes of data directly to /var/lib/postgresql/data inside the container layer.',
+      problem: 'OverlayFS Copy-on-Write is heavily optimized for reads, but slow for heavy writes. The database is sluggish, and when the container is deleted, all customer data is permanently lost.',
+      solution: 'The developer mounts a Docker Volume. Volumes bypass the Union Filesystem, offering native disk I/O performance and persistent storage even if the container is destroyed.',
+    },
+
+    internalFlow: [
+      { step: 1, title: 'Mount LowerDirs', desc: 'Docker identifies the read-only image layers.', why: 'Prepares the immutable base.', techDetail: 'lowerdir=/var/lib/docker/overlay2/<layer1>:<layer2>' },
+      { step: 2, title: 'Create UpperDir', desc: 'Docker creates an empty directory for container writes.', why: 'Isolates container changes.', techDetail: 'upperdir=/var/lib/docker/overlay2/<container_id>/diff' },
+      { step: 3, title: 'Mount OverlayFS', desc: 'Kernel merges them into a single mount point.', why: 'Provides unified view to the app.', techDetail: 'mount -t overlay overlay -o lowerdir=...,upperdir=...' },
+      { step: 4, title: 'Read Request', desc: 'App reads a file. Kernel fetches it from the lowest layer.', why: 'Zero overhead for reading.', techDetail: 'VFS traverses lowerdir' },
+      { step: 5, title: 'Write Request', desc: 'App edits a file. Kernel copies it to UpperDir first.', why: 'Prevents modifying the base image.', techDetail: 'Copy-up operation triggered' },
+    ],
+
+    commonMistakes: [
+      {
+        mistake: 'Storing permanent data in the container layer',
+        whyWrong: 'The writeable layer is tightly coupled to the container lifecycle. Deleting the container deletes the data.',
+        correctWay: 'Always use Docker Volumes or Bind Mounts for persistent data.',
+      },
+      {
+        mistake: 'Downloading large temp files in one Dockerfile step and deleting them in another',
+        whyWrong: 'Each RUN command creates a layer. Deleting a file in a later layer just hides it using a "whiteout" file; the data is still in the image history.',
+        correctWay: 'Download, extract, and delete temp files in a single chained RUN command.',
+      },
+    ],
+
+    recapChecklist: [
+      'OverlayFS stacks read-only image layers under a thin writeable container layer.',
+      'Copy-on-Write (CoW) ensures base images are never modified and disk space is saved.',
+      'Editing a base file forces it to be copied to the top layer first.',
+      'Never use the UnionFS for heavy database writes; use Volumes instead.',
+    ],
+
+    challenge: {
+      question: 'What happens when an application inside a container modifies a configuration file that originated from the base image?',
+      options: [
+        { label: 'The file is modified directly in the base image.', isCorrect: false, explanation: 'Base images are immutable (read-only).' },
+        { label: 'The file is copied into the container\'s unique writeable layer, and the modification happens there.', isCorrect: true, explanation: 'This is the Copy-on-Write mechanism protecting the base image.' },
+        { label: 'The container crashes because files cannot be modified.', isCorrect: false, explanation: 'OverlayFS seamlessly handles the modification via Copy-on-Write.' },
+      ],
+    },
+
+    
+    withoutVsWith: {
+      without: {
+        title: 'WITHOUT UNIONFS (VMs)',
+        items: [
+          'Every VM needs a full 10GB copy of the operating system',
+          'Creating 10 identical VMs consumes 100GB of disk space',
+          'Duplicated effort for disk I/O and caching',
+        ],
+        outcome: '💾 Massive storage waste and slow provisioning',
+      },
+      with: {
+        title: 'WITH UNIONFS (Overlay2)',
+        items: [
+          '100 containers share the exact same 50MB base image on disk',
+          'Only modified files consume extra disk space',
+          'Instant provisioning since no heavy files are copied',
+        ],
+        outcome: '🪶 Incredible disk efficiency and instant startup',
+      },
+    },
+
+    blockDiagram: {
+      title: 'OverlayFS Layering',
+      subtitle: 'Click blocks to understand Copy-on-Write:',
+      nodes: [
+        {
+          id: 'upper-layer',
+          label: 'Container Layer (UpperDir)',
+          simpleDef: 'The thin read/write layer created when a container starts.',
+          techDef: 'Ephemeral OverlayFS upperdir where modified files are copied and saved.',
+          badge: 'Read/Write',
+          color: '#38bdf8',
+        },
+        {
+          id: 'lower-layer-2',
+          label: 'Image Layer 2',
+          simpleDef: 'App code and dependencies.',
+          techDef: 'Read-only lowerdir containing application artifacts.',
+          badge: 'Read-Only',
+          color: '#4ade80',
+        },
+        {
+          id: 'lower-layer-1',
+          label: 'Image Layer 1',
+          simpleDef: 'Base Operating System (e.g., Alpine).',
+          techDef: 'Read-only lowerdir containing rootfs base files.',
+          badge: 'Read-Only',
+          color: '#facc15',
+        },
+      ],
+    },
+
+    terms: [
+      {
+        term: 'Union Filesystem',
+        simple: 'A file system that stacks multiple folders on top of each other seamlessly.',
+        technical: 'Mount mechanism that merges multiple directories into a single unified rootfs view.',
+        analogy: 'Stacking transparent plastic sheets to form a complete picture.',
+        related: ['Overlay2', 'Copy-on-Write'],
+      },
+      {
+        term: 'Copy-on-Write (CoW)',
+        simple: 'Only copying a file if you try to change it.',
+        technical: 'Strategy where a read-only file is copied to the upperdir only upon the first write operation.',
+        analogy: 'Placing tracing paper over a book so you can make notes without ruining the book.',
+        related: ['UpperDir'],
+      },
+      {
+        term: 'Overlay2',
+        simple: 'The specific, most popular union filesystem used by Docker.',
+        technical: 'The default Docker storage driver for Linux merging lowerdir and upperdir.',
+        analogy: 'The brand name of the tracing paper.',
+        related: ['Union Filesystem'],
+      }
+    ],
+
+    whenToUse: [
+      '✓ Automatically used by Docker to manage image layers efficiently',
+      '✓ Explains why you should chain RUN commands in Dockerfiles to minimize layer sizes',
+    ],
+
+    whenNotToUse: [
+      '✕ NEVER use the container write layer for high-performance database storage (I/O is slow). Use Docker Volumes instead.',
+    ],
+
+    developerScenario: {
+      title: 'Real Developer Scenario: Disk Space Exhaustion',
+      setup: 'A developer runs an active PostgreSQL database inside a container. It writes gigabytes of data directly to /var/lib/postgresql/data inside the container layer.',
+      problem: 'OverlayFS Copy-on-Write is heavily optimized for reads, but slow for heavy writes. The database is sluggish, and when the container is deleted, all customer data is permanently lost.',
+      solution: 'The developer mounts a Docker Volume. Volumes bypass the Union Filesystem, offering native disk I/O performance and persistent storage even if the container is destroyed.',
+    },
+
+    internalFlow: [
+      { step: 1, title: 'Mount LowerDirs', desc: 'Docker identifies the read-only image layers.', why: 'Prepares the immutable base.', techDetail: 'lowerdir=/var/lib/docker/overlay2/<layer1>:<layer2>' },
+      { step: 2, title: 'Create UpperDir', desc: 'Docker creates an empty directory for container writes.', why: 'Isolates container changes.', techDetail: 'upperdir=/var/lib/docker/overlay2/<container_id>/diff' },
+      { step: 3, title: 'Mount OverlayFS', desc: 'Kernel merges them into a single mount point.', why: 'Provides unified view to the app.', techDetail: 'mount -t overlay overlay -o lowerdir=...,upperdir=...' },
+      { step: 4, title: 'Read Request', desc: 'App reads a file. Kernel fetches it from the lowest layer.', why: 'Zero overhead for reading.', techDetail: 'VFS traverses lowerdir' },
+      { step: 5, title: 'Write Request', desc: 'App edits a file. Kernel copies it to UpperDir first.', why: 'Prevents modifying the base image.', techDetail: 'Copy-up operation triggered' },
+    ],
+
+    commonMistakes: [
+      {
+        mistake: 'Storing permanent data in the container layer',
+        whyWrong: 'The writeable layer is tightly coupled to the container lifecycle. Deleting the container deletes the data.',
+        correctWay: 'Always use Docker Volumes or Bind Mounts for persistent data.',
+      },
+      {
+        mistake: 'Downloading large temp files in one Dockerfile step and deleting them in another',
+        whyWrong: 'Each RUN command creates a layer. Deleting a file in a later layer just hides it using a "whiteout" file; the data is still in the image history.',
+        correctWay: 'Download, extract, and delete temp files in a single chained RUN command.',
+      },
+    ],
+
+    recapChecklist: [
+      'OverlayFS stacks read-only image layers under a thin writeable container layer.',
+      'Copy-on-Write (CoW) ensures base images are never modified and disk space is saved.',
+      'Editing a base file forces it to be copied to the top layer first.',
+      'Never use the UnionFS for heavy database writes; use Volumes instead.',
+    ],
+
+    challenge: {
+      question: 'What happens when an application inside a container modifies a configuration file that originated from the base image?',
+      options: [
+        { label: 'The file is modified directly in the base image.', isCorrect: false, explanation: 'Base images are immutable (read-only).' },
+        { label: 'The file is copied into the container\'s unique writeable layer, and the modification happens there.', isCorrect: true, explanation: 'This is the Copy-on-Write mechanism protecting the base image.' },
+        { label: 'The container crashes because files cannot be modified.', isCorrect: false, explanation: 'OverlayFS seamlessly handles the modification via Copy-on-Write.' },
+      ],
+    },
+
+    
+    withoutVsWith: {
+      without: {
+        title: 'WITHOUT UNIONFS (VMs)',
+        items: [
+          'Every VM needs a full 10GB copy of the operating system',
+          'Creating 10 identical VMs consumes 100GB of disk space',
+          'Duplicated effort for disk I/O and caching',
+        ],
+        outcome: '💾 Massive storage waste and slow provisioning',
+      },
+      with: {
+        title: 'WITH UNIONFS (Overlay2)',
+        items: [
+          '100 containers share the exact same 50MB base image on disk',
+          'Only modified files consume extra disk space',
+          'Instant provisioning since no heavy files are copied',
+        ],
+        outcome: '🪶 Incredible disk efficiency and instant startup',
+      },
+    },
+
+    blockDiagram: {
+      title: 'OverlayFS Layering',
+      subtitle: 'Click blocks to understand Copy-on-Write:',
+      nodes: [
+        {
+          id: 'upper-layer',
+          label: 'Container Layer (UpperDir)',
+          simpleDef: 'The thin read/write layer created when a container starts.',
+          techDef: 'Ephemeral OverlayFS upperdir where modified files are copied and saved.',
+          badge: 'Read/Write',
+          color: '#38bdf8',
+        },
+        {
+          id: 'lower-layer-2',
+          label: 'Image Layer 2',
+          simpleDef: 'App code and dependencies.',
+          techDef: 'Read-only lowerdir containing application artifacts.',
+          badge: 'Read-Only',
+          color: '#4ade80',
+        },
+        {
+          id: 'lower-layer-1',
+          label: 'Image Layer 1',
+          simpleDef: 'Base Operating System (e.g., Alpine).',
+          techDef: 'Read-only lowerdir containing rootfs base files.',
+          badge: 'Read-Only',
+          color: '#facc15',
+        },
+      ],
+    },
+
+    terms: [
+      {
+        term: 'Union Filesystem',
+        simple: 'A file system that stacks multiple folders on top of each other seamlessly.',
+        technical: 'Mount mechanism that merges multiple directories into a single unified rootfs view.',
+        analogy: 'Stacking transparent plastic sheets to form a complete picture.',
+        related: ['Overlay2', 'Copy-on-Write'],
+      },
+      {
+        term: 'Copy-on-Write (CoW)',
+        simple: 'Only copying a file if you try to change it.',
+        technical: 'Strategy where a read-only file is copied to the upperdir only upon the first write operation.',
+        analogy: 'Placing tracing paper over a book so you can make notes without ruining the book.',
+        related: ['UpperDir'],
+      },
+      {
+        term: 'Overlay2',
+        simple: 'The specific, most popular union filesystem used by Docker.',
+        technical: 'The default Docker storage driver for Linux merging lowerdir and upperdir.',
+        analogy: 'The brand name of the tracing paper.',
+        related: ['Union Filesystem'],
+      }
+    ],
+
+    whenToUse: [
+      '✓ Automatically used by Docker to manage image layers efficiently',
+      '✓ Explains why you should chain RUN commands in Dockerfiles to minimize layer sizes',
+    ],
+
+    whenNotToUse: [
+      '✕ NEVER use the container write layer for high-performance database storage (I/O is slow). Use Docker Volumes instead.',
+    ],
+
+    developerScenario: {
+      title: 'Real Developer Scenario: Disk Space Exhaustion',
+      setup: 'A developer runs an active PostgreSQL database inside a container. It writes gigabytes of data directly to /var/lib/postgresql/data inside the container layer.',
+      problem: 'OverlayFS Copy-on-Write is heavily optimized for reads, but slow for heavy writes. The database is sluggish, and when the container is deleted, all customer data is permanently lost.',
+      solution: 'The developer mounts a Docker Volume. Volumes bypass the Union Filesystem, offering native disk I/O performance and persistent storage even if the container is destroyed.',
+    },
+
+    internalFlow: [
+      { step: 1, title: 'Mount LowerDirs', desc: 'Docker identifies the read-only image layers.', why: 'Prepares the immutable base.', techDetail: 'lowerdir=/var/lib/docker/overlay2/<layer1>:<layer2>' },
+      { step: 2, title: 'Create UpperDir', desc: 'Docker creates an empty directory for container writes.', why: 'Isolates container changes.', techDetail: 'upperdir=/var/lib/docker/overlay2/<container_id>/diff' },
+      { step: 3, title: 'Mount OverlayFS', desc: 'Kernel merges them into a single mount point.', why: 'Provides unified view to the app.', techDetail: 'mount -t overlay overlay -o lowerdir=...,upperdir=...' },
+      { step: 4, title: 'Read Request', desc: 'App reads a file. Kernel fetches it from the lowest layer.', why: 'Zero overhead for reading.', techDetail: 'VFS traverses lowerdir' },
+      { step: 5, title: 'Write Request', desc: 'App edits a file. Kernel copies it to UpperDir first.', why: 'Prevents modifying the base image.', techDetail: 'Copy-up operation triggered' },
+    ],
+
+    commonMistakes: [
+      {
+        mistake: 'Storing permanent data in the container layer',
+        whyWrong: 'The writeable layer is tightly coupled to the container lifecycle. Deleting the container deletes the data.',
+        correctWay: 'Always use Docker Volumes or Bind Mounts for persistent data.',
+      },
+      {
+        mistake: 'Downloading large temp files in one Dockerfile step and deleting them in another',
+        whyWrong: 'Each RUN command creates a layer. Deleting a file in a later layer just hides it using a "whiteout" file; the data is still in the image history.',
+        correctWay: 'Download, extract, and delete temp files in a single chained RUN command.',
+      },
+    ],
+
+    recapChecklist: [
+      'OverlayFS stacks read-only image layers under a thin writeable container layer.',
+      'Copy-on-Write (CoW) ensures base images are never modified and disk space is saved.',
+      'Editing a base file forces it to be copied to the top layer first.',
+      'Never use the UnionFS for heavy database writes; use Volumes instead.',
+    ],
+
+    challenge: {
+      question: 'What happens when an application inside a container modifies a configuration file that originated from the base image?',
+      options: [
+        { label: 'The file is modified directly in the base image.', isCorrect: false, explanation: 'Base images are immutable (read-only).' },
+        { label: 'The file is copied into the container\'s unique writeable layer, and the modification happens there.', isCorrect: true, explanation: 'This is the Copy-on-Write mechanism protecting the base image.' },
+        { label: 'The container crashes because files cannot be modified.', isCorrect: false, explanation: 'OverlayFS seamlessly handles the modification via Copy-on-Write.' },
+      ],
+    },
 
     syntaxCode: 'docker diff web-frontend',
     syntaxTokens: [
@@ -730,12 +3460,12 @@ export const TOPIC_01_02_CONCEPTS: Record<string, UniversalDockerConcept> = {
     ],
 
     sandbox: {
-      initialCommands: ['docker diff web-frontend'],
+      initialCommands: ['docker pull nginx:alpine', 'docker image inspect nginx:alpine --format "{{.GraphDriver.Data.LowerDir}}"'],
       guidedSteps: [
-        { instruction: 'Inspect modified filesystem layers of container web-frontend', command: 'docker diff web-frontend', hint: 'Type docker diff web-frontend' },
+        { instruction: 'Inspect the Overlay2 layers of an image', command: 'docker image inspect nginx:alpine --format "{{.GraphDriver.Data.LowerDir}}"', hint: 'Type docker image inspect...' },
       ],
-      targetTask: 'Understand Overlay2 Copy-on-Write.',
-      solutionCommands: ['docker diff web-frontend'],
+      targetTask: 'Inspect the underlying OverlayFS directory structure of an image.',
+      solutionCommands: ['docker image inspect nginx:alpine --format "{{.GraphDriver.Data.LowerDir}}"'],
     },
 
     reference: {

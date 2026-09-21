@@ -444,6 +444,55 @@ export const PodAcademyView: React.FC<PodAcademyViewProps> = ({ onSwitchToSuite 
               </span>
             </div>
 
+            {/* Docker & Container Foundation Bridge (Chapters 1 & 2) */}
+            {(currentChapter?.number === 1 || currentChapter?.number === 2) && (
+              <div
+                style={{
+                  background: 'linear-gradient(135deg, rgba(14, 165, 233, 0.12) 0%, rgba(50, 108, 229, 0.08) 100%)',
+                  border: '1px solid rgba(14, 165, 233, 0.3)',
+                  borderRadius: '10px',
+                  padding: '0.65rem 0.85rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: '0.65rem',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem' }}>
+                  <span style={{ fontSize: '0.72rem', fontWeight: 800, color: '#38bdf8', background: 'rgba(14, 165, 233, 0.2)', padding: '0.15rem 0.5rem', borderRadius: '4px', textTransform: 'uppercase' }}>
+                    Docker &rarr; K8s Bridge
+                  </span>
+                  <span style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>
+                    In Docker, you run standalone containers via <code style={{ color: '#38bdf8', fontFamily: 'var(--font-mono)' }}>docker run</code>. In Kubernetes, containers are wrapped inside <strong>Pods</strong> alongside a Pause container for clustered networking and storage volumes.
+                  </span>
+                </div>
+
+                {onSwitchToSuite && (
+                  <button
+                    onClick={() => onSwitchToSuite('dockforge')}
+                    style={{
+                      background: 'rgba(14, 165, 233, 0.15)',
+                      border: '1px solid rgba(14, 165, 233, 0.35)',
+                      color: '#38bdf8',
+                      fontSize: '0.74rem',
+                      fontWeight: 700,
+                      padding: '0.3rem 0.75rem',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.35rem',
+                      transition: 'all 0.15s ease',
+                    }}
+                  >
+                    <span>DockForge Docker Academy</span>
+                    <ChevronRight size={12} />
+                  </button>
+                )}
+              </div>
+            )}
+
             {/* Sub-Tabs Navigation */}
             <div style={{ display: 'flex', gap: '0.4rem', borderTop: '1px solid var(--border-color)', paddingTop: '0.85rem', flexWrap: 'wrap' }}>
               {[

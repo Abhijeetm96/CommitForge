@@ -87,38 +87,57 @@ export const ConceptTeachingEngine: React.FC<ConceptTeachingEngineProps> = ({
     const cmd = inputCommand.trim();
     const newHistory = [...terminalHistory, { type: 'input' as const, text: `$ ${cmd}` }];
 
-    // Intelligent command evaluation and mistake detection
-    if (cmd === 'docker run -d -p 8080:80 nginx' || cmd.includes('docker run')) {
-      if (!cmd.includes('-d')) {
-        newHistory.push({
-          type: 'error',
-          text: '⚠️ You started Nginx, but it is locked in foreground mode. Hint: Which flag tells Docker to run in detached (background) mode? (-d)',
-        });
-      } else if (!cmd.includes('-p')) {
-        newHistory.push({
-          type: 'error',
-          text: '⚠️ Container is running in background, but host port 8080 is not published! Hint: Add -p 8080:80 to publish port.',
-        });
-      } else {
-        newHistory.push({
-          type: 'output',
-          text: 'a3f2c1d4e5f67b8a9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b',
-        });
-        newHistory.push({
-          type: 'output',
-          text: '🟢 SUCCESS! Container a3f2c1d4e5f6 is RUNNING on port 8080.',
-        });
-        markConceptComplete(concept.id);
-        showToast('🎉 Task completed! Concept marked as completed.');
-      }
-    } else if (cmd === 'docker ps') {
+    // Concept-aware command evaluation using sandbox data
+    const solutionCmds = concept.sandbox?.solutionCommands || [];
+    const guidedSteps = concept.sandbox?.guidedSteps || [];
+    const allValidCmds = [...solutionCmds, ...guidedSteps.map((s) => s.command)];
+    const isExactSolution = solutionCmds.some((sol) => cmd === sol);
+    const isGuidedCmd = guidedSteps.some((s) => cmd === s.command);
+    const isPartialMatch = allValidCmds.some((sol) => cmd.startsWith(sol.split(' ').slice(0, 2).join(' ')));
+
+    if (isExactSolution) {
       newHistory.push({
         type: 'output',
-        text: 'CONTAINER ID   IMAGE   COMMAND                  CREATED         STATUS         PORTS',
+        text: `✅ Command accepted. Executing: ${cmd}`,
       });
       newHistory.push({
         type: 'output',
-        text: 'a3f2c1d4e5f6   nginx   "/docker-entrypoint.…"   2 seconds ago   Up 2 seconds   0.0.0.0:8080->80/tcp',
+        text: `🟢 SUCCESS! ${concept.title} task completed successfully.`,
+      });
+      markConceptComplete(concept.id);
+      showToast(`🎉 "${concept.title}" marked as completed!`);
+    } else if (isGuidedCmd) {
+      const step = guidedSteps.find((s) => cmd === s.command);
+      newHistory.push({
+        type: 'output',
+        text: `✅ Step complete: ${step?.instruction || 'Command executed.'}`,
+      });
+    } else if (cmd === 'docker ps') {
+      newHistory.push({
+        type: 'output',
+        text: 'CONTAINER ID   IMAGE          COMMAND              CREATED         STATUS         PORTS',
+      });
+      newHistory.push({
+        type: 'output',
+        text: `a3f2c1d4e5f6   ${concept.command.split(' ').pop() || 'app'}   "entrypoint..."   2s ago   Up 2s   0.0.0.0:8080->80/tcp`,
+      });
+    } else if (cmd === 'help' || cmd === 'hint') {
+      const nextStep = guidedSteps[0];
+      if (nextStep) {
+        newHistory.push({
+          type: 'hint',
+          text: `💡 Hint: ${nextStep.hint}`,
+        });
+      } else {
+        newHistory.push({
+          type: 'hint',
+          text: `💡 Try running: ${concept.command}`,
+        });
+      }
+    } else if (isPartialMatch) {
+      newHistory.push({
+        type: 'error',
+        text: `⚠️ You're close! Check your flags and arguments. Type "hint" for guidance.`,
       });
     } else {
       newHistory.push({
@@ -224,7 +243,7 @@ export const ConceptTeachingEngine: React.FC<ConceptTeachingEngineProps> = ({
                 Core Definition
               </div>
               <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#fff', margin: '0 0 1rem 0' }}>
-                What is a Container?
+                What is {concept.title}?
               </h2>
               <p style={{ fontSize: '1.05rem', lineHeight: 1.6, color: '#cbd5e1', margin: 0 }}>
                 {concept.whatIsIt}
@@ -246,7 +265,7 @@ export const ConceptTeachingEngine: React.FC<ConceptTeachingEngineProps> = ({
               <div>
                 <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#fff', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <HelpCircle size={18} color="var(--docker-blue)" />
-                  <span>Why Do We Need Containers?</span>
+                  <span>Why Do We Need {concept.title}?</span>
                 </h3>
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.25rem' }}>

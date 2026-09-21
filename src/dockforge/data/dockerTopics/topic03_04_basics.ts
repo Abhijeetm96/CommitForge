@@ -62,14 +62,43 @@ export const TOPIC_03_04_CONCEPTS: Record<string, UniversalDockerConcept> = {
         ],
       },
     ],
-
+    withoutVsWith: {
+      without: { title: "Native Linux Dependencies", items: ["Complex VM setup on Windows/Mac", "Manual networking configs", "No visual management UI"], outcome: "Hours lost setting up environments" },
+      with: { title: "Docker Desktop", items: ["1-click installer for Win/Mac", "Seamless WSL2 integration", "Built-in visual dashboard"], outcome: "Docker ready in minutes" }
+    },
+    blockDiagram: {
+      title: "Docker Desktop Architecture",
+      subtitle: "How Docker Desktop runs on Windows/Mac",
+      nodes: [
+        { id: "gui", label: "Desktop GUI", simpleDef: "Visual dashboard", techDef: "Electron App", color: "#38bdf8" },
+        { id: "vm", label: "WSL2 / Hypervisor", simpleDef: "Linux Environment", techDef: "Utility VM", color: "#facc15" },
+        { id: "daemon", label: "Docker Daemon", simpleDef: "Engine core", techDef: "dockerd process", color: "#4ade80" }
+      ]
+    },
+    terms: [
+      { term: "WSL2", simple: "Windows Subsystem for Linux", technical: "Hyper-V based lightweight utility VM running a real Linux kernel.", analogy: "A tiny Linux computer living inside your Windows PC." },
+      { term: "Docker Dashboard", simple: "Visual UI for Docker", technical: "Electron-based GUI for managing Docker Engine API resources.", analogy: "The steering wheel and dashboard of your car." }
+    ],
+    whenToUse: ["✓ Local development on Windows or macOS", "✓ When you want visual container management", "✓ Testing containers before production"],
+    whenNotToUse: ["✕ Running in production servers", "✕ Headless Linux servers", "✕ CI/CD automated pipelines"],
+    developerScenario: { title: "Local Dev Setup", setup: "New developer joins a project using Windows 11.", problem: "The project uses Linux-specific dependencies and tools.", solution: "Developer installs Docker Desktop with WSL2 backend, getting native Linux performance and tooling." },
+    internalFlow: [
+      { step: 1, title: "Launch Application", desc: "User opens Docker Desktop.", why: "Initialize UI and background services.", techDetail: "Starts Desktop frontend and backend services." },
+      { step: 2, title: "Start WSL2 VM", desc: "Boots the hidden Linux environment.", why: "Docker requires a Linux kernel.", techDetail: "Uses wsl.exe to start the docker-desktop distros." },
+      { step: 3, title: "Start Daemon", desc: "Docker Engine starts inside the VM.", why: "To manage containers.", techDetail: "Executes dockerd inside the utility VM." },
+      { step: 4, title: "Expose Socket", desc: "Maps Linux socket to host OS.", why: "So Windows CLI can talk to Linux Docker.", techDetail: "Creates named pipe //./pipe/docker_engine." }
+    ],
+    commonMistakes: [
+      { mistake: "Installing Docker Desktop on a Production Server", whyWrong: "Desktop is designed for local dev, includes unnecessary GUI overhead.", correctWay: "Install native Docker Engine on production Linux servers." },
+      { mistake: "Disabling WSL2 integration on Windows", whyWrong: "Falls back to legacy Hyper-V which is slower.", correctWay: "Always use the WSL2 based engine on modern Windows." }
+    ],
+    recapChecklist: ["Docker Desktop is for local development on Windows/Mac.", "Uses a hidden lightweight VM (WSL2) to provide a Linux kernel.", "Includes a GUI dashboard for easy management.", "Not for use on production servers."],
+    challenge: { question: "Why does Docker Desktop on Windows require WSL2 or Hyper-V?", options: [ { label: "To run the GUI dashboard", isCorrect: false, explanation: "The GUI is a native Windows app." }, { label: "Because containers share the host OS kernel, and Linux containers require a Linux kernel", isCorrect: true, explanation: "Windows doesn't have a Linux kernel natively, so a VM provides it." }, { label: "To provide antivirus scanning", isCorrect: false, explanation: "Not the primary reason." } ] },
     sandbox: {
-      initialCommands: ['docker info'],
-      guidedSteps: [
-        { instruction: 'Verify Docker daemon system information', command: 'docker info', hint: 'Run docker info' },
-      ],
-      targetTask: 'Check Docker Desktop daemon readiness.',
-      solutionCommands: ['docker info'],
+      initialCommands: [],
+      targetTask: "Verify Docker Desktop/Engine is running.",
+      solutionCommands: ["docker version"],
+      guidedSteps: [ { instruction: "Check the version of Docker Client and Server", command: "docker version", hint: "Run docker version" } ]
     },
 
     reference: {
@@ -140,14 +169,45 @@ export const TOPIC_03_04_CONCEPTS: Record<string, UniversalDockerConcept> = {
         ],
       },
     ],
-
+    withoutVsWith: {
+      without: { title: "Manual Processes", items: ["Running apps manually in background", "Handling process crashes", "No isolation"], outcome: "Unstable server environment" },
+      with: { title: "Docker Engine", items: ["Automated process management", "Systemd service integration", "Namespaced isolation"], outcome: "Robust container hosting platform" }
+    },
+    blockDiagram: {
+      title: "Docker Engine Architecture",
+      subtitle: "How dockerd runs on Linux servers",
+      nodes: [
+        { id: "cli", label: "Docker CLI", simpleDef: "Terminal commands", techDef: "Client binary", color: "#38bdf8" },
+        { id: "socket", label: "docker.sock", simpleDef: "Communication pipe", techDef: "Unix domain socket", color: "#a78bfa" },
+        { id: "daemon", label: "dockerd", simpleDef: "Background service", techDef: "Systemd daemon", color: "#4ade80" },
+        { id: "containerd", label: "containerd", simpleDef: "Container runtime", techDef: "High-level runtime", color: "#facc15" }
+      ]
+    },
+    terms: [
+      { term: "dockerd", simple: "Docker Daemon", technical: "The persistent background process that manages Docker objects.", analogy: "The kitchen manager in a restaurant." },
+      { term: "docker.sock", simple: "Docker Socket", technical: "Unix IPC socket where the Docker API listens for commands.", analogy: "The order window where waiters give tickets to the kitchen." },
+      { term: "docker group", simple: "Docker User Group", technical: "Linux user group that grants socket access without requiring sudo.", analogy: "A VIP pass to the kitchen." }
+    ],
+    whenToUse: ["✓ Production Linux servers", "✓ CI/CD build agents", "✓ Headless cloud instances"],
+    whenNotToUse: ["✕ Everyday local dev on Windows (use Desktop instead)", "✕ Shared hosting environments without root"],
+    developerScenario: { title: "Deploying to Production", setup: "A team needs to host a Node.js app on a bare-metal Ubuntu server.", problem: "Manual deployments are messy and hard to restart on failure.", solution: "Install Docker Engine, enable the systemd service, and run the app as a resilient container." },
+    internalFlow: [
+      { step: 1, title: "Systemd Starts Daemon", desc: "OS boots up.", why: "Initialize background services.", techDetail: "systemd executes dockerd based on docker.service." },
+      { step: 2, title: "Bind to Socket", desc: "Daemon creates communication endpoint.", why: "To listen for CLI commands.", techDetail: "Binds to /var/run/docker.sock with root privileges." },
+      { step: 3, title: "Initialize Runtime", desc: "Connects to containerd.", why: "To actually run container processes.", techDetail: "dockerd connects to containerd via gRPC." },
+      { step: 4, title: "Accept Commands", desc: "CLI sends REST API calls.", why: "User runs a docker command.", techDetail: "CLI POSTs to /v1.41/containers/create." }
+    ],
+    commonMistakes: [
+      { mistake: "Forgetting to use sudo or add user to docker group", whyWrong: "The docker.sock is owned by root.", correctWay: "Run 'sudo usermod -aG docker $USER' to grant permissions." },
+      { mistake: "Directly killing the dockerd process", whyWrong: "Leaves containers in an inconsistent state.", correctWay: "Use 'systemctl stop docker' for clean shutdown." }
+    ],
+    recapChecklist: ["Docker Engine is the native background service on Linux.", "It listens on docker.sock for API requests.", "You must add your user to the 'docker' group to avoid using sudo.", "It uses systemd for auto-start on boot."],
+    challenge: { question: "How does the Docker CLI communicate with the Docker daemon on Linux by default?", options: [ { label: "Via SSH", isCorrect: false, explanation: "SSH is for remote access." }, { label: "Via a Unix socket (docker.sock)", isCorrect: true, explanation: "This is the default local IPC mechanism." }, { label: "Via a local MySQL database", isCorrect: false, explanation: "Docker doesn't use MySQL for this." } ] },
     sandbox: {
-      initialCommands: ['docker version'],
-      guidedSteps: [
-        { instruction: 'Check Docker engine server details', command: 'docker version', hint: 'Run docker version' },
-      ],
-      targetTask: 'Check Linux engine socket status.',
-      solutionCommands: ['docker version'],
+      initialCommands: [],
+      targetTask: "Check the status of Docker Engine.",
+      solutionCommands: ["systemctl status docker"],
+      guidedSteps: [ { instruction: "Check systemd service status for Docker", command: "systemctl status docker", hint: "Run systemctl status docker" } ]
     },
 
     reference: {
@@ -227,15 +287,46 @@ export const TOPIC_03_04_CONCEPTS: Record<string, UniversalDockerConcept> = {
         ],
       },
     ],
-
+    withoutVsWith: {
+      without: { title: "Manual App Startup", items: ["Install runtime (Java/Node)", "Download dependencies", "Configure ports manually"], outcome: "Works on my machine, fails elsewhere" },
+      with: { title: "docker run", items: ["One command execution", "Self-contained dependencies", "Isolated networking"], outcome: "Consistent startup everywhere" }
+    },
+    blockDiagram: {
+      title: "docker run Execution Flow",
+      subtitle: "What happens when you press enter",
+      nodes: [
+        { id: "cli", label: "CLI", simpleDef: "docker run", techDef: "Sends POST request", color: "#38bdf8" },
+        { id: "pull", label: "Pull Image", simpleDef: "Download if needed", techDef: "Fetch from Registry", color: "#a78bfa" },
+        { id: "create", label: "Create", simpleDef: "Allocate resources", techDef: "Setup namespaces", color: "#facc15" },
+        { id: "start", label: "Start", simpleDef: "Boot process", techDef: "Execute CMD", color: "#4ade80" }
+      ]
+    },
+    terms: [
+      { term: "Detached Mode (-d)", simple: "Run in background", technical: "Starts the container process in the background and prints the ID.", analogy: "Starting a washing machine and walking away." },
+      { term: "Port Publishing (-p)", simple: "Map network ports", technical: "Creates an iptables DNAT rule forwarding host traffic to the container.", analogy: "A receptionist forwarding outside calls to your office extension." },
+      { term: "Container Name (--name)", simple: "Friendly identifier", technical: "Assigns a custom string alias in Docker's internal DNS and metadata.", analogy: "Giving your pet a name instead of calling it 'Dog #42'." }
+    ],
+    whenToUse: ["✓ Starting a new database instance locally", "✓ Running a quick one-off script", "✓ Booting up a web server for testing"],
+    whenNotToUse: ["✕ Restarting an already stopped container (use docker start)", "✕ Running complex multi-container apps (use docker-compose)"],
+    developerScenario: { title: "Local Database Setup", setup: "A developer needs PostgreSQL for their backend API.", problem: "Installing Postgres on their OS might conflict with existing tools.", solution: "They use 'docker run -d -p 5432:5432 postgres' to instantly boot an isolated database." },
+    internalFlow: [
+      { step: 1, title: "Check Local Image", desc: "Daemon checks cache.", why: "To avoid unnecessary downloads.", techDetail: "Looks for image digest locally." },
+      { step: 2, title: "Pull Image (if missing)", desc: "Downloads from registry.", why: "Image is required to create container.", techDetail: "API call to Docker Hub." },
+      { step: 3, title: "Create Container", desc: "Allocates read/write layer.", why: "Prepare filesystem.", techDetail: "Mounts OverlayFS upperdir and creates config." },
+      { step: 4, title: "Allocate Network", desc: "Assigns IP and maps ports.", why: "To allow communication.", techDetail: "Creates veth pair and iptables rules." },
+      { step: 5, title: "Start Process", desc: "Executes the main command.", why: "To run the app.", techDetail: "Spawns PID 1 inside namespaces." }
+    ],
+    commonMistakes: [
+      { mistake: "Forgetting the -d flag for web servers", whyWrong: "The terminal becomes locked, and pressing Ctrl+C kills the server.", correctWay: "Use 'docker run -d' for background services." },
+      { mistake: "Re-running 'docker run' when a container is stopped", whyWrong: "Creates a brand new container duplicate, throwing a name conflict error.", correctWay: "Use 'docker start <name>' to resume an existing container." }
+    ],
+    recapChecklist: ["docker run combines 'create' and 'start'.", "Use -d to run in the background.", "Use -p HOST:CONTAINER to expose ports.", "Use --name for easy referencing."],
+    challenge: { question: "If you want to run an Nginx web server in the background and map it to your machine's port 8080, what command do you use?", options: [ { label: "docker run nginx -p 8080", isCorrect: false, explanation: "Incorrect syntax and missing detached flag." }, { label: "docker run -d -p 8080:80 nginx", isCorrect: true, explanation: "Correctly specifies detached mode and maps host 8080 to container 80." }, { label: "docker start nginx -p 8080:80", isCorrect: false, explanation: "docker start resumes an existing container; you need docker run." } ] },
     sandbox: {
-      initialCommands: ['docker ps'],
-      guidedSteps: [
-        { instruction: 'Run an Nginx container in detached mode named "custom-web" on port 8080', command: 'docker run -d --name custom-web -p 8080:80 nginx:1.25-alpine', hint: 'Run docker run -d --name custom-web -p 8080:80 nginx:1.25-alpine' },
-        { instruction: 'Verify container is active using docker ps', command: 'docker ps', hint: 'Run docker ps' },
-      ],
-      targetTask: 'Master docker run options.',
-      solutionCommands: ['docker run -d --name custom-web -p 8080:80 nginx:1.25-alpine', 'docker ps'],
+      initialCommands: [],
+      targetTask: "Run a container in the background.",
+      solutionCommands: ["docker run -d -p 8080:80 --name webserver nginx"],
+      guidedSteps: [ { instruction: "Run an Nginx container named 'webserver' in detached mode mapping port 8080 to 80", command: "docker run -d -p 8080:80 --name webserver nginx", hint: "Run docker run -d -p 8080:80 --name webserver nginx" } ]
     },
 
     reference: {
@@ -313,15 +404,44 @@ export const TOPIC_03_04_CONCEPTS: Record<string, UniversalDockerConcept> = {
         ],
       },
     ],
-
+    withoutVsWith: {
+      without: { title: "Black Box Debugging", items: ["Guessing why app failed", "Relying purely on limited logs", "No direct file access"], outcome: "Frustrating troubleshooting" },
+      with: { title: "docker exec", items: ["Interactive shell access", "Live process inspection", "Direct file reading"], outcome: "Fast, accurate debugging" }
+    },
+    blockDiagram: {
+      title: "docker exec Architecture",
+      subtitle: "How exec attaches to a running container",
+      nodes: [
+        { id: "running", label: "Running Container", simpleDef: "PID 1 (Main App)", techDef: "Existing namespaces", color: "#4ade80" },
+        { id: "exec", label: "docker exec", simpleDef: "New Command", techDef: "API /exec endpoint", color: "#38bdf8" },
+        { id: "shell", label: "New Process", simpleDef: "e.g., bash/sh", techDef: "Child process in namespace", color: "#a78bfa" }
+      ]
+    },
+    terms: [
+      { term: "-i (interactive)", simple: "Keep input open", technical: "Keeps STDIN open even if not attached.", analogy: "Leaving the phone line open to talk." },
+      { term: "-t (tty)", simple: "Terminal formatting", technical: "Allocates a pseudo-TTY for shell formatting and signals.", analogy: "Using a proper headset instead of a tin can." },
+      { term: "Namespace Injection", simple: "Entering the bubble", technical: "Kernel feature allowing a new process to join an existing set of namespaces.", analogy: "Using a master key to walk into a locked vault." }
+    ],
+    whenToUse: ["✓ Opening a bash/sh shell in a running container", "✓ Running database dump commands (e.g., pg_dump)", "✓ Inspecting live config files without restarting"],
+    whenNotToUse: ["✕ Modifying application code directly (it won't persist)", "✕ Trying to start background services inside the container"],
+    developerScenario: { title: "Debugging a Config Issue", setup: "A web server container is running but returning 403 Forbidden.", problem: "The developer needs to see if the internal config file is correct.", solution: "They use 'docker exec -it webserver /bin/sh' to explore the container's filesystem and read the config file." },
+    internalFlow: [
+      { step: 1, title: "API Request", desc: "CLI requests execution.", why: "Initiate command.", techDetail: "POST /containers/{id}/exec" },
+      { step: 2, title: "Create Exec Instance", desc: "Daemon prepares command.", why: "Setup environment.", techDetail: "Configures process parameters." },
+      { step: 3, title: "Start Exec", desc: "Daemon starts process.", why: "To run the shell.", techDetail: "POST /exec/{id}/start, hijacking connection for IO." },
+      { step: 4, title: "Join Namespaces", desc: "Process enters container.", why: "To see container files/network.", techDetail: "Uses setns() syscall to join namespaces." }
+    ],
+    commonMistakes: [
+      { mistake: "Trying to exec into a STOPPED container", whyWrong: "exec requires a running container because it joins active namespaces.", correctWay: "Start the container first, or use docker run for a new one." },
+      { mistake: "Forgetting the -it flags for a shell", whyWrong: "The shell will start but immediately exit or hang without taking input.", correctWay: "Always use '-it' when you want an interactive shell like 'sh' or 'bash'." }
+    ],
+    recapChecklist: ["docker exec runs NEW commands in ALREADY RUNNING containers.", "Use '-it' flags to open an interactive terminal.", "Great for debugging and running admin commands (like DB migrations).", "Changes made this way are lost if the container is destroyed."],
+    challenge: { question: "Why do you use the '-it' flags with docker exec when opening a bash shell?", options: [ { label: "To run it in the background", isCorrect: false, explanation: "That's what -d does." }, { label: "To allocate a terminal and keep input open so you can type commands", isCorrect: true, explanation: "Without -it, you can't interact with the shell." }, { label: "To inject the process into the container", isCorrect: false, explanation: "exec handles that inherently." } ] },
     sandbox: {
-      initialCommands: ['docker exec web-frontend ls -la'],
-      guidedSteps: [
-        { instruction: 'Run ls -la inside container web-frontend using docker exec', command: 'docker exec web-frontend ls -la', hint: 'Run docker exec web-frontend ls -la' },
-        { instruction: 'Print environment variables inside container', command: 'docker exec web-frontend env', hint: 'Run docker exec web-frontend env' },
-      ],
-      targetTask: 'Inspect container internal files with docker exec.',
-      solutionCommands: ['docker exec web-frontend ls -la', 'docker exec web-frontend env'],
+      initialCommands: [],
+      targetTask: "Open an interactive shell in a container.",
+      solutionCommands: ["docker exec -it webserver /bin/sh"],
+      guidedSteps: [ { instruction: "Execute an interactive sh shell inside 'webserver'", command: "docker exec -it webserver /bin/sh", hint: "Run docker exec -it webserver /bin/sh" } ]
     },
 
     reference: {
@@ -395,16 +515,45 @@ export const TOPIC_03_04_CONCEPTS: Record<string, UniversalDockerConcept> = {
         ],
       },
     ],
-
+    withoutVsWith: {
+      without: { title: "Abrupt Kills", items: ["Data corruption", "Lost database transactions", "Hanging network sockets"], outcome: "Unreliable state on restart" },
+      with: { title: "Graceful Stop/Start", items: ["Clean process exit", "Preserved filesystem state", "Safe application teardown"], outcome: "Safe, resumable workloads" }
+    },
+    blockDiagram: {
+      title: "Container Stop Lifecycle",
+      subtitle: "The graceful shutdown process",
+      nodes: [
+        { id: "running", label: "Running", simpleDef: "App is active", techDef: "PID 1 running", color: "#4ade80" },
+        { id: "sigterm", label: "docker stop", simpleDef: "Please quit", techDef: "Sends SIGTERM", color: "#facc15" },
+        { id: "grace", label: "Wait 10s", simpleDef: "Cleanup time", techDef: "Grace period", color: "#38bdf8" },
+        { id: "sigkill", label: "Force Kill", simpleDef: "Die now", techDef: "Sends SIGKILL if still running", color: "#f87171" }
+      ]
+    },
+    terms: [
+      { term: "SIGTERM", simple: "Graceful exit signal", technical: "Signal 15: Tells the process to clean up and shut down.", analogy: "A polite 'We are closing in 10 minutes, please leave'." },
+      { term: "SIGKILL", simple: "Force exit signal", technical: "Signal 9: Instantly destroys the process. Cannot be intercepted.", analogy: "Pulling the fire alarm and pushing everyone out." },
+      { term: "Grace Period", simple: "Waiting time", technical: "The default 10 seconds Docker waits after SIGTERM before sending SIGKILL.", analogy: "The 10 seconds before a time bomb explodes." }
+    ],
+    whenToUse: ["✓ Temporarily pausing a local development environment", "✓ Updating configuration before restarting", "✓ Safe shutdown of stateful databases"],
+    whenNotToUse: ["✕ When a container is frozen and ignoring signals (use docker kill)", "✕ If you want to delete it completely (use rm -f)"],
+    developerScenario: { title: "Database Maintenance", setup: "A developer is running a local MongoDB container.", problem: "They need to reboot their computer but want to keep the DB data.", solution: "They use 'docker stop' to let MongoDB cleanly write its logs to disk, and 'docker start' later to resume right where they left off." },
+    internalFlow: [
+      { step: 1, title: "Send SIGTERM", desc: "Daemon sends polite signal.", why: "Allow app to clean up.", techDetail: "Sends SIGTERM to PID 1." },
+      { step: 2, title: "Wait", desc: "Waits up to 10 seconds.", why: "App is closing files.", techDetail: "Timer starts." },
+      { step: 3, title: "Send SIGKILL", desc: "Force kill if needed.", why: "Ensure container stops.", techDetail: "Sends SIGKILL if PID 1 still exists." },
+      { step: 4, title: "Update State", desc: "Marks container as exited.", why: "Metadata update.", techDetail: "Status becomes Exited (0)." }
+    ],
+    commonMistakes: [
+      { mistake: "Assuming 'stop' deletes the container", whyWrong: "Stop only halts the process. The filesystem and config remain intact on disk.", correctWay: "Use 'docker rm' to delete stopped containers." },
+      { mistake: "Always using 'docker kill'", whyWrong: "Force killing can corrupt databases that need to flush data to disk.", correctWay: "Use 'docker stop' for regular operations." }
+    ],
+    recapChecklist: ["docker stop sends SIGTERM, waits 10s, then sends SIGKILL.", "docker start resumes a stopped container with its data intact.", "Properly written apps should handle SIGTERM to shut down cleanly.", "Use 'docker kill' only for completely frozen containers."],
+    challenge: { question: "What happens during the 10-second grace period after you run 'docker stop'?", options: [ { label: "Docker waits to see if the application cleans up and exits on its own (via SIGTERM)", isCorrect: true, explanation: "It gives the app a chance to shut down gracefully." }, { label: "Docker downloads updates", isCorrect: false, explanation: "Stop doesn't involve updates." }, { label: "Docker deletes the container's files", isCorrect: false, explanation: "Files remain intact." } ] },
     sandbox: {
-      initialCommands: ['docker ps'],
-      guidedSteps: [
-        { instruction: 'Stop the running container web-frontend', command: 'docker stop web-frontend', hint: 'Run docker stop web-frontend' },
-        { instruction: 'Verify container is stopped using docker ps -a', command: 'docker ps -a', hint: 'Run docker ps -a' },
-        { instruction: 'Start the container back up', command: 'docker start web-frontend', hint: 'Run docker start web-frontend' },
-      ],
-      targetTask: 'Manage container lifecycle with stop and start.',
-      solutionCommands: ['docker stop web-frontend', 'docker start web-frontend'],
+      initialCommands: [],
+      targetTask: "Stop a running container.",
+      solutionCommands: ["docker stop webserver"],
+      guidedSteps: [ { instruction: "Gracefully stop the 'webserver' container", command: "docker stop webserver", hint: "Run docker stop webserver" } ]
     },
 
     reference: {
@@ -481,15 +630,44 @@ export const TOPIC_03_04_CONCEPTS: Record<string, UniversalDockerConcept> = {
         ],
       },
     ],
-
+    withoutVsWith: {
+      without: { title: "Dangling Artifacts", items: ["Hundreds of stopped containers", "Wasted disk space", "Naming conflicts"], outcome: "Cluttered host system" },
+      with: { title: "docker rm", items: ["Clean host disk", "Freed container names", "Bulk pruning options"], outcome: "Tidy, optimized environment" }
+    },
+    blockDiagram: {
+      title: "docker rm Actions",
+      subtitle: "What is actually deleted",
+      nodes: [
+        { id: "layer", label: "Writeable Layer", simpleDef: "Temp files", techDef: "Overlay2 diff directory", color: "#f87171" },
+        { id: "metadata", label: "Container JSON", simpleDef: "Config", techDef: "Config metadata", color: "#f87171" },
+        { id: "image", label: "Image / Volumes", simpleDef: "Persisted stuff", techDef: "Read-only layers", color: "#4ade80" }
+      ]
+    },
+    terms: [
+      { term: "Force Flag (-f)", simple: "Kill and remove", technical: "Sends SIGKILL and removes the container in one operation.", analogy: "Throwing an appliance in the trash while it's still running." },
+      { term: "Prune", simple: "Bulk delete", technical: "Removes all stopped containers across the entire Docker engine.", analogy: "Emptying the system's recycle bin." },
+      { term: "Writeable Layer", simple: "Container disk space", technical: "The thin filesystem layer on top of the image where container changes are written.", analogy: "A transparent drawing sheet placed over a map." }
+    ],
+    whenToUse: ["✓ Freeing up a container name (e.g., 'web') to reuse it", "✓ Reclaiming disk space from old exited containers", "✓ Cleaning up after a finished task"],
+    whenNotToUse: ["✕ When you still need the data inside the container (and haven't used volumes)", "✕ For persistent databases you want to restart later"],
+    developerScenario: { title: "Cleaning the Environment", setup: "A developer tries to run 'docker run --name my-app redis' but gets an error: 'The name /my-app is already in use'.", problem: "An old, stopped container still owns that name.", solution: "They run 'docker rm my-app' to delete the old container, freeing up the name for the new one." },
+    internalFlow: [
+      { step: 1, title: "Check State", desc: "Ensure container is stopped.", why: "Safety mechanism.", techDetail: "Fails if state is Running (unless -f)." },
+      { step: 2, title: "Unlink Network", desc: "Detaches network interfaces.", why: "Free IP addresses.", techDetail: "Removes veth from docker0 bridge." },
+      { step: 3, title: "Delete RW Layer", desc: "Deletes container filesystem.", why: "Reclaim disk space.", techDetail: "Removes directory in /var/lib/docker/containers." },
+      { step: 4, title: "Remove Metadata", desc: "Deletes from Docker DB.", why: "Free the name.", techDetail: "Removes from SQLite/daemon memory." }
+    ],
+    commonMistakes: [
+      { mistake: "Trying to remove a running container without -f", whyWrong: "Docker prevents this to avoid accidental data loss.", correctWay: "Use 'docker stop' first, or 'docker rm -f'." },
+      { mistake: "Thinking 'docker rm' deletes the image", whyWrong: "Images are separate. 'rm' only deletes the container instance.", correctWay: "Use 'docker rmi' to delete images." }
+    ],
+    recapChecklist: ["'docker rm' deletes stopped container instances.", "Use '-f' to force delete a running container.", "It frees up disk space and container names.", "'docker container prune' cleans up all stopped containers at once."],
+    challenge: { question: "If you have 50 stopped containers taking up space, what is the fastest way to remove all of them?", options: [ { label: "docker rm -all", isCorrect: false, explanation: "Not a valid command." }, { label: "docker container prune", isCorrect: true, explanation: "Safely bulk-removes all stopped containers." }, { label: "docker rmi", isCorrect: false, explanation: "This removes images, not containers." } ] },
     sandbox: {
-      initialCommands: ['docker ps -a'],
-      guidedSteps: [
-        { instruction: 'Force remove the container cache-redis', command: 'docker rm -f cache-redis', hint: 'Run docker rm -f cache-redis' },
-        { instruction: 'Verify container is removed using docker ps -a', command: 'docker ps -a', hint: 'Run docker ps -a' },
-      ],
-      targetTask: 'Clean up stopped container instances.',
-      solutionCommands: ['docker rm -f cache-redis'],
+      initialCommands: [],
+      targetTask: "Remove a stopped container.",
+      solutionCommands: ["docker rm webserver"],
+      guidedSteps: [ { instruction: "Remove the 'webserver' container", command: "docker rm webserver", hint: "Run docker rm webserver" } ]
     },
 
     reference: {

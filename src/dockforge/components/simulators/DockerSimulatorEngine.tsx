@@ -34,25 +34,23 @@ export const DockerSimulatorEngine: React.FC<DockerSimulatorEngineProps> = ({
   onComplete,
   showToast,
 }) => {
-  // Stepper State (1 to 6)
-  const [currentStep, setCurrentStep] = useState<number>(6);
+  // Stepper State (1 to N steps)
+  const stepDetails = (concept.internalFlow || []).map((flow) => ({
+    step: flow.step,
+    title: flow.title,
+    desc: flow.desc,
+    why: flow.why,
+  }));
+  const totalSteps = stepDetails.length || 6;
+  const [currentStep, setCurrentStep] = useState<number>(1);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [showWhyModal, setShowWhyModal] = useState<boolean>(false);
   const [showLogs, setShowLogs] = useState<boolean>(false);
 
   // Active Containers List
   const [containers, setContainers] = useState<ContainerItem[]>([
-    { id: 'a3f2c1d4e5f6', name: 'Nginx Container', port: 8080, status: 'running' },
+    { id: 'a3f2c1d4e5f6', name: `${concept.title}`, port: 8080, status: 'running' },
   ]);
-
-  const stepDetails = [
-    { step: 1, title: 'CLI Receives Command', desc: 'Validates flags and translates command into REST API payload.', why: 'CLI converts human terminal input into HTTP UNIX socket request.' },
-    { step: 2, title: 'Check Local Image', desc: 'Queries local daemon storage driver (overlay2) for image layers.', why: 'Avoids network downloads if image layers exist locally.' },
-    { step: 3, title: 'Pull Image Layers', desc: 'Fetches compressed filesystem layers from Docker Hub registry.', why: 'Downloads immutable rootfs binaries.' },
-    { step: 4, title: 'Create Container Layer', desc: 'Allocates thin read-write OverlayFS layer on top of image.', why: 'Isolates container filesystem changes.' },
-    { step: 5, title: 'Attach Network & Ports', desc: 'Allocates virtual IP (172.17.0.2) and iptables port mapping (8080->80).', why: 'Binds host port 8080 to container port 80.' },
-    { step: 6, title: 'Start Process (RUNNING)', desc: 'Container runtime (runc) executes PID 1 inside isolated namespaces.', why: 'Process is now running and servicing HTTP requests.' },
-  ];
 
   // Auto Play Timer Effect
   useEffect(() => {
@@ -60,18 +58,18 @@ export const DockerSimulatorEngine: React.FC<DockerSimulatorEngineProps> = ({
     if (isPlaying) {
       interval = setInterval(() => {
         setCurrentStep((prev) => {
-          if (prev >= 6) {
+          if (prev >= totalSteps) {
             setIsPlaying(false);
             onComplete();
-            showToast('🟢 Container is RUNNING & bound to http://localhost:8080');
-            return 6;
+            showToast(`🟢 ${concept.title} simulation complete!`);
+            return totalSteps;
           }
           return prev + 1;
         });
       }, 1000);
     }
     return () => clearInterval(interval);
-  }, [isPlaying, onComplete, showToast]);
+  }, [isPlaying, onComplete, showToast, totalSteps, concept.title]);
 
   const handleRun = () => {
     setCurrentStep(1);
@@ -80,12 +78,12 @@ export const DockerSimulatorEngine: React.FC<DockerSimulatorEngineProps> = ({
   };
 
   const handleStepNext = () => {
-    if (currentStep < 6) {
+    if (currentStep < totalSteps) {
       const nextStep = currentStep + 1;
       setCurrentStep(nextStep);
-      if (nextStep === 6) {
+      if (nextStep === totalSteps) {
         onComplete();
-        showToast('🟢 Container is RUNNING & bound to http://localhost:8080');
+        showToast(`🟢 ${concept.title} simulation complete!`);
       }
     }
   };
@@ -134,7 +132,7 @@ export const DockerSimulatorEngine: React.FC<DockerSimulatorEngineProps> = ({
     }
   };
 
-  const activeStepInfo = stepDetails.find((s) => s.step === currentStep) || stepDetails[5];
+  const activeStepInfo = stepDetails.find((s) => s.step === currentStep) || stepDetails[stepDetails.length - 1] || { step: 1, title: 'Step 1', desc: 'Executing...', why: '' };
 
   return (
     <div className="docker-card" style={{ padding: '1.75rem', background: '#090d16', border: '1px solid var(--docker-border-active)' }}>
@@ -195,7 +193,7 @@ export const DockerSimulatorEngine: React.FC<DockerSimulatorEngineProps> = ({
 
           <button
             onClick={handleStepNext}
-            disabled={currentStep >= 6}
+            disabled={currentStep >= totalSteps}
             style={{
               padding: '0.5rem 0.95rem',
               borderRadius: '8px',
@@ -204,11 +202,11 @@ export const DockerSimulatorEngine: React.FC<DockerSimulatorEngineProps> = ({
               color: '#38bdf8',
               fontWeight: 800,
               fontSize: '0.82rem',
-              cursor: currentStep >= 6 ? 'not-allowed' : 'pointer',
+              cursor: currentStep >= totalSteps ? 'not-allowed' : 'pointer',
               display: 'flex',
               alignItems: 'center',
               gap: '0.35rem',
-              opacity: currentStep >= 6 ? 0.5 : 1,
+              opacity: currentStep >= totalSteps ? 0.5 : 1,
             }}
           >
             <span>Step →</span>
@@ -326,7 +324,7 @@ export const DockerSimulatorEngine: React.FC<DockerSimulatorEngineProps> = ({
           <div style={{ fontSize: '0.8rem', color: '#fff', display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
             <div>Images: {currentStep >= 3 ? 'nginx:latest' : '0 (Checking)'}</div>
             <div>Active Containers: {currentStep >= 4 ? containers.length : 0}</div>
-            <div>State: <strong style={{ color: currentStep >= 6 ? '#4ade80' : '#facc15' }}>{currentStep >= 6 ? 'RUNNING' : currentStep >= 4 ? 'CREATED' : 'INITIALIZING'}</strong></div>
+            <div>State: <strong style={{ color: currentStep >= totalSteps ? '#4ade80' : '#facc15' }}>{currentStep >= totalSteps ? 'RUNNING' : currentStep >= 4 ? 'CREATED' : 'INITIALIZING'}</strong></div>
             <div>Port Mapping: {currentStep >= 5 ? `Host ${containers[0]?.port || 8080} -> Container 80` : 'None'}</div>
           </div>
         </div>
@@ -355,14 +353,14 @@ export const DockerSimulatorEngine: React.FC<DockerSimulatorEngineProps> = ({
             <div
               key={cnt.id}
               style={{
-                background: cnt.status === 'running' && currentStep >= 6 ? 'linear-gradient(180deg, rgba(14, 165, 233, 0.2) 0%, rgba(2, 132, 199, 0.1) 100%)' : 'rgba(15, 23, 42, 0.85)',
-                border: cnt.status === 'running' && currentStep >= 6 ? '2px solid #0ea5e9' : '1px dashed #ef4444',
+                background: cnt.status === 'running' && currentStep >= totalSteps ? 'linear-gradient(180deg, rgba(14, 165, 233, 0.2) 0%, rgba(2, 132, 199, 0.1) 100%)' : 'rgba(15, 23, 42, 0.85)',
+                border: cnt.status === 'running' && currentStep >= totalSteps ? '2px solid #0ea5e9' : '1px dashed #ef4444',
                 padding: '1.1rem',
                 borderRadius: '12px',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '0.65rem',
-                boxShadow: cnt.status === 'running' && currentStep >= 6 ? '0 0 25px rgba(14, 165, 233, 0.3)' : 'none',
+                boxShadow: cnt.status === 'running' && currentStep >= totalSteps ? '0 0 25px rgba(14, 165, 233, 0.3)' : 'none',
                 backdropFilter: 'blur(10px)',
                 transition: 'all 0.3s ease',
               }}
@@ -373,8 +371,8 @@ export const DockerSimulatorEngine: React.FC<DockerSimulatorEngineProps> = ({
                   <div style={{ fontSize: '0.7rem', color: '#38bdf8', fontFamily: 'JetBrains Mono, monospace' }}>{cnt.id}</div>
                 </div>
 
-                <span style={{ fontSize: '0.7rem', fontWeight: 800, padding: '0.18rem 0.55rem', borderRadius: '999px', background: cnt.status === 'running' && currentStep >= 6 ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)', color: cnt.status === 'running' && currentStep >= 6 ? '#4ade80' : '#f87171' }}>
-                  {cnt.status === 'running' && currentStep >= 6 ? '🟢 Running' : '🔴 Stopped'}
+                <span style={{ fontSize: '0.7rem', fontWeight: 800, padding: '0.18rem 0.55rem', borderRadius: '999px', background: cnt.status === 'running' && currentStep >= totalSteps ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)', color: cnt.status === 'running' && currentStep >= totalSteps ? '#4ade80' : '#f87171' }}>
+                  {cnt.status === 'running' && currentStep >= totalSteps ? '🟢 Running' : '🔴 Stopped'}
                 </span>
               </div>
 
