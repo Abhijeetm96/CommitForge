@@ -41,16 +41,16 @@ interface UpcomingTool {
 
 const UPCOMING_TOOLS: UpcomingTool[] = [
   {
-    id: 'docker',
-    name: 'Docker',
-    domain: 'Containers & Image Layers',
-    techStack: 'Docker & OCI Runtimes',
+    id: 'helm',
+    name: 'Helm & Kustomize',
+    domain: 'Package Management & Templates',
+    techStack: 'Helm v3 & Kustomize Engine',
     quarter: 'Q4 2026',
     color: '#0ea5e9',
     bgGlow: 'rgba(14, 165, 233, 0.15)',
     icon: Container,
-    description: 'Master containerization from the kernel up. Optimize multi-stage Dockerfiles, distroless builds, layer caching, and rootless isolation.',
-    coreConcepts: ['Multi-Stage Dockerfiles', 'Distroless & Slim Builds', 'Layer Caching & BuildKit', 'Docker Compose Multi-Node', 'Container Bridge Networking'],
+    description: 'Master Cloud-Native package management. Template Kubernetes manifests with Helm charts, values overrides, and Kustomize overlays.',
+    coreConcepts: ['Helm Chart Templates & Values', 'Kustomize Overlays & Patches', 'Chart Repository Distribution', 'Release Rollbacks & History', 'Subcharts & Dependencies'],
   },
   {
     id: 'ansible',
@@ -207,21 +207,21 @@ export const ForgeSuiteHomeView: React.FC = () => {
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e' }} />
               <span style={{ fontSize: '0.85rem', color: '#cbd5e1' }}>
-                <strong style={{ color: '#fff' }}>34</strong> Live Curriculum Modules
+                <strong style={{ color: '#fff' }}>48</strong> Live Curriculum Modules
               </span>
             </div>
             <div style={{ width: '1px', height: '18px', background: 'rgba(148, 163, 184, 0.2)' }} />
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <Zap size={15} color="#eab308" />
               <span style={{ fontSize: '0.85rem', color: '#cbd5e1' }}>
-                <strong style={{ color: '#fff' }}>127+</strong> Interactive Concepts
+                <strong style={{ color: '#fff' }}>171+</strong> Interactive Concepts
               </span>
             </div>
             <div style={{ width: '1px', height: '18px', background: 'rgba(148, 163, 184, 0.2)' }} />
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <Cpu size={15} color="#38bdf8" />
               <span style={{ fontSize: '0.85rem', color: '#cbd5e1' }}>
-                <strong style={{ color: '#fff' }}>2</strong> Live Execution Engines
+                <strong style={{ color: '#fff' }}>3</strong> Live Execution Engines
               </span>
             </div>
             <div style={{ width: '1px', height: '18px', background: 'rgba(148, 163, 184, 0.2)' }} />
@@ -234,7 +234,7 @@ export const ForgeSuiteHomeView: React.FC = () => {
           </div>
         </div>
 
-        {/* SECTION 1: DUAL LIVE FLAGSHIP PLATFORMS */}
+        {/* SECTION 1: TRIPLE LIVE FLAGSHIP PLATFORMS */}
         <div id="academies" style={{ marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
           <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#22c55e' }} />
           <span style={{ fontSize: '0.82rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#94a3b8' }}>
