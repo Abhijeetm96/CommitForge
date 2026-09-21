@@ -35,6 +35,56 @@ export interface ScenarioQuestion {
   note?: string;
 }
 
+export interface ConceptTerm {
+  term: string;
+  simple: string;
+  technical: string;
+  analogy?: string;
+  related?: string[];
+}
+
+export interface InternalStep {
+  step: number;
+  title: string;
+  desc: string;
+  why: string;
+  techDetail: string;
+}
+
+export interface CommonMistake {
+  mistake: string;
+  whyWrong: string;
+  correctWay: string;
+}
+
+export interface BlockDiagramNode {
+  id: string;
+  label: string;
+  simpleDef: string;
+  techDef: string;
+  badge?: string;
+  color?: string;
+}
+
+export interface BlockDiagramData {
+  title: string;
+  subtitle: string;
+  nodes: BlockDiagramNode[];
+}
+
+export interface WithoutVsWithData {
+  without: {
+    title: string;
+    items: string[];
+    outcome: string;
+  };
+  with: {
+    title: string;
+    items: string[];
+    outcome: string;
+  };
+}
+
 export interface UniversalDockerConcept {
   id: string;
   command: string;
@@ -52,6 +102,26 @@ export interface UniversalDockerConcept {
   inSimpleWords: string;
   whyDoYouNeedIt: string;
   realWorldAnalogy: string;
+
+  // Extended Teaching Sequence Fields
+  withoutVsWith?: WithoutVsWithData;
+  blockDiagram?: BlockDiagramData;
+  terms?: ConceptTerm[];
+  whenToUse?: string[];
+  whenNotToUse?: string[];
+  developerScenario?: {
+    title: string;
+    setup: string;
+    problem: string;
+    solution: string;
+  };
+  internalFlow?: InternalStep[];
+  commonMistakes?: CommonMistake[];
+  recapChecklist?: string[];
+  challenge?: {
+    question: string;
+    options: { label: string; isCorrect: boolean; explanation: string }[];
+  };
 
   // Level 2: Syntax
   syntaxCode: string;

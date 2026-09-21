@@ -14,22 +14,199 @@ export const TOPIC_01_02_CONCEPTS: Record<string, UniversalDockerConcept> = {
     difficulty: 'Beginner',
 
     whatIsIt:
-      'Containers are lightweight, standalone execution packages that enclose application source code along with all system libraries, dependencies, configuration files, and runtime binaries needed to run consistently across any computing environment.',
+      'A container is a lightweight isolated environment that runs an application and everything it needs (code, runtime, dependencies, system tools).',
     inSimpleWords:
-      'Imagine a standardized shipping container on a cargo ship. It holds your entire app and all its tools. You can drop that container onto a Mac, Windows laptop, or Linux cloud server, and it runs identically without messing up the host computer.',
+      'Think of a container as a small box for your application. Your application lives inside the box. The box keeps it separated from other applications on your computer. Docker creates and manages these boxes.',
     whyDoYouNeedIt:
       'Without containers, installing different versions of Python, Node.js, or PostgreSQL on host servers causes version conflicts ("works on my laptop but broke on production server"). Containers eliminate this pain entirely.',
     realWorldAnalogy:
       'A hotel guest room. Each guest has their own private bathroom, bed, key card, and TV (isolated environment), but all rooms share the hotel foundation, electrical grid, and plumbing (shared host kernel).',
 
-    syntaxCode: 'docker run -d --name web-server -p 8080:80 nginx:alpine',
-    syntaxTokens: [
-      { token: 'docker run', role: 'Command', explanation: 'Creates and starts a container instance from an image.' },
-      { token: '-d', role: 'Flag', explanation: 'Detached mode: runs container in the background.' },
-      { token: '--name web-server', role: 'Flag', explanation: 'Assigns a custom human-readable name to the container.' },
-      { token: '-p 8080:80', role: 'Flag', explanation: 'Maps host port 8080 to container port 80.' },
-      { token: 'nginx:alpine', role: 'Image Target', explanation: 'Specifies the Nginx image built on lightweight Alpine Linux.' },
+    withoutVsWith: {
+      without: {
+        title: 'WITHOUT CONTAINERS',
+        items: [
+          'Developer A has Node 20, Developer B has Node 18',
+          'Global package pollution on host computer',
+          'Missing database dependencies on production server',
+          'Manual setup instructions per developer machine',
+        ],
+        outcome: '💥 "Works on my machine" bugs and production downtime',
+      },
+      with: {
+        title: 'WITH CONTAINERS',
+        items: [
+          'App bundled with exact Node, Python & library versions',
+          'Identical execution on Mac, Windows, Linux & Cloud',
+          'Instant startup in under a second',
+          'Zero pollution of host machine files',
+        ],
+        outcome: '📦 Guaranteed identical, isolated execution everywhere',
+      },
+    },
+
+    blockDiagram: {
+      title: 'Host Machine & Container Isolation Boundary',
+      subtitle: 'Click any block below to inspect Simple vs Technical definitions:',
+      nodes: [
+        {
+          id: 'host-os',
+          label: 'Host Operating System (Linux Kernel)',
+          simpleDef: 'The underlying computer operating system running Docker.',
+          techDef: 'The Linux kernel providing namespaces, cgroups, and syscall interface to containers.',
+          badge: 'Host OS',
+          color: '#38bdf8',
+        },
+        {
+          id: 'container-box',
+          label: 'Container Boundary (Isolated Process)',
+          simpleDef: 'An isolated box separating your app from the host OS and other apps.',
+          techDef: 'An isolated user-space process environment (PID & Net namespaces) sharing host kernel syscalls.',
+          badge: 'Container',
+          color: '#4ade80',
+        },
+        {
+          id: 'app-files',
+          label: 'Application + Libraries + Config',
+          simpleDef: 'Your application source code and required dependencies.',
+          techDef: 'Copy-on-write OverlayFS layer stacked on top of immutable image layers.',
+          badge: 'App Code',
+          color: '#facc15',
+        },
+      ],
+    },
+
+    terms: [
+      {
+        term: 'Container',
+        simple: 'A box-like isolated environment for running an application.',
+        technical: 'An isolated user-space process constructed using Linux namespaces (PID, Net, Mnt) and cgroups.',
+        analogy: 'A guest room in a hotel with its own key and bathroom.',
+        related: ['Image', 'Host Machine', 'Container Runtime'],
+      },
+      {
+        term: 'Host Machine',
+        simple: 'The physical or virtual computer running Docker.',
+        technical: 'The OS kernel executing the Docker daemon and managing hardware resources.',
+        analogy: 'The hotel building containing all guest rooms.',
+        related: ['Container', 'Kernel'],
+      },
+      {
+        term: 'Image',
+        simple: 'A read-only packaged template used to create containers.',
+        technical: 'An immutable bundle of rootfs filesystem layers defined by OCI container specs.',
+        analogy: 'A cookie cutter or architectural blueprint.',
+        related: ['Container', 'Registry'],
+      },
+      {
+        term: 'Container Runtime',
+        simple: 'The engine software responsible for starting and managing containers.',
+        technical: 'Low-level component (e.g. runc, containerd) interfacing with Linux syscalls.',
+        analogy: 'The hotel management team checking keys and rooms.',
+        related: ['Docker Engine', 'runc'],
+      },
     ],
+
+    syntaxCode: 'docker run -d -p 8080:80 --name webserver nginx',
+    syntaxTokens: [
+      { token: 'docker', role: 'CLI Tool', explanation: 'The Docker Command-Line Interface client.' },
+      { token: 'run', role: 'Command', explanation: 'Create and start a new container from an image.' },
+      { token: '-d', role: 'Flag', explanation: 'Detached mode: runs container in background without locking terminal.' },
+      { token: '-p 8080:80', role: 'Flag', explanation: 'Publish port: maps host port 8080 to container internal port 80.' },
+      { token: '--name webserver', role: 'Flag', explanation: 'Assigns a predictable human-readable name "webserver".' },
+      { token: 'nginx', role: 'Image', explanation: 'The official Nginx web server image from Docker Hub.' },
+    ],
+
+    variations: [
+      {
+        title: 'Base Foregound Execution',
+        syntax: 'docker run nginx',
+        whatItDoes: 'Runs Nginx in foreground, attaching server logs directly to current terminal.',
+        whenToUse: 'Quick manual testing or watching real-time stdout logs.',
+        warning: 'Locks current terminal tab until Ctrl+C is pressed.',
+      },
+      {
+        title: 'Detached Background Server',
+        syntax: 'docker run -d nginx',
+        whatItDoes: 'Runs container silently in background, returning container ID immediately.',
+        whenToUse: 'Running web servers, APIs, and background daemons.',
+      },
+      {
+        title: 'Port-Mapped Web Server',
+        syntax: 'docker run -d -p 8080:80 nginx',
+        whatItDoes: 'Maps host port 8080 to container port 80, making Nginx accessible in browser.',
+        whenToUse: 'When you need to access web applications running inside container.',
+      },
+      {
+        title: 'Named & Disposable Container',
+        syntax: 'docker run --name my-app --rm -d -p 8080:80 nginx',
+        whatItDoes: 'Assigns name "my-app" and automatically deletes container disk files when stopped.',
+        whenToUse: 'Clean development runs and CI testing pipelines.',
+      },
+    ],
+
+    whenToUse: [
+      '✓ Running isolated applications without installing local system dependencies',
+      '✓ Guaranteeing identical runtime behavior across Mac, Windows, Linux, and Cloud',
+      '✓ Running microservices and backend databases (PostgreSQL, Redis, Nginx)',
+      '✓ Continuous Integration and Automated Testing pipelines',
+    ],
+
+    whenNotToUse: [
+      '✕ When persistent data is required without mounting a Docker Volume',
+      '✕ When running legacy GUI applications needing direct host GPU display drivers',
+      '✕ When you mistake stopping a container for deleting its disk state',
+    ],
+
+    developerScenario: {
+      title: 'Real Developer Scenario: Eliminating "Works on My Machine"',
+      setup: 'Developer A works on macOS with Node.js 20 installed globally. Developer B works on Windows 11 with Node.js 18.',
+      problem: 'Developer A commits code using new Node 20 features. Developer B pulls the code and it crashes instantly.',
+      solution: 'Instead of forcing everyone to reinstall Node, they package the app into a Docker container. Both run "docker run my-node-app" and execute on 100% identical Node environments.',
+    },
+
+    internalFlow: [
+      { step: 1, title: 'CLI Receives Command', desc: 'Docker CLI validates flags and sends REST request to Docker Daemon socket.', why: 'Translates terminal command into API payload.', techDetail: 'POST /v1.43/containers/create' },
+      { step: 2, title: 'Image Check', desc: 'Daemon checks if "nginx:latest" exists in local image store.', why: 'Avoids redundant network downloads if image is cached.', techDetail: 'Queries local overlay2 storage driver' },
+      { step: 3, title: 'Registry Pull (If Missing)', desc: 'If absent locally, Daemon pulls image layers from Docker Hub.', why: 'Downloads immutable filesystem binaries.', techDetail: 'HTTPS GET registry-1.docker.io' },
+      { step: 4, title: 'Create Container Layer', desc: 'Daemon creates a read-write thin layer on top of read-only image layers.', why: 'Isolates container disk changes from base image.', techDetail: 'Mounts OverlayFS union filesystem' },
+      { step: 5, title: 'Attach Network & Ports', desc: 'Daemon allocates virtual IP (172.17.0.2) and sets up iptables port forwarding (8080->80).', why: 'Connects container to network interface.', techDetail: 'Creates veth pair & iptables DNAT rule' },
+      { step: 6, title: 'Start Process (RUNNING)', desc: 'Container runtime (runc) executes PID 1 inside isolated namespaces.', why: 'Nginx is now running and isolated.', techDetail: 'runc start container_id' },
+    ],
+
+    commonMistakes: [
+      {
+        mistake: 'Thinking "docker run" only downloads an image.',
+        whyWrong: '"docker run" pulls image, creates container filesystem, configures network, AND starts process.',
+        correctWay: 'Use "docker pull" if you only want to download without running.',
+      },
+      {
+        mistake: 'Confusing Image vs Container.',
+        whyWrong: 'An Image is a read-only template (like a recipe). A Container is the active running instance (like cooked food).',
+        correctWay: 'Build an Image once, spawn many Containers from it.',
+      },
+      {
+        mistake: 'Believing stopping a container deletes its files.',
+        whyWrong: 'Stopping a container halts PID 1, but disk layers remain until "docker rm".',
+        correctWay: 'Use "docker rm" to permanently delete stopped containers.',
+      },
+    ],
+
+    recapChecklist: [
+      'A container is an isolated user-space process sharing the host OS kernel.',
+      'Containers eliminate "works on my machine" bugs by bundling app + dependencies.',
+      '"docker run -d -p 8080:80" creates a background container mapped to host port 8080.',
+      'Stopping a container (docker stop) halts execution; removing it (docker rm) deletes files.',
+    ],
+
+    challenge: {
+      question: 'Which flag allows a web application inside a container to be accessed from your computer browser at http://localhost:8080?',
+      options: [
+        { label: '-p 8080:80', isCorrect: true, explanation: 'Correct! -p 8080:80 publishes host port 8080 to container internal port 80.' },
+        { label: '-d', isCorrect: false, explanation: '-d runs the container in detached (background) mode, but does not publish ports.' },
+        { label: '--name 8080', isCorrect: false, explanation: '--name sets the container name, not port mapping.' },
+      ],
+    },
 
     actionStage: {
       before: {
@@ -52,21 +229,6 @@ export const TOPIC_01_02_CONCEPTS: Record<string, UniversalDockerConcept> = {
       },
     },
 
-    variations: [
-      {
-        title: 'Interactive Terminal Shell',
-        syntax: 'docker run -it alpine sh',
-        whatItDoes: 'Attaches an interactive terminal shell (TTY) inside a container.',
-        whenToUse: 'Debugging files or exploring a container environment interactively.',
-      },
-      {
-        title: 'Disposable Self-Deleting Container',
-        syntax: 'docker run --rm alpine echo "Hello World"',
-        whatItDoes: 'Executes a single command and immediately removes the container on exit.',
-        whenToUse: 'One-off diagnostic scripts, automated tests, or quick commands.',
-      },
-    ],
-
     scenarios: [
       {
         title: 'Container vs Host Kernel Sharing',
@@ -85,8 +247,8 @@ export const TOPIC_01_02_CONCEPTS: Record<string, UniversalDockerConcept> = {
         { instruction: 'Start a detached Nginx container on port 8080', command: 'docker run -d -p 8080:80 nginx:1.25-alpine', hint: 'Type docker run -d -p 8080:80 nginx:1.25-alpine' },
         { instruction: 'Verify container is active', command: 'docker ps', hint: 'Type docker ps' },
       ],
-      targetTask: 'Launch an isolated Nginx container.',
-      solutionCommands: ['docker run -d -p 8080:80 nginx:1.25-alpine'],
+      targetTask: 'Launch an isolated Nginx container on port 8080 in background mode.',
+      solutionCommands: ['docker run -d -p 8080:80 nginx'],
     },
 
     reference: {
@@ -98,6 +260,8 @@ export const TOPIC_01_02_CONCEPTS: Record<string, UniversalDockerConcept> = {
         'docker rm [CONTAINER]      # Remove container',
       ],
       bestPractices: [
+        'Always run background web servers with detached flag -d.',
+        'Use explicit port mapping -p host_port:container_port to expose ports.',
         'Use small base images like Alpine or Distroless.',
         'Never store permanent data directly inside container write layers.',
         'Assign explicit container names using --name.',
