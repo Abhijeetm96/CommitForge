@@ -5,10 +5,11 @@ import { PodAcademyView } from './components/academy/PodAcademyView';
 import { PodLabsHubView } from './components/labs/PodLabsHubView';
 import { ClusterIdeView } from './components/ide/ClusterIdeView';
 import { ClusterCanvas } from './components/visualizer/ClusterCanvas';
+import { ViewMode } from '../context/AppContext';
 import './styles/podforge.css';
 
 interface PodForgeAppProps {
-  onSwitchToSuite?: (mode: 'home' | 'learn' | 'roadmap') => void;
+  onSwitchToSuite?: (mode: ViewMode) => void;
 }
 
 const PodForgeContent: React.FC<PodForgeAppProps> = ({ onSwitchToSuite }) => {

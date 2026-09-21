@@ -27,10 +27,12 @@ import {
   Award,
 } from 'lucide-react';
 
+import { ViewMode } from '../../../context/AppContext';
+
 type AcademyTab = 'learn' | 'spec' | 'practice' | 'visualize' | 'pitfalls' | 'quiz';
 
 interface PodAcademyViewProps {
-  onSwitchToSuite?: (mode: 'home' | 'learn' | 'roadmap') => void;
+  onSwitchToSuite?: (mode: ViewMode) => void;
 }
 
 export const PodAcademyView: React.FC<PodAcademyViewProps> = ({ onSwitchToSuite }) => {
