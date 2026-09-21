@@ -34,7 +34,7 @@ export interface RoadmapStage {
   subtitle: string;
   category: 'developer' | 'cloud-native' | 'sre';
   status: 'live' | 'coming-soon';
-  liveAction?: 'learn' | 'podforge' | 'cicd';
+  liveAction?: 'learn' | 'podforge' | 'cicd' | 'dockforge';
   platformName: string;
   techStack: string;
   duration: string;
@@ -106,12 +106,13 @@ const ROADMAP_STAGES: RoadmapStage[] = [
     title: 'Containerization & Build Engineering',
     subtitle: 'Package immutable runtime artifacts with multi-stage builds and minimal images',
     category: 'developer',
-    status: 'coming-soon',
-    platformName: 'DockerCraft',
-    techStack: 'Docker • BuildKit • OCI Images • Distroless',
-    duration: 'Target Q3 2026',
+    status: 'live',
+    liveAction: 'dockforge',
+    platformName: 'DockForge',
+    techStack: 'Virtual Docker Engine • 14 Topics • Multi-Stage IDE',
+    duration: '14 Topics • 44 Concepts • Active In-App',
     color: '#0ea5e9',
-    glowColor: 'rgba(14, 165, 233, 0.25)',
+    glowColor: 'rgba(14, 165, 233, 0.3)',
     icon: Container,
     certifications: ['Docker Certified Associate (DCA)', 'OCI Specialist'],
     description:
@@ -298,6 +299,8 @@ export const DevOpsRoadmapView: React.FC = () => {
         setMode('learn');
       } else if (stage.liveAction === 'podforge') {
         setMode('podforge');
+      } else if (stage.liveAction === 'dockforge') {
+        setMode('dockforge');
       }
     } else {
       setVotedStages((prev) => ({
@@ -592,6 +595,25 @@ export const DevOpsRoadmapView: React.FC = () => {
               <span>CommitForge</span>
             </button>
             <button
+              onClick={() => setMode('dockforge')}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                padding: '0.45rem 0.85rem',
+                borderRadius: '8px',
+                background: 'rgba(14, 165, 233, 0.12)',
+                border: '1px solid rgba(14, 165, 233, 0.35)',
+                color: '#38bdf8',
+                fontSize: '0.8rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+              }}
+            >
+              <Container size={14} />
+              <span>DockForge</span>
+            </button>
+            <button
               onClick={() => setMode('podforge')}
               style={{
                 display: 'inline-flex',
@@ -601,7 +623,7 @@ export const DevOpsRoadmapView: React.FC = () => {
                 borderRadius: '8px',
                 background: 'rgba(50, 108, 229, 0.12)',
                 border: '1px solid rgba(50, 108, 229, 0.35)',
-                color: '#38bdf8',
+                color: '#60a5fa',
                 fontSize: '0.8rem',
                 fontWeight: 700,
                 cursor: 'pointer',
