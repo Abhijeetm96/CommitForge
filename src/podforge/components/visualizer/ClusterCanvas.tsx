@@ -9,7 +9,10 @@ import {
   XCircle,
   Clock,
   X,
+  Zap,
 } from 'lucide-react';
+import { CoolingTurbineFan } from '../../../components/simulation/CoolingTurbineFan';
+import { LuminousBulb } from '../../../components/simulation/LuminousBulb';
 
 export const ClusterCanvas: React.FC = () => {
   const { clusterState, selectedPod } = useApp();
@@ -136,27 +139,34 @@ export const ClusterCanvas: React.FC = () => {
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.25rem' }}>
-                  <span
-                    style={{
-                      fontSize: '0.68rem',
-                      fontWeight: 800,
-                      padding: '0.15rem 0.55rem',
-                      borderRadius: '999px',
-                      textTransform: 'uppercase',
-                      background: isCP ? 'rgba(168, 85, 247, 0.15)' : 'rgba(56, 189, 248, 0.15)',
-                      color: isCP ? 'var(--k8s-purple)' : 'var(--k8s-cyan)',
-                      border: `1px solid ${isCP ? 'rgba(168, 85, 247, 0.3)' : 'rgba(56, 189, 248, 0.3)'}`,
-                    }}
-                  >
-                    {node.status.role}
-                  </span>
-
-                  {isUnschedulable && (
-                    <span style={{ fontSize: '0.66rem', color: 'var(--k8s-amber)', fontWeight: 700 }}>
-                      SchedulingDisabled
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <CoolingTurbineFan
+                    status={!node.status.ready ? 'fault' : node.status.usage.cpuPercent > 70 ? 'turbo' : 'running'}
+                    size={38}
+                    showRpm={false}
+                  />
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '0.25rem' }}>
+                    <span
+                      style={{
+                        fontSize: '0.68rem',
+                        fontWeight: 800,
+                        padding: '0.15rem 0.55rem',
+                        borderRadius: '999px',
+                        textTransform: 'uppercase',
+                        background: isCP ? 'rgba(168, 85, 247, 0.15)' : 'rgba(56, 189, 248, 0.15)',
+                        color: isCP ? 'var(--k8s-purple)' : 'var(--k8s-cyan)',
+                        border: `1px solid ${isCP ? 'rgba(168, 85, 247, 0.3)' : 'rgba(56, 189, 248, 0.3)'}`,
+                      }}
+                    >
+                      {node.status.role}
                     </span>
-                  )}
+
+                    {isUnschedulable && (
+                      <span style={{ fontSize: '0.66rem', color: 'var(--k8s-amber)', fontWeight: 700 }}>
+                        SchedulingDisabled
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
 
@@ -216,13 +226,27 @@ export const ClusterCanvas: React.FC = () => {
                           }}
                         >
                           <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', minWidth: 0 }}>
-                            {getPhaseIcon(p.status.phase)}
+                            <LuminousBulb
+                              state={
+                                p.status.phase === 'Running'
+                                  ? 'green'
+                                  : p.status.phase === 'CrashLoopBackOff' || p.status.phase === 'Failed'
+                                  ? 'red'
+                                  : 'amber'
+                              }
+                              size={15}
+                            />
                             <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                               {p.metadata.name}
                             </span>
                           </div>
 
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                            <CoolingTurbineFan
+                              status={p.status.phase === 'Running' ? 'running' : 'stopped'}
+                              size={22}
+                              showRpm={false}
+                            />
                             <span
                               style={{
                                 fontSize: '0.68rem',

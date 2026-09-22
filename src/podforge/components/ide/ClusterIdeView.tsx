@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ClusterCanvas } from '../visualizer/ClusterCanvas';
 import { KubeTerminal } from '../terminal/KubeTerminal';
-import { FileCode, Play, CheckCircle2 } from 'lucide-react';
+import { FileCode, Play, CheckCircle2, Zap, LayoutGrid } from 'lucide-react';
+import { EnterpriseKubeSimulator } from '../simulators/EnterpriseKubeSimulator';
 
 const SAMPLE_MANIFESTS: Record<string, string> = {
   'frontend-deploy.yaml': `apiVersion: apps/v1
@@ -63,6 +64,7 @@ export const ClusterIdeView: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<string>('frontend-deploy.yaml');
   const [manifestContent, setManifestContent] = useState<string>(SAMPLE_MANIFESTS['frontend-deploy.yaml']);
   const [appliedFeedback, setAppliedFeedback] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'simulation' | 'canvas'>('simulation');
 
   const handleSelectFile = (fileName: string) => {
     setSelectedFile(fileName);
@@ -205,12 +207,73 @@ export const ClusterIdeView: React.FC = () => {
         </div>
       </div>
 
-      {/* RIGHT COLUMN: SPLIT VIEW (LIVE CANVAS + TERMINAL) */}
+      {/* RIGHT COLUMN: SPLIT VIEW (SIMULATOR / CANVAS + TERMINAL) */}
       <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
-        <div style={{ height: '55%', borderBottom: '1px solid var(--border-color)', overflow: 'hidden' }}>
-          <ClusterCanvas />
+        {/* View Switcher Bar */}
+        <div style={{
+          height: '38px',
+          background: '#070b16',
+          borderBottom: '1px solid var(--border-color)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 0.85rem',
+          flexShrink: 0,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(255,255,255,0.06)', borderRadius: '6px', padding: '0.15rem' }}>
+            <button
+              onClick={() => setViewMode('simulation')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                padding: '0.2rem 0.65rem',
+                borderRadius: '5px',
+                border: 'none',
+                background: viewMode === 'simulation' ? 'linear-gradient(135deg, #326ce5, #1d4ed8)' : 'transparent',
+                color: viewMode === 'simulation' ? '#fff' : '#38bdf8',
+                fontSize: '0.74rem',
+                fontWeight: 800,
+                cursor: 'pointer',
+                boxShadow: viewMode === 'simulation' ? '0 0 10px rgba(50, 108, 229, 0.4)' : 'none',
+              }}
+            >
+              <Zap size={13} />
+              ⚡ Enterprise Rig (Live Simulation)
+            </button>
+            <button
+              onClick={() => setViewMode('canvas')}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.35rem',
+                padding: '0.2rem 0.65rem',
+                borderRadius: '5px',
+                border: 'none',
+                background: viewMode === 'canvas' ? 'rgba(56, 189, 248, 0.2)' : 'transparent',
+                color: viewMode === 'canvas' ? '#fff' : '#94a3b8',
+                fontSize: '0.74rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+              }}
+            >
+              <LayoutGrid size={13} />
+              🗺️ Live Mesh Canvas
+            </button>
+          </div>
+
+          <span style={{ fontSize: '0.66rem', color: '#64748b' }}>
+            {viewMode === 'simulation' ? 'Tactile switches & self-healing enabled' : 'Full cluster topology view'}
+          </span>
         </div>
-        <div style={{ height: '45%', overflow: 'hidden' }}>
+
+        {/* Top 58%: Either Enterprise Simulator OR Canvas */}
+        <div style={{ height: '58%', borderBottom: '1px solid var(--border-color)', overflow: 'hidden' }}>
+          {viewMode === 'simulation' ? <EnterpriseKubeSimulator /> : <ClusterCanvas />}
+        </div>
+
+        {/* Bottom 42%: Terminal */}
+        <div style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
           <KubeTerminal autoFocus={false} />
         </div>
       </div>
