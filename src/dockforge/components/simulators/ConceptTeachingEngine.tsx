@@ -574,52 +574,93 @@ export const ConceptTeachingEngine: React.FC<ConceptTeachingEngineProps> = ({
                   borderRadius: '12px',
                   border: '1px solid var(--docker-border)',
                   display: 'flex',
-                  flexWrap: 'wrap',
-                  gap: '0.65rem',
-                  fontFamily: 'JetBrains Mono, monospace',
-                  fontSize: '1rem',
+                  flexDirection: 'column',
+                  gap: '0.75rem',
                   marginBottom: '1.5rem',
                 }}
               >
-                {concept.syntaxTokens.map((tok, idx) => {
-                  const isSelected = selectedTokenIndex === idx;
-                  return (
-                    <span
-                      key={idx}
-                      onClick={() => setSelectedTokenIndex(idx)}
-                      style={{
-                        padding: '0.4rem 0.75rem',
-                        borderRadius: '8px',
-                        background: isSelected ? 'rgba(14, 165, 233, 0.3)' : 'rgba(255,255,255,0.06)',
-                        border: isSelected ? '2px solid #38bdf8' : '1px solid rgba(255,255,255,0.1)',
-                        color: isSelected ? '#38bdf8' : '#fff',
-                        fontWeight: 700,
-                        cursor: 'pointer',
-                        transition: 'all 0.15s ease',
-                      }}
-                    >
-                      {tok.token}
-                    </span>
-                  );
-                })}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
+                  <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.72rem', color: 'var(--docker-text-secondary)' }}>
+                    $ {concept.syntaxCode || concept.command}
+                  </span>
+                  <span style={{ fontSize: '0.68rem', color: '#64748b', fontStyle: 'italic' }}>
+                    👆 Click any token below
+                  </span>
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', fontFamily: 'JetBrains Mono, monospace', fontSize: '1rem' }}>
+                  {concept.syntaxTokens.map((tok, idx) => {
+                    const isSelected = selectedTokenIndex === idx;
+                    // Role-based color coding
+                    const roleColors: Record<string, { bg: string; border: string; text: string; selectedBg: string }> = {
+                      'CLI Tool': { bg: 'rgba(56, 189, 248, 0.12)', border: '#38bdf8', text: '#38bdf8', selectedBg: 'rgba(56, 189, 248, 0.3)' },
+                      'Command': { bg: 'rgba(74, 222, 128, 0.12)', border: '#4ade80', text: '#4ade80', selectedBg: 'rgba(74, 222, 128, 0.3)' },
+                      'Flag': { bg: 'rgba(167, 139, 250, 0.12)', border: '#a78bfa', text: '#a78bfa', selectedBg: 'rgba(167, 139, 250, 0.3)' },
+                      'Image': { bg: 'rgba(251, 191, 36, 0.12)', border: '#fbbf24', text: '#fbbf24', selectedBg: 'rgba(251, 191, 36, 0.3)' },
+                      'Target Image': { bg: 'rgba(251, 191, 36, 0.12)', border: '#fbbf24', text: '#fbbf24', selectedBg: 'rgba(251, 191, 36, 0.3)' },
+                      'Argument': { bg: 'rgba(244, 114, 182, 0.12)', border: '#f472b6', text: '#f472b6', selectedBg: 'rgba(244, 114, 182, 0.3)' },
+                      'Option': { bg: 'rgba(244, 114, 182, 0.12)', border: '#f472b6', text: '#f472b6', selectedBg: 'rgba(244, 114, 182, 0.3)' },
+                      'Subcommand': { bg: 'rgba(45, 212, 191, 0.12)', border: '#2dd4bf', text: '#2dd4bf', selectedBg: 'rgba(45, 212, 191, 0.3)' },
+                    };
+                    const colors = roleColors[tok.role] || { bg: 'rgba(148, 163, 184, 0.12)', border: '#94a3b8', text: '#94a3b8', selectedBg: 'rgba(148, 163, 184, 0.3)' };
+                    return (
+                      <span
+                        key={idx}
+                        onClick={() => setSelectedTokenIndex(isSelected ? null : idx)}
+                        style={{
+                          padding: '0.4rem 0.75rem',
+                          borderRadius: '8px',
+                          background: isSelected ? colors.selectedBg : colors.bg,
+                          border: isSelected ? `2px solid ${colors.border}` : `1px solid ${colors.border}40`,
+                          color: colors.text,
+                          fontWeight: 700,
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease',
+                          boxShadow: isSelected ? `0 0 12px ${colors.border}30` : 'none',
+                          transform: isSelected ? 'scale(1.05)' : 'scale(1)',
+                        }}
+                      >
+                        {tok.token}
+                        <span style={{ fontSize: '0.6rem', marginLeft: '0.4rem', opacity: 0.7, fontWeight: 600 }}>
+                          {tok.role}
+                        </span>
+                      </span>
+                    );
+                  })}
+                </div>
               </div>
 
               {/* Active Token Explanation Card */}
-              {selectedTokenIndex !== null && concept.syntaxTokens[selectedTokenIndex] && (
-                <div style={{ background: 'rgba(14, 165, 233, 0.08)', border: '1px solid rgba(14, 165, 233, 0.3)', padding: '1.25rem', borderRadius: '10px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem' }}>
-                    <span style={{ fontSize: '0.72rem', fontWeight: 800, padding: '0.2rem 0.6rem', borderRadius: '6px', background: 'var(--docker-blue)', color: '#fff' }}>
-                      {concept.syntaxTokens[selectedTokenIndex].role}
-                    </span>
-                    <span style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 800, fontSize: '0.95rem', color: '#fff' }}>
-                      {concept.syntaxTokens[selectedTokenIndex].token}
-                    </span>
+              {selectedTokenIndex !== null && concept.syntaxTokens[selectedTokenIndex] && (() => {
+                const tok = concept.syntaxTokens[selectedTokenIndex];
+                const roleColors: Record<string, string> = {
+                  'CLI Tool': '#38bdf8', 'Command': '#4ade80', 'Flag': '#a78bfa',
+                  'Image': '#fbbf24', 'Target Image': '#fbbf24', 'Argument': '#f472b6',
+                  'Option': '#f472b6', 'Subcommand': '#2dd4bf',
+                };
+                const accentColor = roleColors[tok.role] || '#94a3b8';
+                return (
+                  <div style={{
+                    background: `linear-gradient(135deg, ${accentColor}10 0%, rgba(15, 23, 42, 0.6) 100%)`,
+                    border: `1px solid ${accentColor}50`,
+                    padding: '1.25rem',
+                    borderRadius: '10px',
+                    marginBottom: '1rem',
+                    animation: 'fadeIn 0.2s ease',
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.6rem' }}>
+                      <span style={{ fontSize: '0.72rem', fontWeight: 800, padding: '0.2rem 0.6rem', borderRadius: '6px', background: accentColor, color: '#000' }}>
+                        {tok.role}
+                      </span>
+                      <span style={{ fontFamily: 'JetBrains Mono, monospace', fontWeight: 800, fontSize: '1.05rem', color: accentColor }}>
+                        {tok.token}
+                      </span>
+                    </div>
+                    <p style={{ fontSize: '0.92rem', color: '#e2e8f0', margin: 0, lineHeight: 1.6 }}>
+                      {tok.explanation}
+                    </p>
                   </div>
-                  <p style={{ fontSize: '0.88rem', color: '#e2e8f0', margin: 0, lineHeight: 1.5 }}>
-                    {concept.syntaxTokens[selectedTokenIndex].explanation}
-                  </p>
-                </div>
-              )}
+                );
+              })()}
             </div>
 
             {/* Syntax Variations Explorer */}
