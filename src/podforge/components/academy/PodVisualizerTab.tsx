@@ -27,64 +27,22 @@ interface ChaosEventLog {
   message: string;
 }
 
+import { getVisualizerCapabilities } from '../../data/topics/visualizerScope';
+
 export const PodVisualizerTab: React.FC<Props> = ({ concept }) => {
   const { executeCommand } = useApp();
   const [visualizerMode, setVisualizerMode] = useState<'diagram' | 'topology'>('diagram');
   const [chaosLogs, setChaosLogs] = useState<ChaosEventLog[]>([]);
 
-  const cid = concept.id.toLowerCase();
-  const ctitle = concept.title.toLowerCase();
-
-  // 1. Pod Crash & Self-Healing: strictly for Pods, ReplicaSets, Deployments, Probes
-  const allowsPodCrash =
-    cid.includes('c-pod-intro') ||
-    cid.includes('c-pod-lifecycle') ||
-    cid.includes('c-pod-health') ||
-    cid.includes('c-replicasets') ||
-    cid.includes('c-probes') ||
-    ctitle.includes('pod lifecycle') ||
-    ctitle.includes('self-healing') ||
-    ctitle.includes('replicasets');
-
-  // 2. HPA Traffic Spike: strictly for Autoscaling concepts
-  const allowsHpaSpike =
-    cid.includes('c-hpa') ||
-    cid.includes('c-autoscale') ||
-    ctitle.includes('horizontal pod autoscaler') ||
-    ctitle.includes('why autoscaling') ||
-    ctitle.includes('autoscaling');
-
-  // 3. Node Drain & Eviction: strictly for Worker Nodes, Scheduling, Evictions
-  const allowsNodeDrain =
-    cid.includes('c-worker-nodes') ||
-    cid.includes('c-node-drain') ||
-    cid.includes('c-pod-evictions') ||
-    cid.includes('c-taints') ||
-    ctitle.includes('worker nodes') ||
-    ctitle.includes('pod evictions') ||
-    ctitle.includes('taints');
-
-  // 4. Rolling Update: strictly for Deployments and Deployment Patterns
-  const allowsRollingUpdate =
-    cid.includes('c-deployments') ||
-    cid.includes('c-rolling-updates') ||
-    cid.includes('c-rollbacks') ||
-    cid.includes('c-blue-green') ||
-    cid.includes('c-canary') ||
-    ctitle.includes('rolling update') ||
-    ctitle.includes('deployment patterns') ||
-    ctitle.includes('rollout');
-
-  // Simulator toolbar is ONLY rendered where required by the concept
-  const hasAnySimulatorAction =
-    allowsPodCrash || allowsHpaSpike || allowsNodeDrain || allowsRollingUpdate;
-
-  // Scale trigger is only shown if the resource is scalable
-  const allowsScale =
-    /replicas:\s*\d+/.test(concept.yamlSnippet) ||
-    ctitle.includes('deployment') ||
-    ctitle.includes('replicaset') ||
-    ctitle.includes('statefulset');
+  const caps = getVisualizerCapabilities(concept);
+  const allowsPodCrash = caps.allowsPodCrash;
+  const allowsHpaSpike = caps.allowsHpaSpike;
+  const allowsNodeDrain = caps.allowsNodeDrain;
+  const allowsRollingUpdate = caps.allowsRollingUpdate;
+  const hasAnySimulatorAction = caps.supportsChaosSimulator;
+  const allowsScale = caps.allowsScale;
+  const allowsApply = caps.allowsApply;
+  const supportsTopology = caps.supportsTopology;
 
   const addChaosLog = (type: 'kill' | 'scale' | 'drain' | 'rollout', msg: string) => {
     const newLog: ChaosEventLog = {
@@ -182,100 +140,106 @@ export const PodVisualizerTab: React.FC<Props> = ({ concept }) => {
 
         {/* Mode Switcher Pill */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
-          <div
-            style={{
-              display: 'flex',
-              background: 'rgba(0, 0, 0, 0.4)',
-              borderRadius: '8px',
-              padding: '0.25rem',
-              border: '1px solid rgba(56, 189, 248, 0.3)',
-            }}
-          >
-            <button
-              onClick={() => setVisualizerMode('diagram')}
+          {supportsTopology && (
+            <div
               style={{
                 display: 'flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-                background: visualizerMode === 'diagram' ? 'var(--k8s-blue)' : 'transparent',
-                color: visualizerMode === 'diagram' ? '#fff' : '#94a3b8',
-                border: 'none',
-                borderRadius: '6px',
-                padding: '0.35rem 0.85rem',
-                fontSize: '0.78rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
+                background: 'rgba(0, 0, 0, 0.4)',
+                borderRadius: '8px',
+                padding: '0.25rem',
+                border: '1px solid rgba(56, 189, 248, 0.3)',
               }}
             >
-              <Network size={14} />
-              <span>Architecture &amp; Flow Diagram</span>
-            </button>
-
-            <button
-              onClick={() => setVisualizerMode('topology')}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-                background: visualizerMode === 'topology' ? 'var(--k8s-blue)' : 'transparent',
-                color: visualizerMode === 'topology' ? '#fff' : '#94a3b8',
-                border: 'none',
-                borderRadius: '6px',
-                padding: '0.35rem 0.85rem',
-                fontSize: '0.78rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              <Server size={14} />
-              <span>Live Cluster Topology</span>
-            </button>
-          </div>
-
-          {/* Quick Apply / Scale triggers */}
-          <div style={{ display: 'flex', gap: '0.45rem' }}>
-            <button
-              onClick={handleSimulateApply}
-              style={{
-                background: 'var(--bg-surface)',
-                border: '1px solid var(--border-color)',
-                borderRadius: '7px',
-                padding: '0.35rem 0.65rem',
-                color: '#38bdf8',
-                fontSize: '0.74rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.35rem',
-              }}
-            >
-              <Play size={12} /> Apply Manifest
-            </button>
-
-            {allowsScale && (
               <button
-                onClick={handleSimulateScale}
+                onClick={() => setVisualizerMode('diagram')}
                 style={{
-                  background: 'var(--bg-surface)',
-                  border: '1px solid var(--border-color)',
-                  borderRadius: '7px',
-                  padding: '0.35rem 0.65rem',
-                  color: '#10b981',
-                  fontSize: '0.74rem',
-                  fontWeight: 700,
-                  cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '0.35rem',
+                  gap: '0.4rem',
+                  background: visualizerMode === 'diagram' ? 'var(--k8s-blue)' : 'transparent',
+                  color: visualizerMode === 'diagram' ? '#fff' : '#94a3b8',
+                  border: 'none',
+                  borderRadius: '6px',
+                  padding: '0.35rem 0.85rem',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
                 }}
               >
-                <Zap size={12} /> Scale
+                <Network size={14} />
+                <span>Architecture &amp; Flow Diagram</span>
               </button>
-            )}
-          </div>
+
+              <button
+                onClick={() => setVisualizerMode('topology')}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  background: visualizerMode === 'topology' ? 'var(--k8s-blue)' : 'transparent',
+                  color: visualizerMode === 'topology' ? '#fff' : '#94a3b8',
+                  border: 'none',
+                  borderRadius: '6px',
+                  padding: '0.35rem 0.85rem',
+                  fontSize: '0.78rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <Server size={14} />
+                <span>Live Cluster Topology</span>
+              </button>
+            </div>
+          )}
+
+          {/* Quick Apply / Scale triggers - Only rendered where valid */}
+          {(allowsApply || allowsScale) && (
+            <div style={{ display: 'flex', gap: '0.45rem' }}>
+              {allowsApply && (
+                <button
+                  onClick={handleSimulateApply}
+                  style={{
+                    background: 'var(--bg-surface)',
+                    border: '1px solid var(--border-color)',
+                    borderRadius: '7px',
+                    padding: '0.35rem 0.65rem',
+                    color: '#38bdf8',
+                    fontSize: '0.74rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                  }}
+                >
+                  <Play size={12} /> Apply Manifest
+                </button>
+              )}
+
+              {allowsScale && (
+                <button
+                  onClick={handleSimulateScale}
+                  style={{
+                    background: 'var(--bg-surface)',
+                    border: '1px solid var(--border-color)',
+                    borderRadius: '7px',
+                    padding: '0.35rem 0.65rem',
+                    color: '#10b981',
+                    fontSize: '0.74rem',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                  }}
+                >
+                  <Zap size={12} /> Scale
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
