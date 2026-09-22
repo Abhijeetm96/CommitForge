@@ -1,164 +1,255 @@
-import React from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { useDocker } from '../../context/DockerContext';
 import { DockerTerminal } from '../terminal/DockerTerminal';
-import { FileCode, Play, Terminal, Layers, Box, Check, RefreshCw, HardDrive } from 'lucide-react';
+import { IdeFileExplorer } from './IdeFileExplorer';
+import { IdeSyntaxEditor } from './IdeSyntaxEditor';
+import { IdeContainerDashboard } from './IdeContainerDashboard';
+import { IdeBuildOutput } from './IdeBuildOutput';
+import { IdeStatusBar } from './IdeStatusBar';
+import { PROJECT_FILES, PROJECT_TREE, ProjectFile, isFolder, ProjectTreeItem } from './ideProjectFiles';
+import { Play, Upload, ArrowUpCircle, StopCircle, BarChart3, Trash2, Zap, Code2 } from 'lucide-react';
+import { EnterpriseDockerSimulator } from '../simulators/EnterpriseDockerSimulator';
+
+// Flatten the tree to quickly find a file by path
+function findFileInTree(items: ProjectTreeItem[], path: string): ProjectFile | null {
+  for (const item of items) {
+    if (isFolder(item)) {
+      const found = findFileInTree(item.children, path);
+      if (found) return found;
+    } else if (item.path === path) {
+      return item;
+    }
+  }
+  return null;
+}
 
 export const DockerIdeView: React.FC = () => {
   const {
-    activeIdeFile,
-    setActiveIdeFile,
+    executeCommand,
+    containers,
+    images,
+    volumes,
     dockerfileContent,
     setDockerfileContent,
     composeContent,
     setComposeContent,
-    executeCommand,
-    containers,
   } = useDocker();
 
-  const handleBuildRun = () => {
-    if (activeIdeFile === 'Dockerfile') {
-      executeCommand('docker build -t my-app:latest .');
+  // File explorer state
+  const [activeFilePath, setActiveFilePath] = useState('Dockerfile');
+  const [outputTab, setOutputTab] = useState<'terminal' | 'build' | 'logs'>('terminal');
+  const [centerMode, setCenterMode] = useState<'editor' | 'simulation'>('editor');
+
+  // Custom file contents for editable files (override PROJECT_FILES defaults)
+  const [customFiles, setCustomFiles] = useState<Record<string, string>>({});
+
+  const activeFile = useMemo(() => findFileInTree(PROJECT_TREE, activeFilePath), [activeFilePath]);
+
+  const activeContent = useMemo(() => {
+    // Sync with context for Dockerfile/compose
+    if (activeFilePath === 'Dockerfile') return dockerfileContent;
+    if (activeFilePath === 'docker-compose.yml') return composeContent;
+    return customFiles[activeFilePath] || PROJECT_FILES[activeFilePath] || '// File not found';
+  }, [activeFilePath, dockerfileContent, composeContent, customFiles]);
+
+  const handleFileContentChange = useCallback((content: string) => {
+    if (activeFilePath === 'Dockerfile') {
+      setDockerfileContent(content);
+    } else if (activeFilePath === 'docker-compose.yml') {
+      setComposeContent(content);
     } else {
-      executeCommand('docker compose up -d');
+      setCustomFiles(prev => ({ ...prev, [activeFilePath]: content }));
     }
+  }, [activeFilePath, setDockerfileContent, setComposeContent]);
+
+  // Toolbar actions
+  const handleBuildRun = () => {
+    setOutputTab('build');
+    executeCommand('docker build -t acme-api:latest .');
+    executeCommand('docker run -d --name acme-api -p 3000:3000 acme-api:latest');
+  };
+
+  const handleComposeUp = () => {
+    setOutputTab('build');
+    executeCommand('docker compose up -d');
+  };
+
+  const handleComposeDown = () => {
+    executeCommand('docker compose down');
+  };
+
+  const handlePush = () => {
+    setOutputTab('build');
+    executeCommand('docker push ghcr.io/acme-corp/acme-api:latest');
+  };
+
+  const handlePrune = () => {
+    executeCommand('docker system prune -f');
   };
 
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%', width: '100%', overflow: 'hidden', background: 'var(--docker-dark-bg)' }}>
-      {/* IDE Top Action Bar */}
-      <div
-        style={{
-          height: '45px',
-          background: 'var(--docker-surface)',
-          borderBottom: '1px solid var(--docker-border)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '0 1.25rem',
-        }}
-      >
-        {/* File Tabs */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-          <button
-            onClick={() => setActiveIdeFile('Dockerfile')}
-            style={{
-              padding: '0.35rem 0.85rem',
-              borderRadius: '6px 6px 0 0',
-              background: activeIdeFile === 'Dockerfile' ? 'var(--docker-dark-bg)' : 'transparent',
-              border: 'none',
-              borderTop: activeIdeFile === 'Dockerfile' ? '2px solid var(--docker-blue)' : '2px solid transparent',
-              color: activeIdeFile === 'Dockerfile' ? '#fff' : 'var(--docker-text-secondary)',
-              fontSize: '0.8rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.4rem',
-            }}
-          >
-            <FileCode size={14} color="#0ea5e9" />
-            Dockerfile
-          </button>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%', overflow: 'hidden', background: 'var(--docker-dark-bg)' }}>
 
+      {/* === TOP TOOLBAR === */}
+      <div style={{
+        height: '42px',
+        background: '#0c1220',
+        borderBottom: '1px solid rgba(255,255,255,0.08)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '0 1rem',
+        flexShrink: 0,
+      }}>
+        {/* Left: Project name */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <span style={{ fontSize: '1rem' }}>🐳</span>
+          <span style={{ fontSize: '0.82rem', fontWeight: 800, color: '#e2e8f0', letterSpacing: '-0.01em' }}>
+            acme-saas-platform
+          </span>
+          <span style={{ fontSize: '0.65rem', color: '#475569', padding: '0.1rem 0.4rem', background: 'rgba(255,255,255,0.05)', borderRadius: '4px' }}>
+            v2.4.1
+          </span>
+        </div>
+
+        {/* Center: View Switcher (Editor vs Enterprise Simulation Rig) */}
+        <div style={{ display: 'flex', background: 'rgba(255,255,255,0.06)', borderRadius: '6px', padding: '0.15rem' }}>
           <button
-            onClick={() => setActiveIdeFile('docker-compose.yml')}
+            onClick={() => setCenterMode('editor')}
             style={{
-              padding: '0.35rem 0.85rem',
-              borderRadius: '6px 6px 0 0',
-              background: activeIdeFile === 'docker-compose.yml' ? 'var(--docker-dark-bg)' : 'transparent',
-              border: 'none',
-              borderTop: activeIdeFile === 'docker-compose.yml' ? '2px solid var(--docker-blue)' : '2px solid transparent',
-              color: activeIdeFile === 'docker-compose.yml' ? '#fff' : 'var(--docker-text-secondary)',
-              fontSize: '0.8rem',
-              fontWeight: 700,
-              cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '0.4rem',
+              gap: '0.35rem',
+              padding: '0.2rem 0.6rem',
+              borderRadius: '5px',
+              border: 'none',
+              background: centerMode === 'editor' ? '#0ea5e9' : 'transparent',
+              color: centerMode === 'editor' ? '#fff' : '#94a3b8',
+              fontSize: '0.72rem',
+              fontWeight: 700,
+              cursor: 'pointer',
             }}
           >
-            <Layers size={14} color="#38bdf8" />
-            docker-compose.yml
+            <Code2 size={12} />
+            Code Editor
+          </button>
+          <button
+            onClick={() => setCenterMode('simulation')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              padding: '0.2rem 0.6rem',
+              borderRadius: '5px',
+              border: 'none',
+              background: centerMode === 'simulation' ? 'linear-gradient(135deg, #0ea5e9, #0284c7)' : 'transparent',
+              color: centerMode === 'simulation' ? '#fff' : '#38bdf8',
+              fontSize: '0.72rem',
+              fontWeight: 800,
+              cursor: 'pointer',
+              boxShadow: centerMode === 'simulation' ? '0 0 10px rgba(14, 165, 233, 0.4)' : 'none',
+            }}
+          >
+            <Zap size={12} />
+            ⚡ Enterprise Live Rig
           </button>
         </div>
 
-        {/* Action Controls */}
-        <button
-          onClick={handleBuildRun}
-          style={{
-            padding: '0.35rem 0.9rem',
-            borderRadius: '6px',
-            background: 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)',
-            color: '#fff',
-            border: 'none',
-            fontSize: '0.78rem',
-            fontWeight: 800,
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.4rem',
-            boxShadow: '0 2px 8px rgba(14, 165, 233, 0.4)',
-          }}
-        >
-          <Play size={13} fill="#fff" />
-          {activeIdeFile === 'Dockerfile' ? 'Build & Run Image' : 'Compose Up'}
-        </button>
+        {/* Right: Action buttons */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <ToolbarButton icon={<Play size={12} fill="#fff" />} label="Build & Run" color="#0ea5e9" onClick={handleBuildRun} />
+          <ToolbarButton icon={<ArrowUpCircle size={12} />} label="Compose Up" color="#4ade80" onClick={handleComposeUp} />
+          <ToolbarButton icon={<StopCircle size={12} />} label="Compose Down" color="#f87171" onClick={handleComposeDown} />
+          <div style={{ width: '1px', height: '20px', background: 'rgba(255,255,255,0.08)', margin: '0 0.2rem' }} />
+          <ToolbarButton icon={<Upload size={12} />} label="Push" color="#a78bfa" onClick={handlePush} />
+          <ToolbarButton icon={<Trash2 size={12} />} label="Prune" color="#94a3b8" onClick={handlePrune} />
+        </div>
       </div>
 
-      {/* Main Workspace Layout */}
-      <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1.2fr 1fr', height: 'calc(100% - 45px)' }}>
-        {/* Editor Side */}
-        <div style={{ display: 'flex', flexDirection: 'column', borderRight: '1px solid var(--docker-border)', height: '100%' }}>
-          <textarea
-            value={activeIdeFile === 'Dockerfile' ? dockerfileContent : composeContent}
-            onChange={(e) => {
-              if (activeIdeFile === 'Dockerfile') {
-                setDockerfileContent(e.target.value);
-              } else {
-                setComposeContent(e.target.value);
-              }
-            }}
-            spellCheck={false}
-            style={{
-              flex: 1,
-              width: '100%',
-              background: '#070b14',
-              color: '#38bdf8',
-              fontFamily: 'JetBrains Mono, Fira Code, monospace',
-              fontSize: '0.88rem',
-              lineHeight: 1.6,
-              padding: '1.25rem',
-              border: 'none',
-              outline: 'none',
-              resize: 'none',
-              boxSizing: 'border-box',
-            }}
-          />
+      {/* === MAIN WORKSPACE === */}
+      <div style={{
+        flex: 1,
+        display: 'grid',
+        gridTemplateColumns: centerMode === 'simulation' ? '220px 1fr' : '220px 1fr 340px',
+        height: 'calc(100% - 70px)',
+        overflow: 'hidden',
+      }}>
+
+        {/* Column 1: File Explorer */}
+        <div style={{ borderRight: '1px solid rgba(255,255,255,0.08)', overflowY: 'auto', background: '#0a0f1a' }}>
+          <IdeFileExplorer activeFilePath={activeFilePath} onSelectFile={setActiveFilePath} />
         </div>
 
-        {/* Output Side: Containers Monitor & Terminal */}
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-          {/* Active Containers Mini Inspector */}
-          <div style={{ padding: '0.85rem 1rem', background: 'var(--docker-surface)', borderBottom: '1px solid var(--docker-border)' }}>
-            <div style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--docker-text-secondary)', textTransform: 'uppercase', marginBottom: '0.4rem' }}>
-              Active Containers ({containers.length})
+        {/* Column 2: Code Editor OR Enterprise Simulation Rig */}
+        <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          {centerMode === 'simulation' ? (
+            <EnterpriseDockerSimulator />
+          ) : (
+            <IdeSyntaxEditor
+              filePath={activeFilePath}
+              content={activeContent}
+              language={activeFile?.language || 'dockerfile'}
+              editable={activeFile?.editable ?? false}
+              onChange={handleFileContentChange}
+            />
+          )}
+        </div>
+
+        {/* Column 3: Dashboard + Terminal (only when in editor mode) */}
+        {centerMode === 'editor' && (
+          <div style={{ display: 'flex', flexDirection: 'column', borderLeft: '1px solid rgba(255,255,255,0.08)', overflow: 'hidden' }}>
+
+            {/* Top: Container Dashboard with Live Hardware switches & fans */}
+            <div style={{ height: '45%', overflowY: 'auto', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+              <IdeContainerDashboard />
             </div>
-            <div style={{ display: 'flex', gap: '0.5rem', overflowX: 'auto' }}>
-              {containers.map((c) => (
-                <div key={c.id} style={{ padding: '0.4rem 0.65rem', borderRadius: '6px', background: 'rgba(255,255,255,0.04)', border: '1px solid var(--docker-border)', fontSize: '0.72rem', whiteSpace: 'nowrap' }}>
-                  <span style={{ fontWeight: 700, color: '#fff' }}>{c.name}</span>
-                  <span style={{ color: c.status === 'running' ? '#4ade80' : '#ef4444', marginLeft: '0.4rem' }}>● {c.status}</span>
+
+            {/* Bottom: Terminal / Build Output */}
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+              <IdeBuildOutput activeTab={outputTab} onTabChange={setOutputTab} />
+              {outputTab === 'terminal' && (
+                <div style={{ flex: 1, overflow: 'hidden' }}>
+                  <DockerTerminal />
                 </div>
-              ))}
+              )}
             </div>
           </div>
-
-          {/* Terminal */}
-          <div style={{ flex: 1, height: '100%' }}>
-            <DockerTerminal />
-          </div>
-        </div>
+        )}
       </div>
+
+      {/* === STATUS BAR === */}
+      <IdeStatusBar />
     </div>
   );
 };
+
+// --- Helper: Toolbar Button ---
+const ToolbarButton: React.FC<{
+  icon: React.ReactNode;
+  label: string;
+  color: string;
+  onClick: () => void;
+}> = ({ icon, label, color, onClick }) => (
+  <button
+    onClick={onClick}
+    style={{
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.3rem',
+      padding: '0.28rem 0.65rem',
+      borderRadius: '5px',
+      background: `${color}18`,
+      border: `1px solid ${color}30`,
+      color,
+      fontSize: '0.7rem',
+      fontWeight: 700,
+      cursor: 'pointer',
+      transition: 'all 0.15s ease',
+    }}
+    onMouseEnter={(e) => { e.currentTarget.style.background = `${color}30`; }}
+    onMouseLeave={(e) => { e.currentTarget.style.background = `${color}18`; }}
+  >
+    {icon}
+    {label}
+  </button>
+);

@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { useDocker } from '../../context/DockerContext';
 import { Container, DockerImage, DockerVolume, DockerNetwork } from '../../docker-engine/types';
-import { Layers, Database, Network, HardDrive, Cpu, Terminal, ArrowRight, ShieldCheck, Activity } from 'lucide-react';
+import { Layers, Database, Network, HardDrive, Cpu, Terminal, ArrowRight, ShieldCheck, Activity, Zap } from 'lucide-react';
+import { EnterpriseDockerSimulator } from '../simulators/EnterpriseDockerSimulator';
 
 export const ContainerMeshVisualizer: React.FC = () => {
   const { containers, images, volumes, networks } = useDocker();
-  const [selectedView, setSelectedView] = useState<'filesystem' | 'layers' | 'networking'>('filesystem');
+  const [selectedView, setSelectedView] = useState<'enterprise' | 'filesystem' | 'layers' | 'networking'>('enterprise');
 
   const activeContainers = containers.filter((c) => c.status === 'running');
 
@@ -18,12 +19,33 @@ export const ContainerMeshVisualizer: React.FC = () => {
             Container Engine State &bull; Real-time Inspector
           </div>
           <h1 style={{ fontSize: '1.8rem', fontWeight: 900, color: '#fff', margin: 0 }}>
-            Container Topology &amp; Layer Visualizer
+            Container Topology &amp; Production Visualizer
           </h1>
         </div>
 
         {/* View Switcher Pills */}
         <div style={{ display: 'flex', gap: '0.5rem', background: 'var(--docker-surface)', padding: '0.35rem', borderRadius: '10px', border: '1px solid var(--docker-border)' }}>
+          <button
+            onClick={() => setSelectedView('enterprise')}
+            style={{
+              padding: '0.45rem 0.9rem',
+              borderRadius: '8px',
+              border: 'none',
+              background: selectedView === 'enterprise' ? 'linear-gradient(135deg, #0ea5e9, #0284c7)' : 'transparent',
+              color: selectedView === 'enterprise' ? '#fff' : '#38bdf8',
+              fontSize: '0.8rem',
+              fontWeight: 800,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              boxShadow: selectedView === 'enterprise' ? '0 0 12px rgba(14,165,233,0.4)' : 'none',
+            }}
+          >
+            <Zap size={14} />
+            ⚡ Enterprise Production Rig
+          </button>
+
           <button
             onClick={() => setSelectedView('filesystem')}
             style={{
@@ -85,6 +107,13 @@ export const ContainerMeshVisualizer: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {/* VIEW 0: ENTERPRISE PRODUCTION RIG */}
+      {selectedView === 'enterprise' && (
+        <div style={{ flex: 1, minHeight: '600px', display: 'flex', flexDirection: 'column' }}>
+          <EnterpriseDockerSimulator />
+        </div>
+      )}
 
       {/* VIEW 1: FILESYSTEM & MOUNTS */}
       {selectedView === 'filesystem' && (
