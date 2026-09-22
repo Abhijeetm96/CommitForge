@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 
 import { ViewMode } from '../../../context/AppContext';
+import { conceptRequiresVisualizer } from '../../data/topics/visualizerScope';
 
 type AcademyTab = 'learn' | 'spec' | 'practice' | 'visualize' | 'pitfalls' | 'quiz';
 type DifficultyTier = 'All' | 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert';
@@ -48,6 +49,16 @@ export const PodAcademyView: React.FC<PodAcademyViewProps> = ({ onSwitchToSuite 
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   const currentChapter = KUBE_CHAPTERS.find((ch) => ch.concepts.some((c) => c.id === activeConcept.id));
+
+  // Determine if this concept requires/supports an interactive visualizer or simulator
+  const hasVisualizer = useMemo(() => conceptRequiresVisualizer(activeConcept), [activeConcept]);
+
+  // If user navigates from a visualizer-enabled concept to a theoretical/setup concept, fallback to learn tab
+  React.useEffect(() => {
+    if (activeTab === 'visualize' && !hasVisualizer) {
+      setActiveTab('learn');
+    }
+  }, [hasVisualizer, activeTab]);
 
   // Flatten all concepts for linear previous / next navigation
   const allConcepts = useMemo(() => KUBE_CHAPTERS.flatMap((ch) => ch.concepts), []);
@@ -393,7 +404,7 @@ export const PodAcademyView: React.FC<PodAcademyViewProps> = ({ onSwitchToSuite 
             <button
               type="button"
               onClick={() => {
-                setActiveConceptId('c-pod-intro');
+                setActiveConceptId('c-k8s-overview');
                 setActiveTab('learn');
               }}
               title="Return to PodForge Academy"
@@ -632,7 +643,9 @@ export const PodAcademyView: React.FC<PodAcademyViewProps> = ({ onSwitchToSuite 
                 { id: 'learn' as AcademyTab, label: 'Concept Overview', icon: BookOpen },
                 { id: 'spec' as AcademyTab, label: 'Declarative YAML', icon: FileCode },
                 { id: 'practice' as AcademyTab, label: 'Terminal Sandbox', icon: Code2 },
-                { id: 'visualize' as AcademyTab, label: 'Live Visualizer', icon: Activity },
+                ...(hasVisualizer
+                  ? [{ id: 'visualize' as AcademyTab, label: 'Live Visualizer', icon: Activity }]
+                  : []),
                 { id: 'pitfalls' as AcademyTab, label: 'Pitfalls & SRE', icon: AlertTriangle },
                 { id: 'quiz' as AcademyTab, label: 'Scenario Quiz', icon: Award },
               ].map((tab) => {
