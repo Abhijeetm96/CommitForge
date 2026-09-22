@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { DOCKER_14_TOPICS } from '../dockforge/data/unifiedDockerData';
+import { DOCKER_14_TOPICS, DOCKER_UNIVERSAL_CONCEPTS } from '../dockforge/data/unifiedDockerData';
 import { ensureFullConceptData } from '../dockforge/data/conceptDataEnricher';
 
 describe('DockForge Master Docker Curriculum & Interactive Pedagogy Audit', () => {
@@ -21,7 +21,12 @@ describe('DockForge Master Docker Curriculum & Interactive Pedagogy Audit', () =
     const missingDataIssues: string[] = [];
 
     allConcepts.forEach((rawConcept) => {
-      const concept = ensureFullConceptData(rawConcept);
+      const fullConcept = DOCKER_UNIVERSAL_CONCEPTS[rawConcept.id];
+      if (!fullConcept) {
+        missingDataIssues.push(`${rawConcept.id}: concept not found in DOCKER_UNIVERSAL_CONCEPTS`);
+        return;
+      }
+      const concept = ensureFullConceptData(fullConcept);
 
       // Stage 1: Mental Model & Without vs With
       if (!concept.withoutVsWith) {
@@ -107,7 +112,7 @@ describe('DockForge Master Docker Curriculum & Interactive Pedagogy Audit', () =
     DOCKER_14_TOPICS.forEach((topic) => {
       console.log(`✓ Topic ${topic.number}: ${topic.title.padEnd(38, ' ')} | ${topic.concepts.length} concepts`);
       topic.concepts.forEach((c) => {
-        const full = ensureFullConceptData(c);
+        const full = ensureFullConceptData(DOCKER_UNIVERSAL_CONCEPTS[c.id] || c as any);
         console.log(`    ↳ [${full.difficulty.padEnd(12, ' ')}] ${c.title.padEnd(36, ' ')} (${c.command})`);
         console.log(`        - Internal Flow: ${full.internalFlow?.length} steps | Nodes: ${full.blockDiagram?.nodes.length} | Mistakes: ${full.commonMistakes?.length}`);
       });
