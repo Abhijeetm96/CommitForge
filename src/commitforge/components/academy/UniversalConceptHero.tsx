@@ -319,9 +319,9 @@ export const UniversalConceptHero: React.FC<Props> = ({
               {isCiCd && (
                 <span
                   style={{
-                    fontSize: '0.7rem',
+                    fontSize: '0.75rem',
                     fontWeight: 800,
-                    padding: '0.15rem 0.65rem',
+                    padding: '0.18rem 0.65rem',
                     borderRadius: '999px',
                     background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.35) 0%, rgba(99, 102, 241, 0.35) 100%)',
                     color: '#f3e8ff',
@@ -351,9 +351,9 @@ export const UniversalConceptHero: React.FC<Props> = ({
                   <span
                     key={idx}
                     style={{
-                      fontSize: '0.7rem',
+                      fontSize: '0.75rem',
                       fontWeight: 700,
-                      padding: '0.15rem 0.55rem',
+                      padding: '0.18rem 0.6rem',
                       borderRadius: '999px',
                       background: colorTheme.bg,
                       color: colorTheme.text,
@@ -392,7 +392,7 @@ export const UniversalConceptHero: React.FC<Props> = ({
         )}
       </div>
 
-      {/* 6 Sub-Tabs: Learn | Explore | Sandbox | Visualize | Practice | Reference (Sticky so navigation is never lost) */}
+      {/* 6 Sub-Tabs: Concept Overview | Variations & Scenarios | Interactive Sandbox | Visual Flow | Hands-on Challenge | Command Manual */}
       <div
         className="academy-subtabs-bar"
         style={{
@@ -409,12 +409,12 @@ export const UniversalConceptHero: React.FC<Props> = ({
         }}
       >
         {([
-          { id: 'Learn', label: 'Learn' },
+          { id: 'Learn', label: 'Concept Overview' },
           { id: 'Explore', label: 'Variations & Scenarios' },
-          { id: 'Sandbox', label: 'Sandbox' },
-          { id: 'Visualize', label: 'Visualize' },
-          { id: 'Practice', label: 'Practice' },
-          { id: 'Reference', label: 'Reference' },
+          { id: 'Sandbox', label: 'Interactive Sandbox' },
+          { id: 'Visualize', label: 'Visual Flow' },
+          { id: 'Practice', label: 'Hands-on Challenge' },
+          { id: 'Reference', label: 'Command Manual' },
         ] as const).map(({ id: tab, label }) => {
           const isActive = activeTab === tab;
           const isSandbox = tab === 'Sandbox';
