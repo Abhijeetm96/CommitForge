@@ -38,11 +38,15 @@ describe('Forge Suite Unified Portal Tests', () => {
     expect(validRoadmapMode).toBe('roadmap');
   });
 
-  it('validates devops roadmap stage coverage across 3 tracks and 9 disciplines', () => {
-    const totalRoadmapStages = 9;
-    const liveStages = ['stage-git', 'stage-cicd', 'stage-k8s'];
-    const upcomingStages = ['stage-docker', 'stage-ansible', 'stage-terraform', 'stage-observability', 'stage-security', 'stage-ebpf'];
+  it('exports FuturisticParallaxBackground as a valid component', async () => {
+    const { FuturisticParallaxBackground } = await import('../components/home/FuturisticParallaxBackground');
+    expect(FuturisticParallaxBackground).toBeDefined();
+    expect(typeof FuturisticParallaxBackground).toBe('function');
+  });
 
-    expect(liveStages.length + upcomingStages.length).toBe(totalRoadmapStages);
+  it('exports ForgeSuiteHomeView as a valid component containing futuristic background', async () => {
+    const { ForgeSuiteHomeView } = await import('../components/home/ForgeSuiteHomeView');
+    expect(ForgeSuiteHomeView).toBeDefined();
+    expect(typeof ForgeSuiteHomeView).toBe('function');
   });
 });

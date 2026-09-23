@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Footer } from '../layout/Footer';
+import { FuturisticParallaxBackground } from './FuturisticParallaxBackground';
 import {
   Flame,
   Boxes,
@@ -142,16 +143,18 @@ export const ForgeSuiteHomeView: React.FC = () => {
   return (
     <div
       style={{
+        position: 'relative',
         flex: 1,
         minHeight: '100%',
-        background: 'radial-gradient(ellipse at top, #0f172a 0%, #030712 100%)',
+        background: '#030712',
         color: '#f8fafc',
         padding: '2.5rem 1.5rem 4rem',
         overflowY: 'auto',
         boxSizing: 'border-box',
       }}
     >
-      <div style={{ maxWidth: '1240px', margin: '0 auto' }}>
+      <FuturisticParallaxBackground />
+      <div style={{ position: 'relative', zIndex: 1, maxWidth: '1240px', margin: '0 auto' }}>
         {/* Top Suite Hero */}
         <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
           <div
@@ -268,7 +271,9 @@ export const ForgeSuiteHomeView: React.FC = () => {
           {/* ========================================================================= */}
           <div
             style={{
-              background: 'linear-gradient(170deg, rgba(20, 27, 45, 0.75) 0%, rgba(10, 15, 28, 0.9) 100%)',
+              background: 'linear-gradient(170deg, rgba(20, 27, 45, 0.72) 0%, rgba(10, 15, 28, 0.88) 100%)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
               border: '1px solid rgba(240, 80, 51, 0.25)',
               borderRadius: '20px',
               padding: '2rem',
@@ -595,7 +600,9 @@ export const ForgeSuiteHomeView: React.FC = () => {
           {/* ========================================================================= */}
           <div
             style={{
-              background: 'linear-gradient(170deg, rgba(20, 27, 45, 0.75) 0%, rgba(10, 15, 28, 0.9) 100%)',
+              background: 'linear-gradient(170deg, rgba(20, 27, 45, 0.72) 0%, rgba(10, 15, 28, 0.88) 100%)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
               border: '1px solid rgba(56, 189, 248, 0.25)',
               borderRadius: '20px',
               padding: '2rem',
@@ -916,7 +923,9 @@ export const ForgeSuiteHomeView: React.FC = () => {
           {/* ========================================================================= */}
           <div
             style={{
-              background: 'linear-gradient(170deg, rgba(20, 27, 45, 0.75) 0%, rgba(10, 15, 28, 0.9) 100%)',
+              background: 'linear-gradient(170deg, rgba(20, 27, 45, 0.72) 0%, rgba(10, 15, 28, 0.88) 100%)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
               border: '1px solid rgba(14, 165, 233, 0.25)',
               borderRadius: '20px',
               padding: '2rem',
@@ -1310,6 +1319,8 @@ export const ForgeSuiteHomeView: React.FC = () => {
                   key={tool.id}
                   style={{
                     background: 'linear-gradient(145deg, rgba(20, 27, 45, 0.6) 0%, rgba(10, 15, 26, 0.8) 100%)',
+                    backdropFilter: 'blur(16px)',
+                    WebkitBackdropFilter: 'blur(16px)',
                     border: `1px solid rgba(148, 163, 184, 0.15)`,
                     borderRadius: '20px',
                     padding: '1.75rem',
