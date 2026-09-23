@@ -268,9 +268,9 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
                         : hasActiveChild
                         ? 'var(--accent-primary)'
                         : 'var(--text-primary)',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
+                      whiteSpace: 'normal',
+                      lineHeight: 1.35,
+                      wordBreak: 'break-word',
                     }}
                   >
                     {topic.title}
@@ -380,6 +380,7 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
                         </span>
                         <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0, flex: 1 }}>
                           <span
+                            title={concept.command}
                             style={{
                               fontFamily: 'ui-monospace, monospace',
                               fontSize: '0.8rem',
@@ -400,7 +401,7 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
                           </span>
                           <span
                             style={{
-                              fontSize: '0.68rem',
+                              fontSize: '0.75rem',
                               color: isActive
                                 ? isCiCdTopic
                                   ? '#e9d5ff'
@@ -408,9 +409,7 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
                                 : isCiCdTopic
                                 ? '#a78bfa'
                                 : 'var(--text-secondary)',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              whiteSpace: 'nowrap',
+                              lineHeight: 1.3,
                             }}
                           >
                             {concept.shortDesc}
@@ -682,7 +681,7 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
                 color: isConceptDone ? '#22c55e' : '#38bdf8',
                 padding: '0.42rem 0.95rem',
                 borderRadius: '8px',
-                fontSize: '0.76rem',
+                fontSize: '0.78rem',
                 fontWeight: 700,
                 display: 'flex',
                 alignItems: 'center',
@@ -692,7 +691,7 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
               }}
             >
               <CheckCircle2 size={14} />
-              <span>{isConceptDone ? 'Learned ✓' : 'Mark as Learned'}</span>
+              <span>{isConceptDone ? 'Completed' : 'Mark as Complete'}</span>
             </button>
           </div>
 
