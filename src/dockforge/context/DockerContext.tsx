@@ -1,7 +1,8 @@
-import React, { createContext, useContext, useState, useMemo, useCallback } from 'react';
+import React, { createContext, useContext, useState, useMemo, useCallback, useEffect } from 'react';
 import { DockerEngine } from '../docker-engine/engine';
 import { Container, DockerImage, DockerVolume, DockerNetwork, DockerCommandResult } from '../docker-engine/types';
 import { DOCKER_14_TOPICS, DOCKER_UNIVERSAL_CONCEPTS, UniversalDockerConcept } from '../data/unifiedDockerData';
+import { ProgressManager } from '../../progress/ProgressManager';
 
 export type DockMode = 'academy' | 'labs' | 'ide' | 'visualizer';
 
@@ -49,10 +50,33 @@ export interface DockerContextType {
 const DockerContext = createContext<DockerContextType | null>(null);
 
 export const DockerProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [mode, setMode] = useState<DockMode>('academy');
-  const [activeTopicIdState, setActiveTopicIdState] = useState<string>('topic-01');
-  const [activeConceptIdState, setActiveConceptIdState] = useState<string>('c-what-are-containers');
-  const [completedConceptIds, setCompletedConceptIds] = useState<string[]>(['c-what-are-containers']);
+  const [mode, setMode] = useState<DockMode>(() => {
+    try {
+      const saved = localStorage.getItem('dockforge_initial_mode') as DockMode;
+      if (saved && ['academy', 'labs', 'ide', 'visualizer'].includes(saved)) {
+        localStorage.removeItem('dockforge_initial_mode');
+        return saved;
+      }
+    } catch {}
+    return 'academy';
+  });
+  const progressManager = useMemo(() => ProgressManager.getInstance(), []);
+  const [activeTopicIdState, setActiveTopicIdState] = useState<string>(() => {
+    return progressManager.getAcademyProgress('dockforge').currentTopicId || 'topic-01';
+  });
+  const [activeConceptIdState, setActiveConceptIdState] = useState<string>(() => {
+    return progressManager.getAcademyProgress('dockforge').currentLessonId || 'c-what-are-containers';
+  });
+  const [completedConceptIds, setCompletedConceptIds] = useState<string[]>(() => {
+    return progressManager.getAcademyProgress('dockforge').completedLessonIds;
+  });
+
+  useEffect(() => {
+    return progressManager.subscribe((state) => {
+      const ids = state.academies.dockforge?.completedLessonIds || [];
+      setCompletedConceptIds([...ids]);
+    });
+  }, [progressManager]);
 
   const setActiveTopicId = useCallback((topicId: string) => {
     setActiveTopicIdState(topicId);
@@ -67,11 +91,12 @@ export const DockerProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   const setActiveConceptId = useCallback((conceptId: string) => {
     setActiveConceptIdState(conceptId);
+    progressManager.startLesson('dockforge', conceptId);
     const parentTopic = DOCKER_14_TOPICS.find((t) => t.concepts.some((c) => c.id === conceptId));
     if (parentTopic) {
       setActiveTopicIdState(parentTopic.id);
     }
-  }, []);
+  }, [progressManager]);
 
   const activeTopicId = activeTopicIdState;
   const activeConceptId = activeConceptIdState;
@@ -135,8 +160,8 @@ volumes:
   }, [activeConceptId]);
 
   const markConceptComplete = useCallback((id: string) => {
-    setCompletedConceptIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
-  }, []);
+    progressManager.completeLesson('dockforge', id);
+  }, [progressManager]);
 
   const executeCommand = useCallback(
     (rawCommand: string): DockerCommandResult => {

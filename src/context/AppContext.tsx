@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useMemo } from '
 import { GitEngine } from '../commitforge/git-engine/engine';
 import { GitRepo, CommandResult, StateInspectorData, WhyExplanation, CommandComparison } from '../commitforge/git-engine/types';
 import { PROJECTS, ProjectDefinition } from '../commitforge/data/projects';
+import { ProgressManager } from '../progress/ProgressManager';
 
 export type ViewMode =
   | 'home'
@@ -168,8 +169,15 @@ export interface AppContextType {
 const AppContext = createContext<AppContextType | null>(null);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const progressManager = useMemo(() => ProgressManager.getInstance(), []);
   const [mode, setModeState] = useState<ViewMode>('home');
-  const [activeLessonConcept, setActiveLessonConcept] = useState<string | null>(null);
+  const [activeLessonConcept, setActiveLessonConceptState] = useState<string | null>(null);
+  const setActiveLessonConcept = (c: string | null) => {
+    setActiveLessonConceptState(c);
+    if (c) {
+      progressManager.startLesson('commitforge', c);
+    }
+  };
   const [instructionMode, setInstructionModeState] = useState<InstructionMode>(() => {
     return (localStorage.getItem('commitforge_instruction_mode') as InstructionMode) || 'beginner';
   });
@@ -255,9 +263,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   ]);
 
   // Lessons
-  const [currentLessonId, setCurrentLessonId] = useState<string>(DEFAULT_LESSON.id);
+  const [currentLessonId, setCurrentLessonIdState] = useState<string>(() => {
+    return progressManager.getAcademyProgress('commitforge').currentLessonId || DEFAULT_LESSON.id;
+  });
   const currentLesson = DEFAULT_LESSON;
-  const [completedLessonIds, setCompletedLessonIds] = useState<string[]>([]);
+  const [completedLessonIds, setCompletedLessonIds] = useState<string[]>(() => {
+    return progressManager.getAcademyProgress('commitforge').completedLessonIds;
+  });
+
+  useEffect(() => {
+    return progressManager.subscribe((state) => {
+      const ids = state.academies.commitforge?.completedLessonIds || [];
+      setCompletedLessonIds([...ids]);
+    });
+  }, [progressManager]);
+
+  const setCurrentLessonId = (id: string) => {
+    setCurrentLessonIdState(id);
+    progressManager.startLesson('commitforge', id);
+  };
   const [predictionRecord, setPredictionRecord] = useState<{ total: number; correct: number }>({ total: 0, correct: 0 });
 
   // Why explanation & comparisons
@@ -338,11 +362,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const markLessonComplete = (id: string) => {
-    if (!completedLessonIds.includes(id)) {
-      setCompletedLessonIds(prev => [...prev, id]);
-      recordSkillEvidence('foundations', 'practiced');
-      recordSkillEvidence('commits', 'practiced');
-    }
+    progressManager.completeLesson('commitforge', id);
+    recordSkillEvidence('foundations', 'practiced');
+    recordSkillEvidence('commits', 'practiced');
   };
 
   const setProjectKey = (key: string) => {

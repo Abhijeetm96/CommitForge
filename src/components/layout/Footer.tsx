@@ -1,5 +1,6 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
+import { useProgress } from '../../progress';
 import {
   Flame,
   Boxes,
@@ -16,6 +17,7 @@ import {
 
 export const Footer: React.FC = () => {
   const { setMode, setShowProblemSearch } = useApp();
+  const { openSettings } = useProgress();
 
   return (
     <footer
@@ -71,11 +73,11 @@ export const Footer: React.FC = () => {
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '0.5rem',
-                padding: '0.35rem 0.75rem',
+                padding: '0.4rem 0.8rem',
                 borderRadius: '999px',
-                background: 'rgba(34, 197, 94, 0.1)',
-                border: '1px solid rgba(34, 197, 94, 0.25)',
-                fontSize: '0.74rem',
+                background: 'rgba(34, 197, 94, 0.12)',
+                border: '1px solid rgba(34, 197, 94, 0.3)',
+                fontSize: '0.8rem',
                 fontWeight: 700,
                 color: '#4ade80',
               }}
@@ -89,7 +91,7 @@ export const Footer: React.FC = () => {
                   boxShadow: '0 0 8px #22c55e',
                 }}
               />
-              <span>2 Simulation Engines Operational</span>
+              <span>3 Simulation Engines Operational (Git • Docker • K8s)</span>
             </div>
           </div>
 
@@ -145,10 +147,27 @@ export const Footer: React.FC = () => {
                 </button>
               </li>
 
-              <li style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.85rem', color: '#64748b' }}>
-                <Container size={14} color="#0ea5e9" />
-                <span>Docker (Containers &amp; Image Layers)</span>
-                <span style={{ fontSize: '0.68rem', padding: '0.1rem 0.4rem', borderRadius: '4px', background: 'rgba(14, 165, 233, 0.12)', color: '#0ea5e9', fontWeight: 700 }}>SOON</span>
+              <li>
+                <button
+                  onClick={() => setMode('dockforge')}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                    color: 'var(--text-secondary)',
+                    fontSize: '0.85rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.45rem',
+                    cursor: 'pointer',
+                    transition: 'color 0.15s ease',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = '#0ea5e9')}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
+                >
+                  <Container size={14} color="#0ea5e9" />
+                  <span>DockForge (Docker &amp; Container Engine)</span>
+                </button>
               </li>
 
               <li style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', fontSize: '0.85rem', color: '#64748b' }}>
@@ -235,19 +254,33 @@ export const Footer: React.FC = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.82rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ color: '#94a3b8' }}>Global Problem Search</span>
-                <kbd style={{ padding: '0.15rem 0.4rem', borderRadius: '4px', background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-color)', fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: '#cbd5e1' }}>⌘K / Ctrl+K</kbd>
+                <kbd style={{ padding: '0.2rem 0.45rem', borderRadius: '4px', background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-color)', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: '#cbd5e1' }}>⌘K / Ctrl+K</kbd>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ color: '#94a3b8' }}>Clear Terminal</span>
-                <kbd style={{ padding: '0.15rem 0.4rem', borderRadius: '4px', background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-color)', fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: '#cbd5e1' }}>Ctrl+L</kbd>
+                <kbd style={{ padding: '0.2rem 0.45rem', borderRadius: '4px', background: 'var(--bg-surface-elevated)', border: '1px solid var(--border-color)', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: '#cbd5e1' }}>Ctrl+L</kbd>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ color: '#94a3b8' }}>Execution Environment</span>
                 <span style={{ color: '#38bdf8', fontWeight: 600 }}>100% In-Browser</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ color: '#94a3b8' }}>Cloud Fees</span>
-                <span style={{ color: '#4ade80', fontWeight: 700 }}>$0.00 (Zero Cloud Account Needed)</span>
+                <span style={{ color: '#94a3b8' }}>Learning Progress</span>
+                <button
+                  onClick={openSettings}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#38bdf8',
+                    cursor: 'pointer',
+                    fontSize: '0.78rem',
+                    fontWeight: 600,
+                    padding: 0,
+                    textDecoration: 'underline',
+                  }}
+                >
+                  Backup / Sync
+                </button>
               </div>
             </div>
           </div>

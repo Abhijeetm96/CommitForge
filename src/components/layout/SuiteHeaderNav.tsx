@@ -1,9 +1,11 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
-import { Flame, Boxes, Sparkles, Search, GitBranch, Container } from 'lucide-react';
+import { useProgress } from '../../progress';
+import { Flame, Boxes, Sparkles, Search, GitBranch, Container, Database } from 'lucide-react';
 
 export const SuiteHeaderNav: React.FC = () => {
   const { mode, setMode, setShowProblemSearch } = useApp();
+  const { openSettings } = useProgress();
 
   return (
     <header
@@ -56,15 +58,14 @@ export const SuiteHeaderNav: React.FC = () => {
           </span>
           <span
             style={{
-              fontSize: '0.7rem',
-              fontWeight: 700,
-              padding: '0.15rem 0.5rem',
-              borderRadius: '999px',
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              padding: '0.2rem 0.6rem',
+              borderRadius: '9999px',
               background: 'rgba(56, 189, 248, 0.1)',
               color: '#38bdf8',
               border: '1px solid rgba(56, 189, 248, 0.25)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.04em',
+              letterSpacing: '0.01em',
             }}
           >
             DevOps Academies
@@ -166,6 +167,26 @@ export const SuiteHeaderNav: React.FC = () => {
 
       {/* Right Controls */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <button
+          onClick={openSettings}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.4rem',
+            padding: '0.35rem 0.75rem',
+            borderRadius: '6px',
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border-color)',
+            color: 'var(--text-secondary)',
+            fontSize: '0.75rem',
+            cursor: 'pointer',
+          }}
+          title="Backup & Restore Learning Progress"
+        >
+          <Database size={13} color="#38bdf8" />
+          <span>Progress</span>
+        </button>
+
         <button
           onClick={() => setShowProblemSearch(true)}
           style={{

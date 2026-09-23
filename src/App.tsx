@@ -8,10 +8,14 @@ import { PodForgeApp } from './podforge/PodForgeApp';
 import { DockForgeApp } from './dockforge/DockForgeApp';
 import { Agentation } from 'agentation';
 
-const AppContent: React.FC = () => {
-  const { mode, setMode, setShowProblemSearch } = useApp();
+import { UniversalProblemSolver } from './platform/search/UniversalProblemSolver';
+import { TechnologyType } from './platform/lesson-runtime/types';
+import { ProgressProvider, ProgressSettingsModal } from './progress';
 
-  // Global ⌘K / Ctrl+K keyboard shortcut opens the Natural-Language Problem Solver
+const AppContent: React.FC = () => {
+  const { mode, setMode, showProblemSearch, setShowProblemSearch } = useApp();
+
+  // Global ⌘K / Ctrl+K keyboard shortcut opens the Universal Problem Solver
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
@@ -23,75 +27,78 @@ const AppContent: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [setShowProblemSearch]);
 
-  if (mode === 'home') {
-    return (
-      <>
-        <SuiteHeaderNav />
-        <main
-          className="main-content"
-          style={{
-            flex: '1 1 0%',
-            display: 'flex',
-            flexDirection: 'column',
-            minHeight: 0,
-            height: 'calc(100vh - 60px)',
-            maxHeight: 'calc(100vh - 60px)',
-            overflowY: 'auto',
-            overflowX: 'hidden',
-          }}
-        >
-          <ForgeSuiteHomeView />
-        </main>
-        <Agentation />
-      </>
-    );
-  }
+  const handleSelectLessonFromSolver = (tech: TechnologyType, _lessonId: string) => {
+    if (tech === 'git') setMode('learn');
+    else if (tech === 'docker') setMode('dockforge');
+    else if (tech === 'kubernetes') setMode('podforge');
+  };
 
-  if (mode === 'roadmap') {
-    return (
-      <>
-        <SuiteHeaderNav />
-        <main
-          className="main-content"
-          style={{
-            flex: '1 1 0%',
-            display: 'flex',
-            flexDirection: 'column',
-            minHeight: 0,
-            height: 'calc(100vh - 60px)',
-            maxHeight: 'calc(100vh - 60px)',
-            overflow: 'hidden',
-          }}
-        >
-          <DevOpsRoadmapView />
-        </main>
-        <Agentation />
-      </>
-    );
-  }
+  const renderActiveView = () => {
+    if (mode === 'home') {
+      return (
+        <>
+          <SuiteHeaderNav />
+          <main
+            className="main-content"
+            style={{
+              flex: '1 1 0%',
+              display: 'flex',
+              flexDirection: 'column',
+              minHeight: 0,
+              height: 'calc(100vh - 60px)',
+              maxHeight: 'calc(100vh - 60px)',
+              overflowY: 'auto',
+              overflowX: 'hidden',
+            }}
+          >
+            <ForgeSuiteHomeView />
+          </main>
+        </>
+      );
+    }
 
-  if (mode === 'podforge') {
-    return (
-      <>
-        <PodForgeApp onSwitchToSuite={(newMode) => setMode(newMode)} />
-        <Agentation />
-      </>
-    );
-  }
+    if (mode === 'roadmap') {
+      return (
+        <>
+          <SuiteHeaderNav />
+          <main
+            className="main-content"
+            style={{
+              flex: '1 1 0%',
+              display: 'flex',
+              flexDirection: 'column',
+              minHeight: 0,
+              height: 'calc(100vh - 60px)',
+              maxHeight: 'calc(100vh - 60px)',
+              overflow: 'hidden',
+            }}
+          >
+            <DevOpsRoadmapView />
+          </main>
+        </>
+      );
+    }
 
-  if (mode === 'dockforge') {
-    return (
-      <>
-        <DockForgeApp onSwitchToSuite={(newMode) => setMode(newMode)} />
-        <Agentation />
-      </>
-    );
-  }
+    if (mode === 'podforge') {
+      return <PodForgeApp onSwitchToSuite={(newMode) => setMode(newMode)} />;
+    }
 
-  // Active Git Academy: CommitForge
+    if (mode === 'dockforge') {
+      return <DockForgeApp onSwitchToSuite={(newMode) => setMode(newMode)} />;
+    }
+
+    return <CommitForgeApp onSwitchToSuite={(newMode) => setMode(newMode)} />;
+  };
+
   return (
     <>
-      <CommitForgeApp onSwitchToSuite={(newMode) => setMode(newMode)} />
+      {renderActiveView()}
+      <UniversalProblemSolver
+        isOpen={showProblemSearch}
+        onClose={() => setShowProblemSearch(false)}
+        onSelectLesson={handleSelectLessonFromSolver}
+      />
+      <ProgressSettingsModal />
       <Agentation />
     </>
   );
@@ -99,8 +106,10 @@ const AppContent: React.FC = () => {
 
 export default function App() {
   return (
-    <AppProvider>
-      <AppContent />
-    </AppProvider>
+    <ProgressProvider>
+      <AppProvider>
+        <AppContent />
+      </AppProvider>
+    </ProgressProvider>
   );
 }
