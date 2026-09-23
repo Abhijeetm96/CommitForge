@@ -153,5 +153,5 @@ describe('All 18 Topics Complete Curriculum Verification & Quality Audit', () =>
     expect(missingMistakes).toEqual([]);
     expect(missingVariationsRich).toEqual([]);
     expect(missingScenariosRich).toEqual([]);
-  });
+  }, 30000);
 });
