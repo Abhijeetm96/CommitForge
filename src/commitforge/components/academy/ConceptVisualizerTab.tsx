@@ -440,19 +440,19 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.35rem',
-                background: 'rgba(245, 158, 11, 0.12)',
-                border: '1px solid rgba(245, 158, 11, 0.3)',
-                color: '#f59e0b',
+                background: 'rgba(255, 255, 255, 0.04)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                color: 'var(--text-secondary)',
                 padding: '0.35rem 0.75rem',
                 borderRadius: '7px',
-                fontSize: '0.74rem',
-                fontWeight: 700,
+                fontSize: '0.75rem',
+                fontWeight: 600,
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
               }}
               title="Seed this concept's working files into the live visualizer"
             >
-              <Sparkles size={13} />
+              <Sparkles size={13} color="#f59e0b" />
               <span>Seed Concept State</span>
             </button>
 
@@ -463,18 +463,18 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.35rem',
-                  background: 'rgba(34, 197, 94, 0.12)',
-                  border: '1px solid rgba(34, 197, 94, 0.3)',
-                  color: '#22c55e',
+                  background: 'rgba(255, 255, 255, 0.04)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  color: 'var(--text-secondary)',
                   padding: '0.35rem 0.75rem',
                   borderRadius: '7px',
-                  fontSize: '0.74rem',
-                  fontWeight: 700,
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
                   cursor: 'pointer',
                   transition: 'all 0.15s ease',
                 }}
               >
-                <Terminal size={13} />
+                <Terminal size={13} color="#22c55e" />
                 <span>Open in Sandbox</span>
                 <ChevronRight size={13} />
               </button>
