@@ -1,7 +1,7 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
 import { useProgress } from '../../progress';
-import { Flame, Boxes, Sparkles, Search, GitBranch, Container, Database } from 'lucide-react';
+import { Flame, Search, Sun } from 'lucide-react';
 
 export const SuiteHeaderNav: React.FC = () => {
   const { mode, setMode, setShowProblemSearch } = useApp();
@@ -11,211 +11,325 @@ export const SuiteHeaderNav: React.FC = () => {
     <header
       className="header-nav"
       style={{
-        height: '60px',
+        height: '62px',
         flexShrink: 0,
-        background: 'var(--bg-surface)',
-        borderBottom: '1px solid var(--border-color)',
+        background: '#090e1a',
+        borderBottom: '1px solid rgba(148, 163, 184, 0.12)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 1.5rem',
+        padding: '0 2rem',
         position: 'sticky',
         top: 0,
         zIndex: 50,
+        boxSizing: 'border-box',
       }}
     >
-      {/* Brand */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+      {/* Brand & Logo */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
         <button
-          onClick={() => setMode('home')}
+          onClick={() => setMode('roadmap')}
           style={{
             background: 'none',
             border: 'none',
             color: 'inherit',
             display: 'flex',
             alignItems: 'center',
-            gap: '0.6rem',
+            gap: '0.65rem',
             cursor: 'pointer',
             padding: 0,
           }}
+          title="ForgeSuite Home"
         >
           <div
             style={{
               width: '32px',
               height: '32px',
               borderRadius: '8px',
-              background: 'linear-gradient(135deg, #f05033 0%, #326ce5 100%)',
+              background: 'linear-gradient(135deg, #0284c7 0%, #2563eb 100%)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 2px 8px rgba(240, 80, 51, 0.3)',
+              boxShadow: '0 2px 10px rgba(14, 165, 233, 0.35)',
             }}
           >
-            <Flame size={18} color="#fff" />
+            <Flame size={19} color="#ffffff" fill="#ffffff" />
           </div>
-          <span style={{ fontWeight: 800, fontSize: '1.05rem', letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
+          <span style={{ fontWeight: 800, fontSize: '1.15rem', letterSpacing: '-0.02em', color: '#ffffff' }}>
             Forge<span style={{ color: '#38bdf8' }}>Suite</span>
           </span>
-          <span
+        </button>
+
+        {/* Navigation Tabs Matching Reference Image */}
+        <nav style={{ display: 'flex', alignItems: 'center', gap: '1.6rem' }}>
+          {/* Learn Tab */}
+          <button
+            onClick={() => setMode('learn')}
             style={{
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              padding: '0.2rem 0.6rem',
-              borderRadius: '9999px',
-              background: 'rgba(56, 189, 248, 0.1)',
-              color: '#38bdf8',
-              border: '1px solid rgba(56, 189, 248, 0.25)',
-              letterSpacing: '0.01em',
+              background: 'none',
+              border: 'none',
+              color: mode === 'learn' ? '#ffffff' : '#94a3b8',
+              fontSize: '0.86rem',
+              fontWeight: mode === 'learn' ? 700 : 500,
+              cursor: 'pointer',
+              padding: '0.4rem 0',
+              position: 'relative',
+              transition: 'color 0.15s ease',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+            onMouseLeave={(e) => {
+              if (mode !== 'learn') e.currentTarget.style.color = '#94a3b8';
             }}
           >
-            DevOps Academies
-          </span>
-        </button>
+            Learn
+            {mode === 'learn' && (
+              <span
+                style={{
+                  position: 'absolute',
+                  bottom: '-12px',
+                  left: 0,
+                  right: 0,
+                  height: '3px',
+                  borderRadius: '9999px',
+                  background: '#38bdf8',
+                  boxShadow: '0 0 8px rgba(56, 189, 248, 0.8)',
+                }}
+              />
+            )}
+          </button>
+
+          {/* Roadmap Tab (Active) */}
+          <button
+            onClick={() => setMode('roadmap')}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: mode === 'roadmap' ? '#ffffff' : '#94a3b8',
+              fontSize: '0.86rem',
+              fontWeight: mode === 'roadmap' ? 700 : 500,
+              cursor: 'pointer',
+              padding: '0.4rem 0',
+              position: 'relative',
+              transition: 'color 0.15s ease',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+            onMouseLeave={(e) => {
+              if (mode !== 'roadmap') e.currentTarget.style.color = '#94a3b8';
+            }}
+          >
+            Roadmap
+            {mode === 'roadmap' && (
+              <span
+                style={{
+                  position: 'absolute',
+                  bottom: '-12px',
+                  left: '-4px',
+                  right: '-4px',
+                  height: '3px',
+                  borderRadius: '9999px',
+                  background: '#0284c7',
+                  boxShadow: '0 0 10px rgba(2, 132, 199, 0.9)',
+                }}
+              />
+            )}
+          </button>
+
+          {/* Practice Tab */}
+          <button
+            onClick={() => setMode('dockforge')}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: mode === 'dockforge' ? '#ffffff' : '#94a3b8',
+              fontSize: '0.86rem',
+              fontWeight: mode === 'dockforge' ? 700 : 500,
+              cursor: 'pointer',
+              padding: '0.4rem 0',
+              position: 'relative',
+              transition: 'color 0.15s ease',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+            onMouseLeave={(e) => {
+              if (mode !== 'dockforge') e.currentTarget.style.color = '#94a3b8';
+            }}
+          >
+            Practice
+            {mode === 'dockforge' && (
+              <span
+                style={{
+                  position: 'absolute',
+                  bottom: '-12px',
+                  left: 0,
+                  right: 0,
+                  height: '3px',
+                  borderRadius: '9999px',
+                  background: '#38bdf8',
+                }}
+              />
+            )}
+          </button>
+
+          {/* Challenges Tab */}
+          <button
+            onClick={() => setMode('podforge')}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: mode === 'podforge' ? '#ffffff' : '#94a3b8',
+              fontSize: '0.86rem',
+              fontWeight: mode === 'podforge' ? 700 : 500,
+              cursor: 'pointer',
+              padding: '0.4rem 0',
+              position: 'relative',
+              transition: 'color 0.15s ease',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+            onMouseLeave={(e) => {
+              if (mode !== 'podforge') e.currentTarget.style.color = '#94a3b8';
+            }}
+          >
+            Challenges
+            {mode === 'podforge' && (
+              <span
+                style={{
+                  position: 'absolute',
+                  bottom: '-12px',
+                  left: 0,
+                  right: 0,
+                  height: '3px',
+                  borderRadius: '9999px',
+                  background: '#38bdf8',
+                }}
+              />
+            )}
+          </button>
+
+          {/* Labs Tab */}
+          <button
+            onClick={() => setShowProblemSearch(true)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#94a3b8',
+              fontSize: '0.86rem',
+              fontWeight: 500,
+              cursor: 'pointer',
+              padding: '0.4rem 0',
+              position: 'relative',
+              transition: 'color 0.15s ease',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}
+          >
+            Labs
+          </button>
+
+          {/* Community Tab */}
+          <button
+            onClick={() => {
+              window.open('https://github.com/Abhijeetm96/CommitForge', '_blank', 'noopener,noreferrer');
+            }}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#94a3b8',
+              fontSize: '0.86rem',
+              fontWeight: 500,
+              cursor: 'pointer',
+              padding: '0.4rem 0',
+              position: 'relative',
+              transition: 'color 0.15s ease',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}
+          >
+            Community
+          </button>
+        </nav>
       </div>
 
-      {/* Academy Switcher Buttons */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-        <button
-          onClick={() => setMode('learn')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.45rem',
-            padding: '0.45rem 0.9rem',
-            borderRadius: '8px',
-            background: 'rgba(240, 80, 51, 0.1)',
-            border: '1px solid rgba(240, 80, 51, 0.3)',
-            color: 'var(--git-orange)',
-            fontSize: '0.82rem',
-            fontWeight: 700,
-            cursor: 'pointer',
-            transition: 'all 0.15s ease',
-          }}
-          title="Open CommitForge Git Academy"
-        >
-          <GitBranch size={15} />
-          CommitForge
-        </button>
-
-        <button
-          onClick={() => setMode('dockforge')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.45rem',
-            padding: '0.45rem 0.9rem',
-            borderRadius: '8px',
-            background: 'rgba(14, 165, 233, 0.12)',
-            border: '1px solid rgba(14, 165, 233, 0.35)',
-            color: '#38bdf8',
-            fontSize: '0.82rem',
-            fontWeight: 700,
-            cursor: 'pointer',
-            transition: 'all 0.15s ease',
-          }}
-          title="Open DockForge Docker & Container Academy"
-        >
-          <Container size={15} />
-          DockForge
-        </button>
-
-        <button
-          onClick={() => setMode('podforge')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.45rem',
-            padding: '0.45rem 0.9rem',
-            borderRadius: '8px',
-            background: 'rgba(50, 108, 229, 0.1)',
-            border: '1px solid rgba(50, 108, 229, 0.3)',
-            color: '#60a5fa',
-            fontSize: '0.82rem',
-            fontWeight: 700,
-            cursor: 'pointer',
-            transition: 'all 0.15s ease',
-          }}
-          title="Open PodForge Kubernetes Academy"
-        >
-          <Boxes size={15} />
-          PodForge
-        </button>
-
-        <button
-          onClick={() => setMode('roadmap')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.45rem',
-            padding: '0.45rem 0.85rem',
-            borderRadius: '8px',
-            background: mode === 'roadmap' ? 'rgba(234, 179, 8, 0.16)' : 'transparent',
-            border: mode === 'roadmap' ? '1px solid rgba(234, 179, 8, 0.45)' : '1px solid var(--border-color)',
-            color: mode === 'roadmap' ? '#facc15' : 'var(--text-secondary)',
-            fontSize: '0.82rem',
-            fontWeight: mode === 'roadmap' ? 800 : 600,
-            cursor: 'pointer',
-            transition: 'all 0.15s ease',
-            boxShadow: mode === 'roadmap' ? '0 0 12px rgba(234, 179, 8, 0.2)' : 'none',
-          }}
-          title="Explore DevOps & Cloud-Native Engineering Roadmap"
-        >
-          <Sparkles size={14} color={mode === 'roadmap' ? '#facc15' : '#eab308'} />
-          Roadmap
-        </button>
-      </div>
-
-      {/* Right Controls */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-        <button
-          onClick={openSettings}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.4rem',
-            padding: '0.35rem 0.75rem',
-            borderRadius: '6px',
-            background: 'var(--bg-card)',
-            border: '1px solid var(--border-color)',
-            color: 'var(--text-secondary)',
-            fontSize: '0.75rem',
-            cursor: 'pointer',
-          }}
-          title="Backup & Restore Learning Progress"
-        >
-          <Database size={13} color="#38bdf8" />
-          <span>Progress</span>
-        </button>
-
-        <button
+      {/* Right Controls: Search, Theme Toggle, Avatar */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        {/* Search Input Box */}
+        <div
           onClick={() => setShowProblemSearch(true)}
           style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '0.4rem',
-            padding: '0.35rem 0.75rem',
-            borderRadius: '6px',
-            background: 'var(--bg-card)',
-            border: '1px solid var(--border-color)',
-            color: 'var(--text-secondary)',
-            fontSize: '0.75rem',
+            gap: '0.55rem',
+            padding: '0.4rem 0.95rem',
+            borderRadius: '9999px',
+            background: 'rgba(255, 255, 255, 0.05)',
+            border: '1px solid rgba(148, 163, 184, 0.18)',
+            color: '#64748b',
+            fontSize: '0.82rem',
             cursor: 'pointer',
+            width: '180px',
+            transition: 'border-color 0.15s ease',
           }}
-          title="Search all concepts (Ctrl+K)"
+          onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'rgba(56, 189, 248, 0.4)')}
+          onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(148, 163, 184, 0.18)')}
         >
-          <Search size={13} />
-          <span>Search</span>
-          <kbd
-            style={{
-              padding: '0.1rem 0.3rem',
-              borderRadius: '3px',
-              background: 'var(--bg-surface-elevated)',
-              fontSize: '0.65rem',
-              fontFamily: 'var(--font-mono)',
-            }}
-          >
-            ⌘K
-          </kbd>
+          <Search size={14} color="#64748b" />
+          <span style={{ color: '#94a3b8' }}>Search...</span>
+        </div>
+
+        {/* Theme Toggle Icon (Sun) */}
+        <button
+          type="button"
+          onClick={() => {
+            const isDark = document.documentElement.classList.contains('theme-dark') || !document.documentElement.classList.contains('theme-light');
+            if (isDark) {
+              document.documentElement.classList.remove('theme-dark');
+              document.documentElement.classList.add('theme-light');
+            } else {
+              document.documentElement.classList.remove('theme-light');
+              document.documentElement.classList.add('theme-dark');
+            }
+          }}
+          style={{
+            background: 'none',
+            border: 'none',
+            color: '#94a3b8',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '0.35rem',
+            borderRadius: '50%',
+            transition: 'color 0.15s ease',
+          }}
+          title="Toggle Light / Dark Mode"
+          onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+          onMouseLeave={(e) => (e.currentTarget.style.color = '#94a3b8')}
+        >
+          <Sun size={18} />
+        </button>
+
+        {/* User Profile Avatar Circle "A" */}
+        <button
+          onClick={openSettings}
+          style={{
+            width: '32px',
+            height: '32px',
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, #0284c7 0%, #2563eb 100%)',
+            border: '2px solid rgba(56, 189, 248, 0.4)',
+            color: '#ffffff',
+            fontWeight: 800,
+            fontSize: '0.84rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            boxShadow: '0 2px 8px rgba(2, 132, 199, 0.4)',
+            transition: 'transform 0.15s ease',
+          }}
+          title="User Profile & Progress Backup"
+          onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.08)')}
+          onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+        >
+          A
         </button>
       </div>
     </header>
