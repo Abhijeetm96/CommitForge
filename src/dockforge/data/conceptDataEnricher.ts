@@ -431,15 +431,24 @@ export function ensureFullConceptData(concept: UniversalDockerConcept): Universa
   ];
 
   // 4. Syntax Tokens
-  const syntaxTokens = concept.syntaxTokens && concept.syntaxTokens.length > 0 ? concept.syntaxTokens : [
+  const defaultSyntaxTokens = [
     { token: 'docker', role: 'CLI Tool', explanation: 'The Docker Command-Line Interface binary.' },
     { token: cmd.split(' ')[1] || 'run', role: 'Command', explanation: `The primary subcommand to perform ${title}.` },
     { token: '-d', role: 'Flag', explanation: 'Runs the process in background (detached) mode.' },
     { token: 'target:latest', role: 'Target', explanation: 'The image or resource targeted by this command.' },
   ];
+  let syntaxTokens = concept.syntaxTokens && concept.syntaxTokens.length > 0 ? [...concept.syntaxTokens] : [];
+  if (syntaxTokens.length < 2) {
+    for (const tok of defaultSyntaxTokens) {
+      if (syntaxTokens.length >= 3) break;
+      if (!syntaxTokens.some((t) => t.token === tok.token)) {
+        syntaxTokens.push(tok);
+      }
+    }
+  }
 
   // 5. Syntax Variations
-  const variations = concept.variations && concept.variations.length > 0 ? concept.variations : [
+  const defaultVariations = [
     {
       title: 'Standard Execution',
       syntax: cmd,
@@ -459,6 +468,16 @@ export function ensureFullConceptData(concept: UniversalDockerConcept): Universa
       whenToUse: 'Automation scripts and container references.',
     },
   ];
+
+  let variations = concept.variations && concept.variations.length > 0 ? [...concept.variations] : [];
+  if (variations.length < 2) {
+    for (const dv of defaultVariations) {
+      if (variations.length >= 3) break;
+      if (!variations.some((v) => v.title === dv.title || v.syntax === dv.syntax)) {
+        variations.push(dv);
+      }
+    }
+  }
 
   // 6. When / When Not To Use
   const whenToUse = concept.whenToUse && concept.whenToUse.length > 0 ? concept.whenToUse : [
@@ -486,7 +505,23 @@ export function ensureFullConceptData(concept: UniversalDockerConcept): Universa
   const internalFlow = concept.internalFlow && concept.internalFlow.length > 0 ? concept.internalFlow : getCategoryInternalFlow(category, title, cmd);
 
   // 9. Common Mistakes
-  const commonMistakes = concept.commonMistakes && concept.commonMistakes.length > 0 ? concept.commonMistakes : getCategoryCommonMistakes(category, title);
+  const categoryMistakes = getCategoryCommonMistakes(category, title);
+  let commonMistakes = concept.commonMistakes && concept.commonMistakes.length > 0 ? [...concept.commonMistakes] : [...categoryMistakes];
+  if (commonMistakes.length < 2) {
+    for (const cm of categoryMistakes) {
+      if (commonMistakes.length >= 2) break;
+      if (!commonMistakes.some((m) => m.mistake === cm.mistake)) {
+        commonMistakes.push(cm);
+      }
+    }
+  }
+  if (commonMistakes.length < 2) {
+    commonMistakes.push({
+      mistake: `Executing ${cmd} without inspecting container or image state first`,
+      whyWrong: 'Can lead to runtime conflicts, occupied ports, or unexpected container exits.',
+      correctWay: `Use 'docker ps' or 'docker images' to verify environment state before invoking ${cmd}.`,
+    });
+  }
 
   // 10. Recap & Challenge
   const recapChecklist = concept.recapChecklist && concept.recapChecklist.length > 0 ? concept.recapChecklist : [
