@@ -78,7 +78,7 @@ export const ConceptVisualActionStage: React.FC<Props> = ({ concept, onOpenVisua
         style={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between',
+          justifyContent: 'flex-start',
           padding: '0.75rem 1.25rem',
           background: 'var(--bg-surface)',
           borderBottom: '1px solid var(--border-color)',
@@ -145,6 +145,16 @@ export const ConceptVisualActionStage: React.FC<Props> = ({ concept, onOpenVisua
             3. {concept.actionStage.after.label}
           </button>
         </div>
+
+        {/* Visual divider connecting steps with playback actions */}
+        <div
+          style={{
+            width: '1px',
+            height: '22px',
+            background: 'var(--border-color)',
+            margin: '0 0.25rem',
+          }}
+        />
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           {isPlaying ? (
