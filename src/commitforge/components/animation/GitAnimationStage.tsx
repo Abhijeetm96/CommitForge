@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { GitRepo, Commit } from '../../git-engine/types';
-import { calculateGitStateDiff, GitStateDelta } from './stateDiff';
+import { calculateGitStateDiff } from './stateDiff';
 import { CausalAnimationStep, StageMode } from './types';
 import { getCausalStory } from './causalStories';
 import { GitKnowsModal } from './GitKnowsModal';
@@ -18,22 +18,10 @@ import {
   FileText,
   GitBranch,
   HelpCircle,
-  Network,
-  Cpu,
   GitGraph,
-  Info,
-  Shield,
-  Zap,
-  ArrowRight,
-  ExternalLink,
-  Code,
-  Folder,
-  Tag,
-  Clock,
-  User,
-  Sparkles,
-  ChevronRight,
   AlertTriangle,
+  Cpu,
+  Shield,
 } from 'lucide-react';
 
 interface GitAnimationStageProps {
@@ -48,18 +36,17 @@ export const GitAnimationStage: React.FC<GitAnimationStageProps> = ({
   commandId = 'push',
   stageMode = 'animation',
   repo,
-  onExecuteCommand,
+  onExecuteCommand: _onExecuteCommand,
 }) => {
-  const story = getCausalStory(commandId, repo);
+  const story = useMemo(() => getCausalStory(commandId, repo), [commandId, repo]);
 
-  // Active stage mode (sync with parent prop)
+  // Active stage mode (sync with parent prop without cascading render)
   const [currentStageMode, setCurrentStageMode] = useState<StageMode>(stageMode);
-
-  useEffect(() => {
-    if (stageMode) {
-      setCurrentStageMode(stageMode);
-    }
-  }, [stageMode]);
+  const prevStageModeRef = useRef(stageMode);
+  if (prevStageModeRef.current !== stageMode) {
+    prevStageModeRef.current = stageMode;
+    setCurrentStageMode(stageMode);
+  }
 
   // Playback state
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -85,9 +72,12 @@ export const GitAnimationStage: React.FC<GitAnimationStageProps> = ({
   const [showGitKnowsModal, setShowGitKnowsModal] = useState(false);
   const [showWhyModal, setShowWhyModal] = useState(false);
 
-  // State diffing
+  // State diffing (pure memoized derivation without cascading renders)
   const [beforeSnapshot] = useState<GitRepo>(repo);
-  const [stateDelta, setStateDelta] = useState<GitStateDelta | null>(null);
+  const stateDelta = useMemo(
+    () => calculateGitStateDiff(beforeSnapshot, repo),
+    [beforeSnapshot, repo]
+  );
 
   const timerRef = useRef<any>(null);
 
@@ -119,11 +109,6 @@ export const GitAnimationStage: React.FC<GitAnimationStageProps> = ({
     };
   }, [isPlaying, currentStepIndex, totalSteps, playbackSpeed, currentStageMode]);
 
-  useEffect(() => {
-    const diff = calculateGitStateDiff(beforeSnapshot, repo);
-    setStateDelta(diff);
-  }, [repo, beforeSnapshot]);
-
   const handleReplay = () => {
     setCurrentStepIndex(0);
     setIsPlaying(true);
@@ -144,39 +129,41 @@ export const GitAnimationStage: React.FC<GitAnimationStageProps> = ({
   const isBranchStory = commandId === 'branch' || commandId === 'switch' || commandId === 'merge' || commandId === 'conflict' || commandId === 'rebase';
   const isThreeAreaStory = !isRemoteStory && !isBranchStory;
 
-  // Commits list from real repository
+  // Commits list from real repository (pure memoized fallback)
   const commitList = Object.values(repo.commits);
-  const displayCommits = commitList.length > 0
-    ? commitList
-    : [
-        {
-          hash: '4d9e2f3a8b1c4e2d3f5a6b7c8d9e0f1a2b3c4d5e',
-          shortHash: '4d9e2f3',
-          message: 'Initial repository setup',
-          author: 'Dev <dev@commitforge.io>',
-          timestamp: Date.now() - 3600000 * 4,
-          parents: [],
-          files: { 'index.html': '<html><body>Hello CommitForge</body></html>' },
-        },
-        {
-          hash: '9b1c7a0e3d4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b',
-          shortHash: '9b1c7a0',
-          message: 'Add responsive navigation layout',
-          author: 'Dev <dev@commitforge.io>',
-          timestamp: Date.now() - 3600000 * 2,
-          parents: ['4d9e2f3a8b1c4e2d3f5a6b7c8d9e0f1a2b3c4d5e'],
-          files: { 'index.html': '<html><body>Updated layout</body></html>', 'style.css': 'body { margin: 0; }' },
-        },
-        {
-          hash: `${headHash}000000000000000000000000000000000`,
-          shortHash: headHash,
-          message: 'Implement core state transitions',
-          author: 'Dev <dev@commitforge.io>',
-          timestamp: Date.now() - 1800000,
-          parents: ['9b1c7a0e3d4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b'],
-          files: { 'index.html': '...', 'style.css': '...', 'script.js': 'console.log("Ready");' },
-        },
-      ];
+  const displayCommits = useMemo(() => {
+    if (commitList.length > 0) return commitList;
+    const baseTime = 1718000000000;
+    return [
+      {
+        hash: '4d9e2f3a8b1c4e2d3f5a6b7c8d9e0f1a2b3c4d5e',
+        shortHash: '4d9e2f3',
+        message: 'Initial repository setup',
+        author: 'Dev <dev@commitforge.io>',
+        timestamp: baseTime - 3600000 * 4,
+        parents: [],
+        files: { 'index.html': '<html><body>Hello CommitForge</body></html>' },
+      },
+      {
+        hash: '9b1c7a0e3d4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b',
+        shortHash: '9b1c7a0',
+        message: 'Add responsive navigation layout',
+        author: 'Dev <dev@commitforge.io>',
+        timestamp: baseTime - 3600000 * 2,
+        parents: ['4d9e2f3a8b1c4e2d3f5a6b7c8d9e0f1a2b3c4d5e'],
+        files: { 'index.html': '<html><body>Updated layout</body></html>', 'style.css': 'body { margin: 0; }' },
+      },
+      {
+        hash: `${headHash}000000000000000000000000000000000`,
+        shortHash: headHash,
+        message: 'Implement core state transitions',
+        author: 'Dev <dev@commitforge.io>',
+        timestamp: baseTime - 1800000,
+        parents: ['9b1c7a0e3d4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b'],
+        files: { 'index.html': '...', 'style.css': '...', 'script.js': 'console.log("Ready");' },
+      },
+    ];
+  }, [commitList, headHash]);
 
   const activeDagCommit = selectedDagCommit || displayCommits[displayCommits.length - 1];
 

@@ -27,7 +27,6 @@ import {
   ChevronRight,
   Zap,
   Database,
-  BookOpen,
   FastForward,
 } from 'lucide-react';
 
@@ -53,13 +52,15 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
 }) => {
   const { repo, executeCommand } = useApp();
 
-  // Active visualized concept (can be switched locally or passed upward)
-  const [selectedConceptId, setSelectedConceptId] = useState<string>(initialConcept.id);
-
-  // Sync if prop changes
-  useEffect(() => {
-    setSelectedConceptId(initialConcept.id);
-  }, [initialConcept.id]);
+  // Active visualized concept (can be switched locally or passed upward without cascading render)
+  const [localConceptId, setLocalConceptId] = useState<string | null>(null);
+  const prevInitialIdRef = useRef(initialConcept.id);
+  if (prevInitialIdRef.current !== initialConcept.id) {
+    prevInitialIdRef.current = initialConcept.id;
+    setLocalConceptId(null);
+  }
+  const selectedConceptId = localConceptId ?? initialConcept.id;
+  const setSelectedConceptId = setLocalConceptId;
 
   const activeConcept: UniversalConcept = useMemo(() => {
     return ALL_ACADEMY_CONCEPTS[selectedConceptId] || getUniversalConcept(selectedConceptId) || initialConcept;

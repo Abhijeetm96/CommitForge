@@ -10,21 +10,16 @@ import {
   GitBranch,
   ShieldAlert,
   Zap,
-  CheckCircle2,
   Sparkles,
-  Server,
   Layers,
   Cpu,
   Code2,
   BookOpen,
   Container,
   Cloud,
-  GitPullRequest,
   Activity,
   ShieldCheck,
   Clock,
-  Bell,
-  Check,
 } from 'lucide-react';
 
 interface UpcomingTool {

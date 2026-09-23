@@ -1,16 +1,58 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import { SuiteHeaderNav } from './components/layout/SuiteHeaderNav';
 import { ForgeSuiteHomeView } from './components/home/ForgeSuiteHomeView';
-import { DevOpsRoadmapView } from './components/roadmap/DevOpsRoadmapView';
-import { CommitForgeApp } from './commitforge/CommitForgeApp';
-import { PodForgeApp } from './podforge/PodForgeApp';
-import { DockForgeApp } from './dockforge/DockForgeApp';
 import { Agentation } from 'agentation';
 
-import { UniversalProblemSolver } from './platform/search/UniversalProblemSolver';
 import { TechnologyType } from './platform/lesson-runtime/types';
 import { ProgressProvider, ProgressSettingsModal } from './progress';
+
+// Code-split heavy academy engines and secondary views for optimal initial page latency
+const CommitForgeApp = React.lazy(() =>
+  import('./commitforge/CommitForgeApp').then((m) => ({ default: m.CommitForgeApp }))
+);
+const PodForgeApp = React.lazy(() =>
+  import('./podforge/PodForgeApp').then((m) => ({ default: m.PodForgeApp }))
+);
+const DockForgeApp = React.lazy(() =>
+  import('./dockforge/DockForgeApp').then((m) => ({ default: m.DockForgeApp }))
+);
+const DevOpsRoadmapView = React.lazy(() =>
+  import('./components/roadmap/DevOpsRoadmapView').then((m) => ({ default: m.DevOpsRoadmapView }))
+);
+const UniversalProblemSolver = React.lazy(() =>
+  import('./platform/search/UniversalProblemSolver').then((m) => ({ default: m.UniversalProblemSolver }))
+);
+
+const ViewLoadingFallback: React.FC<{ label?: string }> = ({ label = 'Loading Academy Engine...' }) => (
+  <div
+    style={{
+      flex: 1,
+      minHeight: 'calc(100vh - 60px)',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'radial-gradient(ellipse at top, #0f172a 0%, #030712 100%)',
+      color: '#94a3b8',
+      gap: '1rem',
+    }}
+  >
+    <div
+      style={{
+        width: '32px',
+        height: '32px',
+        borderRadius: '50%',
+        border: '3px solid rgba(56, 189, 248, 0.2)',
+        borderTopColor: '#38bdf8',
+        animation: 'spin 0.8s linear infinite',
+      }}
+    />
+    <span style={{ fontSize: '0.85rem', fontWeight: 600, letterSpacing: '0.02em', color: '#cbd5e1' }}>
+      {label}
+    </span>
+  </div>
+);
 
 const AppContent: React.FC = () => {
   const { mode, setMode, showProblemSearch, setShowProblemSearch } = useApp();
@@ -73,31 +115,49 @@ const AppContent: React.FC = () => {
               overflow: 'hidden',
             }}
           >
-            <DevOpsRoadmapView />
+            <Suspense fallback={<ViewLoadingFallback label="Loading DevOps Roadmap..." />}>
+              <DevOpsRoadmapView />
+            </Suspense>
           </main>
         </>
       );
     }
 
     if (mode === 'podforge') {
-      return <PodForgeApp onSwitchToSuite={(newMode) => setMode(newMode)} />;
+      return (
+        <Suspense fallback={<ViewLoadingFallback label="Booting Kubernetes Engine..." />}>
+          <PodForgeApp onSwitchToSuite={(newMode) => setMode(newMode)} />
+        </Suspense>
+      );
     }
 
     if (mode === 'dockforge') {
-      return <DockForgeApp onSwitchToSuite={(newMode) => setMode(newMode)} />;
+      return (
+        <Suspense fallback={<ViewLoadingFallback label="Starting Docker Daemon..." />}>
+          <DockForgeApp onSwitchToSuite={(newMode) => setMode(newMode)} />
+        </Suspense>
+      );
     }
 
-    return <CommitForgeApp onSwitchToSuite={(newMode) => setMode(newMode)} />;
+    return (
+      <Suspense fallback={<ViewLoadingFallback label="Initializing Git Academy..." />}>
+        <CommitForgeApp onSwitchToSuite={(newMode) => setMode(newMode)} />
+      </Suspense>
+    );
   };
 
   return (
     <>
       {renderActiveView()}
-      <UniversalProblemSolver
-        isOpen={showProblemSearch}
-        onClose={() => setShowProblemSearch(false)}
-        onSelectLesson={handleSelectLessonFromSolver}
-      />
+      {showProblemSearch && (
+        <Suspense fallback={null}>
+          <UniversalProblemSolver
+            isOpen={showProblemSearch}
+            onClose={() => setShowProblemSearch(false)}
+            onSelectLesson={handleSelectLessonFromSolver}
+          />
+        </Suspense>
+      )}
       <ProgressSettingsModal />
       <Agentation />
     </>
