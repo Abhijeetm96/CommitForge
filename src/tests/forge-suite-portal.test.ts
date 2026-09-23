@@ -49,10 +49,4 @@ describe('Forge Suite Unified Portal Tests', () => {
     expect(ForgeSuiteHomeView).toBeDefined();
     expect(typeof ForgeSuiteHomeView).toBe('function');
   });
-
-  it('exports DeveloperConnectOverlay as a valid multiplayer interaction component', async () => {
-    const { DeveloperConnectOverlay } = await import('../components/home/DeveloperConnectOverlay');
-    expect(DeveloperConnectOverlay).toBeDefined();
-    expect(typeof DeveloperConnectOverlay).toBe('function');
-  });
 });

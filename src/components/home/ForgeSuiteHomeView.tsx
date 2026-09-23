@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Footer } from '../layout/Footer';
 import { FuturisticParallaxBackground } from './FuturisticParallaxBackground';
-import { DeveloperConnectOverlay } from './DeveloperConnectOverlay';
 import {
   Flame,
   Boxes,
@@ -155,7 +154,6 @@ export const ForgeSuiteHomeView: React.FC = () => {
       }}
     >
       <FuturisticParallaxBackground />
-      <DeveloperConnectOverlay />
       <div style={{ position: 'relative', zIndex: 1, maxWidth: '1240px', margin: '0 auto' }}>
         {/* Top Suite Hero */}
         <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>

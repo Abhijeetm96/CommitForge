@@ -11,20 +11,16 @@ interface Particle {
   baseAlpha: number;
   alpha: number;
   layer: number; // 0 = deep background, 1 = midground, 2 = foreground
-  shape: 'circle' | 'diamond' | 'ring';
   phase: number;
   pulseSpeed: number;
-  rotation: number;
-  rotationSpeed: number;
 }
 
-const PALETTE = [
-  { color: '#38bdf8', glow: 'rgba(56, 189, 248, 0.4)' }, // Cyber Sky Cyan
-  { color: '#818cf8', glow: 'rgba(129, 140, 248, 0.35)' }, // Indigo / Mesh
-  { color: '#c084fc', glow: 'rgba(192, 132, 252, 0.35)' }, // Cyber Violet
-  { color: '#f05033', glow: 'rgba(240, 80, 51, 0.3)' }, // Git Orange / Flame
-  { color: '#34d399', glow: 'rgba(52, 211, 153, 0.3)' }, // Pod Green
-  { color: '#38bdf8', glow: 'rgba(56, 189, 248, 0.5)' }, // Electric Blue
+const SUBTLE_PALETTE = [
+  { color: '#38bdf8', glow: 'rgba(56, 189, 248, 0.18)' }, // Soft Sky Cyan
+  { color: '#818cf8', glow: 'rgba(129, 140, 248, 0.15)' }, // Soft Indigo
+  { color: '#c084fc', glow: 'rgba(192, 132, 252, 0.15)' }, // Soft Violet
+  { color: '#67e8f9', glow: 'rgba(103, 232, 249, 0.15)' }, // Light Cyan
+  { color: '#94a3b8', glow: 'rgba(148, 163, 184, 0.12)' }, // Slate Star
 ];
 
 interface FuturisticParallaxBackgroundProps {
@@ -34,7 +30,7 @@ interface FuturisticParallaxBackgroundProps {
 
 export const FuturisticParallaxBackground: React.FC<FuturisticParallaxBackgroundProps> = ({
   className = '',
-  particleCount = 85,
+  particleCount = 48,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -117,150 +113,123 @@ export const FuturisticParallaxBackground: React.FC<FuturisticParallaxBackground
     }
     window.addEventListener('scroll', handleScroll, { passive: true });
 
-    // Initialize particles
+    // Initialize particles (Subtle, delicate sizes and velocities)
     const particles: Particle[] = [];
     for (let i = 0; i < particleCount; i++) {
-      const paletteItem = PALETTE[Math.floor(Math.random() * PALETTE.length)];
-      // 45% deep, 40% mid, 15% foreground
+      const paletteItem = SUBTLE_PALETTE[Math.floor(Math.random() * SUBTLE_PALETTE.length)];
       const randLayer = Math.random();
-      const layer = randLayer < 0.45 ? 0 : randLayer < 0.85 ? 1 : 2;
+      const layer = randLayer < 0.5 ? 0 : randLayer < 0.85 ? 1 : 2;
 
       let size: number;
       let baseAlpha: number;
       let speedMultiplier: number;
-      let shape: 'circle' | 'diamond' | 'ring' = 'circle';
 
       if (layer === 0) {
-        size = Math.random() * 1.5 + 0.8;
-        baseAlpha = Math.random() * 0.35 + 0.15;
-        speedMultiplier = 0.25;
+        size = Math.random() * 0.8 + 0.6;
+        baseAlpha = Math.random() * 0.15 + 0.12;
+        speedMultiplier = 0.15;
       } else if (layer === 1) {
-        size = Math.random() * 2.2 + 1.2;
-        baseAlpha = Math.random() * 0.4 + 0.35;
-        speedMultiplier = 0.55;
-        if (Math.random() < 0.18) shape = 'diamond';
+        size = Math.random() * 1.2 + 0.9;
+        baseAlpha = Math.random() * 0.2 + 0.2;
+        speedMultiplier = 0.35;
       } else {
-        size = Math.random() * 3.2 + 2;
-        baseAlpha = Math.random() * 0.45 + 0.5;
-        speedMultiplier = 0.9;
-        const r = Math.random();
-        if (r < 0.25) shape = 'diamond';
-        else if (r < 0.4) shape = 'ring';
+        size = Math.random() * 1.5 + 1.2;
+        baseAlpha = Math.random() * 0.25 + 0.25;
+        speedMultiplier = 0.55;
       }
 
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
         vx: (Math.random() - 0.5) * speedMultiplier,
-        vy: (Math.random() * -0.5 - 0.15) * speedMultiplier, // Gentle upward cosmic drift
+        vy: (Math.random() * -0.35 - 0.08) * speedMultiplier, // Soft upward drift
         size,
         color: paletteItem.color,
         glowColor: paletteItem.glow,
         baseAlpha,
         alpha: baseAlpha,
         layer,
-        shape,
         phase: Math.random() * Math.PI * 2,
-        pulseSpeed: Math.random() * 0.02 + 0.01,
-        rotation: Math.random() * Math.PI * 2,
-        rotationSpeed: (Math.random() - 0.5) * 0.03,
+        pulseSpeed: Math.random() * 0.015 + 0.008,
       });
     }
 
-    // Check prefers-reduced-motion
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    // Time-based animation loop
     let lastTime = performance.now();
 
     const render = (currentTime: number) => {
       const dt = Math.min((currentTime - lastTime) / 1000, 0.1);
       lastTime = currentTime;
 
-      // Smooth mouse lerp
-      mouse.smoothNormX += (mouse.targetNormX - mouse.smoothNormX) * 0.06;
-      mouse.smoothNormY += (mouse.targetNormY - mouse.smoothNormY) * 0.06;
-      mouse.absX += (mouse.targetAbsX - mouse.absX) * 0.1;
-      mouse.absY += (mouse.targetAbsY - mouse.absY) * 0.1;
+      // Smooth, gentle mouse dampening
+      mouse.smoothNormX += (mouse.targetNormX - mouse.smoothNormX) * 0.05;
+      mouse.smoothNormY += (mouse.targetNormY - mouse.smoothNormY) * 0.05;
+      mouse.absX += (mouse.targetAbsX - mouse.absX) * 0.08;
+      mouse.absY += (mouse.targetAbsY - mouse.absY) * 0.08;
 
-      // Smooth scroll lerp
-      smoothScrollY += (scrollY - smoothScrollY) * 0.08;
+      smoothScrollY += (scrollY - smoothScrollY) * 0.06;
 
-      // Clear frame with deep void cyber background
+      // Clear frame with deep void black
       ctx.fillStyle = '#030712';
       ctx.fillRect(0, 0, width, height);
 
       // =========================================================================
-      // 1. AMBIENT MULTI-LAYER NEBULAE (Slow breathing, mouse-parallaxed)
+      // 1. WHISPER-SOFT AMBIENT NEBULAE (Gentle cosmic breathing, low contrast)
       // =========================================================================
-      const time = currentTime * 0.0006;
-      const nebulaParallaxX = mouse.smoothNormX * 25;
-      const nebulaParallaxY = mouse.smoothNormY * 20;
+      const time = currentTime * 0.0004;
+      const nebulaParallaxX = mouse.smoothNormX * 18;
+      const nebulaParallaxY = mouse.smoothNormY * 14;
 
-      // Top-Left Cyan Nebula
-      const g1X = width * 0.2 + nebulaParallaxX + Math.sin(time * 0.8) * 40;
-      const g1Y = height * 0.25 + nebulaParallaxY + Math.cos(time * 0.7) * 35;
-      const grad1 = ctx.createRadialGradient(g1X, g1Y, 10, g1X, g1Y, width * 0.45);
-      grad1.addColorStop(0, 'rgba(14, 165, 233, 0.14)');
-      grad1.addColorStop(0.5, 'rgba(56, 189, 248, 0.05)');
+      // Top-Left Cyan Ambient Glow
+      const g1X = width * 0.25 + nebulaParallaxX + Math.sin(time * 0.6) * 30;
+      const g1Y = height * 0.2 + nebulaParallaxY + Math.cos(time * 0.5) * 25;
+      const grad1 = ctx.createRadialGradient(g1X, g1Y, 10, g1X, g1Y, width * 0.4);
+      grad1.addColorStop(0, 'rgba(14, 165, 233, 0.07)');
+      grad1.addColorStop(0.6, 'rgba(56, 189, 248, 0.02)');
       grad1.addColorStop(1, 'rgba(3, 7, 18, 0)');
       ctx.fillStyle = grad1;
       ctx.fillRect(0, 0, width, height);
 
-      // Center-Right Violet / Purple Cyber Nebula
-      const g2X = width * 0.75 - nebulaParallaxX + Math.cos(time * 0.9) * 45;
-      const g2Y = height * 0.45 - nebulaParallaxY + Math.sin(time * 0.6) * 40;
-      const grad2 = ctx.createRadialGradient(g2X, g2Y, 10, g2X, g2Y, width * 0.42);
-      grad2.addColorStop(0, 'rgba(139, 92, 246, 0.12)');
-      grad2.addColorStop(0.5, 'rgba(168, 85, 247, 0.04)');
+      // Center-Right Violet Ambient Glow
+      const g2X = width * 0.75 - nebulaParallaxX + Math.cos(time * 0.7) * 35;
+      const g2Y = height * 0.4 - nebulaParallaxY + Math.sin(time * 0.4) * 30;
+      const grad2 = ctx.createRadialGradient(g2X, g2Y, 10, g2X, g2Y, width * 0.38);
+      grad2.addColorStop(0, 'rgba(139, 92, 246, 0.06)');
+      grad2.addColorStop(0.6, 'rgba(168, 85, 247, 0.015)');
       grad2.addColorStop(1, 'rgba(3, 7, 18, 0)');
       ctx.fillStyle = grad2;
       ctx.fillRect(0, 0, width, height);
 
-      // Bottom Git Flame / Amber Flare
-      const g3X = width * 0.45 + nebulaParallaxX * 0.8;
-      const g3Y = height * 0.85 + nebulaParallaxY * 0.8;
-      const grad3 = ctx.createRadialGradient(g3X, g3Y, 10, g3X, g3Y, width * 0.38);
-      grad3.addColorStop(0, 'rgba(240, 80, 51, 0.09)');
-      grad3.addColorStop(0.5, 'rgba(234, 88, 12, 0.03)');
-      grad3.addColorStop(1, 'rgba(3, 7, 18, 0)');
-      ctx.fillStyle = grad3;
-      ctx.fillRect(0, 0, width, height);
-
       // =========================================================================
-      // 2. FUTURISTIC 3D PERSPECTIVE CYBER GRID (Horizon effect at bottom)
+      // 2. SUBTLE 3D PERSPECTIVE HORIZON GRID (Faint, high-end wireframe)
       // =========================================================================
-      const gridHorizonY = height * 0.65;
+      const gridHorizonY = height * 0.72;
       const gridBottomY = height;
-      const vanishingX = width * 0.5 + mouse.smoothNormX * 60;
+      const vanishingX = width * 0.5 + mouse.smoothNormX * 40;
 
-      gridOffset = (gridOffset + dt * 25) % 40;
+      gridOffset = (gridOffset + dt * 15) % 36;
 
       ctx.save();
-      // Grid clipping / gradient mask so it fades smoothly upward
       const gridFadeGrad = ctx.createLinearGradient(0, gridHorizonY, 0, gridBottomY);
       gridFadeGrad.addColorStop(0, 'rgba(56, 189, 248, 0)');
-      gridFadeGrad.addColorStop(0.3, 'rgba(56, 189, 248, 0.04)');
-      gridFadeGrad.addColorStop(1, 'rgba(99, 102, 241, 0.12)');
+      gridFadeGrad.addColorStop(0.5, 'rgba(56, 189, 248, 0.018)');
+      gridFadeGrad.addColorStop(1, 'rgba(99, 102, 241, 0.045)');
 
       ctx.strokeStyle = gridFadeGrad;
-      ctx.lineWidth = 1;
+      ctx.lineWidth = 0.75;
 
-      // Perspective vertical lines converging to vanishing point
-      const numLines = 24;
+      const numLines = 18;
       for (let i = -numLines; i <= numLines; i++) {
-        const bottomX = vanishingX + (i * width) / (numLines * 0.7);
+        const bottomX = vanishingX + (i * width) / (numLines * 0.85);
         ctx.beginPath();
-        ctx.moveTo(vanishingX + i * 4, gridHorizonY);
+        ctx.moveTo(vanishingX + i * 2, gridHorizonY);
         ctx.lineTo(bottomX, gridBottomY);
         ctx.stroke();
       }
 
-      // Horizontal perspective cross lines with logarithmic spacing
-      const numHoriz = 12;
+      const numHoriz = 8;
       for (let j = 0; j < numHoriz; j++) {
-        // Perspective curve
-        const progress = Math.pow((j + gridOffset / 40) / numHoriz, 2.2);
+        const progress = Math.pow((j + gridOffset / 36) / numHoriz, 2.4);
         const y = gridHorizonY + progress * (gridBottomY - gridHorizonY);
         if (y > gridHorizonY && y <= gridBottomY) {
           ctx.beginPath();
@@ -272,7 +241,7 @@ export const FuturisticParallaxBackground: React.FC<FuturisticParallaxBackground
       ctx.restore();
 
       // =========================================================================
-      // 3. MOUSE INTERACTION TORCH / GRAVITATIONAL LIGHT FIELD
+      // 3. WHISPER-SOFT MOUSE SPOTLIGHT (Very subtle radial field)
       // =========================================================================
       if (mouse.isInside && mouse.absX > -100) {
         const mouseGlow = ctx.createRadialGradient(
@@ -281,101 +250,101 @@ export const FuturisticParallaxBackground: React.FC<FuturisticParallaxBackground
           0,
           mouse.absX,
           mouse.absY,
-          220
+          160
         );
-        mouseGlow.addColorStop(0, 'rgba(56, 189, 248, 0.09)');
-        mouseGlow.addColorStop(0.4, 'rgba(129, 140, 248, 0.04)');
+        mouseGlow.addColorStop(0, 'rgba(56, 189, 248, 0.038)');
+        mouseGlow.addColorStop(0.5, 'rgba(129, 140, 248, 0.012)');
         mouseGlow.addColorStop(1, 'rgba(3, 7, 18, 0)');
         ctx.fillStyle = mouseGlow;
         ctx.fillRect(0, 0, width, height);
       }
 
       // =========================================================================
-      // 4. PARTICLE MOTION & MULTI-LAYER PARALLAX DEPTH
+      // 4. SUBTLE PARTICLE DYNAMICS & DEPTH
       // =========================================================================
-      // Layer parallax coefficients
-      // Layer 0 (deep): mouseParallax 12px, scrollParallax 0.05
-      // Layer 1 (mid): mouseParallax 32px, scrollParallax 0.12
-      // Layer 2 (fore): mouseParallax 65px, scrollParallax 0.22
       const layerParallax = [
-        { mouseX: 14, mouseY: 12, scroll: 0.04 },
-        { mouseX: 36, mouseY: 28, scroll: 0.12 },
-        { mouseX: 70, mouseY: 55, scroll: 0.22 },
+        { mouseX: 10, mouseY: 8, scroll: 0.03 },
+        { mouseX: 24, mouseY: 18, scroll: 0.08 },
+        { mouseX: 45, mouseY: 35, scroll: 0.15 },
       ];
 
-      // Update positions
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
 
         if (!prefersReducedMotion) {
           p.phase += p.pulseSpeed;
-          p.rotation += p.rotationSpeed;
           p.x += p.vx;
           p.y += p.vy;
 
-          // Gentle sinusoidal sway
-          p.x += Math.sin(p.phase) * 0.2;
+          p.x += Math.sin(p.phase) * 0.12;
 
-          // Interactive mouse force: particles gently evade or bend around cursor
+          // Gentle organic attraction when cursor is near (organic magnetic dust)
           if (mouse.isInside) {
-            const dx = p.x - mouse.absX;
-            const dy = p.y - mouse.absY;
+            const dx = mouse.absX - p.x;
+            const dy = mouse.absY - p.y;
             const dist = Math.hypot(dx, dy);
-            if (dist < 130 && dist > 1) {
-              const force = (1 - dist / 130) * 1.8;
+            if (dist < 110 && dist > 1) {
+              const force = (1 - dist / 110) * 0.35;
               p.x += (dx / dist) * force;
               p.y += (dy / dist) * force;
             }
           }
 
-          // Boundary wrap with 40px buffer
-          if (p.x < -40) p.x = width + 40;
-          if (p.x > width + 40) p.x = -40;
-          if (p.y < -40) p.y = height + 40;
-          if (p.y > height + 40) p.y = -40;
+          if (p.x < -20) p.x = width + 20;
+          if (p.x > width + 20) p.x = -20;
+          if (p.y < -20) p.y = height + 20;
+          if (p.y > height + 20) p.y = -20;
         }
 
-        // Pulsating alpha
-        p.alpha = p.baseAlpha + Math.sin(p.phase) * (p.baseAlpha * 0.35);
+        p.alpha = p.baseAlpha + Math.sin(p.phase) * (p.baseAlpha * 0.25);
       }
 
       // =========================================================================
-      // 5. CONSTELLATION MESH LINES (Between nearby particles and mouse)
+      // 5. GOSSAMER-THIN CONSTELLATION LINES (Subtle synaptic network)
       // =========================================================================
-      const maxConnectDist = 115;
-      const maxMouseConnectDist = 140;
+      const maxConnectDist = 100;
+      const maxMouseConnectDist = 110;
 
-      // Connect particles to each other
-      for (let i = 0; i < particles.length; i++) {
-        const p1 = particles[i];
-        if (p1.layer === 0) continue; // Skip deep layer for crisp performance
+      // Delicate hairline connection to mouse
+      if (mouse.isInside) {
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i];
+          if (p.layer === 0) continue;
 
-        const lp1 = layerParallax[p1.layer];
-        const p1RenderX = p1.x + mouse.smoothNormX * lp1.mouseX;
-        const p1RenderY =
-          ((p1.y - smoothScrollY * lp1.scroll) % (height + 80)) - 40;
+          const lp = layerParallax[p.layer];
+          const px = p.x + mouse.smoothNormX * lp.mouseX;
+          const py = ((p.y - smoothScrollY * lp.scroll) % (height + 40)) - 20;
 
-        // Interactive beam to mouse
-        if (mouse.isInside && p1.layer >= 1) {
-          const mdx = p1RenderX - mouse.absX;
-          const mdy = p1RenderY - mouse.absY;
+          const mdx = px - mouse.absX;
+          const mdy = py - mouse.absY;
           const mdist = Math.hypot(mdx, mdy);
+
           if (mdist < maxMouseConnectDist) {
-            const mAlpha = (1 - mdist / maxMouseConnectDist) * 0.35;
+            const mAlpha = (1 - mdist / maxMouseConnectDist) * 0.14;
             ctx.beginPath();
             ctx.strokeStyle = `rgba(56, 189, 248, ${mAlpha})`;
-            ctx.lineWidth = 1.2;
-            ctx.moveTo(p1RenderX, p1RenderY);
+            ctx.lineWidth = 0.6;
+            ctx.moveTo(px, py);
             ctx.lineTo(mouse.absX, mouse.absY);
             ctx.stroke();
           }
         }
+      }
+
+      // Delicate lines between nearby nodes
+      for (let i = 0; i < particles.length; i++) {
+        const p1 = particles[i];
+        if (p1.layer === 0) continue;
+
+        const lp1 = layerParallax[p1.layer];
+        const p1RenderX = p1.x + mouse.smoothNormX * lp1.mouseX;
+        const p1RenderY =
+          ((p1.y - smoothScrollY * lp1.scroll) % (height + 40)) - 20;
 
         for (let j = i + 1; j < particles.length; j++) {
           const p2 = particles[j];
           if (p2.layer === 0) continue;
 
-          // Connect if in similar or adjacent layers
           const dx = p1.x - p2.x;
           const dy = p1.y - p2.y;
           const dist = Math.hypot(dx, dy);
@@ -384,12 +353,12 @@ export const FuturisticParallaxBackground: React.FC<FuturisticParallaxBackground
             const lp2 = layerParallax[p2.layer];
             const p2RenderX = p2.x + mouse.smoothNormX * lp2.mouseX;
             const p2RenderY =
-              ((p2.y - smoothScrollY * lp2.scroll) % (height + 80)) - 40;
+              ((p2.y - smoothScrollY * lp2.scroll) % (height + 40)) - 20;
 
-            const alpha = (1 - dist / maxConnectDist) * 0.22;
+            const alpha = (1 - dist / maxConnectDist) * 0.08;
             ctx.beginPath();
             ctx.strokeStyle = `rgba(148, 163, 184, ${alpha})`;
-            ctx.lineWidth = 0.8;
+            ctx.lineWidth = 0.5;
             ctx.moveTo(p1RenderX, p1RenderY);
             ctx.lineTo(p2RenderX, p2RenderY);
             ctx.stroke();
@@ -398,7 +367,7 @@ export const FuturisticParallaxBackground: React.FC<FuturisticParallaxBackground
       }
 
       // =========================================================================
-      // 6. RENDER PARTICLES BY DEPTH LAYER
+      // 6. RENDER PARTICLES (Small, soft glowing nodes)
       // =========================================================================
       for (let layerIdx = 0; layerIdx <= 2; layerIdx++) {
         const lp = layerParallax[layerIdx];
@@ -409,50 +378,27 @@ export const FuturisticParallaxBackground: React.FC<FuturisticParallaxBackground
           const p = particles[i];
           if (p.layer !== layerIdx) continue;
 
-          // Calculated parallax render position
           const rx = p.x + layerOffsetX;
-          let ry = (p.y + layerOffsetY) % (height + 80);
-          if (ry < -40) ry += height + 80;
+          let ry = (p.y + layerOffsetY) % (height + 40);
+          if (ry < -20) ry += height + 40;
 
           ctx.save();
           ctx.translate(rx, ry);
 
-          // Draw glow halo for foreground & midground particles
+          // Soft glow halo
           if (p.layer >= 1) {
             ctx.beginPath();
-            ctx.arc(0, 0, p.size * 2.8, 0, Math.PI * 2);
+            ctx.arc(0, 0, p.size * 2.2, 0, Math.PI * 2);
             ctx.fillStyle = p.glowColor;
             ctx.fill();
           }
 
-          // Main Particle Body
+          // Node center
+          ctx.beginPath();
+          ctx.arc(0, 0, p.size, 0, Math.PI * 2);
           ctx.fillStyle = p.color;
-          ctx.globalAlpha = Math.max(0.1, Math.min(1, p.alpha));
-
-          if (p.shape === 'circle') {
-            ctx.beginPath();
-            ctx.arc(0, 0, p.size, 0, Math.PI * 2);
-            ctx.fill();
-          } else if (p.shape === 'diamond') {
-            ctx.rotate(p.rotation);
-            ctx.beginPath();
-            ctx.moveTo(0, -p.size * 1.5);
-            ctx.lineTo(p.size * 1.5, 0);
-            ctx.lineTo(0, p.size * 1.5);
-            ctx.lineTo(-p.size * 1.5, 0);
-            ctx.closePath();
-            ctx.fill();
-          } else if (p.shape === 'ring') {
-            ctx.beginPath();
-            ctx.arc(0, 0, p.size * 1.4, 0, Math.PI * 2);
-            ctx.strokeStyle = p.color;
-            ctx.lineWidth = 1;
-            ctx.stroke();
-            // Core spark
-            ctx.beginPath();
-            ctx.arc(0, 0, p.size * 0.5, 0, Math.PI * 2);
-            ctx.fill();
-          }
+          ctx.globalAlpha = Math.max(0.08, Math.min(0.6, p.alpha));
+          ctx.fill();
 
           ctx.restore();
         }
@@ -461,10 +407,8 @@ export const FuturisticParallaxBackground: React.FC<FuturisticParallaxBackground
       animationFrameId = requestAnimationFrame(render);
     };
 
-    // Start loop
     animationFrameId = requestAnimationFrame(render);
 
-    // Visibility change: pause when hidden to save CPU/battery
     const handleVisibilityChange = () => {
       if (document.hidden) {
         cancelAnimationFrame(animationFrameId);
@@ -475,7 +419,6 @@ export const FuturisticParallaxBackground: React.FC<FuturisticParallaxBackground
     };
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
-    // Cleanup on unmount
     return () => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', handleResize);
