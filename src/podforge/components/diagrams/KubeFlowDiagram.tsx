@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import './kubeFlowDiagram.css';
 import type { KubeConcept } from '../../data/topics/types';
 import { getDiagramDataForConcept, getChapterMasterDiagram } from '../../data/diagrams/topicFlows';
 import type { FlowBlock, FlowConnection, FlowStep, TopicFlowDiagramData } from './kubeDiagramTypes';
@@ -120,12 +121,32 @@ export const KubeFlowDiagram: React.FC<Props> = ({ concept, compact = false }) =
   const [userArchetype, setUserArchetype] = useState<FlowArchetype | 'auto'>('auto');
   const activeArchetype = userArchetype === 'auto' ? autoArchetype : userArchetype;
 
+  const [pipelineLayoutMode, setPipelineLayoutMode] = useState<'horizontal' | 'vertical'>('horizontal');
+
   const [prevConceptId, setPrevConceptId] = useState(concept.id);
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [inspectedBlock, setInspectedBlock] = useState<FlowBlock | null>(null);
   const [copiedTrace, setCopiedTrace] = useState<boolean>(false);
   const [copiedDiag, setCopiedDiag] = useState<boolean>(false);
+
+  // Modal Escape key and body lock handler
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setInspectedBlock(null);
+      }
+    };
+    if (inspectedBlock) {
+      window.addEventListener('keydown', handleKeyDown);
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        window.removeEventListener('keydown', handleKeyDown);
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [inspectedBlock]);
 
   // Sync state if concept changes
   if (prevConceptId !== concept.id) {
@@ -377,20 +398,50 @@ export const KubeFlowDiagram: React.FC<Props> = ({ concept, compact = false }) =
   // ARCHETYPE 1: PIPELINE (Sequential Horizontal Process Flow)
   // -------------------------------------------------------------
   const renderPipelineLayout = () => {
+    if (pipelineLayoutMode === 'vertical') {
+      return (
+        <div className="kube-pipeline-vertical">
+          {blocks.map((block, idx) => {
+            const nextBlock = blocks[idx + 1];
+            const conn = nextBlock
+              ? connections.find((c) => (c.from === block.id && c.to === nextBlock.id) || (c.from === nextBlock.id && c.to === block.id))
+              : undefined;
+            const isConnActive = conn?.stepNumber === currentStep.step;
+
+            return (
+              <React.Fragment key={block.id}>
+                <div style={{ width: '100%', maxWidth: '360px' }}>
+                  {renderBlock(block, { width: '100%' })}
+                </div>
+
+                {idx < blocks.length - 1 && (
+                  <div className="kube-vertical-connector">
+                    <span className={`kube-conn-badge ${isConnActive ? 'active' : ''}`}>
+                      {conn?.protocol || `Step ${idx + 1}`}
+                    </span>
+                    <svg width="22" height="30" viewBox="0 0 22 30">
+                      <line
+                        x1="11"
+                        y1="2"
+                        x2="11"
+                        y2="22"
+                        stroke={isConnActive ? '#38bdf8' : '#64748b'}
+                        strokeWidth={isConnActive ? 2.5 : 2}
+                        markerEnd={`url(#flow-arrow-${isConnActive ? 'cyan' : 'dim'})`}
+                      />
+                    </svg>
+                  </div>
+                )}
+              </React.Fragment>
+            );
+          })}
+        </div>
+      );
+    }
+
     return (
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexWrap: 'wrap',
-          gap: '0.75rem',
-          width: '100%',
-          padding: '1rem 0.5rem',
-        }}
-      >
+      <div className="kube-pipeline-grid">
         {blocks.map((block, idx) => {
-          const isCurrentBlock = currentStep.activeBlockIds.includes(block.id);
           const nextBlock = blocks[idx + 1];
           const conn = nextBlock
             ? connections.find((c) => (c.from === block.id && c.to === nextBlock.id) || (c.from === nextBlock.id && c.to === block.id))
@@ -399,24 +450,13 @@ export const KubeFlowDiagram: React.FC<Props> = ({ concept, compact = false }) =
 
           return (
             <React.Fragment key={block.id}>
-              {renderBlock(block, { width: compact ? '240px' : '270px' })}
+              <div style={{ flex: '0 0 auto', maxWidth: '100%' }}>
+                {renderBlock(block, { width: compact ? '240px' : '270px' })}
+              </div>
 
               {idx < blocks.length - 1 && (
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', margin: '0 4px' }}>
-                  <span
-                    style={{
-                      fontSize: '0.74rem',
-                      fontFamily: 'var(--font-mono, monospace)',
-                      fontWeight: 700,
-                      color: isConnActive ? '#ffffff' : '#38bdf8',
-                      background: '#040817',
-                      border: isConnActive ? '1px solid #38bdf8' : '1px solid rgba(56, 189, 248, 0.4)',
-                      padding: '0.2rem 0.55rem',
-                      borderRadius: '6px',
-                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.6)',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
+                <div className="kube-pipeline-connector">
+                  <span className={`kube-conn-badge ${isConnActive ? 'active' : ''}`}>
                     {conn?.protocol || `Step ${idx + 1}`}
                   </span>
                   <svg width="56" height="18" viewBox="0 0 56 18">
@@ -1062,25 +1102,30 @@ export const KubeFlowDiagram: React.FC<Props> = ({ concept, compact = false }) =
 
       {/* 3. SIMPLIFIED BESPOKE ARCHITECTURAL CANVAS */}
       <div
+        className="kube-flow-canvas"
         style={{
-          background: `
-            radial-gradient(circle, rgba(56, 189, 248, 0.14) 1.2px, transparent 1.2px) 0 0 / 22px 22px,
-            radial-gradient(ellipse at 50% 0%, rgba(14, 116, 144, 0.15) 0%, transparent 60%),
-            #030712
-          `,
-          border: '1px solid rgba(56, 189, 248, 0.22)',
-          borderRadius: '14px',
           padding: compact ? '1rem 0.5rem' : '1.5rem 1rem',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          minHeight: '260px',
-          position: 'relative',
-          overflowX: 'auto',
-          boxShadow: 'inset 0 0 32px rgba(0, 0, 0, 0.5)',
         }}
       >
+        {activeArchetype === 'pipeline' && (
+          <div className="kube-flow-canvas-controls">
+            <button
+              onClick={() => setPipelineLayoutMode('horizontal')}
+              className={`kube-canvas-btn ${pipelineLayoutMode === 'horizontal' ? 'active' : ''}`}
+              title="Horizontal Track"
+            >
+              Horizontal
+            </button>
+            <button
+              onClick={() => setPipelineLayoutMode('vertical')}
+              className={`kube-canvas-btn ${pipelineLayoutMode === 'vertical' ? 'active' : ''}`}
+              title="Vertical Sequence"
+            >
+              Vertical
+            </button>
+          </div>
+        )}
+
         {activeArchetype === 'pipeline' && renderPipelineLayout()}
         {activeArchetype === 'loop' && renderLoopLayout()}
         {activeArchetype === 'decision' && renderDecisionLayout()}
@@ -1166,37 +1211,15 @@ export const KubeFlowDiagram: React.FC<Props> = ({ concept, compact = false }) =
       {/* 5. COMPONENT INSPECTOR MODAL */}
       {inspectedBlock && (
         <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(5, 10, 24, 0.88)',
-            backdropFilter: 'blur(8px)',
-            zIndex: 100,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '1.25rem',
-            animation: 'fadeIn 0.2s ease-out',
-          }}
+          className="kube-flow-modal-overlay"
           onClick={() => setInspectedBlock(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Inspect ${inspectedBlock.label}`}
         >
           <div
+            className="kube-flow-modal-card"
             onClick={(e) => e.stopPropagation()}
-            style={{
-              width: '100%',
-              maxWidth: '540px',
-              background: '#090e1f',
-              border: '1px solid rgba(56, 189, 248, 0.35)',
-              borderRadius: '16px',
-              padding: '1.35rem',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '1rem',
-              boxShadow: '0 16px 48px rgba(0, 0, 0, 0.6)',
-            }}
           >
             {/* Header */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -1228,7 +1251,8 @@ export const KubeFlowDiagram: React.FC<Props> = ({ concept, compact = false }) =
 
               <button
                 onClick={() => setInspectedBlock(null)}
-                style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}
+                className="kube-flow-modal-close-btn"
+                aria-label="Close Inspector Modal"
               >
                 <X size={18} />
               </button>
