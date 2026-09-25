@@ -3,8 +3,6 @@ import type { UniversalDockerConcept } from '../../data/unifiedDockerData';
 import { getDockerDiagramData } from '../../data/diagrams/dockerTopicFlows';
 import type {
   DockerFlowBlock,
-  DockerFlowConnection,
-  DockerFlowStep,
   DockerTopicFlowDiagramData,
   DockerBlockCategory,
 } from './dockerDiagramTypes';
@@ -29,15 +27,12 @@ import {
   ChevronRight,
   ChevronLeft,
   Info,
-  Zap,
   X,
   Workflow,
   RefreshCw,
   CheckCircle2,
   XCircle,
   Cloud,
-  ArrowRight,
-  ArrowDown,
   Columns,
   Rows,
 } from 'lucide-react';

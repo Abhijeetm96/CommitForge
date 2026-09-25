@@ -10,7 +10,6 @@ import {
   Pause,
   RotateCcw,
   CheckCircle2,
-  Laptop,
   Cloud,
   Layers,
   Database,
@@ -42,9 +41,9 @@ export const GitAnimationStage: React.FC<GitAnimationStageProps> = ({
 
   // Active stage mode (sync with parent prop without cascading render)
   const [currentStageMode, setCurrentStageMode] = useState<StageMode>(stageMode);
-  const prevStageModeRef = useRef(stageMode);
-  if (prevStageModeRef.current !== stageMode) {
-    prevStageModeRef.current = stageMode;
+  const [prevStageMode, setPrevStageMode] = useState(stageMode);
+  if (prevStageMode !== stageMode) {
+    setPrevStageMode(stageMode);
     setCurrentStageMode(stageMode);
   }
 

@@ -3,12 +3,9 @@ import { useApp } from '../../context/AppContext';
 import { useProgress } from '../../progress';
 import {
   GitBranch,
-  Zap,
   Container,
   Boxes,
-  Cpu,
   Cloud,
-  Activity,
   ShieldCheck,
   Terminal,
   CheckCircle2,
@@ -19,22 +16,11 @@ import {
   Compass,
   Award,
   BookOpen,
-  Briefcase,
-  Layers,
-  Flame,
-  Filter,
-  ExternalLink,
-  Play,
-  Pause,
   Trophy,
-  Target,
   TrendingUp,
   X,
-  Map,
   ListOrdered,
   Check,
-  Flag,
-  Navigation,
   Code2,
   Settings,
   Monitor,
@@ -459,7 +445,7 @@ const ROADMAP_STAGES: RoadmapStage[] = [
 export const DevOpsRoadmapView: React.FC = () => {
   const { setMode, setActiveLessonConcept } = useApp();
   const [viewMode, setViewMode] = useState<'highway' | 'syllabus'>('highway');
-  const [activeCategory, setActiveCategory] = useState<RoadmapTrack>('all');
+  const [activeCategory, _setActiveCategory] = useState<RoadmapTrack>('all');
   const [votedStages, setVotedStages] = useState<Record<string, boolean>>({});
   const [selectedStage, setSelectedStage] = useState<RoadmapStage | null>(null);
   const [showOverviewModal, setShowOverviewModal] = useState<boolean>(false);
@@ -528,7 +514,7 @@ export const DevOpsRoadmapView: React.FC = () => {
   };
 
   // Auto-tour driving animation
-  const [isAutoTouring, setIsAutoTouring] = useState<boolean>(false);
+  const [isAutoTouring, _setIsAutoTouring] = useState<boolean>(false);
 
   useEffect(() => {
     if (!isAutoTouring) return;

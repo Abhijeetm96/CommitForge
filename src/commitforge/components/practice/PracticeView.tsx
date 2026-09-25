@@ -9,9 +9,7 @@ import {
   ArrowRight,
   ArrowLeft,
   Search,
-  ChevronRight,
   ChevronDown,
-  Layers,
   ShieldAlert,
   HelpCircle,
   Code2,
@@ -19,8 +17,6 @@ import {
   Sparkles,
   Zap,
   BookOpen,
-  Award,
-  ExternalLink,
   X,
 } from 'lucide-react';
 
@@ -458,7 +454,7 @@ const MISSIONS: PracticeMission[] = [
 ];
 
 export const PracticeView: React.FC = () => {
-  const { executeCommand, repo, completedLessonIds, markLessonComplete } = useApp();
+  const { executeCommand, completedLessonIds, markLessonComplete } = useApp();
 
   const [selectedLevel, setSelectedLevel] = useState<number>(1);
   const [activeTab, setActiveTab] = useState<PracticeTab>('briefing');

@@ -21,11 +21,9 @@ import {
   ChevronDown,
   ChevronUp,
   Terminal,
-  RotateCcw,
   BookOpen,
   Copy,
   Check,
-  Compass,
 } from 'lucide-react';
 
 interface Props {

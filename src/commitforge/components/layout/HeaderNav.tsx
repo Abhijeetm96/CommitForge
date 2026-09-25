@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useApp, ViewMode, InstructionMode } from '../../context/AppContext';
+import { useApp, InstructionMode } from '../../context/AppContext';
 import { PROJECTS } from '../../data/projects';
 import {
   Flame,
@@ -8,17 +8,12 @@ import {
   Moon,
   RotateCcw,
   LifeBuoy,
-  GitBranch,
-  CheckCircle2,
-  X,
-  Film,
   BookOpen,
   Search,
-  Menu,
+  X,
   ChevronDown,
   Boxes,
   Container,
-  ExternalLink,
   Sparkles,
 } from 'lucide-react';
 
@@ -34,9 +29,7 @@ export const HeaderNav: React.FC = () => {
     setProjectKey,
     resetCurrentExercise,
     setShowLostDrawer,
-    setShowGitMovie,
     setShowCommandAtlas,
-    showProblemSearch,
     setShowProblemSearch,
     repo,
     setActiveLessonConcept,
@@ -894,6 +887,7 @@ export const HeaderNav: React.FC = () => {
               <button
                 onClick={() => setShowSettingsMenu(false)}
                 style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
+                aria-label="Close settings"
               >
                 <X size={14} />
               </button>

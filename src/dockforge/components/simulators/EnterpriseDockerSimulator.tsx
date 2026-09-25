@@ -5,19 +5,10 @@ import { CoolingTurbineFan } from '../../../components/simulation/CoolingTurbine
 import { LuminousBulb } from '../../../components/simulation/LuminousBulb';
 import { LiveTrafficStream } from '../../../components/simulation/LiveTrafficStream';
 import {
-  Server,
   Zap,
-  Globe,
-  Flame,
-  AlertOctagon,
   Database,
-  Cpu,
-  Layers,
   Activity,
-  HardDrive,
   Radio,
-  CheckCircle2,
-  XCircle,
 } from 'lucide-react';
 import '../../../components/simulation/simulation.css';
 

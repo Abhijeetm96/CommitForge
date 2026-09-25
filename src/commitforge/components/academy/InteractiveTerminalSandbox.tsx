@@ -1,35 +1,24 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { UniversalConcept, ACADEMY_18_TOPICS } from '../../data/unifiedAcademyData';
-import { Terminal as TerminalIcon, RotateCcw, Play, CheckCircle2, ChevronRight, HelpCircle, Sparkles } from 'lucide-react';
+import { Terminal as TerminalIcon, RotateCcw, Play, CheckCircle2, ChevronRight } from 'lucide-react';
 import { AcademyConceptTab } from './UniversalConceptHero';
 
 interface Props {
   concept: UniversalConcept;
   onOpenCenterSandbox?: () => void;
-  isFullView?: boolean;
+  _isFullView?: boolean;
   onSelectConcept?: (conceptId: string, targetTab?: AcademyConceptTab) => void;
 }
 
-export const InteractiveTerminalSandbox: React.FC<Props> = ({ concept, onOpenCenterSandbox, isFullView, onSelectConcept }) => {
-  const { executeCommand, repo, engine } = useApp();
+export const InteractiveTerminalSandbox: React.FC<Props> = ({ concept, onOpenCenterSandbox, onSelectConcept }) => {
+  const { executeCommand } = useApp();
 
   const [activeTab, setActiveTab] = useState<'terminal' | 'guided'>('terminal');
   const [inputVal, setInputVal] = useState<string>('');
   const [history, setHistory] = useState<{ command: string; output: string[] }[]>([]);
   const [guidedStepIndex, setGuidedStepIndex] = useState<number>(0);
   const terminalOutputRef = useRef<HTMLDivElement>(null);
-
-  // Initialize terminal on concept load
-  useEffect(() => {
-    handleReset();
-  }, [concept.id]);
-
-  useEffect(() => {
-    if (terminalOutputRef.current) {
-      terminalOutputRef.current.scrollTop = terminalOutputRef.current.scrollHeight;
-    }
-  }, [history]);
 
   const handleReset = () => {
     // Run seed commands from sandbox
@@ -48,6 +37,17 @@ export const InteractiveTerminalSandbox: React.FC<Props> = ({ concept, onOpenCen
     setGuidedStepIndex(0);
     setInputVal('');
   };
+
+  // Initialize terminal on concept load
+  useEffect(() => {
+    handleReset();
+  }, [concept.id]);
+
+  useEffect(() => {
+    if (terminalOutputRef.current) {
+      terminalOutputRef.current.scrollTop = terminalOutputRef.current.scrollHeight;
+    }
+  }, [history]);
 
   const handleRunCommand = (cmdToRun?: string) => {
     const raw = (cmdToRun !== undefined ? cmdToRun : inputVal).trim();

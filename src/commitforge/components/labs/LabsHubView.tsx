@@ -241,7 +241,7 @@ const LAB_ITEMS: LabDefinition[] = [
 ];
 
 export const LabsHubView: React.FC = () => {
-  const { mode, setMode, activeLab, setActiveLab, completedLessonIds, markLessonComplete } = useApp();
+  const { mode, activeLab, completedLessonIds, markLessonComplete } = useApp();
 
   // Selected Lab state
   const [selectedLabId, setSelectedLabId] = useState<string>(() => {

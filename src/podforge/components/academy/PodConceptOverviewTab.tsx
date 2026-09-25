@@ -51,10 +51,12 @@ export const PodConceptOverviewTab: React.FC<Props> = ({ concept }) => {
   }, [isPlayingLifecycle, concept.lifecycleSteps]);
 
   // Reset active step when concept changes
-  useEffect(() => {
+  const [prevConceptId, setPrevConceptId] = useState(concept.id);
+  if (prevConceptId !== concept.id) {
+    setPrevConceptId(concept.id);
     setActiveStepIdx(0);
     setIsPlayingLifecycle(false);
-  }, [concept.id]);
+  }
 
   const handleCopy = (text: string, index: number) => {
     navigator.clipboard.writeText(text);

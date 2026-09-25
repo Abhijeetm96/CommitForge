@@ -54,9 +54,9 @@ export const ConceptVisualizerTab: React.FC<Props> = ({
 
   // Active visualized concept (can be switched locally or passed upward without cascading render)
   const [localConceptId, setLocalConceptId] = useState<string | null>(null);
-  const prevInitialIdRef = useRef(initialConcept.id);
-  if (prevInitialIdRef.current !== initialConcept.id) {
-    prevInitialIdRef.current = initialConcept.id;
+  const [prevInitialId, setPrevInitialId] = useState(initialConcept.id);
+  if (prevInitialId !== initialConcept.id) {
+    setPrevInitialId(initialConcept.id);
     setLocalConceptId(null);
   }
   const selectedConceptId = localConceptId ?? initialConcept.id;

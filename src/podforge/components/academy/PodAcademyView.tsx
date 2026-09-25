@@ -16,11 +16,8 @@ import {
   Code2,
   FileCode,
   CheckCircle2,
-  Play,
   ArrowRight,
   ArrowLeft,
-  Sparkles,
-  Lightbulb,
   ChevronRight,
   Boxes,
   Flame,
@@ -43,10 +40,8 @@ interface PodAcademyViewProps {
 }
 
 export const PodAcademyView: React.FC<PodAcademyViewProps> = ({ onSwitchToSuite }) => {
-  const { activeConcept, setActiveConceptId, completedConcepts, markConceptComplete, executeCommand } = useApp();
+  const { activeConcept, setActiveConceptId, completedConcepts, markConceptComplete } = useApp();
   const [activeTab, setActiveTab] = useState<AcademyTab>('learn');
-  const [practiceInput, setPracticeInput] = useState('');
-  const [practiceSuccess, setPracticeSuccess] = useState(false);
   const [difficultyFilter, setDifficultyFilter] = useState<DifficultyTier>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
@@ -55,12 +50,8 @@ export const PodAcademyView: React.FC<PodAcademyViewProps> = ({ onSwitchToSuite 
   // Determine if this concept requires/supports an interactive visualizer or simulator
   const hasVisualizer = useMemo(() => conceptRequiresVisualizer(activeConcept), [activeConcept]);
 
-  // If user navigates from a visualizer-enabled concept to a theoretical/setup concept, fallback to learn tab
-  React.useEffect(() => {
-    if (activeTab === 'visualize' && !hasVisualizer) {
-      setActiveTab('learn');
-    }
-  }, [hasVisualizer, activeTab]);
+  // Derived effective tab - fallback to learn if current concept has no visualizer
+  const currentTab = activeTab === 'visualize' && !hasVisualizer ? 'learn' : activeTab;
 
   // Flatten all concepts for linear previous / next navigation
   const allConcepts = useMemo(() => KUBE_CHAPTERS.flatMap((ch) => ch.concepts), []);
@@ -106,16 +97,7 @@ export const PodAcademyView: React.FC<PodAcademyViewProps> = ({ onSwitchToSuite 
     [allConcepts, completedConcepts]
   );
 
-  const handleRunPractice = () => {
-    const trimmed = practiceInput.trim();
-    if (!trimmed) return;
-    executeCommand(trimmed);
 
-    if (trimmed === activeConcept.practiceChallenge.goalCommand) {
-      setPracticeSuccess(true);
-      markConceptComplete(activeConcept.id);
-    }
-  };
 
   return (
     <div
@@ -652,7 +634,7 @@ export const PodAcademyView: React.FC<PodAcademyViewProps> = ({ onSwitchToSuite 
                 { id: 'pitfalls' as AcademyTab, label: 'Pitfalls & SRE', icon: AlertTriangle },
                 { id: 'quiz' as AcademyTab, label: 'Scenario Quiz', icon: Award },
               ].map((tab) => {
-                const isActive = activeTab === tab.id;
+                const isActive = currentTab === tab.id;
                 const Icon = tab.icon;
                 return (
                   <button
@@ -682,39 +664,39 @@ export const PodAcademyView: React.FC<PodAcademyViewProps> = ({ onSwitchToSuite 
           </div>
 
           {/* TAB 1: LEARN (CONCEPT OVERVIEW) */}
-          {activeTab === 'learn' && (
+          {currentTab === 'learn' && (
             <PodConceptOverviewTab concept={activeConcept} />
           )}
 
           {/* TAB: FLOW & BLOCK DIAGRAM */}
-          {activeTab === 'diagram' && (
+          {currentTab === 'diagram' && (
             <div style={{ padding: '0.25rem 0' }}>
               <KubeFlowDiagram concept={activeConcept} />
             </div>
           )}
 
           {/* TAB 2: DECLARATIVE YAML & SYNTAX */}
-          {activeTab === 'spec' && (
+          {currentTab === 'spec' && (
             <PodYamlSpecTab concept={activeConcept} />
           )}
 
           {/* TAB 3: HANDS-ON PRACTICE SANDBOX */}
-          {activeTab === 'practice' && (
+          {currentTab === 'practice' && (
             <PodPracticeTab concept={activeConcept} />
           )}
 
           {/* TAB 4: LIVE CLUSTER VISUALIZER */}
-          {activeTab === 'visualize' && (
+          {currentTab === 'visualize' && (
             <PodVisualizerTab concept={activeConcept} />
           )}
 
           {/* TAB 5: PITFALLS & SRE RECOVERY */}
-          {activeTab === 'pitfalls' && (
+          {currentTab === 'pitfalls' && (
             <PodPitfallsTab concept={activeConcept} />
           )}
 
           {/* TAB 6: SCENARIO KNOWLEDGE CHECK QUIZ */}
-          {activeTab === 'quiz' && (
+          {currentTab === 'quiz' && (
             <PodQuizTab concept={activeConcept} />
           )}
         </div>

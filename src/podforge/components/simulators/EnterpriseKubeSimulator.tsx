@@ -6,18 +6,8 @@ import { LuminousBulb } from '../../../components/simulation/LuminousBulb';
 import { LiveTrafficStream } from '../../../components/simulation/LiveTrafficStream';
 import {
   Server,
-  Zap,
   Globe,
-  Radio,
-  Cpu,
-  Layers,
   Activity,
-  AlertTriangle,
-  Flame,
-  CheckCircle2,
-  XCircle,
-  RotateCcw,
-  Sparkles,
 } from 'lucide-react';
 import '../../../components/simulation/simulation.css';
 
@@ -179,7 +169,7 @@ export const EnterpriseKubeSimulator: React.FC = () => {
     if (v2) {
       executeCommand('kubectl set image deployment/frontend-web nginx=nginx:v2.0-canary');
       setPods((prev) =>
-        prev.map((p, idx) => ({
+        prev.map((p) => ({
           ...p,
           version: 'v2',
         }))
