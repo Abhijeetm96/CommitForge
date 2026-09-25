@@ -6,6 +6,7 @@ import { Agentation } from 'agentation';
 
 import { TechnologyType } from './platform/lesson-runtime/types';
 import { ProgressProvider, ProgressSettingsModal } from './progress';
+import { SuiteErrorBoundary } from './platform/errors/SuiteErrorBoundary';
 
 // Code-split heavy academy engines and secondary views for optimal initial page latency
 const CommitForgeApp = React.lazy(() =>
@@ -125,30 +126,36 @@ const AppContent: React.FC = () => {
 
     if (mode === 'podforge') {
       return (
-        <Suspense fallback={<ViewLoadingFallback label="Booting Kubernetes Engine..." />}>
-          <PodForgeApp
-            initialConceptId={activeLessonConcept || undefined}
-            onSwitchToSuite={(newMode) => setMode(newMode)}
-          />
-        </Suspense>
+        <SuiteErrorBoundary fallbackTitle="PodForge Kubernetes Academy Error">
+          <Suspense fallback={<ViewLoadingFallback label="Booting Kubernetes Engine..." />}>
+            <PodForgeApp
+              initialConceptId={activeLessonConcept || undefined}
+              onSwitchToSuite={(newMode) => setMode(newMode)}
+            />
+          </Suspense>
+        </SuiteErrorBoundary>
       );
     }
 
     if (mode === 'dockforge') {
       return (
-        <Suspense fallback={<ViewLoadingFallback label="Starting Docker Daemon..." />}>
-          <DockForgeApp
-            initialConceptId={activeLessonConcept || undefined}
-            onSwitchToSuite={(newMode) => setMode(newMode)}
-          />
-        </Suspense>
+        <SuiteErrorBoundary fallbackTitle="DockForge Docker Academy Error">
+          <Suspense fallback={<ViewLoadingFallback label="Starting Docker Daemon..." />}>
+            <DockForgeApp
+              initialConceptId={activeLessonConcept || undefined}
+              onSwitchToSuite={(newMode) => setMode(newMode)}
+            />
+          </Suspense>
+        </SuiteErrorBoundary>
       );
     }
 
     return (
-      <Suspense fallback={<ViewLoadingFallback label="Initializing Git Academy..." />}>
-        <CommitForgeApp onSwitchToSuite={(newMode) => setMode(newMode)} />
-      </Suspense>
+      <SuiteErrorBoundary fallbackTitle="CommitForge Git Academy Error">
+        <Suspense fallback={<ViewLoadingFallback label="Initializing Git Academy..." />}>
+          <CommitForgeApp onSwitchToSuite={(newMode) => setMode(newMode)} />
+        </Suspense>
+      </SuiteErrorBoundary>
     );
   };
 
