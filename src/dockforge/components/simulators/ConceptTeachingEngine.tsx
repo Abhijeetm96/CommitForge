@@ -19,9 +19,11 @@ import {
   Zap,
   Check,
   X,
+  Workflow,
 } from 'lucide-react';
 import { DockerSimulatorEngine } from './DockerSimulatorEngine';
 import { ensureFullConceptData } from '../../data/conceptDataEnricher';
+import { DockerFlowDiagram } from '../diagrams/DockerFlowDiagram';
 
 interface ConceptTeachingEngineProps {
   concept: UniversalDockerConcept;
@@ -218,7 +220,7 @@ export const ConceptTeachingEngine: React.FC<ConceptTeachingEngineProps> = ({
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(255,255,255,0.03)', padding: '0.3rem', borderRadius: '10px', border: '1px solid var(--docker-border)' }}>
           {[
             { id: 1, label: '1. Concept & Problem', icon: BookOpen },
-            { id: 2, label: '2. Visual & Terms', icon: Box },
+            { id: 2, label: '2. Block & Flow Diagram', icon: Workflow },
             { id: 3, label: '3. Syntax & Tokens', icon: Zap },
             { id: 4, label: '4. Internal Mechanics', icon: Layers },
             { id: 5, label: isRuntimeSimulationRequired ? '5. Simulator & Practice' : '5. Practice & Quiz', icon: TerminalIcon },
@@ -364,7 +366,7 @@ export const ConceptTeachingEngine: React.FC<ConceptTeachingEngineProps> = ({
                   boxShadow: '0 4px 14px rgba(14, 165, 233, 0.4)',
                 }}
               >
-                <span>Continue to 2. Visual Model & Terms</span>
+                <span>Continue to 2. Block & Flow Diagram</span>
                 <ArrowRight size={16} />
               </button>
             </div>
@@ -372,83 +374,12 @@ export const ConceptTeachingEngine: React.FC<ConceptTeachingEngineProps> = ({
         )}
 
         {/* ==================================================================== */}
-        {/* STAGE 2: VISUAL BLOCK DIAGRAM & TERMS EXPLORER */}
+        {/* STAGE 2: VISUAL BLOCK & FLOW DIAGRAM & TERMS EXPLORER */}
         {/* ==================================================================== */}
         {stage === 2 && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
-            {/* Interactive Block Diagram */}
-            {concept.blockDiagram && (
-              <div className="docker-card" style={{ padding: '2rem' }}>
-                <div style={{ marginBottom: '1.5rem' }}>
-                  <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#fff', margin: '0 0 0.35rem 0' }}>
-                    {concept.blockDiagram.title}
-                  </h3>
-                  <p style={{ fontSize: '0.84rem', color: 'var(--docker-text-secondary)', margin: 0 }}>
-                    {concept.blockDiagram.subtitle}
-                  </p>
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
-                  {concept.blockDiagram.nodes.map((node) => {
-                    const isSelected = selectedDiagramNode?.id === node.id;
-                    return (
-                      <div
-                        key={node.id}
-                        onClick={() => setSelectedDiagramNode(node)}
-                        style={{
-                          padding: '1.25rem',
-                          borderRadius: '12px',
-                          background: isSelected ? 'rgba(14, 165, 233, 0.15)' : 'rgba(255,255,255,0.02)',
-                          border: isSelected ? `2px solid ${node.color || '#0ea5e9'}` : '1px solid var(--docker-border)',
-                          cursor: 'pointer',
-                          transition: 'all 0.2s ease',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          gap: '0.65rem',
-                        }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                          <span style={{ fontSize: '0.7rem', fontWeight: 800, padding: '0.2rem 0.55rem', borderRadius: '999px', background: `${node.color || '#0ea5e9'}25`, color: node.color || '#38bdf8' }}>
-                            {node.badge || 'Component'}
-                          </span>
-                        </div>
-                        <div style={{ fontWeight: 800, fontSize: '0.94rem', color: '#fff' }}>
-                          {node.label}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Selected Node Definition Inspector */}
-                {selectedDiagramNode && (
-                  <div style={{ background: 'rgba(15, 23, 42, 0.8)', border: '1px solid var(--docker-border-active)', padding: '1.25rem', borderRadius: '10px' }}>
-                    <div style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--docker-blue)', marginBottom: '0.4rem' }}>
-                      INSPECTING: {selectedDiagramNode.label}
-                    </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem', marginTop: '0.75rem' }}>
-                      <div style={{ background: 'rgba(255,255,255,0.03)', padding: '0.85rem', borderRadius: '8px' }}>
-                        <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#4ade80', textTransform: 'uppercase', marginBottom: '0.35rem' }}>
-                          [ Simple Definition ]
-                        </div>
-                        <p style={{ fontSize: '0.86rem', color: '#e2e8f0', margin: 0, lineHeight: 1.5 }}>
-                          {selectedDiagramNode.simpleDef}
-                        </p>
-                      </div>
-
-                      <div style={{ background: 'rgba(255,255,255,0.03)', padding: '0.85rem', borderRadius: '8px' }}>
-                        <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#38bdf8', textTransform: 'uppercase', marginBottom: '0.35rem' }}>
-                          [ Technical Definition ]
-                        </div>
-                        <p style={{ fontSize: '0.86rem', color: '#e2e8f0', margin: 0, lineHeight: 1.5 }}>
-                          {selectedDiagramNode.techDef}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
+            {/* Interactive Multi-Archetype Block & Flow Diagram */}
+            <DockerFlowDiagram concept={concept} />
 
             {/* Terms You Just Encountered */}
             {concept.terms && (
@@ -758,7 +689,7 @@ export const ConceptTeachingEngine: React.FC<ConceptTeachingEngineProps> = ({
                 onClick={() => setStage(2)}
                 style={{ padding: '0.75rem 1.25rem', borderRadius: '10px', background: 'rgba(255,255,255,0.06)', color: '#fff', border: '1px solid var(--docker-border)', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer' }}
               >
-                ← Back to 2. Visual Model
+                ← Back to 2. Block & Flow Diagram
               </button>
               <button
                 onClick={() => setStage(4)}

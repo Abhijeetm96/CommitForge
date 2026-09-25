@@ -8,6 +8,7 @@ import { PodPracticeTab } from './PodPracticeTab';
 import { PodVisualizerTab } from './PodVisualizerTab';
 import { PodPitfallsTab } from './PodPitfallsTab';
 import { PodQuizTab } from './PodQuizTab';
+import { KubeFlowDiagram } from '../diagrams/KubeFlowDiagram';
 import {
   Layers,
   BookOpen,
@@ -28,12 +29,13 @@ import {
   Search,
   Filter,
   X,
+  Workflow,
 } from 'lucide-react';
 
 import { ViewMode } from '../../../context/AppContext';
 import { conceptRequiresVisualizer } from '../../data/topics/visualizerScope';
 
-type AcademyTab = 'learn' | 'spec' | 'practice' | 'visualize' | 'pitfalls' | 'quiz';
+type AcademyTab = 'learn' | 'diagram' | 'spec' | 'practice' | 'visualize' | 'pitfalls' | 'quiz';
 type DifficultyTier = 'All' | 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert';
 
 interface PodAcademyViewProps {
@@ -641,6 +643,7 @@ export const PodAcademyView: React.FC<PodAcademyViewProps> = ({ onSwitchToSuite 
             <div style={{ display: 'flex', gap: '0.4rem', borderTop: '1px solid var(--border-color)', paddingTop: '0.85rem', flexWrap: 'wrap' }}>
               {[
                 { id: 'learn' as AcademyTab, label: 'Concept Overview', icon: BookOpen },
+                { id: 'diagram' as AcademyTab, label: 'Block & Flow Diagram', icon: Workflow },
                 { id: 'spec' as AcademyTab, label: 'Declarative YAML', icon: FileCode },
                 { id: 'practice' as AcademyTab, label: 'Terminal Sandbox', icon: Code2 },
                 ...(hasVisualizer
@@ -681,6 +684,13 @@ export const PodAcademyView: React.FC<PodAcademyViewProps> = ({ onSwitchToSuite 
           {/* TAB 1: LEARN (CONCEPT OVERVIEW) */}
           {activeTab === 'learn' && (
             <PodConceptOverviewTab concept={activeConcept} />
+          )}
+
+          {/* TAB: FLOW & BLOCK DIAGRAM */}
+          {activeTab === 'diagram' && (
+            <div style={{ padding: '0.25rem 0' }}>
+              <KubeFlowDiagram concept={activeConcept} />
+            </div>
           )}
 
           {/* TAB 2: DECLARATIVE YAML & SYNTAX */}

@@ -2229,45 +2229,72 @@ const CHAPTER_15_FLOW: (c: KubeConcept) => TopicFlowDiagramData = (c) => ({
   ],
 });
 
+import { ALL_CONCEPT_DIAGRAMS } from './concepts';
+
 // ============================================================================
-// DYNAMIC DISPATCH ENGINE FOR ALL 15 CHAPTERS
-// Maps every single chapter directly to its authentic architectural topic
+// DYNAMIC DISPATCH ENGINE FOR ALL 71 CONCEPTS ACROSS 15 CHAPTERS
+// Provides authentic bespoke architectural flow & block diagrams for every concept
 // ============================================================================
-export function getDiagramDataForConcept(concept: KubeConcept): TopicFlowDiagramData {
-  const chapterNumber = parseInt(concept.number.split('.')[0], 10) || 1;
+export function getChapterMasterDiagram(chapterNumber: number, fallbackConcept?: KubeConcept): TopicFlowDiagramData {
+  const c: KubeConcept = fallbackConcept || {
+    id: `ch-${chapterNumber}`,
+    number: `${chapterNumber}.0`,
+    title: `Chapter ${chapterNumber} Overview`,
+    commandPill: 'kubectl cluster-info',
+    badge: 'Architecture',
+    difficulty: 'Intermediate',
+    description: `Master architecture for Chapter ${chapterNumber}`,
+    explanation: '',
+    yamlSnippet: '',
+    kubectlCommands: [],
+    visualizerFocus: '',
+    practiceChallenge: { instructions: '', goalCommand: '', hints: [] },
+  };
 
   switch (chapterNumber) {
     case 1:
-      return CHAPTER_1_FLOW(concept);
+      return CHAPTER_1_FLOW(c);
     case 2:
-      return CHAPTER_2_FLOW(concept);
+      return CHAPTER_2_FLOW(c);
     case 3:
-      return CHAPTER_3_FLOW(concept);
+      return CHAPTER_3_FLOW(c);
     case 4:
-      return CHAPTER_4_FLOW(concept);
+      return CHAPTER_4_FLOW(c);
     case 5:
-      return CHAPTER_5_FLOW(concept);
+      return CHAPTER_5_FLOW(c);
     case 6:
-      return CHAPTER_6_FLOW(concept);
+      return CHAPTER_6_FLOW(c);
     case 7:
-      return CHAPTER_7_FLOW(concept);
+      return CHAPTER_7_FLOW(c);
     case 8:
-      return CHAPTER_8_FLOW(concept);
+      return CHAPTER_8_FLOW(c);
     case 9:
-      return CHAPTER_9_FLOW(concept);
+      return CHAPTER_9_FLOW(c);
     case 10:
-      return CHAPTER_10_FLOW(concept);
+      return CHAPTER_10_FLOW(c);
     case 11:
-      return CHAPTER_11_FLOW(concept);
+      return CHAPTER_11_FLOW(c);
     case 12:
-      return CHAPTER_12_FLOW(concept);
+      return CHAPTER_12_FLOW(c);
     case 13:
-      return CHAPTER_13_FLOW(concept);
+      return CHAPTER_13_FLOW(c);
     case 14:
-      return CHAPTER_14_FLOW(concept);
+      return CHAPTER_14_FLOW(c);
     case 15:
-      return CHAPTER_15_FLOW(concept);
+      return CHAPTER_15_FLOW(c);
     default:
-      return CHAPTER_1_FLOW(concept);
+      return CHAPTER_1_FLOW(c);
   }
 }
+
+export function getDiagramDataForConcept(concept: KubeConcept): TopicFlowDiagramData {
+  if (ALL_CONCEPT_DIAGRAMS[concept.id]) {
+    return ALL_CONCEPT_DIAGRAMS[concept.id](concept);
+  }
+
+  const chapterNumber = parseInt(concept.number.split('.')[0], 10) || 1;
+  return getChapterMasterDiagram(chapterNumber, concept);
+}
+
+export { ALL_CONCEPT_DIAGRAMS };
+

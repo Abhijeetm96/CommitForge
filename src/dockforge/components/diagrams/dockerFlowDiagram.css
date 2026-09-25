@@ -1,0 +1,758 @@
+/* Docker Flow & Architectural Diagram Stylesheet */
+
+.docker-flow-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  background: #080d1a;
+  background-image: 
+    radial-gradient(ellipse at top left, rgba(14, 165, 233, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(2, 132, 199, 0.08) 0%, transparent 50%);
+  border: 1.5px solid rgba(14, 165, 233, 0.3);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.docker-flow-container.compact {
+  padding: 1rem;
+  gap: 1rem;
+}
+
+/* ==================================================================== */
+/* 1. HEADER SECTION                                                    */
+/* ==================================================================== */
+.docker-flow-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.docker-flow-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.docker-flow-title-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.35) 0%, rgba(56, 189, 248, 0.15) 100%);
+  border: 1.5px solid rgba(14, 165, 233, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #38bdf8;
+  flex-shrink: 0;
+  box-shadow: 0 0 16px rgba(14, 165, 233, 0.25);
+}
+
+.docker-flow-title-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.docker-flow-main-title {
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  letter-spacing: -0.01em;
+}
+
+.docker-flow-topic-badge {
+  font-size: 0.76rem;
+  color: #38bdf8;
+  background: rgba(14, 165, 233, 0.18);
+  border: 1px solid rgba(14, 165, 233, 0.4);
+  padding: 0.15rem 0.65rem;
+  border-radius: 999px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.docker-flow-subtitle {
+  font-size: 0.86rem;
+  color: #94a3b8;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+/* Archetype Segmented Selector */
+.docker-flow-archetype-nav {
+  display: flex;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.8);
+  border-radius: 10px;
+  padding: 0.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  gap: 0.2rem;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.docker-flow-archetype-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #94a3b8;
+  border-radius: 7px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.docker-flow-archetype-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.docker-flow-archetype-btn.active {
+  background: rgba(14, 165, 233, 0.3);
+  border-color: #38bdf8;
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(14, 165, 233, 0.3);
+}
+
+/* ==================================================================== */
+/* 2. PLAYBACK & STEP PROGRESSION TOOLBAR                              */
+/* ==================================================================== */
+.docker-flow-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0.65rem 1rem;
+}
+
+.docker-flow-playback-cluster {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  flex-shrink: 0;
+}
+
+.docker-flow-tool-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #cbd5e1;
+  border-radius: 8px;
+  padding: 0.35rem 0.65rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  transition: all 0.15s ease;
+}
+
+.docker-flow-tool-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.docker-flow-tool-btn.play-btn {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: #10b981;
+  color: #4ade80;
+  padding: 0.35rem 0.85rem;
+  gap: 0.4rem;
+}
+
+.docker-flow-tool-btn.play-btn.playing {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+  color: #f87171;
+}
+
+/* Stepper Pills */
+.docker-flow-stepper-cluster {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+
+.docker-flow-step-pill {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #94a3b8;
+  border-radius: 7px;
+  padding: 0.3rem 0.75rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.15s ease;
+}
+
+.docker-flow-step-pill:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.docker-flow-step-pill.active {
+  background: var(--docker-blue, #0ea5e9);
+  border-color: #38bdf8;
+  color: #ffffff;
+  font-weight: 800;
+  box-shadow: 0 0 12px rgba(14, 165, 233, 0.5);
+}
+
+.docker-flow-active-badge {
+  font-size: 0.84rem;
+  color: #ffffff;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.docker-flow-active-badge strong {
+  color: #38bdf8;
+  font-weight: 900;
+}
+
+/* ==================================================================== */
+/* 3. DIAGRAM CANVAS AREA                                              */
+/* ==================================================================== */
+.docker-flow-canvas {
+  background: 
+    radial-gradient(circle, rgba(14, 165, 233, 0.16) 1.2px, transparent 1.2px) 0 0 / 22px 22px,
+    radial-gradient(ellipse at 50% 0%, rgba(2, 132, 199, 0.22) 0%, transparent 65%),
+    #050813;
+  border: 1px solid rgba(14, 165, 233, 0.28);
+  border-radius: 14px;
+  padding: 1.5rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 290px;
+  position: relative;
+  overflow-x: auto;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.7);
+  box-sizing: border-box;
+}
+
+/* View Mode Toggles for Pipeline (Horizontal vs Vertical timeline) */
+.docker-flow-canvas-controls {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 0.2rem;
+  z-index: 5;
+}
+
+.docker-canvas-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.docker-canvas-btn.active {
+  background: rgba(14, 165, 233, 0.3);
+  color: #38bdf8;
+}
+
+/* ==================================================================== */
+/* 4. BLOCK COMPONENT STYLING                                           */
+/* ==================================================================== */
+.docker-flow-block-card {
+  border-radius: 12px;
+  padding: 0.95rem 1.1rem;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.2s ease, border-color 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  position: relative;
+  backdrop-filter: blur(10px);
+  user-select: none;
+  box-sizing: border-box;
+}
+
+.docker-flow-block-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+}
+
+.docker-flow-block-card.active-step {
+  transform: translateY(-2px) scale(1.02);
+  animation: pulseBlockGlow 2.5s infinite ease-in-out;
+}
+
+@keyframes pulseBlockGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(14, 165, 233, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 32px rgba(14, 165, 233, 0.7);
+  }
+}
+
+.docker-block-accent-strip {
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 4px;
+  border-radius: 0 2px 2px 0;
+}
+
+.docker-block-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding-left: 0.35rem;
+}
+
+.docker-block-icon-box {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.docker-block-title-text {
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.3;
+  overflow-wrap: break-word;
+}
+
+.docker-block-protocol-badge {
+  display: inline-block;
+  max-width: 100%;
+  font-size: 0.72rem;
+  font-family: var(--font-mono, monospace);
+  font-weight: 700;
+  padding: 0.22rem 0.6rem;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.75);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  color: #38bdf8;
+  margin-left: 0.35rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.docker-block-sublabel {
+  font-size: 0.83rem;
+  color: #cbd5e1;
+  line-height: 1.45;
+  padding-left: 0.35rem;
+  font-weight: 500;
+}
+
+.docker-block-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 0.35rem;
+  padding-top: 0.45rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.docker-block-category-tag {
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.docker-block-inspect-hint {
+  font-size: 0.7rem;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* ==================================================================== */
+/* 5. ARCHETYPE LAYOUTS                                                 */
+/* ==================================================================== */
+
+/* --- PIPELINE LAYOUT --- */
+.docker-pipeline-grid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  width: 100%;
+  padding: 1.25rem 0.5rem;
+  box-sizing: border-box;
+}
+
+.docker-pipeline-connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.docker-conn-badge {
+  font-size: 0.74rem;
+  font-family: var(--font-mono, monospace);
+  font-weight: 700;
+  color: #38bdf8;
+  background: #040817;
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  padding: 0.22rem 0.65rem;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+}
+
+.docker-conn-badge.active {
+  color: #ffffff;
+  border-color: #38bdf8;
+  background: rgba(14, 165, 233, 0.35);
+  box-shadow: 0 0 12px rgba(14, 165, 233, 0.6);
+}
+
+/* Vertical Timeline Mode for smaller screens */
+.docker-pipeline-vertical {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.docker-vertical-connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  margin: 0.25rem 0;
+}
+
+/* --- LOOP LAYOUT --- */
+.docker-loop-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 0.75rem 0;
+}
+
+.docker-loop-banner {
+  margin-top: 0.85rem;
+  width: 100%;
+  max-width: 640px;
+  background: rgba(14, 165, 233, 0.12);
+  border: 1.5px dashed rgba(14, 165, 233, 0.5);
+  border-radius: 12px;
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  box-sizing: border-box;
+}
+
+/* --- DECISION LAYOUT --- */
+.docker-decision-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 0.75rem 0;
+}
+
+.docker-decision-arms {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2rem;
+  width: 100%;
+  max-width: 720px;
+  box-sizing: border-box;
+}
+
+.docker-decision-branch {
+  flex: 1;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+/* --- ROUTING LAYOUT --- */
+.docker-routing-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 0.75rem 0;
+}
+
+.docker-routing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  width: 100%;
+  max-width: 860px;
+}
+
+/* --- STACK LAYOUT --- */
+.docker-stack-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+.docker-stack-tier {
+  width: 100%;
+  border-radius: 12px;
+  padding: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  box-sizing: border-box;
+}
+
+.docker-stack-tier-title {
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.docker-stack-tier-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 0.75rem;
+  width: 100%;
+}
+
+/* ==================================================================== */
+/* 6. CURRENT STAGE EXPLANATION & CLI TRACE                             */
+/* ==================================================================== */
+.docker-flow-explanation-card {
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.12) 0%, rgba(56, 189, 248, 0.05) 100%);
+  border: 1.5px solid rgba(14, 165, 233, 0.35);
+  border-radius: 14px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  box-sizing: border-box;
+}
+
+.docker-explanation-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.docker-explanation-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 0.85rem;
+}
+
+.docker-explanation-box {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+}
+
+.docker-live-trace-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #040816;
+  padding: 0.65rem 1rem;
+  border-radius: 9px;
+  border: 1px solid rgba(14, 165, 233, 0.35);
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  box-sizing: border-box;
+}
+
+/* ==================================================================== */
+/* 7. FIXED COMPONENT INSPECTION MODAL                                  */
+/* ==================================================================== */
+.docker-inspector-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 7, 18, 0.82);
+  backdrop-filter: blur(10px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: fadeIn 0.2s ease-out;
+  box-sizing: border-box;
+}
+
+.docker-inspector-modal {
+  width: 100%;
+  max-width: 580px;
+  max-height: calc(100vh - 3rem);
+  overflow-y: auto;
+  background: #0a1128;
+  background-image: radial-gradient(ellipse at top right, rgba(14, 165, 233, 0.15) 0%, transparent 60%);
+  border: 1.5px solid rgba(14, 165, 233, 0.45);
+  border-radius: 18px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  animation: modalScaleIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+}
+
+@keyframes modalScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ==================================================================== */
+/* 8. RESPONSIVE BREAKPOINTS                                            */
+/* ==================================================================== */
+@media (max-width: 1024px) {
+  .docker-flow-container {
+    padding: 1.15rem;
+  }
+  .docker-flow-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .docker-flow-archetype-nav {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .docker-flow-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .docker-flow-playback-cluster {
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 768px) {
+  .docker-flow-container {
+    padding: 1rem;
+    gap: 1rem;
+  }
+  .docker-flow-main-title {
+    font-size: 1.05rem;
+  }
+  .docker-decision-arms {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .docker-decision-branch {
+    width: 100%;
+    min-width: 0;
+  }
+  .docker-explanation-grid {
+    grid-template-columns: 1fr;
+  }
+  .docker-inspector-modal {
+    padding: 1.15rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .docker-flow-stepper-cluster {
+    gap: 0.25rem;
+  }
+  .docker-flow-step-pill {
+    padding: 0.25rem 0.55rem;
+    font-size: 0.72rem;
+  }
+  .docker-flow-tool-btn {
+    padding: 0.3rem 0.55rem;
+  }
+}

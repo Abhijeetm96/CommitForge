@@ -165,6 +165,23 @@ describe('PodForge Master Architectural Flow & Block Diagram Integrity Audit', (
     });
   });
 
+  it('guarantees that every single one of the 71 concepts has a bespoke diagram registered', async () => {
+    const { ALL_CONCEPT_DIAGRAMS } = await import('../podforge/data/diagrams/topicFlows');
+    const allConcepts = getAllConcepts();
+
+    expect(Object.keys(ALL_CONCEPT_DIAGRAMS).length).toBe(71);
+    expect(allConcepts.length).toBe(71);
+
+    const missingDiagrams: string[] = [];
+    allConcepts.forEach((c) => {
+      if (!ALL_CONCEPT_DIAGRAMS[c.id]) {
+        missingDiagrams.push(`Concept ${c.number} (${c.id}) is missing from ALL_CONCEPT_DIAGRAMS`);
+      }
+    });
+
+    expect(missingDiagrams).toEqual([]);
+  });
+
   it('prints an architectural diagram coverage summary report', () => {
     console.log('\n================ PODFORGE ARCHITECTURAL DIAGRAM AUDIT REPORT ================');
     const allConcepts = getAllConcepts();
@@ -180,5 +197,45 @@ describe('PodForge Master Architectural Flow & Block Diagram Integrity Audit', (
 
     console.log('============================================================================\n');
   });
+
+  it('detects diverse architectural archetypes across chapters so diagrams do not all look the same', async () => {
+    const { detectArchetype } = await import('../podforge/components/diagrams/KubeFlowDiagram');
+    const allConcepts = getAllConcepts();
+
+    const archetypesFound = new Set<string>();
+    const archetypeDistribution: Record<string, number> = {};
+
+    allConcepts.forEach((c) => {
+      const diagram = getDiagramDataForConcept(c);
+      const arch = detectArchetype(diagram);
+      archetypesFound.add(arch);
+      archetypeDistribution[arch] = (archetypeDistribution[arch] || 0) + 1;
+    });
+
+    // Verify all 5 distinct archetypes are actively utilized
+    expect(archetypesFound.has('pipeline')).toBe(true);
+    expect(archetypesFound.has('loop')).toBe(true);
+    expect(archetypesFound.has('decision')).toBe(true);
+    expect(archetypesFound.has('routing')).toBe(true);
+    expect(archetypesFound.has('stack')).toBe(true);
+    expect(archetypesFound.size).toBe(5);
+
+    // Verify specific domain mappings
+    const c01 = allConcepts.find((c) => c.number === '1.1')!;
+    const c05 = allConcepts.find((c) => c.number === '5.1')!;
+    const c08 = allConcepts.find((c) => c.number === '8.1')!;
+    const c10 = allConcepts.find((c) => c.number === '10.1')!;
+    const c12 = allConcepts.find((c) => c.number === '12.1')!;
+    const c14 = allConcepts.find((c) => c.number === '14.1')!;
+
+    expect(detectArchetype(getDiagramDataForConcept(c01))).toBe('pipeline');
+    expect(detectArchetype(getDiagramDataForConcept(c05))).toBe('routing');
+    expect(detectArchetype(getDiagramDataForConcept(c08))).toBe('decision');
+    expect(detectArchetype(getDiagramDataForConcept(c10))).toBe('loop');
+    expect(detectArchetype(getDiagramDataForConcept(c12))).toBe('stack');
+    expect(detectArchetype(getDiagramDataForConcept(c14))).toBe('loop');
+  });
 });
+
+
 
