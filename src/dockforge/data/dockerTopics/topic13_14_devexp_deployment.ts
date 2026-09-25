@@ -1620,7 +1620,7 @@ export const TOPIC_13_14_CONCEPTS: Record<string, UniversalDockerConcept> = {
       ]
     },
     sandbox: {
-      initialCommands: ['echo "job \"web\" { datacenters = [\"dc1\"] group \"api\" { task \"server\" { driver = \"docker\" config { image = \"nginx:alpine\" } } } }" > webapp.nomad'],
+      initialCommands: ['echo \'job "web" { datacenters = ["dc1"] group "api" { task "server" { driver = "docker" config { image = "nginx:alpine" } } } }\' > webapp.nomad'],
       guidedSteps: [
         { instruction: 'Submit the job to HashiCorp Nomad', command: 'nomad job run webapp.nomad', hint: 'Run nomad job run webapp.nomad' },
       ],

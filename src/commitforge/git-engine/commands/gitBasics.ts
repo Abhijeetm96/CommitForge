@@ -414,7 +414,7 @@ export function executeGitBasics(cmd: ParsedCommand, repo: GitRepo): CommandResu
 
     // Check secrets
     for (const [p, content] of Object.entries(activeIndex)) {
-      if (p.includes('.env') || /api_key\s*=\s*['"]?[a-zA-Z0-9_\-]{10,}/i.test(content)) {
+      if (p.includes('.env') || /api_key\s*=\s*['"]?[a-zA-Z0-9_-]{10,}/i.test(content)) {
         warnings.push('🚨 WARNING: You committed potential secrets/API keys! In professional repositories, secrets must be in .env and ignored by .gitignore.');
       }
     }

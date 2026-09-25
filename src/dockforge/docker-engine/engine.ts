@@ -904,7 +904,7 @@ export class DockerEngine {
         status: 'running',
         created: 'Just now',
         ports: [{ hostPort: 5432, containerPort: 5432, protocol: 'tcp' }],
-        mounts: [{ hostPath: 'pgdata', containerPath: '/var/lib/postgresql/data', mode: 'rw' }],
+        mounts: [{ type: 'volume', source: 'pgdata', target: '/var/lib/postgresql/data', readOnly: false }],
         network: 'app_default',
         ipAddress: '172.18.0.2',
         env: { POSTGRES_DB: 'app', POSTGRES_USER: 'postgres' },

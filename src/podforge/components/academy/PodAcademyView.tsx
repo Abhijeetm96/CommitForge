@@ -243,8 +243,6 @@ export const PodAcademyView: React.FC<PodAcademyViewProps> = ({ onSwitchToSuite 
                           key={c.id}
                           onClick={() => {
                             setActiveConceptId(c.id);
-                            setPracticeSuccess(false);
-                            setPracticeInput('');
                           }}
                           style={{
                             padding: '0.5rem 0.65rem',

@@ -7,11 +7,11 @@ import { AcademyConceptTab } from './UniversalConceptHero';
 interface Props {
   concept: UniversalConcept;
   onOpenCenterSandbox?: () => void;
-  _isFullView?: boolean;
+  isFullView?: boolean;
   onSelectConcept?: (conceptId: string, targetTab?: AcademyConceptTab) => void;
 }
 
-export const InteractiveTerminalSandbox: React.FC<Props> = ({ concept, onOpenCenterSandbox, onSelectConcept }) => {
+export const InteractiveTerminalSandbox: React.FC<Props> = ({ concept, onOpenCenterSandbox, isFullView: _isFullView, onSelectConcept }) => {
   const { executeCommand } = useApp();
 
   const [activeTab, setActiveTab] = useState<'terminal' | 'guided'>('terminal');

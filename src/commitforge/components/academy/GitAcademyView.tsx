@@ -49,7 +49,7 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
   React.useEffect(() => {
     if (initialConceptId && initialConceptId !== activeConceptId) {
       setActiveConceptId(initialConceptId);
-      const topic = ALL_ACADEMY_TOPICS.find((t) => t.concepts.some((c) => c.id === initialConceptId));
+      const topic = ACADEMY_18_TOPICS.find((t) => t.concepts.some((c) => c.id === initialConceptId));
       if (topic) {
         setExpandedTopics((prev) => ({ ...prev, [topic.id]: true }));
       }

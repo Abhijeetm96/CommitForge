@@ -27,7 +27,7 @@ export const PodYamlSpecTab: React.FC<Props> = ({ concept }) => {
   const hasReplicas = useMemo(() => /replicas:\s*\d+/.test(concept.yamlSnippet), [concept.yamlSnippet]);
   const hasCpu = useMemo(() => /cpu:\s*["']?[0-9]+m?["']?/.test(concept.yamlSnippet), [concept.yamlSnippet]);
   const hasMemory = useMemo(() => /memory:\s*["']?[0-9]+[A-Za-z]+["']?/.test(concept.yamlSnippet), [concept.yamlSnippet]);
-  const hasImage = useMemo(() => /image:\s*[\w\-\.\/]+/.test(concept.yamlSnippet), [concept.yamlSnippet]);
+  const hasImage = useMemo(() => /image:\s*[\w\-.\/]+/.test(concept.yamlSnippet), [concept.yamlSnippet]);
 
   // Tweak controls are ONLY rendered where fields exist in the manifest
   const hasAnyTweakControls = hasReplicas || hasCpu || hasMemory || hasImage;
@@ -52,7 +52,7 @@ export const PodYamlSpecTab: React.FC<Props> = ({ concept }) => {
       text = text.replace(/memory:\s*["']?[0-9]+[A-Za-z]+["']?/g, `memory: "${memLimit}"`);
     }
     if (hasImage) {
-      text = text.replace(/(image:\s*[\w\-\.\/]+)(:\S+)?/g, (_match, p1) => `${p1}:${imageTag}`);
+      text = text.replace(/(image:\s*[\w\-.\/]+)(:\S+)?/g, (_match, p1) => `${p1}:${imageTag}`);
     }
 
     return text;
