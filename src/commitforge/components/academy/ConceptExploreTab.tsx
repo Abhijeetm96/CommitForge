@@ -13,7 +13,6 @@ import {
   CheckCircle2,
   XCircle,
   AlertTriangle,
-  ArrowRight,
   GitCompare,
   Lightbulb,
   Search,
