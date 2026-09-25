@@ -7,7 +7,6 @@ import {
   Trophy,
   FileText,
   Search,
-  Sun,
   User,
   Boxes,
   ChevronDown,
@@ -299,24 +298,6 @@ export const HeaderNav: React.FC<HeaderNavProps> = ({ onSwitchToSuite }) => {
           </div>
         </div>
 
-        {/* Theme Toggle Button */}
-        <button
-          style={{
-            width: '32px',
-            height: '32px',
-            borderRadius: '50%',
-            background: 'rgba(255, 255, 255, 0.05)',
-            border: '1px solid var(--docker-border)',
-            color: '#cbd5e1',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-          }}
-          title="Toggle Theme"
-        >
-          <Sun size={15} />
-        </button>
 
         {/* Profile Avatar */}
         <div
