@@ -28,12 +28,22 @@ describe('Concepts Universe Independent Page Architecture', () => {
     expect(getTitleForMode('universe')).toContain('71 Concepts Universe');
   });
 
-  it('ensures UniversalConceptHero has a direct launcher button to the independent Universe page', () => {
+  it('ensures UniversalConceptHero removes All 71 Concepts section from concept subtabs', () => {
     const heroPath = path.resolve(__dirname, '../commitforge/components/academy/UniversalConceptHero.tsx');
     const content = fs.readFileSync(heroPath, 'utf-8');
 
-    expect(content).toContain("setMode('universe')");
-    expect(content).toContain('71 Concepts Universe');
+    // All 71 Concepts / Universe should be removed from concept subtabs bar
+    expect(content).not.toContain("id: 'Universe'");
+    expect(content).not.toContain('All 71 Concepts');
+    expect(content).not.toContain('71 Concepts Universe');
+
+    // Sub-tabs must be strictly concept-specific
+    expect(content).toContain("id: 'Learn'");
+    expect(content).toContain("id: 'Explore'");
+    expect(content).toContain("id: 'Sandbox'");
+    expect(content).toContain("id: 'Visualize'");
+    expect(content).toContain("id: 'Practice'");
+    expect(content).toContain("id: 'Reference'");
   });
 
   it('ensures ConceptsUniverseView contains full curriculum catalog with all 71 concepts and search', () => {

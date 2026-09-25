@@ -41,8 +41,8 @@ export const HeaderNav: React.FC = () => {
   const [showMobileNav, setShowMobileNav] = useState(false);
   const [showSuiteMenu, setShowSuiteMenu] = useState(false);
 
-  // Light mode feature toggle (currently disabled; code preserved)
-  const LIGHT_MODE_ENABLED = false;
+  // Light mode feature toggle (enabled for complete theme support)
+  const LIGHT_MODE_ENABLED = true;
 
   const isIDE = mode === 'ide';
   const isClean = Object.keys(repo.workingDirectory).length === 0 || Object.keys(repo.index).length === 0;
@@ -1243,6 +1243,7 @@ export const HeaderNav: React.FC = () => {
 
                 {[
                   { id: 'learn', label: 'Git Academy', desc: '18 Canonical Topics & Live Sandbox' },
+                  { id: 'universe', label: '71 Concepts Universe', desc: 'Complete encyclopedia of 71 Git concepts & scenarios' },
                   { id: 'practice', label: 'Practice Missions', desc: 'Guided interactive developer challenges' },
                   { id: 'labs', label: 'Labs', desc: 'Break, diagnose & recovery simulations' },
                   { id: 'ide', label: 'Developer IDE', desc: 'Simulated professional developer workspace' },

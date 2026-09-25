@@ -5,6 +5,8 @@ import { PodAcademyView } from './components/academy/PodAcademyView';
 import { PodLabsHubView } from './components/labs/PodLabsHubView';
 import { ClusterIdeView } from './components/ide/ClusterIdeView';
 import { ClusterCanvas } from './components/visualizer/ClusterCanvas';
+import { UniversalLessonRuntime } from '../platform/lesson-runtime/UniversalLessonRuntime';
+import { KubeRuntimeAdapter, kubeLessonAdapter } from '../platform/adapters/kubeAdapter';
 import { ViewMode } from '../context/AppContext';
 import './styles/podforge.css';
 
@@ -14,7 +16,7 @@ interface PodForgeAppProps {
 }
 
 const PodForgeContent: React.FC<PodForgeAppProps> = ({ onSwitchToSuite, initialConceptId }) => {
-  const { mode, setMode, activeConcept, setActiveConceptId } = useApp();
+  const { mode, setMode, activeConcept, setActiveConceptId, engine } = useApp();
 
   React.useEffect(() => {
     if (initialConceptId && initialConceptId !== activeConcept.id) {
@@ -40,6 +42,14 @@ const PodForgeContent: React.FC<PodForgeAppProps> = ({ onSwitchToSuite, initialC
         }}
       >
         {mode === 'academy' && <PodAcademyView onSwitchToSuite={onSwitchToSuite} />}
+        {(mode === 'lesson' || mode === 'guided-lesson') && (
+          <UniversalLessonRuntime
+            lesson={kubeLessonAdapter(activeConcept)}
+            adapter={new KubeRuntimeAdapter(engine)}
+            onNextLesson={() => setMode('academy')}
+            onPrevLesson={() => setMode('academy')}
+          />
+        )}
         {mode === 'labs' && <PodLabsHubView />}
         {mode === 'ide' && <ClusterIdeView />}
         {mode === 'cluster' && <ClusterCanvas />}

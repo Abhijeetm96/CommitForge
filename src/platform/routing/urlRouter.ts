@@ -103,6 +103,8 @@ export function mapSegmentToMode(segment: string): ViewMode {
     case 'capstone':
     case 'config-lab':
     case 'discover':
+    case 'lesson':
+    case 'guided-lesson':
       return seg as ViewMode;
 
     case 'home':
@@ -138,6 +140,8 @@ export function mapModeToSegment(mode: ViewMode): string {
     case 'capstone':
     case 'config-lab':
     case 'discover':
+    case 'lesson':
+    case 'guided-lesson':
       return mode;
     case 'home':
     default:

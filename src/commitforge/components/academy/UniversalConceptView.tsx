@@ -275,28 +275,6 @@ export const UniversalConceptView: React.FC<Props> = ({
                     <span>Deep Variations Tab</span>
                     <ArrowRight size={13} />
                   </button>
-                  <button
-                    onClick={() => {
-                      setMode('universe');
-                    }}
-                    style={{
-                      background: 'rgba(56, 189, 248, 0.12)',
-                      border: '1px solid rgba(56, 189, 248, 0.3)',
-                      borderRadius: '6px',
-                      color: '#38bdf8',
-                      padding: '0.25rem 0.65rem',
-                      fontSize: '0.74rem',
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.35rem',
-                      transition: 'all 0.15s ease',
-                    }}
-                  >
-                    <Sparkles size={13} />
-                    <span>Browse All 75 Concepts (220+ Variations)</span>
-                  </button>
                 </div>
               </div>
 
@@ -433,28 +411,6 @@ export const UniversalConceptView: React.FC<Props> = ({
                   >
                     <span>This Concept's Scenarios</span>
                     <ArrowRight size={13} />
-                  </button>
-                  <button
-                    onClick={() => {
-                      setMode('universe');
-                    }}
-                    style={{
-                      background: 'rgba(245, 158, 11, 0.15)',
-                      border: '1px solid rgba(245, 158, 11, 0.35)',
-                      borderRadius: '6px',
-                      color: '#f59e0b',
-                      padding: '0.25rem 0.65rem',
-                      fontSize: '0.74rem',
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.35rem',
-                      transition: 'all 0.15s ease',
-                    }}
-                  >
-                    <Sparkles size={13} />
-                    <span>Solve All 79 Scenarios across 71 Concepts</span>
                   </button>
                 </div>
               </div>

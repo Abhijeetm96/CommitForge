@@ -35,7 +35,7 @@ export class SuiteErrorBoundary extends React.Component<Props, State> {
   private handleReset = () => {
     const nextState: State = { hasError: false, error: null, errorInfo: null, copied: false };
     this.setState(nextState);
-    this.state = nextState;
+    Object.assign(this.state, nextState);
     if (this.props.onReset) {
       this.props.onReset();
     }

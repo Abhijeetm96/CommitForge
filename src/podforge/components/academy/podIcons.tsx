@@ -331,6 +331,5 @@ export const ConceptIconBadge: React.FC<ConceptIconBadgeProps> = ({
   color,
   className,
 }) => {
-  const IconComponent = getConceptIcon(conceptId);
-  return <IconComponent size={size} color={color} className={className} />;
+  return React.createElement(getConceptIcon(conceptId), { size, color, className });
 };

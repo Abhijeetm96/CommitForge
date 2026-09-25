@@ -5,6 +5,8 @@ import { DockerAcademyView } from './components/academy/DockerAcademyView';
 import { ContainerMeshVisualizer } from './components/visualizer/ContainerMeshVisualizer';
 import { DockerLabsHubView } from './components/labs/DockerLabsHubView';
 import { DockerIdeView } from './components/ide/DockerIdeView';
+import { UniversalLessonRuntime } from '../platform/lesson-runtime/UniversalLessonRuntime';
+import { DockerRuntimeAdapter, dockerLessonAdapter } from '../platform/adapters/dockerAdapter';
 import { ViewMode } from '../context/AppContext';
 import './styles/dockforge.css';
 
@@ -14,7 +16,7 @@ interface DockForgeAppProps {
 }
 
 const DockForgeContent: React.FC<DockForgeAppProps> = ({ onSwitchToSuite, initialConceptId }) => {
-  const { mode, setMode, activeConceptId, setActiveConceptId } = useDocker();
+  const { mode, setMode, activeConceptId, setActiveConceptId, currentConcept, engine } = useDocker();
 
   React.useEffect(() => {
     if (initialConceptId && initialConceptId !== activeConceptId) {
@@ -40,6 +42,14 @@ const DockForgeContent: React.FC<DockForgeAppProps> = ({ onSwitchToSuite, initia
         }}
       >
         {mode === 'academy' && <DockerAcademyView />}
+        {(mode === 'lesson' || mode === 'guided-lesson') && (
+          <UniversalLessonRuntime
+            lesson={dockerLessonAdapter(currentConcept)}
+            adapter={new DockerRuntimeAdapter(engine)}
+            onNextLesson={() => setMode('academy')}
+            onPrevLesson={() => setMode('academy')}
+          />
+        )}
         {mode === 'visualizer' && <ContainerMeshVisualizer />}
         {mode === 'labs' && <DockerLabsHubView />}
         {mode === 'ide' && <DockerIdeView />}

@@ -20,7 +20,7 @@ export const IdeSyntaxEditor: React.FC<IdeSyntaxEditorProps> = ({
   editable,
   onChange,
 }) => {
-  const { } = useDocker(); // Keep import as requested
+  useDocker(); // Keep import as requested
   const [internalContent, setInternalContent] = useState(content);
   const [scrollTop, setScrollTop] = useState(0);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);

@@ -44,8 +44,6 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
   React.useEffect(() => {
     if (mode === 'visualize') {
       setAcademyTab('Visualize');
-    } else if (mode === 'community') {
-      setAcademyTab('Universe');
     }
   }, [mode, setAcademyTab]);
 

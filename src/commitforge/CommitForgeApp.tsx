@@ -14,6 +14,9 @@ import { OnboardingWizard } from './components/tutor/OnboardingWizard';
 import { GitForHumansModal } from './components/tutor/GitForHumansModal';
 import { GitMovieModal } from './components/animation/GitMovieModal';
 import { ConceptsUniverseView } from './components/universe/ConceptsUniverseView';
+import { UniversalLessonRuntime } from '../platform/lesson-runtime/UniversalLessonRuntime';
+import { GitRuntimeAdapter, gitLessonAdapter } from '../platform/adapters/gitAdapter';
+import { getUniversalConcept } from './data/unifiedAcademyData';
 import { Database } from 'lucide-react';
 import './styles/commitforge.css';
 
@@ -48,6 +51,7 @@ export const CommitForgeApp: React.FC<CommitForgeAppProps> = ({ onSwitchToSuite 
     closeHumansModal,
     activeLessonConcept,
     setActiveLessonConcept,
+    engine,
   } = useApp();
 
   const [showInternalsModal, setShowInternalsModal] = useState(false);
@@ -81,6 +85,21 @@ export const CommitForgeApp: React.FC<CommitForgeAppProps> = ({ onSwitchToSuite 
 
         {/* EXPERIENCE 1.5: 🌌 71 CONCEPTS UNIVERSE (Independent Curriculum Catalog Page) */}
         {mode === 'universe' && <ConceptsUniverseView />}
+
+        {/* EXPERIENCE 1.8: 🎓 14-STEP UNIVERSAL PEDAGOGICAL LESSON RUNTIME */}
+        {(mode === 'lesson' || mode === 'guided-lesson') && (
+          <UniversalLessonRuntime
+            lesson={gitLessonAdapter(getUniversalConcept(activeLessonConcept || 'c-git-commit'))}
+            adapter={new GitRuntimeAdapter(engine)}
+            onNextLesson={() => {
+              setActiveLessonConcept(null);
+              setMode('learn');
+            }}
+            onPrevLesson={() => {
+              setMode('learn');
+            }}
+          />
+        )}
 
         {/* EXPERIENCE 2: 🛠️ PRACTICE (Guided Developer Missions) */}
         {mode === 'practice' && <PracticeView />}

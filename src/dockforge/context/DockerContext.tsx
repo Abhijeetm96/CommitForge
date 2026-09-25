@@ -5,7 +5,7 @@ import { DOCKER_14_TOPICS, DOCKER_UNIVERSAL_CONCEPTS, UniversalDockerConcept } f
 import { ProgressManager } from '../../progress/ProgressManager';
 import { parseCurrentRoute, syncUrlWithMode } from '../../platform/routing/urlRouter';
 
-export type DockMode = 'academy' | 'labs' | 'ide' | 'visualizer';
+export type DockMode = 'academy' | 'labs' | 'ide' | 'visualizer' | 'lesson' | 'guided-lesson';
 
 interface TerminalEntry {
   command?: string;

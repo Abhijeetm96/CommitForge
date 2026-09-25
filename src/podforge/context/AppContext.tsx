@@ -6,7 +6,7 @@ import type { KubeConcept } from '../data/topics';
 import { ProgressManager } from '../../progress/ProgressManager';
 import { parseCurrentRoute, syncUrlWithMode } from '../../platform/routing/urlRouter';
 
-export type AppMode = 'academy' | 'labs' | 'ide' | 'cluster';
+export type AppMode = 'academy' | 'labs' | 'ide' | 'cluster' | 'lesson' | 'guided-lesson';
 
 interface TerminalHistoryItem {
   command?: string;

@@ -7,12 +7,9 @@ import {
   Terminal,
   Flame,
   GraduationCap,
-  Sparkles,
-  ArrowRight,
 } from 'lucide-react';
 import { getConceptIcon, getTopicIcon } from './academyIcons';
-import { useApp } from '../../context/AppContext';
-import type { AcademyConceptTab } from '../../context/AppContext';
+import { useApp, type AcademyConceptTab } from '../../context/AppContext';
 export type { AcademyConceptTab } from '../../context/AppContext';
 
 interface Props {
@@ -463,33 +460,6 @@ export const UniversalConceptHero: React.FC<Props> = ({
             </button>
           );
         })}
-
-        {/* Quick Launcher to Independent 71 Concepts Universe Page */}
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center' }}>
-          <button
-            onClick={() => setMode('universe')}
-            style={{
-              background: 'rgba(245, 158, 11, 0.08)',
-              border: '1px solid rgba(245, 158, 11, 0.25)',
-              color: '#f59e0b',
-              padding: '0.35rem 0.75rem',
-              borderRadius: '8px',
-              fontSize: '0.76rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.35rem',
-              transition: 'all 0.15s ease',
-              flexShrink: 0,
-            }}
-            title="Open the independent 71 Concepts Universe Catalog page"
-          >
-            <Sparkles size={13} color="#f59e0b" />
-            <span>71 Concepts Universe</span>
-            <ArrowRight size={12} />
-          </button>
-        </div>
       </div>
     </div>
   );

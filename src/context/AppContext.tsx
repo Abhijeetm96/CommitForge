@@ -28,7 +28,9 @@ export type ViewMode =
   | 'reference'
   | 'config-lab'
   | 'visualize'
-  | 'community';
+  | 'community'
+  | 'lesson'
+  | 'guided-lesson';
 
 export type InstructionMode = 'beginner' | 'intermediate' | 'advanced' | 'expert';
 
@@ -205,8 +207,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return 'beginner';
     }
   });
-  // Light mode feature toggle (currently disabled; all code preserved)
-  const LIGHT_MODE_ENABLED = false;
+  // Light mode feature toggle (enabled for complete theme support)
+  const LIGHT_MODE_ENABLED = true;
 
   const [theme, setThemeState] = useState<'dark' | 'light'>(() => {
     if (!LIGHT_MODE_ENABLED) return 'dark';
