@@ -384,9 +384,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }), [evidenceMastery]);
 
   // Beginner-First & Tutor State
-  const [showOnboarding, setShowOnboarding] = useState<boolean>(() => {
-    return !localStorage.getItem('commitforge_onboarded');
+  const [showOnboarding, setShowOnboardingState] = useState<boolean>(() => {
+    try {
+      return !localStorage.getItem('commitforge_onboarded');
+    } catch {
+      return false;
+    }
   });
+
+  const setShowOnboarding = (v: boolean) => {
+    setShowOnboardingState(v);
+    if (!v) {
+      try {
+        localStorage.setItem('commitforge_onboarded', 'true');
+      } catch {}
+    }
+  };
   const [showLostDrawer, setShowLostDrawer] = useState(false);
   const [activeHumansTerm, setActiveHumansTerm] = useState<string | null>(null);
   const [showGitMovie, setShowGitMovie] = useState(false);
