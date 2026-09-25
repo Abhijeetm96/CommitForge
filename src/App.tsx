@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { AppProvider, useApp } from './context/AppContext';
+import { AppProvider, useApp, ViewMode } from './context/AppContext';
 import { SuiteHeaderNav } from './components/layout/SuiteHeaderNav';
 import { ForgeSuiteHomeView } from './components/home/ForgeSuiteHomeView';
 import { Agentation } from 'agentation';
@@ -8,20 +8,22 @@ import { TechnologyType } from './platform/lesson-runtime/types';
 import { ProgressProvider, ProgressSettingsModal } from './progress';
 import { SuiteErrorBoundary } from './platform/errors/SuiteErrorBoundary';
 
-// Code-split heavy academy engines and secondary views for optimal initial page latency
-const CommitForgeApp = React.lazy(() =>
+import { lazyWithRetry } from './platform/utils/lazyWithRetry';
+
+// Code-split heavy academy engines and secondary views with automated chunk-retry on deployment
+const CommitForgeApp = lazyWithRetry(() =>
   import('./commitforge/CommitForgeApp').then((m) => ({ default: m.CommitForgeApp }))
 );
-const PodForgeApp = React.lazy(() =>
+const PodForgeApp = lazyWithRetry(() =>
   import('./podforge/PodForgeApp').then((m) => ({ default: m.PodForgeApp }))
 );
-const DockForgeApp = React.lazy(() =>
+const DockForgeApp = lazyWithRetry(() =>
   import('./dockforge/DockForgeApp').then((m) => ({ default: m.DockForgeApp }))
 );
-const DevOpsRoadmapView = React.lazy(() =>
+const DevOpsRoadmapView = lazyWithRetry(() =>
   import('./components/roadmap/DevOpsRoadmapView').then((m) => ({ default: m.DevOpsRoadmapView }))
 );
-const UniversalProblemSolver = React.lazy(() =>
+const UniversalProblemSolver = lazyWithRetry(() =>
   import('./platform/search/UniversalProblemSolver').then((m) => ({ default: m.UniversalProblemSolver }))
 );
 
@@ -130,7 +132,7 @@ const AppContent: React.FC = () => {
           <Suspense fallback={<ViewLoadingFallback label="Booting Kubernetes Engine..." />}>
             <PodForgeApp
               initialConceptId={activeLessonConcept || undefined}
-              onSwitchToSuite={(newMode) => setMode(newMode)}
+              onSwitchToSuite={(newMode: ViewMode) => setMode(newMode)}
             />
           </Suspense>
         </SuiteErrorBoundary>
@@ -143,7 +145,7 @@ const AppContent: React.FC = () => {
           <Suspense fallback={<ViewLoadingFallback label="Starting Docker Daemon..." />}>
             <DockForgeApp
               initialConceptId={activeLessonConcept || undefined}
-              onSwitchToSuite={(newMode) => setMode(newMode)}
+              onSwitchToSuite={(newMode: ViewMode) => setMode(newMode)}
             />
           </Suspense>
         </SuiteErrorBoundary>
@@ -153,7 +155,7 @@ const AppContent: React.FC = () => {
     return (
       <SuiteErrorBoundary fallbackTitle="CommitForge Git Academy Error">
         <Suspense fallback={<ViewLoadingFallback label="Initializing Git Academy..." />}>
-          <CommitForgeApp onSwitchToSuite={(newMode) => setMode(newMode)} />
+          <CommitForgeApp onSwitchToSuite={(newMode: ViewMode) => setMode(newMode)} />
         </Suspense>
       </SuiteErrorBoundary>
     );

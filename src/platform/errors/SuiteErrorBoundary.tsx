@@ -63,7 +63,14 @@ export class SuiteErrorBoundary extends React.Component<Props, State> {
 
   public render() {
     if (this.state.hasError) {
-      const title = this.props.fallbackTitle || 'Forge Suite View Encountered an Exception';
+      const isChunkError =
+        this.state.error?.message?.includes('Failed to fetch dynamically imported module') ||
+        this.state.error?.message?.includes('error loading dynamically imported module') ||
+        /dynamically imported module/i.test(this.state.error?.message || '');
+
+      const title = isChunkError
+        ? 'Application Update Detected'
+        : this.props.fallbackTitle || 'Forge Suite View Encountered an Exception';
 
       return (
         <div
@@ -83,10 +90,12 @@ export class SuiteErrorBoundary extends React.Component<Props, State> {
               width: '100%',
               maxWidth: '640px',
               background: '#090e1f',
-              border: '1.5px solid rgba(239, 68, 68, 0.4)',
+              border: isChunkError ? '1.5px solid rgba(56, 189, 248, 0.4)' : '1.5px solid rgba(239, 68, 68, 0.4)',
               borderRadius: '16px',
               padding: '2rem',
-              boxShadow: '0 24px 64px rgba(0, 0, 0, 0.7), 0 0 32px rgba(239, 68, 68, 0.15)',
+              boxShadow: isChunkError
+                ? '0 24px 64px rgba(0, 0, 0, 0.7), 0 0 32px rgba(56, 189, 248, 0.15)'
+                : '0 24px 64px rgba(0, 0, 0, 0.7), 0 0 32px rgba(239, 68, 68, 0.15)',
               display: 'flex',
               flexDirection: 'column',
               gap: '1.25rem',
@@ -100,23 +109,25 @@ export class SuiteErrorBoundary extends React.Component<Props, State> {
                   width: '46px',
                   height: '46px',
                   borderRadius: '12px',
-                  background: 'rgba(239, 68, 68, 0.15)',
-                  border: '1.5px solid rgba(239, 68, 68, 0.4)',
+                  background: isChunkError ? 'rgba(56, 189, 248, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+                  border: isChunkError ? '1.5px solid rgba(56, 189, 248, 0.4)' : '1.5px solid rgba(239, 68, 68, 0.4)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#f87171',
+                  color: isChunkError ? '#38bdf8' : '#f87171',
                   flexShrink: 0,
                 }}
               >
-                <AlertTriangle size={24} />
+                {isChunkError ? <RefreshCw size={24} /> : <AlertTriangle size={24} />}
               </div>
               <div>
                 <h2 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0, color: '#ffffff' }}>
                   {title}
                 </h2>
                 <p style={{ fontSize: '0.82rem', color: '#94a3b8', margin: '0.2rem 0 0' }}>
-                  The application captured this error to prevent a total session crash.
+                  {isChunkError
+                    ? 'A new version of Forge Suite was deployed. Refresh to load the latest curriculum and engine assets.'
+                    : 'The application captured this error to prevent a total session crash.'}
                 </p>
               </div>
             </div>
@@ -125,22 +136,28 @@ export class SuiteErrorBoundary extends React.Component<Props, State> {
             <div
               style={{
                 background: '#030712',
-                border: '1px solid rgba(239, 68, 68, 0.25)',
+                border: isChunkError ? '1px solid rgba(56, 189, 248, 0.25)' : '1px solid rgba(239, 68, 68, 0.25)',
                 borderRadius: '8px',
                 padding: '0.85rem 1rem',
                 fontFamily: 'monospace',
                 fontSize: '0.82rem',
-                color: '#fca5a5',
+                color: isChunkError ? '#bae6fd' : '#fca5a5',
                 overflowX: 'auto',
               }}
             >
-              <strong>{this.state.error?.name || 'Error'}:</strong> {this.state.error?.message || 'Unknown runtime error'}
+              {isChunkError ? (
+                <span>Assets updated on server. A quick page refresh will sync your session with latest build.</span>
+              ) : (
+                <>
+                  <strong>{this.state.error?.name || 'Error'}:</strong> {this.state.error?.message || 'Unknown runtime error'}
+                </>
+              )}
             </div>
 
             {/* Action Buttons */}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.65rem' }}>
               <button
-                onClick={this.handleReset}
+                onClick={() => (isChunkError ? window.location.reload() : this.handleReset())}
                 style={{
                   flex: 1,
                   minWidth: '130px',
@@ -160,7 +177,7 @@ export class SuiteErrorBoundary extends React.Component<Props, State> {
                 }}
               >
                 <RefreshCw size={15} />
-                Try Again
+                {isChunkError ? 'Refresh & Update App' : 'Try Again'}
               </button>
 
               <button
