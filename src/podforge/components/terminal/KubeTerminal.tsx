@@ -83,6 +83,7 @@ export const KubeTerminal: React.FC<{ autoFocus?: boolean }> = ({ autoFocus = fa
             clearTerminal();
           }}
           title="Clear terminal"
+          aria-label="Clear terminal output"
           style={{
             background: 'none',
             border: 'none',

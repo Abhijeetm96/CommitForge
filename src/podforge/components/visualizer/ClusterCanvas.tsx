@@ -281,7 +281,12 @@ export const ClusterCanvas: React.FC = () => {
                 <Layers size={18} color="var(--k8s-cyan)" />
                 <span>Pod Inspector: {inspectPod.metadata.name}</span>
               </div>
-              <button onClick={() => setInspectPod(null)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
+              <button
+                onClick={() => setInspectPod(null)}
+                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
+                title="Close pod inspector"
+                aria-label="Close pod inspector"
+              >
                 <X size={18} />
               </button>
             </div>
