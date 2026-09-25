@@ -895,7 +895,29 @@ export class DockerEngine {
     const subcmd = args[0] || 'ps';
 
     if (subcmd === 'up') {
-      // Simulate compose up
+      // Simulate compose up with both web and db services
+      const dbContainer: Container = {
+        id: `c-compose-db-${Date.now().toString(36)}`,
+        name: 'app-db-1',
+        imageId: 'img-postgres-16',
+        imageName: 'postgres:16-alpine',
+        status: 'running',
+        created: 'Just now',
+        ports: [{ hostPort: 5432, containerPort: 5432, protocol: 'tcp' }],
+        mounts: [{ hostPath: 'pgdata', containerPath: '/var/lib/postgresql/data', mode: 'rw' }],
+        network: 'app_default',
+        ipAddress: '172.18.0.2',
+        env: { POSTGRES_DB: 'app', POSTGRES_USER: 'postgres' },
+        cmd: 'postgres',
+        logs: [
+          'PostgreSQL database server initialized',
+          'accepting connections on port 5432',
+        ],
+        cpuUsagePct: 0.8,
+        memoryUsageMb: 48.2,
+        memoryLimitMb: 1024,
+      };
+
       const webContainer: Container = {
         id: `c-compose-web-${Date.now().toString(36)}`,
         name: 'app-web-1',
@@ -905,7 +927,7 @@ export class DockerEngine {
         created: 'Just now',
         ports: [{ hostPort: 3000, containerPort: 3000, protocol: 'tcp' }],
         mounts: [],
-        network: 'app-net',
+        network: 'app_default',
         ipAddress: '172.18.0.3',
         env: { NODE_ENV: 'production', DB_HOST: 'app-db-1' },
         cmd: 'npm start',
@@ -915,7 +937,21 @@ export class DockerEngine {
         memoryLimitMb: 512,
       };
 
-      this.containers.push(webContainer);
+      // Avoid duplicates
+      this.containers = this.containers.filter((c) => c.name !== 'app-web-1' && c.name !== 'app-db-1');
+      this.containers.push(dbContainer, webContainer);
+
+      if (!this.networks.some((n) => n.name === 'app_default')) {
+        this.networks.push({
+          id: 'net-app-default',
+          name: 'app_default',
+          driver: 'bridge',
+          scope: 'local',
+          subnet: '172.18.0.0/16',
+          gateway: '172.18.0.1',
+          containers: ['app-db-1', 'app-web-1'],
+        });
+      }
 
       return {
         rawCommand,
@@ -931,6 +967,7 @@ export class DockerEngine {
       };
     } else if (subcmd === 'down') {
       this.containers = this.containers.filter((c) => !c.name.startsWith('app-'));
+      this.networks = this.networks.filter((n) => n.name !== 'app_default');
       return {
         rawCommand,
         stdout: [
@@ -941,6 +978,7 @@ export class DockerEngine {
         ],
         stderr: [],
         exitCode: 0,
+        whatHappened: 'Stopped and removed Docker Compose stack (services: app-web-1, app-db-1).',
       };
     }
 
