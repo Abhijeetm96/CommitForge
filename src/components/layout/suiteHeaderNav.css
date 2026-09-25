@@ -1,0 +1,184 @@
+/* SuiteHeaderNav Responsive Styling (Issue #8) */
+
+.suite-header-nav {
+  height: 60px;
+  flex-shrink: 0;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.25rem;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-sizing: border-box;
+}
+
+.suite-brand-btn {
+  background: none;
+  border: none;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.suite-brand-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  background: rgba(56, 189, 248, 0.1);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.suite-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.suite-nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.42rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.suite-right-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.suite-control-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.suite-control-btn:hover {
+  background: var(--bg-surface-elevated);
+  color: var(--text-primary);
+}
+
+.suite-mobile-toggle-btn {
+  display: none;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  border-radius: 8px;
+  padding: 0.45rem;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+}
+
+.suite-mobile-drawer {
+  position: absolute;
+  top: 60px;
+  left: 0;
+  right: 0;
+  background: rgba(11, 17, 32, 0.98);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-color);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+  z-index: 49;
+  animation: slideDownNav 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideDownNav {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.suite-mobile-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.suite-mobile-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Tablet: < 880px */
+@media (max-width: 880px) {
+  .suite-brand-badge {
+    display: none;
+  }
+
+  .suite-nav-text {
+    display: none;
+  }
+
+  .suite-nav-btn {
+    padding: 0.45rem 0.65rem;
+  }
+
+  .suite-control-text,
+  .suite-control-kbd {
+    display: none;
+  }
+
+  .suite-control-btn {
+    padding: 0.45rem 0.55rem;
+  }
+}
+
+/* Mobile: < 640px */
+@media (max-width: 640px) {
+  .suite-header-nav {
+    padding: 0 0.85rem;
+  }
+
+  .suite-nav-links {
+    display: none;
+  }
+
+  .suite-mobile-toggle-btn {
+    display: flex;
+  }
+}
