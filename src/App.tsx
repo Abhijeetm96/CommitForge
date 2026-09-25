@@ -55,7 +55,7 @@ const ViewLoadingFallback: React.FC<{ label?: string }> = ({ label = 'Loading Ac
 );
 
 const AppContent: React.FC = () => {
-  const { mode, setMode, showProblemSearch, setShowProblemSearch } = useApp();
+  const { mode, setMode, showProblemSearch, setShowProblemSearch, activeLessonConcept } = useApp();
 
   // Global ⌘K / Ctrl+K keyboard shortcut opens the Universal Problem Solver
   React.useEffect(() => {
@@ -126,7 +126,10 @@ const AppContent: React.FC = () => {
     if (mode === 'podforge') {
       return (
         <Suspense fallback={<ViewLoadingFallback label="Booting Kubernetes Engine..." />}>
-          <PodForgeApp onSwitchToSuite={(newMode) => setMode(newMode)} />
+          <PodForgeApp
+            initialConceptId={activeLessonConcept || undefined}
+            onSwitchToSuite={(newMode) => setMode(newMode)}
+          />
         </Suspense>
       );
     }
@@ -134,7 +137,10 @@ const AppContent: React.FC = () => {
     if (mode === 'dockforge') {
       return (
         <Suspense fallback={<ViewLoadingFallback label="Starting Docker Daemon..." />}>
-          <DockForgeApp onSwitchToSuite={(newMode) => setMode(newMode)} />
+          <DockForgeApp
+            initialConceptId={activeLessonConcept || undefined}
+            onSwitchToSuite={(newMode) => setMode(newMode)}
+          />
         </Suspense>
       );
     }

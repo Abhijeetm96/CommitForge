@@ -18,8 +18,8 @@ export const UNIVERSAL_PROBLEM_DIAGNOSES: ProblemDiagnosis[] = [
     explanationOfFix:
       'HEAD is rewritten to point to HEAD~1. Your uncommitted work remains staged in the index, allowing you to re-commit cleanly.',
     preventativeTip: 'Use git status before committing to verify staged files.',
-    relatedLessonId: 'topic-01-c3',
-    relatedLessonTitle: 'git commit (Snapshots)',
+    relatedLessonId: 'c-git-reset-modes',
+    relatedLessonTitle: 'git reset (--soft, --mixed, --hard)',
   },
   {
     id: 'git-deleted-branch',
@@ -36,8 +36,8 @@ export const UNIVERSAL_PROBLEM_DIAGNOSES: ProblemDiagnosis[] = [
     explanationOfFix:
       'Locate the commit right before the deletion in the reflog, then recreate a branch pointer at that exact commit SHA.',
     preventativeTip: 'Never use -D (force delete) unless you are 100% sure you want to discard the branch.',
-    relatedLessonId: 'topic-03-c1',
-    relatedLessonTitle: 'git branch & reflog',
+    relatedLessonId: 'c-git-reflog',
+    relatedLessonTitle: 'git reflog (Safety Net)',
   },
   {
     id: 'git-push-rejected',
@@ -54,7 +54,7 @@ export const UNIVERSAL_PROBLEM_DIAGNOSES: ProblemDiagnosis[] = [
     explanationOfFix:
       'Rebase fetches remote commits, rewinds your local commits, applies remote commits, and then replays your commits sequentially.',
     preventativeTip: 'Always pull before starting work or pushing new commits.',
-    relatedLessonId: 'topic-04-c2',
+    relatedLessonId: 'c-git-pull',
     relatedLessonTitle: 'git pull & rebase',
   },
 
@@ -92,7 +92,7 @@ export const UNIVERSAL_PROBLEM_DIAGNOSES: ProblemDiagnosis[] = [
     explanationOfFix:
       'Either stop the conflicting container with docker stop, or map the container port to a free host port like 8081.',
     preventativeTip: 'Avoid hardcoding port 8080 across multiple microservices; use reverse proxies or dynamic ports.',
-    relatedLessonId: 'c-running-containers',
+    relatedLessonId: 'c-docker-run-basic',
     relatedLessonTitle: 'docker run -p (Port Mapping)',
   },
   {
@@ -130,7 +130,7 @@ export const UNIVERSAL_PROBLEM_DIAGNOSES: ProblemDiagnosis[] = [
     explanationOfFix:
       'Run kubectl logs with --previous to view stderr right before the crash, then correct the container configuration or manifest.',
     preventativeTip: 'Add readiness and liveness probes with appropriate initialDelaySeconds to avoid premature kills.',
-    relatedLessonId: 'k8s-pods',
+    relatedLessonId: 'c-pods-running-apps',
     relatedLessonTitle: 'Kubernetes Pod Lifecycle & Diagnostics',
   },
   {
@@ -148,7 +148,7 @@ export const UNIVERSAL_PROBLEM_DIAGNOSES: ProblemDiagnosis[] = [
     explanationOfFix:
       'Check the Events section of kubectl describe pod to see the exact constraint. Reduce resource requests in the deployment YAML or add more cluster nodes.',
     preventativeTip: 'Set realistic resource requests and limits; over-requesting causes artificial cluster exhaustion.',
-    relatedLessonId: 'k8s-deployments',
+    relatedLessonId: 'c-deployments-workloads',
     relatedLessonTitle: 'Kubernetes Scheduler & Resource Requests',
   },
   {
@@ -166,7 +166,7 @@ export const UNIVERSAL_PROBLEM_DIAGNOSES: ProblemDiagnosis[] = [
     explanationOfFix:
       'Compare service spec.selector with pod labels. Ensure key-value pairs match exactly.',
     preventativeTip: 'Standardize label conventions across your Helm charts and manifests.',
-    relatedLessonId: 'k8s-services',
+    relatedLessonId: 'c-k8s-services-clusterip',
     relatedLessonTitle: 'Kubernetes Services & Endpoint Discovery',
   },
 ];

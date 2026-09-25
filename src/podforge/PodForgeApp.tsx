@@ -9,11 +9,21 @@ import { ViewMode } from '../context/AppContext';
 import './styles/podforge.css';
 
 interface PodForgeAppProps {
+  initialConceptId?: string;
   onSwitchToSuite?: (mode: ViewMode) => void;
 }
 
-const PodForgeContent: React.FC<PodForgeAppProps> = ({ onSwitchToSuite }) => {
-  const { mode } = useApp();
+const PodForgeContent: React.FC<PodForgeAppProps> = ({ onSwitchToSuite, initialConceptId }) => {
+  const { mode, setMode, activeConcept, setActiveConceptId } = useApp();
+
+  React.useEffect(() => {
+    if (initialConceptId && initialConceptId !== activeConcept.id) {
+      setActiveConceptId(initialConceptId);
+      if (mode !== 'academy') {
+        setMode('academy');
+      }
+    }
+  }, [initialConceptId, activeConcept.id, mode, setActiveConceptId, setMode]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%', overflow: 'hidden' }}>

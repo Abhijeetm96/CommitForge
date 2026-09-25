@@ -9,11 +9,21 @@ import { ViewMode } from '../context/AppContext';
 import './styles/dockforge.css';
 
 interface DockForgeAppProps {
+  initialConceptId?: string;
   onSwitchToSuite?: (mode: ViewMode) => void;
 }
 
-const DockForgeContent: React.FC<DockForgeAppProps> = ({ onSwitchToSuite }) => {
-  const { mode } = useDocker();
+const DockForgeContent: React.FC<DockForgeAppProps> = ({ onSwitchToSuite, initialConceptId }) => {
+  const { mode, setMode, activeConceptId, setActiveConceptId } = useDocker();
+
+  React.useEffect(() => {
+    if (initialConceptId && initialConceptId !== activeConceptId) {
+      setActiveConceptId(initialConceptId);
+      if (mode !== 'academy') {
+        setMode('academy');
+      }
+    }
+  }, [initialConceptId, activeConceptId, mode, setActiveConceptId, setMode]);
 
   return (
     <div className="dockforge-container" style={{ display: 'flex', flexDirection: 'column', height: '100%', width: '100%', overflow: 'hidden' }}>
