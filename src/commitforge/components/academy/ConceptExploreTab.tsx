@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   UniversalConcept,
   ACADEMY_18_TOPICS,
@@ -43,6 +43,12 @@ export const ConceptExploreTab: React.FC<Props> = ({
   initialContentType = 'all',
 }) => {
   const [viewMode, setViewMode] = useState<'current' | 'all'>(initialViewMode);
+
+  useEffect(() => {
+    if (initialViewMode) {
+      setViewMode(initialViewMode);
+    }
+  }, [initialViewMode]);
   const [selectedTopicId, setSelectedTopicId] = useState<string>('all');
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>('all');
   const [contentType, setContentType] = useState<ContentFilterType>(initialContentType);
@@ -911,53 +917,35 @@ export const ConceptExploreTab: React.FC<Props> = ({
           gap: '1rem',
         }}
       >
-        {/* Left: View Mode Pills */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
-          <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-secondary)', marginRight: '0.25rem' }}>
-            VIEW MODE:
+        {/* Left: Active Concept Context */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+          <div
+            style={{
+              width: '32px',
+              height: '32px',
+              borderRadius: '8px',
+              background: viewMode === 'all' ? 'rgba(245, 158, 11, 0.15)' : 'rgba(56, 189, 248, 0.15)',
+              border: viewMode === 'all' ? '1px solid rgba(245, 158, 11, 0.35)' : '1px solid rgba(56, 189, 248, 0.35)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: viewMode === 'all' ? '#f59e0b' : 'var(--accent-primary)',
+            }}
+          >
+            {viewMode === 'all' ? <Sparkles size={16} /> : <BookOpen size={16} />}
           </div>
-
-          <button
-            onClick={() => setViewMode('current')}
-            style={{
-              padding: '0.4rem 0.85rem',
-              borderRadius: '8px',
-              border: viewMode === 'current' ? '1px solid #38bdf8' : '1px solid var(--border-color)',
-              background: viewMode === 'current' ? 'rgba(56, 189, 248, 0.15)' : 'var(--bg-surface)',
-              color: viewMode === 'current' ? 'var(--accent-primary)' : 'var(--text-secondary)',
-              fontSize: '0.8rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.35rem',
-              transition: 'all 0.15s ease',
-            }}
-          >
-            <BookOpen size={14} />
-            <span>This Concept ({concept.command})</span>
-          </button>
-
-          <button
-            onClick={() => setViewMode('all')}
-            style={{
-              padding: '0.4rem 0.85rem',
-              borderRadius: '8px',
-              border: viewMode === 'all' ? '1px solid #f59e0b' : '1px solid var(--border-color)',
-              background: viewMode === 'all' ? 'rgba(245, 158, 11, 0.15)' : 'var(--bg-surface)',
-              color: viewMode === 'all' ? '#f59e0b' : 'var(--text-secondary)',
-              fontSize: '0.8rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.35rem',
-              transition: 'all 0.15s ease',
-            }}
-          >
-            <Sparkles size={14} />
-            <span>All 71 Concepts Universe (219 Variations & 79 Scenarios)</span>
-          </button>
+          <div>
+            <div style={{ fontSize: '0.86rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+              {viewMode === 'all'
+                ? 'All 71 Concepts Universe Catalog'
+                : `${concept.command} — Command Variations, Scenarios & Pitfalls`}
+            </div>
+            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+              {viewMode === 'all'
+                ? '219 variations and 79 real-world interactive scenarios across all 18 topics'
+                : `Interactive modifiers and failure recovery scenarios for ${concept.title}`}
+            </div>
+          </div>
         </div>
 
         {/* Right: Solved Tracker Pill & Concept Jump */}
@@ -1014,61 +1002,6 @@ export const ConceptExploreTab: React.FC<Props> = ({
       {/* ==================================================================== */}
       {viewMode === 'current' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-          {/* Banner inviting to explore all 71 concepts */}
-          <div
-            onClick={() => setViewMode('all')}
-            style={{
-              background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(56, 189, 248, 0.1) 100%)',
-              border: '1px solid rgba(245, 158, 11, 0.3)',
-              borderRadius: '12px',
-              padding: '0.9rem 1.25rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              cursor: 'pointer',
-              transition: 'transform 0.15s ease, border-color 0.15s ease',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-              <div
-                style={{
-                  width: '34px',
-                  height: '34px',
-                  borderRadius: '8px',
-                  background: 'rgba(245, 158, 11, 0.2)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#f59e0b',
-                }}
-              >
-                <Sparkles size={18} />
-              </div>
-              <div>
-                <div style={{ fontSize: '0.88rem', fontWeight: 800, color: '#f8fafc' }}>
-                  Want to practice variations and case scenarios across the entire curriculum?
-                </div>
-                <div style={{ fontSize: '0.74rem', color: '#94a3b8' }}>
-                  Populate and explore all 71 concepts, 219 command modifiers, and 79 real-world scenarios across all 18 topics.
-                </div>
-              </div>
-            </div>
-
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.35rem',
-                color: '#f59e0b',
-                fontWeight: 700,
-                fontSize: '0.8rem',
-              }}
-            >
-              <span>Explore All Concepts</span>
-              <ArrowRight size={14} />
-            </div>
-          </div>
-
           {/* Current Concept Details */}
           {renderConceptCard(concept, true)}
         </div>

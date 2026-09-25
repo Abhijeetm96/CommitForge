@@ -7,11 +7,12 @@ import {
   Terminal,
   Flame,
   GraduationCap,
+  Sparkles,
 } from 'lucide-react';
 import { getConceptIcon, getTopicIcon } from './academyIcons';
 import { useApp } from '../../context/AppContext';
-
-export type AcademyConceptTab = 'Learn' | 'Explore' | 'Sandbox' | 'Visualize' | 'Practice' | 'Reference';
+import type { AcademyConceptTab } from '../../context/AppContext';
+export type { AcademyConceptTab } from '../../context/AppContext';
 
 interface Props {
   concept: UniversalConcept;
@@ -411,6 +412,7 @@ export const UniversalConceptHero: React.FC<Props> = ({
         {([
           { id: 'Learn', label: 'Concept Overview' },
           { id: 'Explore', label: 'Variations & Scenarios' },
+          { id: 'Universe', label: 'All 71 Concepts' },
           { id: 'Sandbox', label: 'Interactive Sandbox' },
           { id: 'Visualize', label: 'Visual Flow' },
           { id: 'Practice', label: 'Hands-on Challenge' },
@@ -418,16 +420,17 @@ export const UniversalConceptHero: React.FC<Props> = ({
         ] as const).map(({ id: tab, label }) => {
           const isActive = activeTab === tab;
           const isSandbox = tab === 'Sandbox';
-          const activeColor = isSandbox ? '#22c55e' : (isCiCd ? '#a855f7' : '#38bdf8');
-          const inactiveColor = isSandbox ? '#86efac' : '#94a3b8';
+          const isUniverse = tab === 'Universe';
+          const activeColor = isSandbox ? '#22c55e' : isUniverse ? '#f59e0b' : (isCiCd ? '#a855f7' : '#38bdf8');
+          const inactiveColor = isSandbox ? '#86efac' : isUniverse ? '#f59e0b' : '#94a3b8';
 
           return (
             <button
               key={tab}
               onClick={() => onSelectTab(tab)}
               style={{
-                background: isSandbox && !isActive ? 'rgba(34, 197, 94, 0.06)' : 'none',
-                border: 'none',
+                background: isSandbox && !isActive ? 'rgba(34, 197, 94, 0.06)' : isUniverse && !isActive ? 'rgba(245, 158, 11, 0.08)' : 'none',
+                border: isUniverse && !isActive ? '1px solid rgba(245, 158, 11, 0.25)' : 'none',
                 color: isActive ? activeColor : inactiveColor,
                 fontSize: '0.88rem',
                 fontWeight: isActive ? 800 : 600,
@@ -443,7 +446,23 @@ export const UniversalConceptHero: React.FC<Props> = ({
               }}
             >
               {isSandbox && <Terminal size={14} color={isActive ? '#22c55e' : '#86efac'} />}
+              {isUniverse && <Sparkles size={14} color={isActive ? '#f59e0b' : '#f59e0b'} />}
               <span>{label}</span>
+              {isUniverse && (
+                <span
+                  style={{
+                    background: isActive ? '#f59e0b' : 'rgba(245, 158, 11, 0.2)',
+                    color: isActive ? '#0f172a' : '#f59e0b',
+                    fontSize: '0.68rem',
+                    fontWeight: 800,
+                    padding: '0.1rem 0.4rem',
+                    borderRadius: '999px',
+                    marginLeft: '0.15rem',
+                  }}
+                >
+                  71
+                </span>
+              )}
               {isActive && (
                 <div
                   style={{

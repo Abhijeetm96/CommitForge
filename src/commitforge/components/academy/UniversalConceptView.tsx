@@ -279,7 +279,7 @@ export const UniversalConceptView: React.FC<Props> = ({
                     onClick={() => {
                       setExploreViewMode('all');
                       setExploreContentType('variations');
-                      onSelectTab('Explore');
+                      onSelectTab('Universe');
                     }}
                     style={{
                       background: 'rgba(56, 189, 248, 0.12)',
@@ -440,7 +440,7 @@ export const UniversalConceptView: React.FC<Props> = ({
                     onClick={() => {
                       setExploreViewMode('all');
                       setExploreContentType('scenarios');
-                      onSelectTab('Explore');
+                      onSelectTab('Universe');
                     }}
                     style={{
                       background: 'rgba(245, 158, 11, 0.15)',
@@ -647,7 +647,19 @@ export const UniversalConceptView: React.FC<Props> = ({
         <ConceptExploreTab
           concept={concept}
           onSelectConcept={onSelectConcept}
-          initialViewMode={exploreViewMode}
+          initialViewMode="current"
+          initialContentType={exploreContentType}
+        />
+      )}
+
+      {/* ================================================================ */}
+      {/* TAB 3: ALL 71 CONCEPTS UNIVERSE (Catalog of All Curriculum)      */}
+      {/* ================================================================ */}
+      {activeTab === 'Universe' && (
+        <ConceptExploreTab
+          concept={concept}
+          onSelectConcept={onSelectConcept}
+          initialViewMode="all"
           initialContentType={exploreContentType}
         />
       )}

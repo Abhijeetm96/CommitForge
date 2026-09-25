@@ -31,6 +31,15 @@ export type ViewMode =
 
 export type InstructionMode = 'beginner' | 'intermediate' | 'advanced' | 'expert';
 
+export type AcademyConceptTab =
+  | 'Learn'
+  | 'Explore'
+  | 'Universe'
+  | 'Sandbox'
+  | 'Visualize'
+  | 'Practice'
+  | 'Reference';
+
 export type CompetencyLevel = 'not_assessed' | 'introduced' | 'practiced' | 'understood' | 'independent' | 'mastered';
 
 export interface SkillMastery {
@@ -165,6 +174,10 @@ export interface AppContextType {
   // Active Teacher Lesson Concept
   activeLessonConcept: string | null;
   setActiveLessonConcept: (c: string | null) => void;
+
+  // Active Git Academy Tab (Concept Overview, Explore, Universe, Sandbox, Visualize, etc.)
+  academyTab: AcademyConceptTab;
+  setAcademyTab: (tab: AcademyConceptTab) => void;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -174,6 +187,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const initialRoute = useMemo(() => parseCurrentRoute(), []);
   const [mode, setModeState] = useState<ViewMode>(initialRoute.mode);
   const [activeLessonConcept, setActiveLessonConceptState] = useState<string | null>(initialRoute.conceptId || null);
+  const [academyTab, setAcademyTab] = useState<AcademyConceptTab>('Learn');
 
   const setActiveLessonConcept = useCallback((c: string | null) => {
     setActiveLessonConceptState(c);
@@ -644,6 +658,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setActiveLab,
         activeLessonConcept,
         setActiveLessonConcept,
+        academyTab,
+        setAcademyTab,
       }}
     >
       <div className={`app-root ${theme}`}>{children}</div>

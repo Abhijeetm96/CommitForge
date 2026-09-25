@@ -33,6 +33,8 @@ export const HeaderNav: React.FC = () => {
     setShowProblemSearch,
     repo,
     setActiveLessonConcept,
+    academyTab,
+    setAcademyTab,
   } = useApp();
 
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
@@ -489,40 +491,94 @@ export const HeaderNav: React.FC = () => {
         </nav>
       ) : (
         <nav className="header-nav-tabs" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-          <button
-            onClick={() => {
-              setActiveLessonConcept(null);
-              setMode('learn');
-            }}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: mode === 'learn' || mode === 'roadmap' || mode === 'first10' || mode === 'dashboard' ? '#38bdf8' : '#94a3b8',
-              fontSize: '0.86rem',
-              fontWeight: mode === 'learn' || mode === 'roadmap' || mode === 'first10' || mode === 'dashboard' ? 800 : 600,
-              padding: '0.4rem 0.75rem',
-              borderRadius: '6px',
-              cursor: 'pointer',
-              position: 'relative',
-              transition: 'all 0.15s ease',
-            }}
-          >
-            Learn
-            {(mode === 'learn' || mode === 'roadmap' || mode === 'first10' || mode === 'dashboard') && (
-              <div
-                style={{
-                  position: 'absolute',
-                  bottom: '-8px',
-                  left: '20%',
-                  right: '20%',
-                  height: '2px',
-                  background: '#38bdf8',
-                  borderRadius: '999px',
-                  boxShadow: '0 0 8px #38bdf8',
-                }}
-              />
-            )}
-          </button>
+          {(() => {
+            const isUniverseActive = (mode === 'learn' || mode === 'community') && academyTab === 'Universe';
+            const isLearnActive =
+              (mode === 'learn' || mode === 'roadmap' || mode === 'first10' || mode === 'dashboard') &&
+              !isUniverseActive;
+
+            return (
+              <>
+                <button
+                  onClick={() => {
+                    setAcademyTab('Learn');
+                    setActiveLessonConcept(null);
+                    setMode('learn');
+                  }}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: isLearnActive ? '#38bdf8' : '#94a3b8',
+                    fontSize: '0.86rem',
+                    fontWeight: isLearnActive ? 800 : 600,
+                    padding: '0.4rem 0.75rem',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    position: 'relative',
+                    transition: 'all 0.15s ease',
+                  }}
+                >
+                  Learn
+                  {isLearnActive && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        bottom: '-8px',
+                        left: '20%',
+                        right: '20%',
+                        height: '2px',
+                        background: '#38bdf8',
+                        borderRadius: '999px',
+                        boxShadow: '0 0 8px #38bdf8',
+                      }}
+                    />
+                  )}
+                </button>
+
+                {/* Concepts Universe (All 71 Concepts) Nav Button */}
+                <button
+                  onClick={() => {
+                    setActiveLessonConcept(null);
+                    setMode('learn');
+                    setAcademyTab('Universe');
+                  }}
+                  style={{
+                    background: isUniverseActive ? 'rgba(245, 158, 11, 0.12)' : 'none',
+                    border: isUniverseActive ? '1px solid rgba(245, 158, 11, 0.3)' : '1px solid transparent',
+                    color: isUniverseActive ? '#f59e0b' : '#94a3b8',
+                    fontSize: '0.86rem',
+                    fontWeight: isUniverseActive ? 800 : 600,
+                    padding: '0.4rem 0.75rem',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    position: 'relative',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.35rem',
+                    transition: 'all 0.15s ease',
+                  }}
+                  title="Explore all 71 Git concepts, 219 variations, and 79 scenarios"
+                >
+                  <Sparkles size={13} color={isUniverseActive ? '#f59e0b' : '#94a3b8'} />
+                  <span>71 Concepts</span>
+                  {isUniverseActive && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        bottom: '-8px',
+                        left: '15%',
+                        right: '15%',
+                        height: '2px',
+                        background: '#f59e0b',
+                        borderRadius: '999px',
+                        boxShadow: '0 0 8px #f59e0b',
+                      }}
+                    />
+                  )}
+                </button>
+              </>
+            );
+          })()}
 
           <button
             onClick={() => setMode('practice')}

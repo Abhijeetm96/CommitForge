@@ -24,7 +24,14 @@ interface Props {
 }
 
 export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
-  const { completedLessonIds, markLessonComplete, setShowProblemSearch, mode } = useApp();
+  const {
+    completedLessonIds,
+    markLessonComplete,
+    setShowProblemSearch,
+    mode,
+    academyTab,
+    setAcademyTab,
+  } = useApp();
 
   const [activeConceptId, setActiveConceptId] = useState<string>(
     initialConceptId || 'c-git-commit'
@@ -34,17 +41,13 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
     'topic-02': true,
   });
 
-  const [activeTab, setActiveTab] = useState<AcademyConceptTab>(
-    mode === 'community' ? 'Explore' : mode === 'visualize' ? 'Visualize' : 'Learn'
-  );
-
   React.useEffect(() => {
     if (mode === 'visualize') {
-      setActiveTab('Visualize');
+      setAcademyTab('Visualize');
     } else if (mode === 'community') {
-      setActiveTab('Explore');
+      setAcademyTab('Universe');
     }
-  }, [mode]);
+  }, [mode, setAcademyTab]);
 
   React.useEffect(() => {
     if (initialConceptId && initialConceptId !== activeConceptId) {
@@ -71,7 +74,7 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
   const handleSelectConcept = (cId: string, tab?: AcademyConceptTab) => {
     setActiveConceptId(cId);
     if (tab) {
-      setActiveTab(tab);
+      setAcademyTab(tab);
     }
   };
 
@@ -578,13 +581,13 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
           {/* Quick Sandbox / Problem Search on Mobile */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             <button
-              onClick={() => setActiveTab('Sandbox')}
+              onClick={() => setAcademyTab('Sandbox')}
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.35rem',
-                background: activeTab === 'Sandbox' ? 'rgba(34, 197, 94, 0.25)' : 'rgba(34, 197, 94, 0.1)',
-                border: activeTab === 'Sandbox' ? '1px solid #22c55e' : '1px solid rgba(34, 197, 94, 0.3)',
+                background: academyTab === 'Sandbox' ? 'rgba(34, 197, 94, 0.25)' : 'rgba(34, 197, 94, 0.1)',
+                border: academyTab === 'Sandbox' ? '1px solid #22c55e' : '1px solid rgba(34, 197, 94, 0.3)',
                 borderRadius: '8px',
                 padding: '0.35rem 0.6rem',
                 color: '#22c55e',
@@ -630,8 +633,8 @@ export const GitAcademyView: React.FC<Props> = ({ initialConceptId }) => {
         >
           <UniversalConceptView
             concept={activeConcept}
-            activeTab={activeTab}
-            onSelectTab={setActiveTab}
+            activeTab={academyTab}
+            onSelectTab={setAcademyTab}
             onSelectConcept={handleSelectConcept}
           />
         </div>
