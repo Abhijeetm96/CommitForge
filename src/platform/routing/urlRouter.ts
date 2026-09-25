@@ -76,6 +76,10 @@ export function mapSegmentToMode(segment: string): ViewMode {
     case 'academy':
       return 'learn';
 
+    case 'universe':
+    case 'concepts':
+      return 'universe';
+
     case 'roadmap':
     case 'devops':
       return 'roadmap';
@@ -116,6 +120,8 @@ export function mapModeToSegment(mode: ViewMode): string {
       return 'dockforge';
     case 'learn':
       return 'commitforge';
+    case 'universe':
+      return 'universe';
     case 'roadmap':
       return 'roadmap';
     case 'practice':
@@ -151,6 +157,8 @@ export function getTitleForMode(mode: ViewMode, conceptTitle?: string | null): s
       return `${prefix}DockForge | Interactive Docker & Container Academy`;
     case 'learn':
       return `${prefix}CommitForge | Interactive Git & Version Control Academy`;
+    case 'universe':
+      return `${prefix}71 Concepts Universe | CommitForge Git Academy`;
     case 'roadmap':
       return `${prefix}DevOps & Cloud-Native Engineering Roadmap | Forge Suite`;
     case 'practice':

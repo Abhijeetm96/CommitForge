@@ -22,6 +22,7 @@ const routes = [
   'podforge',
   'dockforge',
   'commitforge',
+  'universe',
   'roadmap',
   'practice',
   'labs',

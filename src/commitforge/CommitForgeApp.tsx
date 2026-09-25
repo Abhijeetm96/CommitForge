@@ -13,6 +13,7 @@ import { ImLostDrawer } from './components/tutor/ImLostDrawer';
 import { OnboardingWizard } from './components/tutor/OnboardingWizard';
 import { GitForHumansModal } from './components/tutor/GitForHumansModal';
 import { GitMovieModal } from './components/animation/GitMovieModal';
+import { ConceptsUniverseView } from './components/universe/ConceptsUniverseView';
 import { Database } from 'lucide-react';
 import './styles/commitforge.css';
 
@@ -77,6 +78,9 @@ export const CommitForgeApp: React.FC<CommitForgeAppProps> = ({ onSwitchToSuite 
         {(mode === 'learn' || mode === 'dashboard' || mode === 'roadmap' || mode === 'first10' || mode === 'visualize' || mode === 'community') && (
           <GitAcademyView initialConceptId={activeLessonConcept || 'c-git-commit'} />
         )}
+
+        {/* EXPERIENCE 1.5: 🌌 71 CONCEPTS UNIVERSE (Independent Curriculum Catalog Page) */}
+        {mode === 'universe' && <ConceptsUniverseView />}
 
         {/* EXPERIENCE 2: 🛠️ PRACTICE (Guided Developer Missions) */}
         {mode === 'practice' && <PracticeView />}

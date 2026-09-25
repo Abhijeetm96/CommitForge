@@ -13,6 +13,7 @@ export type ViewMode =
   | 'roadmap'
   | 'first10'
   | 'learn'
+  | 'universe'
   | 'practice'
   | 'labs'
   | 'ide'

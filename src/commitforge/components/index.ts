@@ -11,3 +11,4 @@ export { OnboardingWizard } from './tutor/OnboardingWizard';
 export { GitForHumansModal } from './tutor/GitForHumansModal';
 export { GitMovieModal } from './animation/GitMovieModal';
 export { HeaderNav } from './layout/HeaderNav';
+export { ConceptsUniverseView } from './universe/ConceptsUniverseView';

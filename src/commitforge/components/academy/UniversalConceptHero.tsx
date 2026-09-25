@@ -8,6 +8,7 @@ import {
   Flame,
   GraduationCap,
   Sparkles,
+  ArrowRight,
 } from 'lucide-react';
 import { getConceptIcon, getTopicIcon } from './academyIcons';
 import { useApp } from '../../context/AppContext';
@@ -412,7 +413,6 @@ export const UniversalConceptHero: React.FC<Props> = ({
         {([
           { id: 'Learn', label: 'Concept Overview' },
           { id: 'Explore', label: 'Variations & Scenarios' },
-          { id: 'Universe', label: 'All 71 Concepts' },
           { id: 'Sandbox', label: 'Interactive Sandbox' },
           { id: 'Visualize', label: 'Visual Flow' },
           { id: 'Practice', label: 'Hands-on Challenge' },
@@ -420,17 +420,16 @@ export const UniversalConceptHero: React.FC<Props> = ({
         ] as const).map(({ id: tab, label }) => {
           const isActive = activeTab === tab;
           const isSandbox = tab === 'Sandbox';
-          const isUniverse = tab === 'Universe';
-          const activeColor = isSandbox ? '#22c55e' : isUniverse ? '#f59e0b' : (isCiCd ? '#a855f7' : '#38bdf8');
-          const inactiveColor = isSandbox ? '#86efac' : isUniverse ? '#f59e0b' : '#94a3b8';
+          const activeColor = isSandbox ? '#22c55e' : (isCiCd ? '#a855f7' : '#38bdf8');
+          const inactiveColor = isSandbox ? '#86efac' : '#94a3b8';
 
           return (
             <button
               key={tab}
               onClick={() => onSelectTab(tab)}
               style={{
-                background: isSandbox && !isActive ? 'rgba(34, 197, 94, 0.06)' : isUniverse && !isActive ? 'rgba(245, 158, 11, 0.08)' : 'none',
-                border: isUniverse && !isActive ? '1px solid rgba(245, 158, 11, 0.25)' : 'none',
+                background: isSandbox && !isActive ? 'rgba(34, 197, 94, 0.06)' : 'none',
+                border: 'none',
                 color: isActive ? activeColor : inactiveColor,
                 fontSize: '0.88rem',
                 fontWeight: isActive ? 800 : 600,
@@ -446,23 +445,7 @@ export const UniversalConceptHero: React.FC<Props> = ({
               }}
             >
               {isSandbox && <Terminal size={14} color={isActive ? '#22c55e' : '#86efac'} />}
-              {isUniverse && <Sparkles size={14} color={isActive ? '#f59e0b' : '#f59e0b'} />}
               <span>{label}</span>
-              {isUniverse && (
-                <span
-                  style={{
-                    background: isActive ? '#f59e0b' : 'rgba(245, 158, 11, 0.2)',
-                    color: isActive ? '#0f172a' : '#f59e0b',
-                    fontSize: '0.68rem',
-                    fontWeight: 800,
-                    padding: '0.1rem 0.4rem',
-                    borderRadius: '999px',
-                    marginLeft: '0.15rem',
-                  }}
-                >
-                  71
-                </span>
-              )}
               {isActive && (
                 <div
                   style={{
@@ -480,6 +463,33 @@ export const UniversalConceptHero: React.FC<Props> = ({
             </button>
           );
         })}
+
+        {/* Quick Launcher to Independent 71 Concepts Universe Page */}
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center' }}>
+          <button
+            onClick={() => setMode('universe')}
+            style={{
+              background: 'rgba(245, 158, 11, 0.08)',
+              border: '1px solid rgba(245, 158, 11, 0.25)',
+              color: '#f59e0b',
+              padding: '0.35rem 0.75rem',
+              borderRadius: '8px',
+              fontSize: '0.76rem',
+              fontWeight: 700,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              transition: 'all 0.15s ease',
+              flexShrink: 0,
+            }}
+            title="Open the independent 71 Concepts Universe Catalog page"
+          >
+            <Sparkles size={13} color="#f59e0b" />
+            <span>71 Concepts Universe</span>
+            <ArrowRight size={12} />
+          </button>
+        </div>
       </div>
     </div>
   );

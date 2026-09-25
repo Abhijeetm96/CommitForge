@@ -39,7 +39,7 @@ export const UniversalConceptView: React.FC<Props> = ({
   onSelectTab,
   onSelectConcept,
 }) => {
-  const { repo, completedLessonIds, markLessonComplete } = useApp();
+  const { repo, completedLessonIds, markLessonComplete, setMode } = useApp();
   const isCiCd = concept.topicId === 'topic-15';
 
   const isCompleted = completedLessonIds.includes(concept.id);
@@ -277,9 +277,7 @@ export const UniversalConceptView: React.FC<Props> = ({
                   </button>
                   <button
                     onClick={() => {
-                      setExploreViewMode('all');
-                      setExploreContentType('variations');
-                      onSelectTab('Universe');
+                      setMode('universe');
                     }}
                     style={{
                       background: 'rgba(56, 189, 248, 0.12)',
@@ -438,9 +436,7 @@ export const UniversalConceptView: React.FC<Props> = ({
                   </button>
                   <button
                     onClick={() => {
-                      setExploreViewMode('all');
-                      setExploreContentType('scenarios');
-                      onSelectTab('Universe');
+                      setMode('universe');
                     }}
                     style={{
                       background: 'rgba(245, 158, 11, 0.15)',
@@ -648,18 +644,6 @@ export const UniversalConceptView: React.FC<Props> = ({
           concept={concept}
           onSelectConcept={onSelectConcept}
           initialViewMode="current"
-          initialContentType={exploreContentType}
-        />
-      )}
-
-      {/* ================================================================ */}
-      {/* TAB 3: ALL 71 CONCEPTS UNIVERSE (Catalog of All Curriculum)      */}
-      {/* ================================================================ */}
-      {activeTab === 'Universe' && (
-        <ConceptExploreTab
-          concept={concept}
-          onSelectConcept={onSelectConcept}
-          initialViewMode="all"
           initialContentType={exploreContentType}
         />
       )}

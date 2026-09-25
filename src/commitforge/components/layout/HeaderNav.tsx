@@ -492,16 +492,14 @@ export const HeaderNav: React.FC = () => {
       ) : (
         <nav className="header-nav-tabs" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
           {(() => {
-            const isUniverseActive = (mode === 'learn' || mode === 'community') && academyTab === 'Universe';
+            const isUniverseActive = mode === 'universe';
             const isLearnActive =
-              (mode === 'learn' || mode === 'roadmap' || mode === 'first10' || mode === 'dashboard') &&
-              !isUniverseActive;
+              (mode === 'learn' || mode === 'roadmap' || mode === 'first10' || mode === 'dashboard');
 
             return (
               <>
                 <button
                   onClick={() => {
-                    setAcademyTab('Learn');
                     setActiveLessonConcept(null);
                     setMode('learn');
                   }}
@@ -535,16 +533,14 @@ export const HeaderNav: React.FC = () => {
                   )}
                 </button>
 
-                {/* Concepts Universe (All 71 Concepts) Nav Button */}
+                {/* Concepts Universe (All 71 Concepts) Nav Button - Independent Page */}
                 <button
                   onClick={() => {
-                    setActiveLessonConcept(null);
-                    setMode('learn');
-                    setAcademyTab('Universe');
+                    setMode('universe');
                   }}
                   style={{
-                    background: isUniverseActive ? 'rgba(245, 158, 11, 0.12)' : 'none',
-                    border: isUniverseActive ? '1px solid rgba(245, 158, 11, 0.3)' : '1px solid transparent',
+                    background: isUniverseActive ? 'rgba(245, 158, 11, 0.14)' : 'none',
+                    border: isUniverseActive ? '1px solid rgba(245, 158, 11, 0.35)' : '1px solid transparent',
                     color: isUniverseActive ? '#f59e0b' : '#94a3b8',
                     fontSize: '0.86rem',
                     fontWeight: isUniverseActive ? 800 : 600,
@@ -557,7 +553,7 @@ export const HeaderNav: React.FC = () => {
                     gap: '0.35rem',
                     transition: 'all 0.15s ease',
                   }}
-                  title="Explore all 71 Git concepts, 219 variations, and 79 scenarios"
+                  title="Explore all 71 Git concepts, 219 variations, and 79 scenarios in the Universe page"
                 >
                   <Sparkles size={13} color={isUniverseActive ? '#f59e0b' : '#94a3b8'} />
                   <span>71 Concepts</span>
