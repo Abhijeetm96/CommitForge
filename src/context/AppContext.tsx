@@ -1,8 +1,9 @@
-import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { GitEngine } from '../commitforge/git-engine/engine';
 import { GitRepo, CommandResult, StateInspectorData, WhyExplanation, CommandComparison } from '../commitforge/git-engine/types';
 import { PROJECTS, ProjectDefinition } from '../commitforge/data/projects';
 import { ProgressManager } from '../progress/ProgressManager';
+import { parseCurrentRoute, syncUrlWithMode, getTitleForMode } from '../platform/routing/urlRouter';
 
 export type ViewMode =
   | 'home'
@@ -86,7 +87,7 @@ export interface EngineDiff {
 
 export interface AppContextType {
   mode: ViewMode;
-  setMode: (m: ViewMode) => void;
+  setMode: (m: ViewMode, conceptId?: string | null) => void;
   instructionMode: InstructionMode;
   setInstructionMode: (im: InstructionMode) => void;
   theme: 'dark' | 'light';
@@ -170,41 +171,59 @@ const AppContext = createContext<AppContextType | null>(null);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const progressManager = useMemo(() => ProgressManager.getInstance(), []);
-  const [mode, setModeState] = useState<ViewMode>('home');
-  const [activeLessonConcept, setActiveLessonConceptState] = useState<string | null>(null);
-  const setActiveLessonConcept = (c: string | null) => {
+  const initialRoute = useMemo(() => parseCurrentRoute(), []);
+  const [mode, setModeState] = useState<ViewMode>(initialRoute.mode);
+  const [activeLessonConcept, setActiveLessonConceptState] = useState<string | null>(initialRoute.conceptId || null);
+
+  const setActiveLessonConcept = useCallback((c: string | null) => {
     setActiveLessonConceptState(c);
     if (c) {
       progressManager.startLesson('commitforge', c);
     }
-  };
+    syncUrlWithMode(mode, c);
+  }, [mode, progressManager]);
+
   const [instructionMode, setInstructionModeState] = useState<InstructionMode>(() => {
-    return (localStorage.getItem('commitforge_instruction_mode') as InstructionMode) || 'beginner';
+    try {
+      return (localStorage.getItem('commitforge_instruction_mode') as InstructionMode) || 'beginner';
+    } catch {
+      return 'beginner';
+    }
   });
   // Light mode feature toggle (currently disabled; all code preserved)
   const LIGHT_MODE_ENABLED = false;
 
   const [theme, setThemeState] = useState<'dark' | 'light'>(() => {
     if (!LIGHT_MODE_ENABLED) return 'dark';
-    return (localStorage.getItem('commitforge_theme') as 'dark' | 'light') || 'dark';
+    try {
+      return (localStorage.getItem('commitforge_theme') as 'dark' | 'light') || 'dark';
+    } catch {
+      return 'dark';
+    }
   });
 
   const setTheme = (t: 'dark' | 'light') => {
     if (!LIGHT_MODE_ENABLED) {
       setThemeState('dark');
-      localStorage.setItem('commitforge_theme', 'dark');
+      try {
+        localStorage.setItem('commitforge_theme', 'dark');
+      } catch {}
       document.documentElement.setAttribute('data-theme', 'dark');
       return;
     }
     setThemeState(t);
-    localStorage.setItem('commitforge_theme', t);
+    try {
+      localStorage.setItem('commitforge_theme', t);
+    } catch {}
     document.documentElement.setAttribute('data-theme', t);
   };
 
   useEffect(() => {
     if (!LIGHT_MODE_ENABLED && theme !== 'dark') {
       setThemeState('dark');
-      localStorage.setItem('commitforge_theme', 'dark');
+      try {
+        localStorage.setItem('commitforge_theme', 'dark');
+      } catch {}
     }
     const activeTheme = LIGHT_MODE_ENABLED ? theme : 'dark';
     document.documentElement.setAttribute('data-theme', activeTheme);
@@ -224,12 +243,39 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const setInstructionMode = (im: InstructionMode) => {
     setInstructionModeState(im);
-    localStorage.setItem('commitforge_instruction_mode', im);
+    try {
+      localStorage.setItem('commitforge_instruction_mode', im);
+    } catch {}
   };
 
-  const setMode = (m: ViewMode) => {
+  const setMode = useCallback((m: ViewMode, conceptId?: string | null) => {
     setModeState(m);
-  };
+    const targetConcept = conceptId !== undefined ? conceptId : (m === mode ? activeLessonConcept : null);
+    setActiveLessonConceptState(targetConcept);
+    if (targetConcept) {
+      progressManager.startLesson('commitforge', targetConcept);
+    }
+    syncUrlWithMode(m, targetConcept);
+  }, [mode, activeLessonConcept, progressManager]);
+
+  // Synchronize on popstate / hashchange (e.g. browser back/forward buttons)
+  useEffect(() => {
+    syncUrlWithMode(initialRoute.mode, initialRoute.conceptId, true);
+
+    const handlePopState = () => {
+      const route = parseCurrentRoute();
+      setModeState(route.mode);
+      setActiveLessonConceptState(route.conceptId || null);
+      document.title = getTitleForMode(route.mode);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    window.addEventListener('hashchange', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('hashchange', handlePopState);
+    };
+  }, [initialRoute]);
 
   const currentProject = useMemo(() => PROJECTS[projectKey] || PROJECTS['personal-website'], [projectKey]);
   

@@ -4,6 +4,7 @@ import type { ClusterState, Pod, Node, CommandResult } from '../kube-engine/type
 import { KUBE_CHAPTERS } from '../data/topics';
 import type { KubeConcept } from '../data/topics';
 import { ProgressManager } from '../../progress/ProgressManager';
+import { parseCurrentRoute, syncUrlWithMode } from '../../platform/routing/urlRouter';
 
 export type AppMode = 'academy' | 'labs' | 'ide' | 'cluster';
 
@@ -48,6 +49,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
   const progressManager = useMemo(() => ProgressManager.getInstance(), []);
   const [activeConceptId, setActiveConceptIdState] = useState<string>(() => {
+    try {
+      const { conceptId } = parseCurrentRoute();
+      if (conceptId && KUBE_CHAPTERS.some(ch => ch.concepts.some(c => c.id === conceptId))) {
+        return conceptId;
+      }
+    } catch {}
     return progressManager.getAcademyProgress('podforge').currentLessonId || 'c-k8s-overview';
   });
   const [completedConcepts, setCompletedConcepts] = useState<string[]>(() => {
@@ -64,6 +71,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const setActiveConceptId = (id: string) => {
     setActiveConceptIdState(id);
     progressManager.startLesson('podforge', id);
+    syncUrlWithMode('podforge', id);
   };
 
   const [selectedPod, setSelectedPod] = useState<Pod | null>(null);

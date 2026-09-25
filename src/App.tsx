@@ -69,10 +69,10 @@ const AppContent: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [setShowProblemSearch]);
 
-  const handleSelectLessonFromSolver = (tech: TechnologyType, _lessonId: string) => {
-    if (tech === 'git') setMode('learn');
-    else if (tech === 'docker') setMode('dockforge');
-    else if (tech === 'kubernetes') setMode('podforge');
+  const handleSelectLessonFromSolver = (tech: TechnologyType, lessonId: string) => {
+    if (tech === 'git') setMode('learn', lessonId);
+    else if (tech === 'docker') setMode('dockforge', lessonId);
+    else if (tech === 'kubernetes') setMode('podforge', lessonId);
   };
 
   const renderActiveView = () => {
