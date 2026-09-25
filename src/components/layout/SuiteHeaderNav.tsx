@@ -64,11 +64,11 @@ export const SuiteHeaderNav: React.FC = () => {
             border: '1px solid rgba(240, 80, 51, 0.3)',
             color: 'var(--git-orange)',
           }}
-          title="Open CommitForge Git Academy"
+          title="Open Git Academy (CommitForge)"
           aria-label="CommitForge Git Academy"
         >
           <GitBranch size={15} />
-          <span className="suite-nav-text">CommitForge</span>
+          <span className="suite-nav-text">Git</span>
         </button>
 
         <button
@@ -79,11 +79,11 @@ export const SuiteHeaderNav: React.FC = () => {
             border: '1px solid rgba(14, 165, 233, 0.35)',
             color: '#38bdf8',
           }}
-          title="Open DockForge Docker & Container Academy"
+          title="Open Docker Academy (DockForge)"
           aria-label="DockForge Docker & Container Academy"
         >
           <Container size={15} />
-          <span className="suite-nav-text">DockForge</span>
+          <span className="suite-nav-text">Docker</span>
         </button>
 
         <button
@@ -94,11 +94,11 @@ export const SuiteHeaderNav: React.FC = () => {
             border: '1px solid rgba(50, 108, 229, 0.3)',
             color: '#60a5fa',
           }}
-          title="Open PodForge Kubernetes Academy"
+          title="Open Kubernetes Academy (PodForge)"
           aria-label="PodForge Kubernetes Academy"
         >
           <Boxes size={15} />
-          <span className="suite-nav-text">PodForge</span>
+          <span className="suite-nav-text">Kubernetes</span>
         </button>
 
         <button
@@ -176,7 +176,7 @@ export const SuiteHeaderNav: React.FC = () => {
           >
             <GitBranch size={16} color="var(--git-orange)" />
             <div>
-              <div style={{ color: 'var(--git-orange)' }}>CommitForge</div>
+              <div style={{ color: 'var(--git-orange)' }}>Git (CommitForge)</div>
               <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Interactive Git Graph Academy</div>
             </div>
           </button>
@@ -191,8 +191,8 @@ export const SuiteHeaderNav: React.FC = () => {
           >
             <Container size={16} color="#38bdf8" />
             <div>
-              <div style={{ color: '#38bdf8' }}>DockForge</div>
-              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Docker & Containerization Engine</div>
+              <div style={{ color: '#38bdf8' }}>Docker (DockForge)</div>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Docker &amp; Containerization Engine</div>
             </div>
           </button>
 
@@ -206,7 +206,7 @@ export const SuiteHeaderNav: React.FC = () => {
           >
             <Boxes size={16} color="#60a5fa" />
             <div>
-              <div style={{ color: '#60a5fa' }}>PodForge</div>
+              <div style={{ color: '#60a5fa' }}>Kubernetes (PodForge)</div>
               <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Kubernetes Orchestration Academy</div>
             </div>
           </button>

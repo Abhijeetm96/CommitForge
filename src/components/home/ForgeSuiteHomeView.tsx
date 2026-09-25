@@ -39,20 +39,20 @@ const UPCOMING_TOOLS: UpcomingTool[] = [
   {
     id: 'helm',
     name: 'Helm & Kustomize',
-    domain: 'Package Management & Templates',
-    techStack: 'Helm v3 & Kustomize Engine',
+    domain: 'Kubernetes Package Management',
+    techStack: 'Helm & Kustomize',
     quarter: 'Q4 2026',
     color: '#0ea5e9',
     bgGlow: 'rgba(14, 165, 233, 0.15)',
     icon: Container,
-    description: 'Master Cloud-Native package management. Template Kubernetes manifests with Helm charts, values overrides, and Kustomize overlays.',
+    description: 'Master cloud-native package management. Template Kubernetes manifests with Helm charts, values overrides, and Kustomize overlays.',
     coreConcepts: ['Helm Chart Templates & Values', 'Kustomize Overlays & Patches', 'Chart Repository Distribution', 'Release Rollbacks & History', 'Subcharts & Dependencies'],
   },
   {
     id: 'ansible',
     name: 'Ansible',
-    domain: 'Configuration Management & Playbooks',
-    techStack: 'Ansible & OpenTofu',
+    domain: 'Configuration Management',
+    techStack: 'Ansible Playbooks',
     quarter: 'Q4 2026',
     color: '#ef4444',
     bgGlow: 'rgba(239, 68, 68, 0.15)',
@@ -75,7 +75,7 @@ const UPCOMING_TOOLS: UpcomingTool[] = [
   {
     id: 'observability',
     name: 'Prometheus & Grafana',
-    domain: 'Observability & SRE Forensics',
+    domain: 'Monitoring & Observability',
     techStack: 'Prometheus & Grafana',
     quarter: 'Q1 2027',
     color: '#10b981',
@@ -86,9 +86,9 @@ const UPCOMING_TOOLS: UpcomingTool[] = [
   },
   {
     id: 'security',
-    name: 'HashiCorp Vault & Security',
-    domain: 'DevSecOps & Zero-Trust Cloud',
-    techStack: 'Vault & Trivy Security',
+    name: 'HashiCorp Vault',
+    domain: 'Secrets Management & Security',
+    techStack: 'HashiCorp Vault & Trivy',
     quarter: 'Q2 2027',
     color: '#f43f5e',
     bgGlow: 'rgba(244, 63, 94, 0.15)',
@@ -98,9 +98,9 @@ const UPCOMING_TOOLS: UpcomingTool[] = [
   },
   {
     id: 'linux',
-    name: 'Linux Kernel & Systems',
-    domain: 'Kernel & Systems Engineering',
-    techStack: 'Linux Kernel & eBPF',
+    name: 'Linux',
+    domain: 'Operating Systems & Networking',
+    techStack: 'Linux & eBPF',
     quarter: 'Q2 2027',
     color: '#06b6d4',
     bgGlow: 'rgba(6, 182, 212, 0.15)',
@@ -334,11 +334,16 @@ export const ForgeSuiteHomeView: React.FC = () => {
                   <Flame size={24} />
                 </div>
                 <div>
-                  <h2 style={{ fontSize: '1.45rem', fontWeight: 800, margin: 0, color: '#fff', letterSpacing: '-0.02em' }}>
-                    CommitForge
-                  </h2>
-                  <div style={{ fontSize: '0.78rem', color: '#fb923c', fontWeight: 600, letterSpacing: '0.01em' }}>
-                    Git &amp; Version Control Academy
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <h2 style={{ fontSize: '1.45rem', fontWeight: 800, margin: 0, color: '#fff', letterSpacing: '-0.02em' }}>
+                      Git
+                    </h2>
+                    <span style={{ fontSize: '0.7rem', fontWeight: 700, padding: '0.12rem 0.45rem', borderRadius: '4px', background: 'rgba(240, 80, 51, 0.15)', border: '1px solid rgba(240, 80, 51, 0.35)', color: '#fb923c' }}>
+                      CommitForge
+                    </span>
+                  </div>
+                  <div style={{ fontSize: '0.78rem', color: '#fb923c', fontWeight: 600, letterSpacing: '0.01em', marginTop: '0.15rem' }}>
+                    Version Control &amp; CI/CD Academy
                   </div>
                 </div>
               </div>
@@ -663,11 +668,16 @@ export const ForgeSuiteHomeView: React.FC = () => {
                   <Boxes size={24} />
                 </div>
                 <div>
-                  <h2 style={{ fontSize: '1.45rem', fontWeight: 800, margin: 0, color: '#fff', letterSpacing: '-0.02em' }}>
-                    PodForge
-                  </h2>
-                  <div style={{ fontSize: '0.78rem', color: '#38bdf8', fontWeight: 600, letterSpacing: '0.01em' }}>
-                    Kubernetes &amp; Cloud-Native Academy
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <h2 style={{ fontSize: '1.45rem', fontWeight: 800, margin: 0, color: '#fff', letterSpacing: '-0.02em' }}>
+                      Kubernetes
+                    </h2>
+                    <span style={{ fontSize: '0.7rem', fontWeight: 700, padding: '0.12rem 0.45rem', borderRadius: '4px', background: 'rgba(56, 189, 248, 0.15)', border: '1px solid rgba(56, 189, 248, 0.35)', color: '#38bdf8' }}>
+                      PodForge
+                    </span>
+                  </div>
+                  <div style={{ fontSize: '0.78rem', color: '#38bdf8', fontWeight: 600, letterSpacing: '0.01em', marginTop: '0.15rem' }}>
+                    Container Orchestration &amp; Cloud-Native Academy
                   </div>
                 </div>
               </div>
@@ -986,11 +996,16 @@ export const ForgeSuiteHomeView: React.FC = () => {
                   <Container size={24} />
                 </div>
                 <div>
-                  <h2 style={{ fontSize: '1.45rem', fontWeight: 800, margin: 0, color: '#fff', letterSpacing: '-0.02em' }}>
-                    DockForge
-                  </h2>
-                  <div style={{ fontSize: '0.78rem', color: '#38bdf8', fontWeight: 600, letterSpacing: '0.01em' }}>
-                    Docker &amp; Container Engine Academy
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <h2 style={{ fontSize: '1.45rem', fontWeight: 800, margin: 0, color: '#fff', letterSpacing: '-0.02em' }}>
+                      Docker
+                    </h2>
+                    <span style={{ fontSize: '0.7rem', fontWeight: 700, padding: '0.12rem 0.45rem', borderRadius: '4px', background: 'rgba(14, 165, 233, 0.15)', border: '1px solid rgba(14, 165, 233, 0.35)', color: '#38bdf8' }}>
+                      DockForge
+                    </span>
+                  </div>
+                  <div style={{ fontSize: '0.78rem', color: '#38bdf8', fontWeight: 600, letterSpacing: '0.01em', marginTop: '0.15rem' }}>
+                    Containers, Compose &amp; Engine Academy
                   </div>
                 </div>
               </div>
@@ -1248,10 +1263,10 @@ export const ForgeSuiteHomeView: React.FC = () => {
                 </span>
               </div>
               <h2 style={{ fontSize: '1.75rem', fontWeight: 900, letterSpacing: '-0.025em', margin: 0, color: '#fff' }}>
-                Cloud Computing &amp; DevOps Academies
+                Upcoming DevOps Technologies
               </h2>
               <p style={{ fontSize: '0.92rem', color: '#94a3b8', margin: '0.35rem 0 0', maxWidth: '640px' }}>
-                Expanding our hands-on simulator standard across every pillar of cloud engineering and infrastructure automation.
+                Hands-on interactive simulators for the rest of the modern cloud engineering and infrastructure automation stack.
               </p>
             </div>
 
