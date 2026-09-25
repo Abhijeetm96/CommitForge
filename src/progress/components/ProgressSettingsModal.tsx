@@ -14,6 +14,7 @@ import {
   Boxes,
 } from 'lucide-react';
 import { useProgress } from '../useProgress';
+import { useFocusTrap } from '../../platform/hooks/useFocusTrap';
 
 export const ProgressSettingsModal: React.FC = () => {
   const {
@@ -26,6 +27,7 @@ export const ProgressSettingsModal: React.FC = () => {
     importProgress,
   } = useProgress();
 
+  const modalContainerRef = useFocusTrap<HTMLDivElement>(showSettingsModal);
   const [confirmReset, setConfirmReset] = useState<boolean>(false);
   const [resetInput, setResetInput] = useState<string>('');
   const [importStatus, setImportStatus] = useState<{
@@ -34,6 +36,16 @@ export const ProgressSettingsModal: React.FC = () => {
   }>({ type: 'idle' });
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && showSettingsModal) {
+        closeSettings();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showSettingsModal, closeSettings]);
 
   if (!showSettingsModal) return null;
 
@@ -119,6 +131,10 @@ export const ProgressSettingsModal: React.FC = () => {
       }}
     >
       <div
+        ref={modalContainerRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Learner Progress Settings"
         style={{
           width: '100%',
           maxWidth: '640px',
@@ -171,6 +187,8 @@ export const ProgressSettingsModal: React.FC = () => {
           </div>
           <button
             onClick={closeSettings}
+            title="Close settings modal"
+            aria-label="Close settings modal"
             style={{
               background: 'transparent',
               border: 'none',

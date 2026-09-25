@@ -1,8 +1,8 @@
-// src/platform/search/UniversalProblemSolver.tsx
 import React, { useState, useMemo, useEffect } from 'react';
 import { ProblemDiagnosis } from './types';
 import { UNIVERSAL_PROBLEM_DIAGNOSES } from './problemDatabase';
 import { TechnologyType } from '../lesson-runtime/types';
+import { useFocusTrap } from '../hooks/useFocusTrap';
 
 interface UniversalProblemSolverProps {
   isOpen: boolean;
@@ -15,6 +15,7 @@ export const UniversalProblemSolver: React.FC<UniversalProblemSolverProps> = ({
   onClose,
   onSelectLesson,
 }) => {
+  const modalContainerRef = useFocusTrap<HTMLDivElement>(isOpen);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [techFilter, setTechFilter] = useState<'all' | TechnologyType>('all');
   const [selectedProblem, setSelectedProblem] = useState<ProblemDiagnosis | null>(null);
@@ -68,7 +69,13 @@ export const UniversalProblemSolver: React.FC<UniversalProblemSolverProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fadeIn">
-      <div className="relative w-full max-w-4xl bg-slate-900 border border-slate-700/80 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+      <div
+        ref={modalContainerRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Universal Problem Solver"
+        className="relative w-full max-w-4xl bg-slate-900 border border-slate-700/80 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]"
+      >
         {/* Modal Search Bar Header */}
         <div className="p-4 md:p-5 border-b border-slate-800 bg-slate-950 flex items-center justify-between gap-4">
           <div className="flex-1 flex items-center gap-3">
@@ -87,6 +94,7 @@ export const UniversalProblemSolver: React.FC<UniversalProblemSolverProps> = ({
             <span className="text-[11px] font-mono text-slate-500 hidden md:inline">ESC to close</span>
             <button
               onClick={onClose}
+              aria-label="Close problem solver"
               className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-all"
             >
               ✕
